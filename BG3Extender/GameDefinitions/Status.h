@@ -160,10 +160,10 @@ struct StatusDowned : public StatusIncapacitated
     int NumStableSuccess;
     int NumStableFailed;
     int StableRollDC;
-    [[bg3::hidden]] void* StableRoll_LuaExpression;
-    [[bg3::hidden]] void* OnRollsFailed;
-    [[bg3::hidden]] void* OnSuccess;
-    [[bg3::hidden]] void* Roll_M;
+    StatsExpressionParam* StableRoll;
+    stats::Functors* OnRollsFailed;
+    stats::Functors* OnSuccess;
+    [[bg3::hidden]] UnknownFunction RollSignals;
     bool IsStable;
     bool IsHealed;
     int RollSuccesses;
