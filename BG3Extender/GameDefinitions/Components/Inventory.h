@@ -74,6 +74,13 @@ struct StackMemberComponent : public BaseComponent
     EntityHandle Stack;
 };
 
+struct TopOwnerComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(InventoryTopOwner, "eoc::inventory::TopOwnerComponent")
+
+    EntityHandle TopOwner;
+};
+
 struct WeightComponent : public BaseComponent
 {
     DEFINE_COMPONENT(InventoryWeight, "eoc::inventory::WeightComponent")
@@ -84,6 +91,13 @@ struct WeightComponent : public BaseComponent
 struct WieldedComponent : public BaseComponent
 {
     DEFINE_COMPONENT(Wielded, "eoc::inventory::WieldedComponent")
+
+    Guid field_0;
+};
+
+struct WieldingHistoryComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(WieldingHistory, "eoc::inventory::WieldingHistoryComponent")
 
     Guid field_0;
 };
@@ -125,6 +139,7 @@ struct ShapeshiftEquipmentHistoryComponent : public BaseComponent
 DEFINE_TAG_COMPONENT(esv::inventory, CharacterHasGeneratedTradeTreasureComponent, CharacterHasGeneratedTradeTreasure)
 DEFINE_TAG_COMPONENT(esv::inventory, IsReplicatedWithComponent, ServerInventoryIsReplicatedWith)
 DEFINE_TAG_COMPONENT(esv::inventory, ReadyToBeAddedToInventoryComponent, ReadyToBeAddedToInventory)
+DEFINE_TAG_COMPONENT(esv::inventory, EntityHasGeneratedTreasureComponent, HasGeneratedTreasure)
 
 END_NS()
 

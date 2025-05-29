@@ -6,6 +6,14 @@
 BEGIN_NS(combat)
 
 DEFINE_TAG_COMPONENT(eoc::combat, IsInCombatComponent, IsInCombat)
+DEFINE_TAG_COMPONENT(eoc::combat, DelayedFanfareComponent, CombatDelayedFanfare)
+
+struct IsThreatenedComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(CombatIsThreatened, "eoc::combat::IsThreatenedComponent")
+
+    Array<EntityHandle> ThreatenedBy;
+};
 
 struct ParticipantComponent : public BaseComponent
 {
@@ -96,7 +104,6 @@ struct ThreatRangeComponent : public BaseComponent
     int field_4;
     float field_8;
 };
-
 
 END_NS()
 

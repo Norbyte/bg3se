@@ -192,12 +192,18 @@ struct DeathComponent : public BaseComponent
     std::optional<glm::vec3> field_64;
 };
 
-
 struct DeathStateComponent : public BaseComponent
 {
     DEFINE_COMPONENT(DeathState, "eoc::death::StateComponent")
 
     uint32_t State;
+};
+
+struct DeathTypeComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(DeathType, "eoc::death::DeathTypeComponent")
+
+    uint8_t DeathType;
 };
 
 
@@ -345,8 +351,22 @@ struct ShapeshiftStateComponent : public BaseComponent
     std::optional<ShapeshiftStateInner> field_C;
 };
 
-
 END_SE()
+
+
+BEGIN_NS(multiplayer)
+
+struct UserComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(MultiplayerUser, "eoc::multiplayer::UserComponent")
+
+    UserId UserID;
+};
+
+DEFINE_TAG_COMPONENT(eoc::multiplayer, HostComponent, MultiplayerHost)
+
+END_NS()
+
 
 BEGIN_SE()
 
@@ -388,6 +408,37 @@ struct TimeFactorComponent : public BaseComponent
 
 END_SE()
 
+
+BEGIN_NS(translate)
+
+struct ChangeData
+{
+    EntityHandle Entity;
+    glm::vec3 OldPosition;
+    glm::vec3 NewPosition;
+    int Override;
+    bool field_24;
+    bool field_25;
+    bool field_26;
+};
+
+struct ChangedComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(TranslateChanged, "eoc::translate::ChangedComponent")
+
+    HashMap<EntityHandle, Array<ChangeData>> Changes;
+};
+
+struct ChangedEventOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(TranslateChangedEvent, "eoc::translate::ChangedEventOneFrameComponent")
+
+    Array<ChangeData> Changes;
+};
+
+END_NS()
+
+
 BEGIN_NS(sight)
 
 struct SightBaseComponent : public BaseComponent
@@ -420,6 +471,13 @@ struct EntityViewshedComponent : public BaseComponent
     DEFINE_COMPONENT(SightEntityViewshed, "eoc::sight::EntityViewshedComponent")
 
     HashSet<Guid> field_0;
+};
+
+struct IgnoreSurfacesComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(IgnoreSurfaces, "eoc::sight::IgnoreSurfacesComponent")
+
+    HashSet<SurfaceType> SurfaceTypes;
 };
 
 

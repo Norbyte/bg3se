@@ -150,6 +150,20 @@ struct AddedSpellsComponent : public BaseComponent
     Array<SpellMeta> Spells;
 };
 
+struct AttackSpellOverrideComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(AttackSpellOverride, "eoc::spell::AttackSpellOverrideComponent")
+
+    HashMap<uint8_t, FixedString> AttackSpells;
+};
+
+struct ScriptedExplosionComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ScriptedExplosion, "eoc::spell::ScriptedExplosionComponent")
+
+    FixedString Projectile;
+};
+
 struct CooldownData
 {
     SpellId SpellId;

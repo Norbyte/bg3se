@@ -36,6 +36,24 @@ struct CacheComponent : public BaseComponent
     uint32_t Flags;
 };
 
+struct DataCache
+{
+    int field_0;
+    uint8_t field_4;
+    uint8_t field_5;
+    EntityHandle Entity;
+    SpellId Spell;
+    uint8_t field_48;
+    uint8_t field_49;
+};
+
+struct DataCacheSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(SpellCastDataCache, "eoc::spell_cast::DataCacheSingletonComponent")
+
+    HashMap<FixedString, DataCache> Spells;
+};
+
 struct IsCastingComponent : public BaseComponent
 {
     DEFINE_COMPONENT(SpellCastIsCasting, "eoc::spell_cast::IsCastingComponent")
@@ -406,7 +424,6 @@ struct CacheComponent : public BaseComponent
     HashMap<FixedString, HashMap<int, Array<IntermediateTarget>>> IntermediateTargets;
     HashMap<FixedString, int> TargetCounts;
     uint32_t MovementTransactionId;
-    int32_t field_DC;
     std::optional<glm::vec3> field_E0;
     bool HasPathfindTemplate;
     bool PhaseFinished;

@@ -91,6 +91,13 @@ END_SE()
 
 BEGIN_NS(esv)
 
+struct ActionResourceChangeResultsSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ActionResourceChangeResults, "esv::action_resource::ResourceChangeResultsSingletonComponent")
+
+    Array<EntityHandle> Results;
+};
+
 struct ActionResourceSystem : public BaseSystem
 {
     DEFINE_SYSTEM(ServerActionResource, "esv::ActionResourceSystem")

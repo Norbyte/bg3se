@@ -2,6 +2,71 @@
 
 BEGIN_NS(progression)
 
+struct SpellDefinition
+{
+    FixedString SpellId;
+    SpellPrepareType PrepareType;
+    Guid SpellList;
+    AbilityId CastingAbility;
+    SpellCooldownType CooldownType;
+    Guid Class;
+};
+
+struct AbilityImprovementsComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ProgressionAbilityImprovements, "eoc::progression::AbilityImprovementsComponent")
+
+    Array<AbilityId> Abilities;
+    std::array< int32_t, 7> AbilityImprovements;
+};
+
+struct FeatComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ProgressionFeat, "eoc::progression::FeatComponent")
+
+    Guid Feat;
+    int field_10;
+    std::optional<int> ConditionId;
+    Array<SkillId> Proficiencies;
+    Array<SkillId> Expertise;
+    Array<SpellDefinition> AddSpells;
+    Array<FixedString> AddPassives;
+    std::array< int32_t, 7> AbilityImprovements;
+};
+
+struct SpellsComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ProgressionSpells, "eoc::progression::SpellsComponent")
+
+    Array<SpellDefinition> AddSpells;
+    Array<SpellDefinition> RemoveSpells;
+};
+
+struct SkillsComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ProgressionSkills, "eoc::progression::SkillsComponent")
+
+    Array<SkillId> Proficiencies;
+    Array<SkillId> Expertise;
+};
+
+struct PassivesComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ProgressionPassives, "eoc::progression::PassivesComponent")
+
+    Array<FixedString> AddPassives;
+    Array<FixedString> RemovePassives;
+};
+
+struct ReplicatedFeatComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ProgressionReplicatedFeat, "eoc::progression::ReplicatedFeatComponent")
+
+    Guid Feat;
+    uint8_t field_10;
+    int field_14;
+};
+
 struct LevelUpComponent : public BaseComponent
 {
     DEFINE_COMPONENT(LevelUp, "eoc::progression::LevelUpComponent")

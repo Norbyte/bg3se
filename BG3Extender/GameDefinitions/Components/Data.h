@@ -479,12 +479,20 @@ struct DualWieldingComponent : public BaseComponent
     [[bg3::legacy(DisableDualWielding)]] bool ToggledOn;
 };
 
+struct GravityDisabledUntilMovedComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(GravityDisabledUntilMoved, "eoc::GravityDisabledUntilMovedComponent")
+
+    Transform Transform;
+};
+
 DEFINE_TAG_COMPONENT(eoc, GravityDisabledComponent, GravityDisabled)
 DEFINE_TAG_COMPONENT(eoc::improvised_weapon, CanBeWieldedComponent, CanBeWielded)
 DEFINE_TAG_COMPONENT(eoc::tag, AvatarComponent, Avatar)
 DEFINE_TAG_COMPONENT(eoc::tag, HasExclamationDialogComponent, HasExclamationDialog)
 DEFINE_TAG_COMPONENT(eoc::tag, TraderComponent, Trader)
 DEFINE_TAG_COMPONENT(eoc::ambush, AmbushingComponent, Ambushing)
+DEFINE_TAG_COMPONENT(eoc::trade, CanTradeComponent, CanTrade)
 
 struct InteractionFilterComponent : public BaseComponent
 {

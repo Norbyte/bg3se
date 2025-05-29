@@ -52,6 +52,14 @@ struct ToggledPassivesComponent : public BaseComponent
     HashMap<FixedString, bool> Passives;
 };
 
+struct BoostsComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerPassiveBoosts, "esv::passive::BoostsComponent")
+
+    Array<Guid> field_0;
+    std::optional<std::variant<stats::AttackTargetContextData, stats::AttackPositionContextData, stats::MoveContextData, stats::SourceContextData, stats::TargetContextData, stats::NearbyAttackedContextData, stats::NearbyAttackingContextData, stats::EquipContextData>> ContextData;
+};
+
 struct PassiveBaseComponent : public BaseComponent
 {
     DEFINE_COMPONENT(ServerPassiveBase, "esv::passive::BaseComponent")

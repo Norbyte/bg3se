@@ -228,6 +228,32 @@ struct SceneAttachComponent : public BaseComponent
     [[bg3::hidden]] Scene* Scene;
 };
 
+struct CustomIconsStorageSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(CustomIconsStorage, "eoc::CustomIconsStorageSingletonComponent")
+
+    // FIXME - hidden until ScratchBuffer copy ctor logic is implemented
+    [[bg3::hidden]] HashMap<Guid, void*> Icons; /* Map<Guid, ScratchBuffer> */
+};
+
+struct FogVolumeRequestComponent : public MoveableObject
+{
+    DEFINE_PROXY_COMPONENT(FogVolumeRequest, "eoc::FogVolumeRequestComponent")
+
+    Guid field_0;
+};
+
+struct CombinedLightComponent : public MoveableObject
+{
+    DEFINE_PROXY_COMPONENT(CombinedLight, "eoc::CombinedLightComponent")
+
+    EntityHandle Entity;
+    BYTE TemplateType;
+    FixedString Template;
+    FixedString InstanceGuid;
+    Transform Transform;
+};
+
 
 END_SE()
 

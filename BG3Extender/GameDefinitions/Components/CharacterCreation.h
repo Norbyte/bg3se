@@ -364,6 +364,14 @@ END_NS()
 
 BEGIN_NS(esv::character_creation)
 
+struct CustomIconComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerCCCustomIcon, "esv::CharacterCreationCustomIconComponent")
+
+    // FIXME - hidden until ScratchBuffer binding logic is implemented
+    [[bg3::hidden]] ScratchBuffer Icon;
+};
+
 struct AppearanceVisualTagComponent : public BaseComponent
 {
     DEFINE_COMPONENT(ServerCCAppearanceVisualTag, "esv::character_creation::AppearanceVisualTagComponent")

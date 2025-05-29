@@ -40,12 +40,21 @@ struct LifetimeComponent : public BaseComponent
     [[bg3::legacy(field_4)]] float Lifetime;
 };
 
+struct LoseControlComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(StatusLoseControl, "eoc::status::LoseControlComponent")
+
+    bool LoseControl;
+};
+
 struct VisualDisabledComponent : public BaseComponent
 {
     DEFINE_COMPONENT(StatusVisualDisabled, "eoc::status::visual::DisabledComponent")
 
     HashSet<FixedString> Visuals;
 };
+
+DEFINE_TAG_COMPONENT(eoc::status, IndicateDarknessComponent, StatusIndicateDarkness)
 
 END_NS()
 
