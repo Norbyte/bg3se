@@ -130,6 +130,10 @@ PersistentRegistryEntry do_get(lua_State* L, int index, Overload<PersistentRegis
 template <class T>
 LuaDelegate<T> do_get(lua_State* L, int index, Overload<LuaDelegate<T>>)
 {
+    if (lua_type(L, index) == LUA_TNIL) {
+        return LuaDelegate<T>();
+    }
+
     return LuaDelegate<T>(L, index);
 }
 
