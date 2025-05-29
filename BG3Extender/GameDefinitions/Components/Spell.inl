@@ -1,7 +1,7 @@
 #pragma once
 
 #include <GameDefinitions/Components/Components.h>
-#include <GameDefinitions/Components/Spell.h>
+#include <GameDefinitions/Components/SpellCast.h>
 #include <GameDefinitions/Components/Visual.h>
 
 BEGIN_NS(spell_cast)

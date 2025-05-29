@@ -2,6 +2,7 @@
 
 #include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Stats/Common.h>
+#include <GameDefinitions/Components/SpellCast.h>
 
 BEGIN_NS(ecl)
 
