@@ -16,6 +16,7 @@
 #include <GameDefinitions/Components/Events.h>
 #include <GameDefinitions/Components/Party.h>
 #include <GameDefinitions/Components/Spell.h>
+#include <GameDefinitions/Components/SpellCastShared.h>
 #include <GameDefinitions/Components/SpellCast.h>
 #include <GameDefinitions/Components/Interrupt.h>
 #include <GameDefinitions/Components/Tadpole.h>

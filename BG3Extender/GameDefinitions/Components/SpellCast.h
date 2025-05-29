@@ -4,6 +4,9 @@
 #include <GameDefinitions/RootTemplates.h>
 #include <GameDefinitions/Hit.h>
 #include <GameDefinitions/Stats/Common.h>
+#include <GameDefinitions/Components/SpellCastShared.h>
+#include <GameDefinitions/Components/Interrupt.h>
+#include <GameDefinitions/Components/Projectile.h>
 
 
 BEGIN_NS(spell_cast)
@@ -57,70 +60,12 @@ struct MovementComponent : public BaseComponent
     // FixedString TextKey;
 };
 
-struct SpellRollCastEventData
-{
-    [[bg3::legacy(field_0)]] FixedString CastKey;
-    HitDesc Hit;
-};
-
-struct SpellRollTargetInfo
-{
-    uint64_t Flags;
-    glm::vec3 Position;
-};
-
-struct SpellRollData
-{
-    EntityHandle Target;
-    std::optional<EntityHandle> TargetProxy;
-    [[bg3::legacy(Hits)]] Array<SpellRollCastEventData> Casts;
-    HashMap<FixedString, int32_t> NameToCastIndex;
-    int NextReaction;
-    SpellMetaConditionType SpellConditionsType;
-    std::optional<SpellRollTargetInfo> TargetInfo;
-};
-
 struct RollsComponent : public BaseComponent
 {
     DEFINE_COMPONENT(SpellCastRolls, "eoc::spell_cast::RollsComponent")
 
     Array<SpellRollData> Rolls;
 };
-
-struct BaseTarget
-{
-    virtual ~BaseTarget();
-    virtual glm::vec3 GetTargetPosition(ecs::WorldView& world, glm::vec3 const* pos, std::optional<SpellType> type) const;
-    virtual glm::vec3 LEGACY_GetTargetPosition(ecs::EntityWorld& world) const;
-    virtual std::optional<glm::vec3> GetEntityPosition(ecs::WorldView& world) const;
-    virtual bool IsAlive(ecs::WorldView&) const;
-    virtual bool IsValid() const;
-
-    glm::vec3 DoGetTargetPosition(ecs::EntityWorld* world, SpellType type, glm::vec3 const* pos) const;
-    std::optional<glm::vec3> DoGetPosition(EntityHandle entity, ecs::EntityWorld* world, SpellType type) const;
-
-    EntityHandle Target;
-    [[bg3::legacy(TargetOverride)]] std::optional<EntityHandle> TargetProxy;
-    std::optional<glm::vec3> Position;
-};
-
-struct InitialTarget : public BaseTarget
-{
-    glm::vec3 GetTargetPosition(ecs::WorldView& world, glm::vec3 const* pos, std::optional<SpellType> type) const override;
-    glm::vec3 LEGACY_GetTargetPosition(ecs::EntityWorld& world) const override;
-    bool IsAlive(ecs::WorldView&) const override;
-    bool IsValid() const override;
-
-    SpellType TargetingType;
-    std::optional<BaseTarget> Target2;
-};
-
-struct IntermediateTarget : public BaseTarget
-{
-    [[bg3::legacy(Target2)]] InitialTarget InitialTarget;
-    uint8_t field_A0;
-};
-
 
 struct StateComponent : public BaseComponent
 {
@@ -292,12 +237,14 @@ END_NS()
 
 BEGIN_NS(esv::spell_cast)
 
+using namespace bg3se::spell_cast;
+
 struct CastStartRequest
 {
     SpellId Spell;
     SpellCastOptions CastOptions{ 0 };
     EntityHandle Caster;
-    Array<bg3se::spell_cast::InitialTarget> Targets;
+    Array<InitialTarget> Targets;
     ActionOriginator Originator;
     EntityHandle Item;
     EntityHandle field_70;
@@ -331,7 +278,7 @@ struct PreviewSetRequest
     EntityHandle Entity;
     Guid SpellCastGuid;
     uint8_t field_18;
-    std::optional<std::variant<std::optional<navigation::TargetInfo>, std::optional<PathSettings>, uint8_t /* SpellTargetingState */, std::optional<glm::vec3>, bg3se::spell_cast::BaseTarget, bool, int>> Param;
+    std::optional<std::variant<std::optional<navigation::TargetInfo>, std::optional<PathSettings>, uint8_t /* SpellTargetingState */, std::optional<glm::vec3>, BaseTarget, bool, int>> Param;
 };
 
 struct CastHitDelayInfo
@@ -456,7 +403,7 @@ struct CacheComponent : public BaseComponent
     HashMap<int, bool> TextKeyIndices;
     uint32_t TextKeyIndex;
     int32_t field_54;
-    HashMap<FixedString, HashMap<int, Array<bg3se::spell_cast::IntermediateTarget>>> IntermediateTargets;
+    HashMap<FixedString, HashMap<int, Array<IntermediateTarget>>> IntermediateTargets;
     HashMap<FixedString, int> TargetCounts;
     uint32_t MovementTransactionId;
     int32_t field_DC;
@@ -558,6 +505,359 @@ struct CastRequestSystem : public BaseSystem
     Array<PreviewSetRequest> NetworkPreviewUpdateRequests;
     Array<CastConfirmRequest> ConfirmRequests;
 };
+
+
+struct Event_Finish
+{
+    SpellCastFailReason FailReason;
+    uint8_t field_1;
+};
+
+struct Event_MoveDuringCastInitialize
+{
+    float Duration;
+};
+
+struct Event_MoveDuringCastStart
+{
+    FixedString TextKey;
+};
+
+struct Event_MoveDuringCastUpdate
+{
+    float Progress;
+    glm::vec3 Position;
+    glm::vec3 AdjustedPosition;
+};
+
+struct Event_MoveDuringCastEnd
+{
+    glm::vec3 Position;
+    glm::vec3 AdjustedPosition;
+};
+
+struct Event_Cast
+{
+    HitDesc Hit;
+    EntityHandle Target;
+    std::optional<EntityHandle> TargetProxy;
+};
+
+struct Event_CastHit
+{
+    FixedString TextKey;
+    uint32_t Index;
+};
+
+struct Event_CastTextKey
+{
+    FixedString TextKey;
+};
+
+struct Event_TargetHit
+{
+    HitDesc Hit;
+    AttackDesc Attack;
+    EntityHandle Target;
+    glm::vec3 TargetPosition;
+    std::optional<EntityHandle> TargetProxy;
+    uint32_t NumConditionRolls;
+    EntityHandle Caster;
+    std::optional<glm::vec3> SourcePosition;
+    uint64_t ContextType;
+};
+
+struct Event_SpellRollAbort
+{
+    HitDesc Hit;
+    EntityHandle Target;
+    std::optional<EntityHandle> TargetProxy;
+};
+
+struct Event_WeaponSetRequest
+{
+    bool IsRanged;
+};
+
+struct Event_PlayAnimation
+{
+    SpellAnimationCastEvent CastEvent;
+};
+
+struct Event_PhaseChange
+{
+    SpellCastPhase Phase;
+};
+
+struct Event_CacheFlagChange
+{
+    uint32_t Flag;
+};
+
+struct Event_UseCostsChange
+{
+    Array<stats::ActionResourceCost> Costs;
+};
+
+struct Event_InitializeRolls
+{
+    Array<SpellRollData> Rolls;
+};
+
+struct Event_AdvanceRoll
+{
+    EntityHandle Target;
+    std::optional<EntityHandle> TargetProxy;
+    FixedString TextKey;
+    uint8_t SpellConditionsType;
+};
+
+struct Event_AdvanceReaction
+{
+    EntityHandle Target;
+    std::optional<EntityHandle> TargetProxy;
+    uint8_t SpellConditionsType;
+};
+
+struct Event_FireProjectile
+{
+    bg3se::spell_cast::ProjectileTargetData Target;
+    FixedString Trajectory;
+    uint8_t field_34C;
+    uint32_t ProjectileIndex;
+};
+
+struct Event_ChangeProjectileDelayTimer
+{
+    float ProjectileDelay;
+    int ProjectileIndex;
+};
+
+struct Event_PopDelayedProjectile
+{
+    int ProjectileIndex;
+};
+
+struct Event_InitializeIntermediateTargets
+{
+    uint32_t Index;
+    FixedString TextKey;
+    Array<IntermediateTarget> Targets;
+};
+
+struct Event_AddDelayedCastHit
+{
+    uint64_t InitialIndex;
+    uint32_t IntermediateIndex;
+    std::optional<uint32_t> OverallIndex;
+    FixedString TextKey;
+    uint32_t TextKeyIndex;
+};
+
+struct Event_ChangeCastPosition
+{
+    glm::vec3 Position;
+};
+
+struct Event_ChangeCastEndPosition
+{
+    glm::vec3 Position;
+};
+
+struct Event_ChangeMovementTransactionId
+{
+    uint32_t TransactionId;
+};
+
+struct Event_MovementEnd
+{
+    bool PhaseFinished;
+};
+
+struct Event_CreateZone
+{
+    FixedString TextKey;
+    uint32_t TextKeyIndex;
+    InitialTarget Target;
+};
+
+struct Event_DoTeleport
+{
+    FixedString TextKey;
+    uint32_t TextKeyIndex;
+    InitialTarget Target;
+};
+
+struct Event_CreateWall
+{
+    InitialTarget Target;
+};
+
+struct Event_TargetsChanged
+{
+    Array<InitialTarget> Targets;
+};
+
+struct Event_CastOptionsChange
+{
+    uint32_t SetOptions;
+    uint32_t ClearOptions;
+};
+
+struct Event_TargetsChange
+{
+    Array<InitialTarget> Targets;
+};
+
+struct Event_AddSharedMovement
+{
+    glm::vec3 Position;
+    std::optional<glm::vec3> field_C;
+};
+
+struct Event_AddProjectileCache
+{
+    Array<ProjectileResultsExtraData> Projectiles;
+};
+
+struct Event_AddMovementInfo
+{
+    std::optional<navigation::TargetInfo> TargetInfo;
+    std::optional<PathSettings> PathSettings;
+};
+
+struct Event_InterruptStart
+{
+    bg3se::interrupt::InterruptEvent Event;
+    HashMap<EntityHandle, HashSet<EntityHandle>> Interruptors;
+    HashMap<Guid, bg3se::interrupt::ExecutedDependency> ExecutedDependencies;
+};
+
+struct InterruptApplyResultBase
+{
+    bool HasReplacement;
+    HashMap<Guid, bg3se::interrupt::RollAdjustments> RollAdjustments;
+    HashMap<bg3se::interrupt::DamageFunctorKey, bg3se::interrupt::DamageRollAdjustments> DamageRollAdjustments;
+};
+
+struct Event_InterruptEventChange
+{
+    bg3se::interrupt::InterruptEvent Event;
+    bool HasReplacement;
+    bg3se::interrupt::InterruptEvent ReplacementEvent;
+    HashMap<EntityHandle, HashSet<EntityHandle>> Interruptors;
+    HashMap<bg3se::interrupt::InterruptEvent, HashMap<EntityHandle, HashSet<EntityHandle>>> EventInterruptors;
+    InterruptApplyResultBase Results;
+    HashMap<EntityHandle, bg3se::interrupt::InterruptUsage> InterruptUsage;
+    HashMap<Guid, bg3se::interrupt::ExecutedDependency> ExecutedDependencies;
+};
+
+struct Event_InterruptApplyResult : public InterruptApplyResultBase
+{
+    HashMap<EntityHandle, bg3se::interrupt::InterruptUsage> InterruptUsage;
+};
+
+struct Event_InterruptEnd
+{
+    bool StopInterrupt;
+    bg3se::interrupt::InterruptEvent Event;
+};
+
+struct Event_PrecalculatedInterruptors
+{
+    Array<bg3se::interrupt::PrecalculatedAnimationInterruptData> Interruptors;
+    bool HasReplacement;
+};
+
+struct Event_PushPausedAnimationEvents
+{
+    Array<bg3se::interrupt::PausedAnimationEvent> Events;
+};
+
+struct Event_ChangeStoryActionId
+{
+    int32_t StoryActionId;
+};
+
+struct Event_ZoneRangeUpdate
+{
+    float field_0;
+    float field_4;
+    float field_8;
+    float field_C;
+};
+
+struct Event_PrecalculatedConditionals
+{
+    Array<FunctorConditional> Conditionals;
+};
+
+struct Event_UpdateConditionals
+{
+    Array<FunctorConditional> Conditionals;
+};
+
+struct Event_UpdateInterruptors
+{
+    HashMap<EntityHandle, HashSet<EntityHandle>> Interruptors;
+};
+
+
+struct SystemEvent
+{
+    SystemEventType Type;
+    EntityHandle Entity;
+    std::optional<std::variant<
+        Event_Finish,
+        Event_MoveDuringCastInitialize,
+        Event_MoveDuringCastStart,
+        Event_MoveDuringCastUpdate,
+        Event_MoveDuringCastEnd,
+        Event_Cast,
+        Event_CastHit,
+        Event_CastTextKey,
+        Event_TargetHit,
+        Event_SpellRollAbort,
+        Event_WeaponSetRequest,
+        Event_PlayAnimation,
+        Event_PhaseChange,
+        Event_CacheFlagChange,
+        Event_UseCostsChange,
+        Event_InitializeRolls,
+        Event_AdvanceRoll,
+        Event_AdvanceReaction,
+        Event_FireProjectile,
+        Event_ChangeProjectileDelayTimer,
+        Event_PopDelayedProjectile,
+        Event_InitializeIntermediateTargets,
+        Event_AddDelayedCastHit,
+        Event_ChangeCastPosition,
+        Event_ChangeCastEndPosition,
+        Event_ChangeMovementTransactionId,
+        Event_MovementEnd,
+        Event_CreateZone,
+        Event_DoTeleport,
+        Event_CreateWall,
+        Event_TargetsChanged,
+        Event_CastOptionsChange,
+        Event_TargetsChange,
+        Event_AddSharedMovement,
+        Event_AddProjectileCache,
+        Event_AddMovementInfo,
+        Event_InterruptStart,
+        Event_InterruptEventChange,
+        Event_InterruptApplyResult,
+        Event_InterruptEnd,
+        Event_PrecalculatedInterruptors,
+        Event_PushPausedAnimationEvents,
+        Event_ChangeStoryActionId,
+        Event_ZoneRangeUpdate,
+        Event_PrecalculatedConditionals,
+        Event_UpdateConditionals,
+        Event_UpdateInterruptors
+    >> Args;
+};
+
 
 END_NS()
 

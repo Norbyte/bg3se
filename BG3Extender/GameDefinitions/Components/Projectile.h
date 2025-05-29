@@ -4,6 +4,7 @@
 #include <GameDefinitions/Misc.h>
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/Hit.h>
+#include <GameDefinitions/Components/SpellCastShared.h>
 
 BEGIN_NS(path)
 

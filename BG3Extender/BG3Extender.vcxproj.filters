@@ -511,6 +511,7 @@
     <ClInclude Include="GameDefinitions\Components\Sound.h" />
     <ClInclude Include="Lua\Shared\SystemEvents.h" />
     <ClInclude Include="GameDefinitions\Components\SpellCast.h" />
+    <ClInclude Include="GameDefinitions\Components\SpellCastShared.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
