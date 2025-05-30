@@ -42,6 +42,8 @@ P_BITMASK(ItemFlags)
 P(StatusFlags)
 P(DragFlags)
 P(DropFlags)
+P(OnClick)
+P(OnRightClick)
 P(OnActivate)
 P(OnDeactivate)
 P(OnHoverEnter)
@@ -156,7 +158,6 @@ BEGIN_CLS(extui::Tree)
 INHERIT(extui::TreeParent)
 P_FUN(SetOpen, extui::Tree::SetOpen)
 P_BITMASK(Flags)
-P(OnClick)
 P(OnExpand)
 P(OnCollapse)
 END_CLS()
@@ -238,7 +239,6 @@ BEGIN_CLS(extui::MenuItem)
 INHERIT(extui::StyledRenderable)
 P(Enabled)
 P(Shortcut)
-P(OnClick)
 END_CLS()
 
 
@@ -257,7 +257,6 @@ END_CLS()
 
 BEGIN_CLS(extui::TextLink)
 INHERIT(extui::StyledRenderable)
-P(OnClick)
 END_CLS()
 
 
@@ -298,7 +297,6 @@ INHERIT(extui::StyledRenderable)
 P(Size)
 P_BITMASK(Flags)
 P(Selected)
-P(OnClick)
 END_CLS()
 
 
@@ -306,7 +304,6 @@ BEGIN_CLS(extui::Button)
 INHERIT(extui::StyledRenderable)
 P(Size)
 P_BITMASK(Flags)
-P(OnClick)
 END_CLS()
 
 
@@ -316,7 +313,6 @@ P(Image)
 P(Background)
 P(Tint)
 P_BITMASK(Flags)
-P(OnClick)
 END_CLS()
 
 

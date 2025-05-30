@@ -121,6 +121,11 @@ lua::ImguiHandle Renderable::GetParent() const
     return lua::ImguiHandle(Parent);
 }
 
+bool StyledRenderable::OverridesClickEvent() const
+{
+    return false;
+}
+
 lua::ImguiHandle StyledRenderable::GetDragPreview() const
 {
     return lua::ImguiHandle(DragPreview);
@@ -163,6 +168,14 @@ void StyledRenderable::Render(DrawingContext& context)
 
 void StyledRenderable::FireEvents()
 {
+    if (OnClick && !OverridesClickEvent() && ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+        Manager->GetEventQueue().Call(OnClick, lua::ImguiHandle(Handle));
+    }
+    
+    if (OnRightClick && ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+        Manager->GetEventQueue().Call(OnRightClick, lua::ImguiHandle(Handle));
+    }
+
     if (OnActivate && ImGui::IsItemActivated()) {
         Manager->GetEventQueue().Call(OnActivate, lua::ImguiHandle(Handle));
     }
@@ -970,6 +983,11 @@ void MenuItem::StyledRender(DrawingContext& context)
     }
 }
 
+bool MenuItem::OverridesClickEvent() const
+{
+    return true;
+}
+
 bool Group::BeginRender(DrawingContext& context)
 {
     ImGui::BeginGroup();
@@ -1040,10 +1058,6 @@ bool Tree::BeginRender(DrawingContext& context)
         } else if (!rendering_ && OnCollapse) {
             Manager->GetEventQueue().Call(OnCollapse, lua::ImguiHandle(Handle));
         }
-    }
-
-    if (ImGui::IsItemClicked() && OnClick) {
-        Manager->GetEventQueue().Call(OnClick, lua::ImguiHandle(Handle));
     }
 
     return rendering_;
@@ -1297,6 +1311,11 @@ void TextLink::StyledRender(DrawingContext& context)
     }
 }
 
+bool TextLink::OverridesClickEvent() const
+{
+    return true;
+}
+
 
 void BulletText::StyledRender(DrawingContext& context)
 {
@@ -1347,6 +1366,11 @@ void Selectable::StyledRender(DrawingContext& context)
     }
 }
 
+bool Selectable::OverridesClickEvent() const
+{
+    return true;
+}
+
 
 void Button::StyledRender(DrawingContext& context)
 {
@@ -1355,6 +1379,11 @@ void Button::StyledRender(DrawingContext& context)
             Manager->GetEventQueue().Call(OnClick, lua::ImguiHandle(Handle));
         }
     }
+}
+
+bool Button::OverridesClickEvent() const
+{
+    return true;
 }
 
 
@@ -1368,6 +1397,11 @@ void ImageButton::StyledRender(DrawingContext& context)
             Manager->GetEventQueue().Call(OnClick, lua::ImguiHandle(Handle));
         }
     }
+}
+
+bool ImageButton::OverridesClickEvent() const
+{
+    return true;
 }
 
 
