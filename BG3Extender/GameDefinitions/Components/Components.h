@@ -139,8 +139,14 @@ DEFINE_TAG_COMPONENT(eoc, OffStageComponent, OffStage)
 DEFINE_TAG_COMPONENT(eoc, PickingStateComponent, PickingState)
 DEFINE_TAG_COMPONENT(eoc, PlayerComponent, Player)
 DEFINE_TAG_COMPONENT(eoc, SimpleCharacterComponent, SimpleCharacter)
-DEFINE_TAG_COMPONENT(eoc, WeaponSetComponent, WeaponSet)
 DEFINE_TAG_COMPONENT(eoc::character, CharacterComponent, IsCharacter)
+
+struct WeaponSetComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(WeaponSet, "eoc::WeaponSetComponent")
+
+    WeaponSetType WeaponSet;
+};
 
 struct SpeakerComponent : public BaseComponent
 {

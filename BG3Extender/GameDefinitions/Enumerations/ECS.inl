@@ -1614,6 +1614,12 @@ BEGIN_ENUM(PassiveSourceType, uint8_t)
     EV(Debug, 8)
 END_ENUM()
 
+BEGIN_ENUM(WeaponSetType, uint8_t)
+    EV(Melee, 0)
+    EV(Ranged, 1)
+    EV(Unknown, 2)
+END_ENUM()
+
 BEGIN_BITMASK(SpellCastOptions, uint32_t)
     EV(IgnoreHasSpell, 0x1)
     EV(IgnoreCastChecks, 0x2)
