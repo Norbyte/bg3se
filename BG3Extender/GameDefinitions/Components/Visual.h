@@ -8,8 +8,7 @@ struct CustomIconComponent : public BaseComponent
 {
     DEFINE_COMPONENT(CustomIcon, "eoc::CustomIconComponent")
 
-    [[bg3::hidden]]
-    ScratchBuffer Buffer;
+    ScratchBuffer Icon;
     uint8_t Source;
 };
 
@@ -232,8 +231,7 @@ struct CustomIconsStorageSingletonComponent : public BaseComponent
 {
     DEFINE_COMPONENT(CustomIconsStorage, "eoc::CustomIconsStorageSingletonComponent")
 
-    // FIXME - hidden until ScratchBuffer copy ctor logic is implemented
-    [[bg3::hidden]] HashMap<Guid, void*> Icons; /* Map<Guid, ScratchBuffer> */
+    HashMap<Guid, ScratchBuffer> Icons;
 };
 
 struct FogVolumeRequestComponent : public MoveableObject

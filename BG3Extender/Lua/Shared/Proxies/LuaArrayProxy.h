@@ -23,6 +23,8 @@ BY_VAL(WStringView);
 BY_VAL(LSStringView);
 BY_VAL(Noesis::String);
 BY_VAL(Noesis::Symbol);
+BY_VAL(ScratchBuffer);
+BY_VAL(ScratchString);
 BY_VAL(Guid);
 BY_VAL(Path);
 BY_VAL(NetId);

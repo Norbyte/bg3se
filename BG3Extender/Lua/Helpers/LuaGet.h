@@ -48,6 +48,20 @@ inline LSStringView do_get(lua_State* L, int index, Overload<LSStringView>)
     return {};
 }
 
+inline ScratchBuffer do_get(lua_State* L, int index, Overload<ScratchBuffer>)
+{
+    size_t len;
+    auto str = luaL_checklstring(L, index, &len);
+    return ScratchBuffer(std::span<char const>(str, str + len));
+}
+
+inline ScratchString do_get(lua_State* L, int index, Overload<ScratchString>)
+{
+    size_t len;
+    auto str = luaL_checklstring(L, index, &len);
+    return ScratchString(std::span<char const>(str, str + len));
+}
+
 inline Noesis::String do_get(lua_State* L, int index, Overload<Noesis::String>)
 {
     size_t len;

@@ -13,8 +13,7 @@ struct AppearanceMaterialSetting
 
 struct Appearance
 {
-    [[bg3::hidden]]
-    ScratchBuffer Buffer;
+    ScratchBuffer Icon;
     Guid HairColor;
     Guid SkinColor;
     Guid EyeColor;

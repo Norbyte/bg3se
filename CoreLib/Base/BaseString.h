@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <string>
+#include <span>
 
 void MurmurHash3_x64_128(const void* key, int len, uint32_t seed, void* out);
 
@@ -368,35 +369,99 @@ namespace bg3se
         MainTable Main;
     };
 
-    struct ScratchBuffer : public Noncopyable<ScratchBuffer>
+
+    enum class MemBufferFlags : uint8_t
     {
-        uint8_t State_M{ 0 };
-        uint8_t field_1{ 0 };
-        uint16_t MemoryAlignment{ 1 };
-        uint32_t MultipleOf{ 1 };
-        void* Buffer{ nullptr };
-        uint64_t Size{ 0 };
-        bool HasBuffer2{ false };
-        bool field_19{ false };
-        int field_1C{ 0 };
-        uint8_t* Buffer2{ nullptr };
-        void* field_28{ nullptr };
-        void* ReadPointer{ nullptr };
-        void* ReadBuffer{ nullptr };
-        void* ReadEnd_M{ nullptr };
-        void* field_48{ nullptr };
-        uint64_t Size2{ 0 };
+        Mutable = 1,
+        Tracked = 2
     };
 
-    struct ScratchString : public Noncopyable<ScratchString>
+    enum class MemoryOrigin : uint8_t
+    {
+        None = 0,
+        Owned = 1,
+        External = 2
+    };
+
+
+    struct MemBufferMeta
+    {
+        MemoryOrigin Origin{ MemoryOrigin::Owned };
+        MemBufferFlags Flags{ MemBufferFlags::Mutable };
+        uint16_t AllocatorTag{ 0 };
+        uint32_t Alignment{ 0 };
+    };
+
+
+    struct MemBuffer
+    {
+        inline MemBuffer() {}
+        MemBuffer(std::span<char const> s);
+        MemBuffer(MemBuffer const&);
+        MemBuffer(MemBuffer &&);
+        ~MemBuffer();
+
+        MemBuffer& operator = (MemBuffer const&);
+        MemBuffer& operator = (MemBuffer &&);
+
+        MemBufferMeta Meta;
+        void* Buffer{ nullptr };
+        uint64_t Size{ 0 };
+    };
+
+
+    struct MemReadStream
     {
         void* Buffer{ nullptr };
-        uint32_t ReadSize{ 0 };
+        uint64_t Size{ 0 };
+        uint64_t Offset{ 0 };
+    };
+
+
+    struct MemWriteStream : public MemBuffer
+    {
+        uint64_t Offset{ 0 };
+    };
+
+
+    struct ScratchBuffer
+    {
+        inline ScratchBuffer() {}
+        ScratchBuffer(std::span<char const> s);
+        ScratchBuffer(ScratchBuffer const&);
+        ScratchBuffer(ScratchBuffer&&);
+        ~ScratchBuffer();
+
+        ScratchBuffer& operator = (ScratchBuffer const&);
+        ScratchBuffer& operator = (ScratchBuffer&&);
+
+        void RemapWriteStream();
+        void RemapReadStream();
+
+        MemBuffer Buffer;
+        MemWriteStream Write;
+        MemReadStream Read;
+        uint64_t Size{ 0 };
+    };
+
+    struct ScratchString
+    {
+        inline ScratchString() {}
+        ScratchString(std::span<char const> s);
+        ScratchString(ScratchString const&);
+        ScratchString(ScratchString &&);
+        ~ScratchString();
+
+        ScratchString& operator = (ScratchString const&);
+        ScratchString& operator = (ScratchString&&);
+
+        char* Buffer{ nullptr };
+        uint32_t Position{ 0 };
+        uint32_t Capacity{ 0 };
         uint32_t Size{ 0 };
-        uint32_t WritePosition{ 0 };
-        uint32_t ReadPosition{ 0 };
-        bool Unkn1{ false };
-        bool Unkn2{ false };
+        int32_t FloatPrecision{ -1 };
+        bool Managed{ false };
+        bool CanGrow{ false };
     };
 
     struct Guid

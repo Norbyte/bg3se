@@ -220,6 +220,36 @@ inline bool Validate(WStringView const* s, Overload<WStringView>)
     return true;
 }
 
+inline bool Validate(MemBuffer const* s, Overload<MemBuffer>)
+{
+    CHECK(s->Size <= MaxStringLengthHeuristic);
+    CHECK(!IsBadReadPtr(s->Buffer, s->Size));
+
+    return true;
+}
+
+inline bool Validate(ScratchBuffer const* s, Overload<ScratchBuffer>)
+{
+    CHECKR(Validate(&s->Buffer, Overload<MemBuffer>{}));
+    CHECK(s->Size <= s->Buffer.Size);
+    CHECK(s->Write.Buffer == s->Buffer.Buffer);
+    CHECK(s->Read.Buffer == s->Read.Buffer);
+
+    return true;
+}
+
+inline bool Validate(ScratchString const* s, Overload<ScratchString>)
+{
+    CHECK(s->Capacity <= MaxStringLengthHeuristic);
+    CHECK(s->Size <= s->Capacity);
+    CHECK(s->Position <= s->Size);
+    CHECKR(Validate(&s->Managed, Overload<bool>{}));
+    CHECKR(Validate(&s->CanGrow, Overload<bool>{}));
+    CHECK(!IsBadReadPtr(s->Buffer, s->Capacity));
+
+    return true;
+}
+
 inline bool Validate(Path const* p, Overload<Path>)
 {
     return Validate(&p->Name, Overload<STDString>{});

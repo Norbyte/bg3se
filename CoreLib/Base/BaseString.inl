@@ -196,4 +196,196 @@ FixedStringNoRef::FixedStringNoRef(char const* str)
     FixedStringBase::StaticDecRef(Index);
 }
 
+
+MemBuffer::MemBuffer(std::span<char const> s)
+{
+    Buffer = GameAllocRaw(s.size());
+    Size = s.size();
+    memcpy(Buffer, s.data(), s.size());
+}
+
+MemBuffer::MemBuffer(MemBuffer const& o)
+    : Meta(o.Meta)
+{
+    if (o.Buffer) {
+        Meta.Origin = MemoryOrigin::Owned;
+        Buffer = GameAllocRaw(o.Size);
+        Size = o.Size;
+        memcpy(Buffer, o.Buffer, o.Size);
+    } else {
+        Buffer = nullptr;
+        Size = 0;
+    }
+}
+
+MemBuffer::MemBuffer(MemBuffer&& o)
+{
+    Meta = o.Meta;
+    Buffer = o.Buffer;
+    Size = o.Size;
+
+    o.Meta.Origin = MemoryOrigin::None;
+    o.Buffer = nullptr;
+    o.Size = 0;
+}
+
+MemBuffer::~MemBuffer()
+{
+    if (Meta.Origin == MemoryOrigin::Owned) {
+        GameFree(Buffer);
+    }
+}
+
+MemBuffer& MemBuffer::operator = (MemBuffer const& o)
+{
+    if (Meta.Origin == MemoryOrigin::Owned) {
+        GameFree(Buffer);
+    }
+
+    new (this) MemBuffer(o);
+    return *this;
+}
+
+MemBuffer& MemBuffer::operator = (MemBuffer&& o)
+{
+    if (Meta.Origin == MemoryOrigin::Owned) {
+        GameFree(Buffer);
+    }
+
+    new (this) MemBuffer(std::move(o));
+    return *this;
+}
+
+
+ScratchBuffer::ScratchBuffer(std::span<char const> s)
+    : Buffer(s),
+    Size(s.size())
+{
+    RemapWriteStream();
+    RemapReadStream();
+}
+
+ScratchBuffer::ScratchBuffer(ScratchBuffer const& o)
+    : Buffer(o.Buffer),
+    Size(o.Size)
+{
+    RemapWriteStream();
+    RemapReadStream();
+}
+
+ScratchBuffer::ScratchBuffer(ScratchBuffer&& o)
+    : Buffer(std::move(o.Buffer)),
+    Write(std::move(o.Write)),
+    Read(std::move(o.Read)),
+    Size(o.Size)
+{}
+
+ScratchBuffer::~ScratchBuffer()
+{}
+
+ScratchBuffer& ScratchBuffer::operator = (ScratchBuffer const& o)
+{
+    Buffer = o.Buffer;
+    Size = o.Size;
+    RemapWriteStream();
+    RemapReadStream();
+    return *this;
+}
+
+ScratchBuffer& ScratchBuffer::operator = (ScratchBuffer&& o)
+{
+    Buffer = std::move(o.Buffer);
+    Write = std::move(o.Write);
+    Read = std::move(o.Read);
+    Size = o.Size;
+    return *this;
+}
+
+void ScratchBuffer::RemapWriteStream()
+{
+    Write.Meta.Origin = MemoryOrigin::External;
+    Write.Meta.Flags = MemBufferFlags::Mutable;
+    Write.Meta.AllocatorTag = 0;
+    Write.Meta.Alignment = 0;
+    Write.Buffer = Buffer.Buffer;
+    Write.Size = Buffer.Size;
+    Write.Offset = 0;
+}
+
+void ScratchBuffer::RemapReadStream()
+{
+    Read.Buffer = Buffer.Buffer;
+    Read.Size = Buffer.Size;
+    Read.Offset = 0;
+}
+
+
+ScratchString::ScratchString(std::span<char const> s)
+{
+    Buffer = GameAllocArray<char>(s.size());
+    Capacity = (uint32_t)s.size();
+    Size = (uint32_t)s.size();
+    Managed = true;
+    CanGrow = true;
+    memcpy(Buffer, s.data(), s.size());
+}
+
+ScratchString::ScratchString(ScratchString const& o)
+    : Buffer(o.Buffer),
+    Position(o.Position),
+    Capacity(o.Capacity),
+    Size(o.Size),
+    FloatPrecision(o.FloatPrecision),
+    Managed(o.Managed),
+    CanGrow(o.CanGrow)
+{
+    if (Buffer) {
+        Buffer = GameAllocArray<char>(o.Capacity);
+        Managed = true;
+        CanGrow = true;
+        memcpy(Buffer, o.Buffer, o.Size);
+    }
+}
+
+ScratchString::ScratchString(ScratchString&& o)
+    : Buffer(o.Buffer),
+    Position(o.Position),
+    Capacity(o.Capacity),
+    Size(o.Size),
+    FloatPrecision(o.FloatPrecision),
+    Managed(o.Managed),
+    CanGrow(o.CanGrow)
+{
+    o.Buffer = nullptr;
+    o.Managed = false;
+    o.CanGrow = false;
+}
+
+ScratchString::~ScratchString()
+{
+    if (Managed && Buffer) {
+        GameFree(Buffer);
+    }
+}
+
+ScratchString& ScratchString::operator = (ScratchString const& o)
+{
+    if (Managed && Buffer) {
+        GameFree(Buffer);
+    }
+
+    new (this) ScratchString(o);
+    return *this;
+}
+
+ScratchString& ScratchString::operator = (ScratchString&& o)
+{
+    if (Managed && Buffer) {
+        GameFree(Buffer);
+    }
+
+    new (this) ScratchString(std::move(o));
+    return *this;
+}
+
 END_SE()
