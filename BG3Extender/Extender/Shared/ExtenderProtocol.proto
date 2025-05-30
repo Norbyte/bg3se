@@ -53,19 +53,6 @@ message StatIndexedProperty {
     string stringval = 2;
 }
 
-// Updates a stats entry on the client
-message MsgS2CSyncStat {
-  string name = 1;
-  sint32 level = 2;
-  int32 modifier_list = 3;
-  repeated StatIndexedProperty indexed_properties = 4;
-  string ai_flags = 5;
-  repeated StatRequirement requirements = 6;
-  repeated StatRequirement memorization_requirements = 7;
-  repeated string combo_categories = 8;
-  repeated StatPropertyList property_lists = 9;
-}
-
 // Disconnects a client with a server-defined message
 message MsgS2CKick {
   string message = 1;
@@ -101,7 +88,6 @@ message MessageWrapper {
     MsgPostLuaMessage post_lua = 1;
     MsgS2CResetLuaMessage s2c_reset_lua = 2;
     MsgC2SExtenderHello c2s_extender_hello = 5;
-    MsgS2CSyncStat s2c_sync_stat = 6;
     MsgS2CKick s2c_kick = 7;
     MsgUserVars user_vars = 8;
   }

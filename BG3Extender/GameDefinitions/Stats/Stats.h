@@ -361,9 +361,7 @@ struct RPGStats : public ProtectedGameObject<RPGStats>
     std::optional<Object*> CreateObject(FixedString const& name, int32_t modifierListIndex);
     Functors* ConstructFunctorSet(FixedString const& propertyName);
     Functor* ConstructFunctor(FunctorId action);
-    /*void SyncObjectFromServer(MsgS2CSyncStat const& msg);*/
     void SyncWithPrototypeManager(Object* object);
-    /*void BroadcastSyncAll();*/
 
     std::optional<FixedString*> GetFixedString(int stringId);
     FixedString* GetOrCreateFixedString(int& stringId);

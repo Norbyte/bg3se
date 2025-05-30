@@ -280,8 +280,6 @@ namespace bg3se::esv
 
     void ExtensionState::OnGameSessionLoading()
     {
-        dynamicStats_.clear();
-        persistentStats_.clear();
         cachedPersistentVars_.clear();
         bg3se::ExtensionStateBase::OnGameSessionLoading();
     }
@@ -327,24 +325,6 @@ namespace bg3se::esv
                 || *gameState == esv::GameState::Running)) {
             lua->OnModuleResume();
         }
-    }
-
-    void ExtensionState::MarkPersistentStat(FixedString const& statId)
-    {
-        persistentStats_.insert(statId);
-    }
-
-    void ExtensionState::UnmarkPersistentStat(FixedString const& statId)
-    {
-        auto it = persistentStats_.find(statId);
-        if (it != persistentStats_.end()) {
-            persistentStats_.erase(it);
-        }
-    }
-
-    void ExtensionState::MarkDynamicStat(FixedString const& statId)
-    {
-        dynamicStats_.insert(statId);
     }
 
 

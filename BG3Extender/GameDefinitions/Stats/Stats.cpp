@@ -160,145 +160,6 @@ void InterruptPrototypeManager::SyncStat(Object* object)
     SyncStat(object, proto);
 }
 
-
-/*
-void Requirement::ToProtobuf(StatRequirement* msg) const
-{
-    msg->set_requirement((int32_t)RequirementId);
-    msg->set_int_param(IntParam);
-    if (StringParam) {
-        msg->set_string_param(StringParam.Str);
-    }
-    msg->set_negate(Negate);
-}
-
-void Requirement::FromProtobuf(StatRequirement const& msg)
-{
-    RequirementId = (RequirementType)msg.requirement();
-    IntParam = msg.int_param();
-    if (!msg.string_param().empty()) {
-        StringParam = MakeFixedString(msg.string_param().c_str());
-    }
-
-    Negate = msg.negate();
-}*/
-
-
-void Object::ToProtobuf(MsgS2CSyncStat* msg) const
-{
-    /*msg->set_name(Name.Str);
-    msg->set_level(Level);
-    msg->set_modifier_list(ModifierListIndex);
-
-    auto stats = GetStaticSymbols().GetStats();
-    auto modifierList = stats->modifierList.Find(ModifierListIndex);
-
-    for (size_t i = 0; i < IndexedProperties.size(); i++) {
-        auto value = IndexedProperties[i];
-        auto indexedProp = msg->add_indexed_properties();
-        auto modifier = modifierList->Attributes.Find((uint32_t)i);
-        auto enumeration = stats->modifierValueList.Find(modifier->RPGEnumerationIndex);
-        if (enumeration->IsIndexedProperty()) {
-            if (enumeration->IsStringIndexedProperty()) {
-                indexedProp->set_stringval(stats->ModifierFSSet[value].Str);
-            } else {
-                indexedProp->set_intval(value);
-            }
-        }
-    }
-
-    msg->set_ai_flags(AIFlags.Str);
-
-    for (auto const& reqmt : Requirements) {
-        reqmt.ToProtobuf(msg->add_requirements());
-    }
-
-    for (auto const& reqmt : MemorizationRequirements) {
-        reqmt.ToProtobuf(msg->add_memorization_requirements());
-    }
-
-    for (auto const& category : ComboCategories) {
-        msg->add_combo_categories(category.Str);
-    }
-
-    PropertyList.Iterate([msg](auto const& key, auto const& propertyList) {
-        propertyList->ToProtobuf(key, msg->add_property_lists());
-    });*/
-}
-
-void Object::FromProtobuf(MsgS2CSyncStat const& msg)
-{
-    /*auto stats = GetStaticSymbols().GetStats();
-    Level = msg.level();
-
-    if (msg.indexed_properties_size() != IndexedProperties.size()) {
-        OsiError("IndexedProperties size mismatch for '" << Name << "'! Got "
-            << msg.indexed_properties_size() << ", expected " << IndexedProperties.size());
-        return;
-    }
-
-    auto modifierList = stats->modifierList.Find(ModifierListIndex);
-    for (size_t i = 0; i < IndexedProperties.size(); i++) {
-        auto modifier = modifierList->Attributes.Find((uint32_t)i);
-        auto enumeration = stats->modifierValueList.Find(modifier->RPGEnumerationIndex);
-        if (enumeration->IsIndexedProperty()) {
-            auto const& prop = msg.indexed_properties().Get((uint32_t)i);
-            if (enumeration->IsStringIndexedProperty()) {
-                IndexedProperties[i] = stats->GetOrCreateFixedString(prop.stringval().c_str());
-            } else {
-                IndexedProperties[i] = prop.intval();
-            }
-        } else {
-            IndexedProperties[i] = 0;
-        }
-    }
-
-    AIFlags = MakeFixedString(msg.ai_flags().c_str());
-
-    Requirements.Clear();
-    for (auto const& reqmt : msg.requirements()) {
-        Requirement requirement;
-        requirement.FromProtobuf(reqmt);
-        Requirements.Add(requirement);
-    }
-
-    MemorizationRequirements.Clear();
-    for (auto const& reqmt : msg.memorization_requirements()) {
-        Requirement requirement;
-        requirement.FromProtobuf(reqmt);
-        MemorizationRequirements.Add(requirement);
-    }
-
-    ComboCategories.Clear();
-    for (auto const& category : msg.combo_categories()) {
-        ComboCategories.Add(MakeFixedString(category.c_str()));
-    }
-
-    PropertyList.Clear();
-    for (auto const& props : msg.property_lists()) {
-        auto name = MakeFixedString(props.name().c_str());
-        auto propertyList = stats->ConstructPropertyList(name);
-        propertyList->FromProtobuf(props);
-        PropertyList.Insert(name, propertyList);
-    }*/
-}
-
-void Object::BroadcastSyncMessage(bool syncDuringLoading) const
-{
-    /*auto msg = gExtender->GetNetworkManager().GetFreeServerMessage(ReservedUserId);
-    if (!msg) {
-        OsiErrorS("Failed to get free message");
-        return;
-    }
-
-    auto& wrap = msg->GetMessage();
-    ToProtobuf(wrap.mutable_s2c_sync_stat());
-    if (syncDuringLoading) {
-        gExtender->GetNetworkManager().ServerBroadcastToConnectedPeers(msg, ReservedUserId, true);
-    } else {
-        gExtender->GetNetworkManager().ServerBroadcast(msg, ReservedUserId, true);
-    }*/
-}
     
 
 bool RPGEnumeration::IsFlagType(FixedString const& typeName)
@@ -459,24 +320,6 @@ std::optional<Object*> RPGStats::CreateObject(FixedString const& name, int32_t m
     return object;
 }
 
-/*void RPGStats::SyncObjectFromServer(MsgS2CSyncStat const& msg)
-{
-    auto object = objects.Find(ToFixedString(msg.name().c_str()));
-    if (object) {
-        object->FromProtobuf(msg);
-        SyncWithPrototypeManager(object);
-    } else {
-        auto newObject = CreateObject(MakeFixedString(msg.name().c_str()), msg.modifier_list());
-        if (!newObject) {
-            OsiError("Could not construct stats object from server: " << msg.name());
-            return;
-        }
-
-        (*newObject)->FromProtobuf(msg);
-        SyncWithPrototypeManager(*newObject);
-    }
-}*/
-
 void RPGStats::SyncWithPrototypeManager(Object* object)
 {
     auto modifier = ModifierLists.GetByHandle(object->ModifierListIndex);
@@ -502,18 +345,6 @@ void RPGStats::SyncWithPrototypeManager(Object* object)
         }
     }
 }
-
-/*void RPGStats::BroadcastSyncAll()
-{
-    for (auto const& statsId : gExtender->GetServer().GetExtensionState().GetDynamicStats()) {
-        auto object = objects.Find(statsId);
-        if (!object) {
-            OsiError("Stat entry '" << statsId << "' is marked as dynamic but cannot be found! It will not be synced to the client!");
-        } else {
-            object->BroadcastSyncMessage(true);
-        }
-    }
-}*/
 
 std::optional<int> RPGStats::EnumLabelToIndex(FixedString const& enumName, char const* enumLabel)
 {
