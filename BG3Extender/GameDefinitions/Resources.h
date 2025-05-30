@@ -283,38 +283,39 @@ struct [[bg3::hidden]] ResourceBank
 struct [[bg3::hidden]] ResourcePackage
 {
     void* VMT;
+    ResourceContainer Container;
     ResourceBank* Bank;
     FixedString PackageName;
     STDString Path;
-    LegacyRefMap<FixedString, void*> field_38;
+    bool field_38;
 };
 
 struct [[bg3::hidden]] ResourceManager
 {
-    __int64 field_0;
-    LegacyMap<FixedString, resource::Resource*> Resources;
+    void* VMT;
+    LegacyMap<FixedString, resource::Resource*> PreviewResources;
     std::array<ResourceBank*, 2> ResourceBanks;
-    void* MeshProxyFactory;
     void* VisualFactory;
-    Array<FixedString> AnimationPreloadList;
-    __int64 EffectManager;
-    __int64 EffectFactory;
-    __int64 field_60; // Unknown pointer; size 0x50
-    __int64 field_68; // Unknown pointer; size 0x50
-    __int64 field_70; // Unknown pointer; size 0x50
+    void* EffectDependenciesVMT;
+    Array<FixedString> EffectDependencies;
+    void* EffectManager;
+    void* VisualTemplateManager;
+    void* ModelManager;
+    void* ModelProxyManager;
+    void* ModelProxyTemplateManager;
     TextureManager* TextureManager;
-    __int64 field_80; // Unknown pointer; size 0x23e0
+    void* ShaderManager;
     WwiseManager* SoundManager;
-    __int64 VideoManager;
-    __int64 VideoManager2;
-    __int64 GameAnalytics;
+    void* VideoManager;
+    void* VideoManager2;
+    void* GameAnalytics;
     VirtualTextureManager* VirtualTextureManager;
     CRITICAL_SECTION CriticalSection;
     LegacyRefMap<STDString, void*> ResourceDependencies;
     LegacyMap<FixedString, Path*> Sources;
     Array<void*> VisualLoaders;
     LegacyMap<FixedString, void*> GenomeAnimationManagers;
-    void* BlueprintManager;
+    void* GenomeTypeManager;
     ui::UIManager* UIManager;
     ui::UIManager* UIManagerSwap;
 };
