@@ -71,15 +71,9 @@ public:
         QueuePresentKHRHook_.SetPreHook(&VulkanBackend::vkQueuePresentKHRHooked, this);
         HMODULE hUpscaler = LoadLibraryW(L"upscaler.dll");
         if (hUpscaler)
+        {
             ERR("[EXTUI_HOOK_SETUP] upscaler.dll loaded");
-        else
-            ERR("[EXTUI_HOOK_SETUP] WARNING: upscaler.dll not found!");
-        HMODULE sl = GetModuleHandleW(L"sl.interposer.dll");
-        if (!sl) sl = LoadLibraryW(L"sl.interposer.dll");
-        if (!sl) {
-            ERR("[EXTUI_HOOK_SETUP] sl.interposer.dll not found — DLSS-FG hook skipped");
-        }
-        else {
+            HMODULE sl = GetModuleHandleW(L"sl.interposer.dll");
             auto slQueuePresent = reinterpret_cast<PFN_vkQueuePresentKHR>(
                 GetProcAddress(sl, "vkQueuePresentKHR")
             );
@@ -87,17 +81,19 @@ public:
                 ERR("[EXTUI_HOOK_SETUP] sl.interposer.dll missing vkQueuePresentKHR export");
             }
             else {
-                // unwrap any previous wrap just in case, then re-wrap
+                // Forcefully unwrap any existing hooks to ensure ours is the last applied
                 DetourTransactionBegin();
                 DetourUpdateThread(GetCurrentThread());
                 QueuePresentKHRHook_.Unwrap();
                 QueuePresentKHRHook_.Wrap(ResolveFunctionTrampoline(slQueuePresent));
                 DetourTransactionCommit();
-    
-                ERR("[EXTUI_HOOK_SETUP] Overrode vkQueuePresentKHR with sl.interposer.dll @ %p",
-                    slQueuePresent);
+        
+                ERR("[EXTUI_HOOK_SETUP] Forcefully overrode vkQueuePresentKHR with sl.interposer.dll @ %p",
+                        slQueuePresent);
             }
         }
+        else
+            ERR("[EXTUI_HOOK_SETUP] WARNING: upscaler.dll not found!");
     }
 
     void DisableHooks() override
@@ -123,6 +119,7 @@ public:
         if (initialized_) return;
 
         IMGUI_DEBUG("VulkanBackend::InitializeUI()");
+        ERR("[EXTUI_DEBUG] Starting UI initialization");
 
         VkDescriptorPoolSize poolSize
         {
@@ -139,7 +136,11 @@ public:
             .poolSizeCount = 1,
             .pPoolSizes = &poolSize
         };
-        VK_CHECK(vkCreateDescriptorPool(device_, &createInfo, nullptr, &descriptorPool_));
+        VkResult poolResult = vkCreateDescriptorPool(device_, &createInfo, nullptr, &descriptorPool_);
+        if (poolResult != VK_SUCCESS) {
+            ERR("[EXTUI_DEBUG] vkCreateDescriptorPool failed with result: %d", poolResult);
+        }
+        VK_CHECK(poolResult);
 
         VkSamplerCreateInfo samplerInfo
         {
@@ -152,9 +153,14 @@ public:
             .addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
             .maxLod = VK_LOD_CLAMP_NONE,
         };
-        VK_CHECK(vkCreateSampler(device_, &samplerInfo, nullptr, &sampler_));
+        VkResult samplerResult = vkCreateSampler(device_, &samplerInfo, nullptr, &sampler_);
+        if (samplerResult != VK_SUCCESS) {
+            ERR("[EXTUI_DEBUG] vkCreateSampler failed with result: %d", samplerResult);
+        }
+        VK_CHECK(samplerResult);
 
         IMGUI_DEBUG("VK initialization: desc pool %p, sampler %p", descriptorPool_, sampler_);
+        ERR("[EXTUI_DEBUG] Descriptor pool and sampler created");
 
         ImGui_ImplVulkan_InitInfo init_info = {};
         init_info.Instance = instance_;
@@ -181,6 +187,7 @@ public:
         ImGui_ImplVulkan_CreateFontsTexture();
 
         initialized_ = true;
+        ERR("[EXTUI_DEBUG] IMGUI initialization completed, initialized_ set to true");
 
         IMGUI_DEBUG("VK POSTINIT - uiFrameworkStarted %d", uiFrameworkStarted_ ? 1 : 0);
         IMGUI_DEBUG("    Instance %p, PhysicalDevice %p, Device %p", instance_, physicalDevice_, device_);
@@ -192,6 +199,7 @@ public:
         for (auto const& image : swapchain_.images_) {
             IMGUI_DEBUG("    Image %p, FB %p, View %p, Fence %p", image.image, image.framebuffer, image.view, image.fence);
         }
+        ERR("[EXTUI_DEBUG] UI initialization fully completed");
     }
 
     void DestroyUI() override
@@ -689,102 +697,112 @@ private:
         IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Swap chain image #%d (%p)", imageIndex, image.image);
     
         // Wait for the fence from the previous frame to ensure command buffer is available
-        VK_CHECK(vkWaitForFences(device_, 1, &image.fence, VK_TRUE, 50000000));
+        VkResult waitResult = vkWaitForFences(device_, 1, &image.fence, VK_TRUE, UINT64_MAX);
+        if (waitResult != VK_SUCCESS) {
+            ERR("[EXTUI_DEBUG] vkWaitForFences failed with result: %d", waitResult);
+        }
         VK_CHECK(vkResetFences(device_, 1, &image.fence));
         VK_CHECK(vkResetCommandBuffer(image.commandBuffer, 0));
-    
+
+        // Cache application's semaphores before we touch the VkPresentInfoKHR
+        const uint32_t origWaitCount = pPresentInfo->waitSemaphoreCount;
+        const VkSemaphore* origWaitSemaphores = pPresentInfo->pWaitSemaphores;
+
         // Begin recording command buffer
-        VkCommandBufferBeginInfo beginInfo = { VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO };
+        VkCommandBufferBeginInfo beginInfo{ VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO };
         beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
         VK_CHECK(vkBeginCommandBuffer(image.commandBuffer, &beginInfo));
-    
-        // Transition image layout to color attachment
-        VkImageMemoryBarrier barrierToRender = {
-            .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-            .srcAccessMask = VK_ACCESS_ALL_READ_BITS,
-            .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-            .oldLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-            .newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-            .srcQueueFamilyIndex = queueFamily_,
-            .dstQueueFamilyIndex = queueFamily_,
-            .image = image.image,
-            .subresourceRange = {
-                .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-                .baseMipLevel = 0,
-                .levelCount = 1,
-                .baseArrayLayer = 0,
-                .layerCount = 1
-            }
-        };
+
+        // Transition image: PRESENT_SRC_KHR -> COLOR_ATTACHMENT_OPTIMAL
+        VkImageMemoryBarrier barrierToRender{};
+        barrierToRender.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+        barrierToRender.srcAccessMask = 0;
+        barrierToRender.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        barrierToRender.oldLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+        barrierToRender.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        barrierToRender.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        barrierToRender.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        barrierToRender.image = image.image;
+        barrierToRender.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
+
         vkCmdPipelineBarrier(
             image.commandBuffer,
-            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+            VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
             0,
             0, nullptr,
             0, nullptr,
-            1, &barrierToRender
-        );
-    
+            1, &barrierToRender);
+
         // Begin render pass
-        VkClearValue clearValue = {};
-        VkRenderPassBeginInfo renderPassInfo = {
-            .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-            .renderPass = swapchain_.renderPass_,
-            .framebuffer = image.framebuffer,
-            .renderArea = {
-                .offset = {0, 0},
-                .extent = {swapchain_.width_, swapchain_.height_}
-            },
-            .clearValueCount = 1,
-            .pClearValues = &clearValue
-        };
+        VkClearValue clearValue{};
+        VkRenderPassBeginInfo renderPassInfo{ VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO };
+        renderPassInfo.renderPass = swapchain_.renderPass_;
+        renderPassInfo.framebuffer = image.framebuffer;
+        renderPassInfo.renderArea.offset = { 0, 0 };
+        renderPassInfo.renderArea.extent = { swapchain_.width_, swapchain_.height_ };
+        renderPassInfo.clearValueCount = 1;
+        renderPassInfo.pClearValues = &clearValue;
+
         vkCmdBeginRenderPass(image.commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-    
-        // Render ImGui draw data
+
+        // Render ImGui
         ImGui_ImplVulkan_RenderDrawData(&vp.DrawDataP, image.commandBuffer);
-    
+
         // End render pass
         vkCmdEndRenderPass(image.commandBuffer);
-    
-        // Transition layout back to present
+
+        // Transition image: COLOR_ATTACHMENT_OPTIMAL -> PRESENT_SRC_KHR
         VkImageMemoryBarrier barrierToPresent = barrierToRender;
         std::swap(barrierToPresent.oldLayout, barrierToPresent.newLayout);
         std::swap(barrierToPresent.srcAccessMask, barrierToPresent.dstAccessMask);
+
         vkCmdPipelineBarrier(
             image.commandBuffer,
-            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+            VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
             0,
             0, nullptr,
             0, nullptr,
-            1, &barrierToPresent
-        );
-    
-        // End command buffer
+            1, &barrierToPresent);
+
+        // Finish recording
         VK_CHECK(vkEndCommandBuffer(image.commandBuffer));
-    
-        // Submit command buffer
-        VkPipelineStageFlags waitStages[8] = { VK_PIPELINE_STAGE_ALL_COMMANDS_BIT };
-        const uint32_t waitCount = std::min(pPresentInfo->waitSemaphoreCount, 8u);
-        for (uint32_t i = 1; i < waitCount; i++) waitStages[i] = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
-    
-        VkSubmitInfo submitInfo = {
-            .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-            .waitSemaphoreCount = waitCount,
-            .pWaitSemaphores = pPresentInfo->pWaitSemaphores,
-            .pWaitDstStageMask = waitStages,
-            .commandBufferCount = 1,
-            .pCommandBuffers = &image.commandBuffer,
-            .signalSemaphoreCount = 1,
-            .pSignalSemaphores = &image.uiDoneSemaphore
-        };
-    
-        VK_CHECK(vkQueueSubmit(renderQueue_, 1, &submitInfo, image.fence));
-    
-        // Replace presentInfo wait semaphore with the one we just signaled
-        const_cast<VkSemaphore*>(pPresentInfo->pWaitSemaphores)[0] = image.uiDoneSemaphore;
-        const_cast<uint32_t&>(pPresentInfo->waitSemaphoreCount) = 1;
+
+        // Prepare wait stage masks for application's semaphores (max 8 for safety)
+        VkPipelineStageFlags waitStages[8];
+        for (uint32_t i = 0; i < origWaitCount && i < 8; i++) {
+            waitStages[i] = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        }
+
+        // Submit our draw command, waiting on application's semaphores and signalling our own
+        VkSubmitInfo submitInfo{ VK_STRUCTURE_TYPE_SUBMIT_INFO };
+        submitInfo.waitSemaphoreCount = origWaitCount;
+        submitInfo.pWaitSemaphores = origWaitSemaphores;
+        submitInfo.pWaitDstStageMask = (origWaitCount ? waitStages : nullptr);
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = &image.commandBuffer;
+        submitInfo.signalSemaphoreCount = 1;
+        submitInfo.pSignalSemaphores = &image.uiDoneSemaphore;
+
+        VkResult submitResult = vkQueueSubmit(renderQueue_, 1, &submitInfo, image.fence);
+        if (submitResult != VK_SUCCESS) {
+            ERR("[EXTUI_DEBUG] vkQueueSubmit failed with result: %d", submitResult);
+            if (submitResult == VK_ERROR_DEVICE_LOST) {
+                ERR("[EXTUI_DEBUG] VK_ERROR_DEVICE_LOST detected in presentPreHook");
+            }
+        }
+        VK_CHECK(submitResult);
+
+        // Make the present call wait for our rendering to finish
+        if (origWaitCount == 0) {
+            // No original semaphores, just point to ours
+            pPresentInfo->pWaitSemaphores = &image.uiDoneSemaphore;
+        } else {
+            // Overwrite the first entry with our semaphore, discard the rest to keep count small
+            const_cast<VkSemaphore*>(pPresentInfo->pWaitSemaphores)[0] = image.uiDoneSemaphore;
+        }
+        pPresentInfo->waitSemaphoreCount = 1;
     }
     
 
@@ -792,6 +810,7 @@ private:
         VkQueue queue,
         const VkPresentInfoKHR* pPresentInfo)
     {
+        ERR("[EXTUI_DEBUG] vkQueuePresentKHRHooked called");
         if (pPresentInfo->swapchainCount != 1
             || pPresentInfo->pSwapchains[0] != swapChain_) {
             IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Bad swapchain (%d: %p vs. %p)",
@@ -799,18 +818,22 @@ private:
                 pPresentInfo->swapchainCount ? pPresentInfo->pSwapchains[0] : nullptr,
                 swapChain_);
             frameNo_++;
+            ERR("[EXTUI_DEBUG] Bad swapchain detected, returning early");
             return;
         }
 
         std::lock_guard _(globalResourceLock_);
+        ERR("[EXTUI_DEBUG] Acquired global resource lock");
         if (!initialized_) {
             IMGUI_DEBUG("vkQueuePresentKHR: Render backend initialized yet");
             frameNo_ = 0;
+            ERR("[EXTUI_DEBUG] Render backend not initialized, attempting initialization");
 
             if (!uiFrameworkStarted_) {
                 ui_.OnRenderBackendInitialized();
                 uiFrameworkStarted_ = true;
                 IMGUI_DEBUG("vkQueuePresentKHR: uiFrameworkStarted_ = true");
+                ERR("[EXTUI_DEBUG] UI framework started");
 
                 for (auto i = 0; i < viewports_.size(); i++) {
                     viewports_[i].Viewport = *GImGui->Viewports[0];
@@ -820,17 +843,40 @@ private:
             } else {
                 ui_.OnRenderBackendInitialized();
                 InitializeUI();
+                ERR("[EXTUI_DEBUG] Called InitializeUI from vkQueuePresentKHRHooked");
             }
         }
 
+        // Ensure drawViewport_ is set to a default value if not already set
+        if (drawViewport_ == -1) {
+            LOG("[IMGUI] drawViewport_ was not set, defaulting to 0.");
+            drawViewport_ = 0;
+        } else {
+            LOG("[IMGUI] drawViewport_ is set to %d.", drawViewport_);
+        }
+
         if (initialized_ && drawViewport_ != -1) {
-            presentPreHook(const_cast<VkPresentInfoKHR*>(pPresentInfo));
+            ERR("[EXTUI_DEBUG] IMGUI initialized and drawViewport_ set, proceeding to render");
+            // Create a modifiable copy of VkPresentInfoKHR
+            VkPresentInfoKHR modifiedPresentInfo = *pPresentInfo;
+            // Get the current swapchain image
+            uint32_t imageIndex = modifiedPresentInfo.pImageIndices[0];
+            // Replace semaphore with the uiDoneSemaphore for the current image if initialized
+            if (imageIndex < swapchain_.images_.size() && modifiedPresentInfo.waitSemaphoreCount > 0) {
+                modifiedPresentInfo.pWaitSemaphores = &swapchain_.images_[imageIndex].uiDoneSemaphore;
+                IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Using uiDoneSemaphore for image %d", imageIndex);
+                ERR("[EXTUI_DEBUG] Using uiDoneSemaphore for image %d", imageIndex);
+            }
+            presentPreHook(&modifiedPresentInfo);
+            ERR("[EXTUI_DEBUG] Called presentPreHook");
         } else {
             IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Cannot append command buffer - initialized %d, drawViewport %d",
                 initialized_ ? 1 : 0, drawViewport_);
+            ERR("[EXTUI_DEBUG] Cannot append command buffer - initialized: %d, drawViewport: %d", initialized_ ? 1 : 0, drawViewport_);
         }
 
         frameNo_++;
+        ERR("[EXTUI_DEBUG] vkQueuePresentKHRHooked completed, frameNo_ incremented to %d", frameNo_);
     }
 
     IMGUIManager& ui_;
@@ -864,6 +910,7 @@ private:
 
     SwapchainInfo swapchain_;
     uint32_t textures_{ 0 };
+    VkSemaphore imguiSemaphore_{ VK_NULL_HANDLE };
 };
 
 END_NS()
