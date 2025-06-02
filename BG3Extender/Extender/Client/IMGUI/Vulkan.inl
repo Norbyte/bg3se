@@ -68,7 +68,7 @@ public:
         CreatePipelineCacheHook_.SetPostHook(&VulkanBackend::vkCreatePipelineCacheHooked, this);
         CreateSwapchainKHRHook_.SetPostHook(&VulkanBackend::vkCreateSwapchainKHRHooked, this);
         DestroySwapchainKHRHook_.SetPreHook(&VulkanBackend::vkDestroySwapchainKHRHooked, this);
-        QueuePresentKHRHook_.SetPreHook(&VulkanBackend::vkQueuePresentKHRHooked, this);
+        
         HMODULE hUpscaler = LoadLibraryW(L"upscaler.dll");
         if (hUpscaler)
             ERR("[EXTUI_HOOK_SETUP] upscaler.dll loaded");
@@ -94,6 +94,9 @@ public:
                 QueuePresentKHRHook_.Wrap(ResolveFunctionTrampoline(slQueuePresent));
                 DetourTransactionCommit();
     
+                // Set the pre-hook AFTER wrapping the sl.interposer.dll version
+                QueuePresentKHRHook_.SetPreHook(&VulkanBackend::vkQueuePresentKHRHooked, this);
+                
                 ERR("[EXTUI_HOOK_SETUP] Overrode vkQueuePresentKHR with sl.interposer.dll @ %p",
                     slQueuePresent);
             }
@@ -792,6 +795,10 @@ private:
         VkQueue queue,
         const VkPresentInfoKHR* pPresentInfo)
     {
+        // Add detailed logging for debugging
+        ERR("[IMGUI] vkQueuePresentKHRHooked called - swapchainCount: %d, swapChain_: %p", 
+            pPresentInfo->swapchainCount, swapChain_);
+        
         if (pPresentInfo->swapchainCount != 1
             || pPresentInfo->pSwapchains[0] != swapChain_) {
             IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Bad swapchain (%d: %p vs. %p)",
@@ -799,12 +806,13 @@ private:
                 pPresentInfo->swapchainCount ? pPresentInfo->pSwapchains[0] : nullptr,
                 swapChain_);
             frameNo_++;
-            return;
+            // Call the original function using CallOriginal
+            QueuePresentKHRHook_.CallOriginal(queue, pPresentInfo);
         }
 
         std::lock_guard _(globalResourceLock_);
         if (!initialized_) {
-            IMGUI_DEBUG("vkQueuePresentKHR: Render backend initialized yet");
+            ERR("[IMGUI] vkQueuePresentKHR: Render backend not initialized yet");
             frameNo_ = 0;
 
             if (!uiFrameworkStarted_) {
@@ -824,13 +832,25 @@ private:
         }
 
         if (initialized_ && drawViewport_ != -1) {
-            presentPreHook(const_cast<VkPresentInfoKHR*>(pPresentInfo));
+            // Create a modifiable copy of the present info
+            VkPresentInfoKHR modifiedPresentInfo = *pPresentInfo;
+            
+            // Call our pre-hook to do the IMGUI rendering
+            presentPreHook(&modifiedPresentInfo);
+            
+            // Call the original function with the modified present info using CallOriginal
+            QueuePresentKHRHook_.CallOriginal(queue, &modifiedPresentInfo);
+            
+            ERR("[IMGUI] vkQueuePresentKHR: IMGUI rendering complete for frame %d", frameNo_);
         } else {
             IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Cannot append command buffer - initialized %d, drawViewport %d",
                 initialized_ ? 1 : 0, drawViewport_);
+            // Still need to call the original function using CallOriginal
+            QueuePresentKHRHook_.CallOriginal(queue, pPresentInfo);
         }
 
         frameNo_++;
+        // Function is void, no return value needed here.
     }
 
     IMGUIManager& ui_;
