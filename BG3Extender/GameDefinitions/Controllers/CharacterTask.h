@@ -115,6 +115,8 @@ struct CharacterTask_ControllerSelection : public CharacterTask
 struct CharacterTask_MoveController : public CharacterTask
 {
 	static constexpr auto Type = CharacterTaskType::MoveController;
+
+	bool IgnoreMovementUntilStickIsReleased;
 };
 
 
@@ -372,10 +374,10 @@ struct CharacterTask_MoveTo : public CharacterMoveTask
 	int MovementType;
 	int16_t AiFloodId;
 	navigation::TargetInfo NextTarget;
-	bool NeedsTargetUpdate;
+	bool TargetSearchFinished;
 	[[bg3::hidden]] glm::aligned_vec3 HoverPosition;
-	bool HasEntered;
-	uint8_t field_33D;
+	bool TargetReady;
+	bool Started;
 	EntityHandle HoverTarget;
 	EntityHandle TargetEffect;
 	[[bg3::hidden]] void* EffectCallback;

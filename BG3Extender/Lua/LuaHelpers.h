@@ -260,6 +260,7 @@ END_NS()
 
 #include <Lua/Helpers/LuaPush.h>
 #include <Lua/Helpers/LuaGet.h>
+#include <Lua/Helpers/LuaTypeCheck.h>
 
 #include <Lua/LuaUserdata.h>
 #include <Lua/Shared/Proxies/LuaPropertyMap.h>
@@ -272,6 +273,7 @@ END_NS()
 #include <Lua/Shared/Proxies/LuaCppObjectProxy.h>
 #include <Lua/Shared/Proxies/LuaSystemMap.h>
 
+#include <Lua/Helpers/LuaTypeCheckObject.h>
 #include <Lua/Helpers/LuaSerialize.h>
 #include <Lua/Helpers/LuaUnserialize.h>
 #include <Lua/Helpers/LuaPushObject.h>

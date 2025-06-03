@@ -260,6 +260,8 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="Lua\Helpers\LuaGetObject.h" />
     <ClInclude Include="Lua\Helpers\LuaPushObject.h" />
     <ClInclude Include="Lua\Helpers\LuaSerialize.h" />
+    <ClInclude Include="Lua\Helpers\LuaTypeCheck.h" />
+    <ClInclude Include="Lua\Helpers\LuaTypeCheckObject.h" />
     <ClInclude Include="Lua\Helpers\LuaUnserialize.h" />
     <ClInclude Include="Lua\Libs\ClientUI\ClassCache.h" />
     <ClInclude Include="Lua\Libs\Json.h" />

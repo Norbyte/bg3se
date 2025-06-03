@@ -512,6 +512,8 @@
     <ClInclude Include="Lua\Shared\SystemEvents.h" />
     <ClInclude Include="GameDefinitions\Components\SpellCast.h" />
     <ClInclude Include="GameDefinitions\Components\SpellCastShared.h" />
+    <ClInclude Include="Lua\Helpers\LuaTypeCheck.h" />
+    <ClInclude Include="Lua\Helpers\LuaTypeCheckObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

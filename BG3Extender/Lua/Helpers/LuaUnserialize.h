@@ -482,13 +482,32 @@ void UnserializeSetFromUserdata(lua_State* L, int index, HashSet<TK>* obj)
     *obj = *set;
 }
 
-template <class... Args>
-PropertyOperationResult UnserializeVariantFromTable(lua_State* L, int index, std::variant<Args...>* obj)
+template <class TV, unsigned N>
+PropertyOperationResult TryUnserializeVariantOpt(lua_State* L, int index, TV* obj)
+{
+    if constexpr (N < std::variant_size_v<TV>) {
+        using T = std::variant_alternative_t<N, TV>;
+        if (typecheck<T>(L, index)) {
+            T alternative;
+            auto ret = Unserialize(L, index, &alternative);
+            if (ret == PropertyOperationResult::Success) {
+                *obj = std::move(alternative);
+            }
+            return ret;
+        } else {
+            return TryUnserializeVariantOpt<TV, N+1>(L, index, obj);
+        }
+    } else {
+        luaL_error(L, "Value type does not match any alternative in the variant");
+        return PropertyOperationResult::Unknown;
+    }
+}
+
+template <class T>
+PropertyOperationResult UnserializeVariant(lua_State* L, int index, T* obj)
 {
     StackCheck _(L);
-    // FIXME - not supported until we figure out how to serialize type selection
-    return PropertyOperationResult::UnsupportedType;
-    // return std::visit([=](auto& var) { return Unserialize(L, index, &var); }, *obj);
+    return TryUnserializeVariantOpt<T, 0>(L, index, obj);
 }
 
 void UnserializeRawObjectFromTable(lua_State* L, int index, void* obj, GenericPropertyMap const& pm);
@@ -535,12 +554,7 @@ inline PropertyOperationResult Unserialize(lua_State* L, int index, T* obj)
                 UnserializeSetFromUserdata(L, index, obj);
             }
         } else if constexpr (IsVariantLike<T>::Value) {
-            if (isTable) {
-                return UnserializeVariantFromTable(L, index, obj);
-            } else {
-                // References to variants are not kept in userspace
-                return PropertyOperationResult::UnsupportedType;
-            }
+            return UnserializeVariant(L, index, obj);
         } else if constexpr (IsOptional<T>::Value) {
             if constexpr (std::is_default_constructible_v<typename IsOptional<T>::ValueType>) {
                 if (lua_type(L, index) == LUA_TNIL) {

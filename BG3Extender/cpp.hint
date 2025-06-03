@@ -16,3 +16,4 @@
 #define EV(label, value) label = value,
 #define END_ENUM_NS() }; };
 #define END_ENUM() };
+#define TYPECHECK(ty, luaty) inline bool do_check_strict(lua_State * L, int index, Overload<ty>) { return lua_type(L, index) == luaty; }

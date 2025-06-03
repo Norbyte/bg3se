@@ -277,26 +277,6 @@ inline typename std::optional<T> do_get(lua_State* L, int index, Overload<std::o
 }
 
 template <class T>
-inline T checked_get_flags(lua_State* L, int index)
-{
-    static_assert(IsBitfieldV<T>, "Can only fetch bitfield fields!");
-
-    luaL_checktype(L, index, LUA_TTABLE);
-    T flags = (T)0;
-    for (auto idx : iterate(L, index)) {
-        auto label = do_get(L, idx, Overload<FixedString>{});
-        auto val = BitfieldInfo<T>::Find(label);
-        if (val) {
-            flags |= *val;
-        } else {
-            luaL_error(L, "Label '%s' is not valid for enumeration '%s'", label.GetString(), BitfieldInfo<T>::GetStore().LuaName);
-        }
-    }
-
-    return flags;
-}
-
-template <class T>
 typename std::enable_if_t<!IsByVal<T> && !std::is_pointer_v<T>, T> do_get(lua_State* L, int index, Overload<T>);
 
 template <class T>

@@ -36,6 +36,17 @@ Table* lua_get_array_n(lua_State* L, int idx, int size)
     return arr;
 }
 
+bool lua_typecheck_array_n(lua_State* L, int idx, int size)
+{
+    auto val = lua_index2addr(L, idx);
+    if (!ttistable(val)) return false;
+
+    auto tab = hvalue(val);
+    if (tab->lsizenode > 0) return false;
+
+    return lua_get_array_size(tab) == size;
+}
+
 float lua_val_get_float(lua_State* L, TValue* val)
 {
     if (ttisfloat(val)) {

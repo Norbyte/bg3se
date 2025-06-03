@@ -365,8 +365,13 @@ local function ValidateGlobals()
     Ext.Types.Validate(Ext.Stats.GetStatsManager())
     Ext.Types.Validate(Ext.Mod.GetModManager())
     Ext.Types.Validate(Ext.Mod.GetBaseMod())
+    Ext.Types.Validate(Ext.Level.GetActivePathfindingRequests())
 
     if Ext.UI then
+        Ext.Types.Validate(Ext.Input.GetInputManager())
+        Ext.Types.Validate(Ext.UI.GetCursorControl())
+        Ext.Types.Validate(Ext.UI.GetDragDrop())
+    
         local helpers = Ext.UI.GetPickingHelper(1)
         if helpers ~= nil then
             Ext.Types.Validate(helpers)

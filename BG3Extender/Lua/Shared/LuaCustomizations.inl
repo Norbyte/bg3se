@@ -527,6 +527,27 @@ CppObjectMetadata lua_get_cppvalue(lua_State* L, TValue* v)
     };
 }
 
+bool lua_typecheck_cppvalue(lua_State* L, int idx)
+{
+    auto val = lua_index2addr(L, idx);
+    return ttislightcppobject(val) || ttiscppobject(val);
+}
+
+bool lua_typecheck_cppvalue(lua_State* L, int idx, MetatableTag expectedMetatableTag)
+{
+    auto val = lua_index2addr(L, idx);
+    return (ttislightcppobject(val) || ttiscppobject(val))
+        && CppValue::DecodeMetatableTag(val) == expectedMetatableTag;
+}
+
+bool lua_typecheck_cppvalue(lua_State* L, int idx, MetatableTag expectedMetatableTag, int propertyMapTag)
+{
+    auto val = lua_index2addr(L, idx);
+    return (ttislightcppobject(val) || ttiscppobject(val))
+        && CppValue::DecodeMetatableTag(val) == expectedMetatableTag
+        && CppValue::DecodePropertyMapTag(val) == propertyMapTag;
+}
+
 bool lua_try_get_cppvalue(lua_State* L, int idx, MetatableTag expectedTypeTag, CppObjectMetadata& obj)
 {
     auto value = lua_index2addr(L, idx);
