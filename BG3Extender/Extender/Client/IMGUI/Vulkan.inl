@@ -799,6 +799,18 @@ private:
         ERR("[IMGUI] vkQueuePresentKHRHooked called - swapchainCount: %d, swapChain_: %p", 
             pPresentInfo->swapchainCount, swapChain_);
         
+        // If we don't have a swapchain yet, we need to capture it from the present info
+        if (swapChain_ == VK_NULL_HANDLE && pPresentInfo->swapchainCount > 0) {
+            std::lock_guard _(globalResourceLock_);
+            swapChain_ = pPresentInfo->pSwapchains[0];
+            ERR("[IMGUI] Captured swapchain from present info: %p", swapChain_);
+            
+            // Since we just got the swapchain, we should initialize on the next frame
+            // Call the original function and return
+            QueuePresentKHRHook_.CallOriginal(queue, pPresentInfo);
+            return;
+        }
+        
         if (pPresentInfo->swapchainCount != 1
             || pPresentInfo->pSwapchains[0] != swapChain_) {
             IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Bad swapchain (%d: %p vs. %p)",
@@ -808,6 +820,7 @@ private:
             frameNo_++;
             // Call the original function using CallOriginal
             QueuePresentKHRHook_.CallOriginal(queue, pPresentInfo);
+            return;
         }
 
         std::lock_guard _(globalResourceLock_);
@@ -850,7 +863,6 @@ private:
         }
 
         frameNo_++;
-        // Function is void, no return value needed here.
     }
 
     IMGUIManager& ui_;
