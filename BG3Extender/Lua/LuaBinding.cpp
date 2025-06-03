@@ -49,7 +49,7 @@ void push(lua_State* L, EntityHandle const& h)
 void push(lua_State* L, ComponentHandle const& h)
 {
     if (h) {
-        lua_pushlightuserdata(L, (void*)h.Handle);
+        lua_pushinteger(L, (int64_t)h.Handle);
     } else {
         push(L, nullptr);
     }
@@ -60,7 +60,7 @@ ComponentHandle do_get(lua_State* L, int index, Overload<ComponentHandle>)
     if (lua_type(L, index) == LUA_TNIL) {
         return ComponentHandle{ ComponentHandle::NullHandle };
     } else {
-        return ComponentHandle{ (uint64_t)lua_touserdata(L, index) };
+        return ComponentHandle{ (uint64_t)lua_tointeger(L, index) };
     }
 }
 

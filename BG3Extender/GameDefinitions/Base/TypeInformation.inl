@@ -206,7 +206,6 @@ void TypeInformationRepository::Initialize()
     RegisterStaticType<Path>("Path", LuaTypeId::String);
     RegisterStaticType<NetId>("NetId", LuaTypeId::Integer);
     RegisterStaticType<UserId>("UserId", LuaTypeId::Integer);
-    // FIXME - revisit typing for handles later!
     RegisterStaticType<ComponentHandle>("ComponentHandle", LuaTypeId::Integer);
     RegisterStaticType<EntityHandle>("EntityHandle", LuaTypeId::Integer);
     RegisterStaticType<ecs::EntityRef>("EntityRef", LuaTypeId::Integer);
