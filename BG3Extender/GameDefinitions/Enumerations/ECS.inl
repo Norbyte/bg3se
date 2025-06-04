@@ -403,6 +403,8 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
     E(HitProxy)
     E(HitProxyOwner)
     E(HitReaction)
+    E(HitMeta)
+    E(HitLifetime)
 
     // Hit events
     E(HitAnimationRequest)

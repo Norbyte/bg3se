@@ -342,19 +342,13 @@ struct UserReservedForComponent : public BaseComponent
     int UserID;
 };
 
-struct ShapeshiftStateInner
-{
-    FixedString field_0;
-    uint32_t field_4;
-};
-
 struct ShapeshiftStateComponent : public BaseComponent
 {
     DEFINE_COMPONENT(ShapeshiftState, "eoc::shapeshift::StateComponent")
 
     std::optional<uint8_t> BloodSurfaceType;
     std::optional<FixedString> BloodType;
-    std::optional<ShapeshiftStateInner> field_C;
+    [[bg3::legacy(field_C)]] std::optional<TemplateInfo> Template;
 };
 
 END_SE()

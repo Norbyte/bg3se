@@ -56,7 +56,7 @@ struct BoostsComponent : public BaseComponent
 {
     DEFINE_COMPONENT(ServerPassiveBoosts, "esv::passive::BoostsComponent")
 
-    Array<Guid> field_0;
+    [[bg3::legacy(field_0)]] Array<Guid> Boosts;
     std::optional<std::variant<stats::AttackTargetContextData, stats::AttackPositionContextData, stats::MoveContextData, stats::SourceContextData, stats::TargetContextData, stats::NearbyAttackedContextData, stats::NearbyAttackingContextData, stats::EquipContextData>> ContextData;
 };
 

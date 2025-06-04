@@ -37,6 +37,23 @@ struct TargetComponent : public BaseComponent
 };
 
 
+struct MetaComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(HitMeta, "eoc::hit::MetaComponent")
+
+    Guid HitGuid;
+};
+
+
+struct LifetimeComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(HitLifetime, "eoc::hit::LifetimeComponent")
+
+    float Lifetime;
+    uint8_t field_4;
+};
+
+
 struct AttackerComponent : public BaseComponent
 {
     DEFINE_COMPONENT(HitAttacker, "eoc::hit::AttackerComponent")
@@ -181,9 +198,9 @@ struct HitEventData
     Guid Inflicter;
     Guid InflicterOwner;
     Guid TargetProxy;
-    char DamageType;
-    int Damage;
-    BYTE CauseType;
+    DamageType DamageType;
+    int32_t Damage;
+    CauseType CauseType;
     int StoryActionId;
 };
 

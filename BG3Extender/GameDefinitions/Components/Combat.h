@@ -68,11 +68,11 @@ struct TurnBasedEntityInfo
 
 struct TurnBasedGroup
 {
-    Array<TurnBasedEntityInfo> Handles;
-    Guid Participant;
-    uint32_t field_28;
-    int32_t Initiative;
-    uint8_t field_30;
+    [[bg3::legacy(Handles)]] Array<TurnBasedEntityInfo> Members;
+    [[bg3::legacy(Participant)]] Guid Team;
+    [[bg3::legacy(field_28)]] uint32_t Round{ 0 };
+    int32_t Initiative{ 0 };
+    [[bg3::legacy(field_30)]] bool IsPlayer{ false };
 };
 
 struct TurnOrderComponent : public BaseComponent
