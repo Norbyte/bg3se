@@ -1397,6 +1397,13 @@ void EntitySystemHelpersBase::InitSystemUpdateHooks()
 
 void EntitySystemHelpersBase::ClearSystemUpdateHooks()
 {
+    for (unsigned i = 0; i < systemHooks_.size(); i++) {
+        if (systemHooks_[i].OriginalUpdateProc != nullptr) {
+            auto& system = GetEntityWorld()->Systems.Systems[i];
+            system.UpdateProc = systemHooks_[i].OriginalUpdateProc;
+        }
+    }
+
     systemToId_.clear();
     systemHooks_.clear();
 }
