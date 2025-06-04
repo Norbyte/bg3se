@@ -100,8 +100,8 @@ struct UpdateTargetTrackingOneFrameComponent : public BaseComponent
 
 struct PostponedConditionalRoll
 {
-    __int64 field_0;
-    __int64 field_8;
+    uint64_t RollIndex{ 0 };
+    stats::ConditionId Condition;
     ConditionRoll Roll;
     uint8_t field_148{ 0 };
 };
@@ -110,11 +110,11 @@ struct ConditionalRollInterruptEventOneFrameComponent : public BaseComponent
 {
     DEFINE_ONEFRAME_COMPONENT(PassiveConditionalRollInterruptEvent, "esv::passive::ConditionalRollInterruptEventOneFrameComponent")
 
-    Guid field_0;
-    EntityHandle field_10;
-    EntityHandle field_18;
-    EntityHandle field_20;
-    FixedString field_28;
+    [[bg3::legacy(field_0)]] Guid RollUuid;
+    [[bg3::legacy(field_10)]] EntityHandle Target;
+    [[bg3::legacy(field_18)]] EntityHandle Source;
+    [[bg3::legacy(field_20)]] EntityHandle Passive;
+    [[bg3::legacy(field_28)]] FixedString PassiveId;
     Array<PostponedConditionalRoll> PostponedRolls;
 };
 

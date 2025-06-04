@@ -112,23 +112,23 @@ struct SpellRollEvent
     [[bg3::legacy(field_48)]] std::optional<int> CriticalRollThreshold;
     AbilityId Ability;
     SpellAttackType SpellAttackType;
-    [[bg3::legacy(field_52)]] bool WasHit;
-    Guid field_58;
+    [[bg3::legacy(field_52), bg3::legacy(WasHit)]] bool ConditionResult;
+    Guid RollUuid2;
     SpellId Spell;
 };
 
 struct ConditionalRollEvent
 {
     Guid RollUuid;
-    Guid field_10;
-    __int64 field_20;
-    EntityHandle field_28;
-    FixedString field_30;
+    [[bg3::legacy(field_10)]] Guid RollUuid2;
+    [[bg3::legacy(field_20)]] uint64_t RollIndex;
+    [[bg3::legacy(field_28)]] EntityHandle Passive;
+    [[bg3::legacy(field_30)]] FixedString PassiveId;
     ConditionRollType ConditionRollType;
     RollData Roll;
-    int field_50;
+    [[bg3::legacy(field_50)]] int DC;
     AbilityId Ability;
-    bool field_55;
+    [[bg3::legacy(field_55)]] bool SwappedSourceAndTarget;
 };
 
 struct EnterAttackRangeEvent
@@ -155,30 +155,30 @@ struct SpellPreDamageEvent
     Dependency Dependency1;
     Dependency Dependency2;
     SpellId Spell;
-    uint32_t field_90;
+    [[bg3::legacy(field_90)]] uint32_t SpellRollIndex;
 };
 
 struct PlaceholderSpellRollEvent
 {
-    Guid field_0;
-    Guid field_10;
-    FixedString field_20;
-    Guid field_28;
+    [[bg3::legacy(field_0)]] Guid RollUuid;
+    [[bg3::legacy(field_10)]] Guid FunctorUuid;
+    [[bg3::legacy(field_20)]] FixedString SpellId;
+    [[bg3::legacy(field_28)]] Guid SpellCastUuid;
     Dependency Dependency;
     stats::PropertyContext StatsFunctorContext;
-    FixedString field_58;
-    int field_5C;
+    [[bg3::legacy(field_58)]] FixedString TextKey;
+    [[bg3::legacy(field_5C)]] stats::ConditionId Conditions;
 };
 
 struct ConditionResultEvent
 {
-    Guid field_0;
-    FixedString field_10;
-    Guid field_18;
-    Guid field_28;
-    int field_38;
+    [[bg3::legacy(field_0)]] Guid RollUuid;
+    [[bg3::legacy(field_10)]] FixedString SpellId;
+    [[bg3::legacy(field_18)]] Guid SpellCastUuid;
+    [[bg3::legacy(field_28)]] Guid FunctorUuid;
+    [[bg3::legacy(field_38)]] stats::ConditionId Conditions;
     stats::PropertyContext StatsFunctorContext;
-    char field_48;
+    [[bg3::legacy(field_48)]] bool ConditionResult;
     DamageFlags DamageEffectFlags;
 };
 
@@ -234,15 +234,14 @@ struct UndecidedEvent
 
 struct UndecidedEventWithId
 {
-    glm::vec3 field_0;
-    float field_C;
+    Guid EventUuid;
     UndecidedEvent Event;
 };
 
 struct DelayedTargetHitInterruptEvent
 {
-    Guid field_0;
-    uint8_t field_10;
+    [[bg3::legacy(field_48)]] Guid EventUuid;
+    bool field_10;
     uint32_t field_14;
     HitDesc Hit;
     AttackDesc Attack;

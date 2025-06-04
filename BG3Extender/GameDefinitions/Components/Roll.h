@@ -13,38 +13,38 @@ struct RequestedRollComponent : public BaseComponent
     Guid RollUuid;
     uint8_t RollComponentType;
     uint8_t RollType;
-    EntityHandle field_20;
+    [[bg3::legacy(field_20)]] EntityHandle Roller;
     STDString StatsExpression;
-    uint8_t AdvantageType;
-    uint8_t AC;
+    AdvantageBoostType AdvantageType;
+    [[bg3::legacy(AC)]] uint8_t DC;
     uint8_t NaturalRoll;
     uint8_t DiscardedDiceTotal;
     uint8_t DiceAdditionalValue;
     int AdditionalValue;
     uint8_t SpellCheck;
     bool Finished;
-    uint8_t field_4E;
+    [[bg3::legacy(field_4E)]] bool Canceled;
     uint8_t field_4F;
     float PassiveRollDelay;
     uint8_t RollContext;
-    uint8_t field_55;
-    int field_58;
-    EntityHandle field_60;
+    [[bg3::legacy(field_55)]] bool FromScript;
+    [[bg3::legacy(field_58)]] int DialogId;
+    [[bg3::legacy(field_60)]] EntityHandle Subject;
     Array<ResolvedRollBonus> ResolvedRollBonuses;
     Array<FixedRollBonus> FixedRollBonuses;
-    uint8_t field_88;
+    [[bg3::legacy(field_88)]] bool RolledComponentType0;
     uint8_t field_89;
     uint8_t field_8A;
-    Array<Guid> field_90;
+    [[bg3::legacy(field_90)]] Array<Guid> ExcludedBonusesTags;
     AbilityId Ability;
     SkillId Skill;
-    uint8_t field_A2;
+    [[bg3::legacy(field_A2)]] bool ConsumedInspirationPoint;
     Roll Roll;
     StatsRollResult Result;
     StatsRollMetadata Metadata;
     STDString field_1B0;
-    float PassiveRollDelay2;
-    uint8_t field_1CC;
+    [[bg3::legacy(PassiveRollDelay2)]] float RollDelayRemaining;
+    [[bg3::legacy(field_1CC)]] bool RequestStop;
     Guid EntityUuid;
     Guid Entity2Uuid;
 };
@@ -58,50 +58,48 @@ DEFINE_TAG_COMPONENT(eoc::active_roll, InProgressComponent, RollInProgress)
 struct DynamicModifierId
 {
     Guid ModifierGuid;
-    DynamicModifierType Type;
+    DynamicModifierType Type{ DynamicModifierType::None };
 };
 
 
 struct ModifierSourceInfo
 {
-    uint8_t SourceType;
-    FixedString Source;
+    BoostSourceType SourceType{ BoostSourceType::Undefined };
+    FixedString Cause;
     FixedString StackId;
-    int StackPriority;
-    EntityHandle field_10;
-    __int64 field_18;
-    uint8_t field_20;
+    int StackPriority{ 0 };
+    [[bg3::legacy(field_10)]] EntityHandle Equipment;
+    [[bg3::legacy(field_18)]] ComponentHandle Status;
+    uint8_t field_20{ 0 };
     EntityHandle field_28;
-    EntityHandle field_30;
+    EntityHandle Source;
 };
 
 
 struct Modifier
 {
-    int AbilityModifier;
-    int AbilityModifier2;
-    uint8_t AdvantageType;
-    uint8_t Advantage;
-    uint8_t SuccessFlags;
-    DiceSizeId DiceValue;
-    uint8_t AmountOfDices;
-    BoostType BoostType;
-    uint8_t TargetType;
-    uint8_t field_F;
-    uint8_t field_28;
-    TranslatedString field_2C;
-    __int64 field_40;
-    __int64 field_48;
+    [[bg3::legacy(AbilityModifier)]] int Value{ 0 };
+    [[bg3::legacy(AbilityModifier2)]] int TotalValue{ 0 };
+    AdvantageBoostType AdvantageType{ AdvantageBoostType::None };
+    uint8_t Advantage{ 0 };
+    CriticalHitSuccessFlags SuccessFlags{ 0 };
+    DiceSizeId DiceValue{ DiceSizeId::Default };
+    uint8_t AmountOfDices{ 0 };
+    BoostType BoostType{ 0 };
+    uint8_t TargetType{ 0 };
+    [[bg3::legacy(field_F)]] RollCritical CriticalHitType{ RollCritical::None };
+    uint8_t field_28{ 0 };
+    [[bg3::legacy(field_2C)]] TranslatedString AdvantageReason;
+    Guid field_40;
     ModifierSourceInfo Source;
 };
 
 struct StaticModifier
 {
     Guid ModifierGuid;
-    uint8_t field_10;
+    [[bg3::legacy(field_10)]] bool Disabled{ false };
     Modifier Modifier;
-    uint32_t field_88;
-    uint32_t field_8C;
+    uint8_t field_88{ 0 };
 };
 
 struct ConsumableModifier
@@ -147,7 +145,7 @@ struct ModifiersComponent : public BaseComponent
 {
     DEFINE_COMPONENT(RollModifiers, "eoc::active_roll::ModifiersComponent")
 
-    EntityHandle field_0;
+    [[bg3::legacy(field_0)]] EntityHandle Entity;
     Array<DynamicModifierId> DynamicModifiers;
     uint8_t field_18;
     uint8_t field_19;
@@ -206,25 +204,22 @@ BEGIN_NS(esv::roll)
 struct FinishedEvent
 {
     uint8_t RollContext;
-    EntityHandle Source2;
+    [[bg3::legacy(Source2)]] EntityHandle Subject;
     Guid RollUuid;
-    EntityHandle field_20;
+    [[bg3::legacy(field_20)]] EntityHandle Roll;
     uint8_t SpellCheck;
-    uint8_t field_29;
-    EntityHandle Source;
-    uint8_t AC;
-    uint8_t field_39;
-    uint8_t field_3A;
-    uint8_t field_3B;
-    uint8_t AdvantageType1;
-    uint8_t AdvantageType2;
+    [[bg3::legacy(field_29)]] bool Canceled;
+    [[bg3::legacy(Source)]] EntityHandle Roller;
+    [[bg3::legacy(AC)]] uint32_t DC;
+    [[bg3::legacy(AdvantageType1)]] bool Advantage;
+    [[bg3::legacy(AdvantageType2)]] bool Disadvantage;
     SkillId Skill;
     AbilityId Ability;
     uint8_t RollType;
     int DiceAdditionalValue;
-    uint8_t field_48;
+    [[bg3::legacy(field_48)]] bool ConsumedInspirationPoint;
     int NaturalRoll;
-    uint8_t RollComponentType0;
+    bool RollComponentType0;
 };
 
 

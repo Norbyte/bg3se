@@ -138,18 +138,11 @@ struct InterruptRequestsComponent : public BaseComponent
     Array<interrupt::UpdateInterruptorsRequestData> UpdateInterruptorsRequests;
 };
 
-struct InterruptRollData
-{
-    __int64 field_0;
-    [[bg3::legacy(field_8)]] Array<FixedRollBonus> FixedRollBonuses;
-};
-
 struct FunctorConditional
 {
-    glm::vec3 field_0;
-    float field_C;
-    EntityHandle field_10;
-    int field_18;
+    Guid FunctorUuid;
+    EntityHandle Target;
+    stats::ConditionId Conditions;
     bool WasAdjusted{ false };
     ConditionRoll Roll;
 };
