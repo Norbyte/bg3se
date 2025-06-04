@@ -13,7 +13,7 @@ struct GenericPropertyTag
     Guid Entity;
 };
 
-struct Bound
+struct Bound : public ProtectedGameObject<Bound>
 {
     EntityHandle Entity;
     LegacyRefMap<AIBoundType, BoundData> AIBounds;
@@ -648,16 +648,16 @@ struct Slot
     SpellId SpellId;
     FixedString Passive;
     uint32_t Slot;
-    bool IsNew;
+    bool IsNew{ false };
 };
 
 struct Bar
 {
-    uint8_t Index;
-    uint8_t field_1;
+    uint8_t Index{ 0 };
+    uint8_t field_1{ 0 };
     Array<Slot> Elements;
-    uint8_t Width;
-    uint32_t Height;
+    uint8_t Width{ 1 };
+    uint32_t Height{ 1 };
     STDString field_20;
 };
 

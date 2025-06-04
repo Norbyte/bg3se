@@ -5,10 +5,10 @@ BEGIN_NS(progression)
 struct SpellDefinition
 {
     FixedString SpellId;
-    SpellPrepareType PrepareType;
+    SpellPrepareType PrepareType{ SpellPrepareType::AlwaysPrepared };
     Guid SpellList;
-    AbilityId CastingAbility;
-    SpellCooldownType CooldownType;
+    AbilityId CastingAbility{ AbilityId::None };
+    SpellCooldownType CooldownType{ SpellCooldownType::Default };
     Guid Class;
 };
 
@@ -17,7 +17,7 @@ struct AbilityImprovementsComponent : public BaseComponent
     DEFINE_COMPONENT(ProgressionAbilityImprovements, "eoc::progression::AbilityImprovementsComponent")
 
     Array<AbilityId> Abilities;
-    std::array< int32_t, 7> AbilityImprovements;
+    std::array<int32_t, 7> AbilityImprovements;
 };
 
 struct FeatComponent : public BaseComponent
@@ -31,7 +31,7 @@ struct FeatComponent : public BaseComponent
     Array<SkillId> Expertise;
     Array<SpellDefinition> AddSpells;
     Array<FixedString> AddPassives;
-    std::array< int32_t, 7> AbilityImprovements;
+    std::array<int32_t, 7> AbilityImprovements;
 };
 
 struct SpellsComponent : public BaseComponent

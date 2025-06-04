@@ -28,7 +28,7 @@ struct IsOwnedComponent : public BaseComponent
 struct ContainerSlotData
 {
     EntityHandle Item;
-    uint32_t field_8;
+    uint32_t field_8{ 0 };
 };
 
 struct ContainerComponent : public BaseComponent
@@ -55,8 +55,8 @@ struct MemberTransformComponent : public BaseComponent
 
 struct StackEntry
 {
-    uint16_t EntityIndex;
-    uint32_t Quantity;
+    uint16_t EntityIndex{ 0 };
+    uint32_t Quantity{ 0 };
 };
 
 struct StackComponent : public BaseComponent

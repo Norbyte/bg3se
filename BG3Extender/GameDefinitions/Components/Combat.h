@@ -63,7 +63,7 @@ struct TurnBasedComponent : public BaseComponent
 struct TurnBasedEntityInfo
 {
     EntityHandle Entity;
-    int32_t Initiative;
+    int32_t Initiative{ 0 };
 };
 
 struct TurnBasedGroup
@@ -163,20 +163,20 @@ struct CombatGroupUpdate
 {
     EntityHandle Combat;
     FixedString CombatGroup;
-    bool field_C;
+    bool field_C{ false };
 };
 
 struct GlobalCombatRequest
 {
     EntityHandle field_0;
     EntityHandle field_8;
-    uint32_t Action; // 1 = RequestCombat
+    uint32_t Action{ 0 }; // 1 = RequestCombat
     EntityHandle Combat;
 };
 
 struct NarrativeCombatRequest
 {
-    NarrativeCombatRequestType Action;
+    NarrativeCombatRequestType Action{ NarrativeCombatRequestType::Create };
     EntityHandle Entity;
     Guid CombatGuid;
 };

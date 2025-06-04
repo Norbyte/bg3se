@@ -52,7 +52,7 @@ struct Settings
 {
     std::variant<Bezier3Trajectory, Bezier4Trajectory> Trajectory;
     [[bg3::hidden]] uint32_t _Pad;
-    uint8_t RotateMode;
+    uint8_t RotateMode{ 0 };
     std::variant<ConstantVelocity, LinearVelocity, MappedVelocity> Velocity;
 };
 
@@ -77,7 +77,7 @@ struct ProjectileResult : public path::Settings
     [[bg3::legacy(field_50)]] FixedString TemplateId;
     EntityHandle field_58;
     glm::vec3 field_60;
-    float InterpolateValue;
+    float InterpolateValue{ .0f };
 };
 
 struct SourceInfoComponent : public BaseComponent
@@ -289,7 +289,7 @@ struct ProjectileTargetData
     glm::vec3 field_0;
     IntermediateTarget Target;
     FixedString TextKey;
-    int field_BC;
+    int field_BC{ 0 };
     HitDesc Hit;
     std::optional<path::Settings> PathSettings;
     std::optional<projectile::ProjectileResult> Result;

@@ -59,8 +59,8 @@ struct SpellIdWithPrototype : public SpellId
 
 struct DamagePair
 {
-    int32_t Amount;
-    DamageType DamageType;
+    int32_t Amount{ 0 };
+    DamageType DamageType{ DamageType::None };
 };
 
 struct RollDefinition

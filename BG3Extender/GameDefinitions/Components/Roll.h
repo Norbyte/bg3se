@@ -118,8 +118,8 @@ struct ItemSpellModifier
     SpellId Spell;
     EntityHandle Source;
     EntityHandle Item;
-    uint8_t TargetType;
-    bool Concentration;
+    uint8_t TargetType{ 0 };
+    bool Concentration{ false };
     Array<Modifier> Modifiers;
 };
 
@@ -128,8 +128,8 @@ struct SpellModifier
     Guid ModifierGuid;
     SpellId Spell;
     EntityHandle Source;
-    uint8_t TargetType;
-    bool Concentration;
+    uint8_t TargetType{ 0 };
+    bool Concentration{ false };
     Array<Modifier> Modifiers;
 };
 
@@ -137,7 +137,7 @@ struct ToggledPassiveModifier
 {
     Guid ModifierGuid;
     FixedString Passive;
-    int field_14;
+    int field_14{ 0 };
     EntityHandle Source;
     EntityHandle PassiveEntity;
     Array<Modifier> Modifiers;

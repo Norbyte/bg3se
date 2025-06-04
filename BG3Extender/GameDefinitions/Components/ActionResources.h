@@ -8,8 +8,8 @@ BEGIN_SE()
 struct ActionResourceSetValueRequest
 {
     Guid ResourceId;
-    double Amount;
-    double OldAmount;
+    double Amount{ .0f };
+    double OldAmount{ .0f };
 };
 
 struct ActionResourceRefillRequest
@@ -52,12 +52,12 @@ struct ActionResourceDiceValue
 struct ActionResourceEntry
 {
     Guid ResourceUUID;
-    [[bg3::legacy(ResourceId)]] int Level;
-    double Amount;
-    double MaxAmount;
-    [[bg3::legacy(field_28)]] ResourceReplenishType ReplenishType;
+    [[bg3::legacy(ResourceId)]] int Level{ 0 };
+    double Amount{ .0f };
+    double MaxAmount{ .0f };
+    [[bg3::legacy(field_28)]] ResourceReplenishType ReplenishType{ ResourceReplenishType::Default };
     [[bg3::legacy(SubAmounts)]] std::optional<std::array<ActionResourceDiceValue, 7>> DiceValues;
-    uint8_t field_A8;
+    uint8_t field_A8{ 0 };
 };
 
 struct ActionResourcesComponent : public BaseComponent
@@ -77,7 +77,7 @@ struct ActionResourceEventsOneFrameComponent : public BaseComponent
 struct ActionResourceSpendResult
 {
     Guid Resource;
-    bool Succeeded;
+    bool Succeeded{ true };
 };
 
 struct ActionResourceSpendEventOneFrameComponent : public BaseComponent

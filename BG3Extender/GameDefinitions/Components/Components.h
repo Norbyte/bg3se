@@ -422,10 +422,10 @@ struct ChangeData
     EntityHandle Entity;
     glm::vec3 OldPosition;
     glm::vec3 NewPosition;
-    int Override;
-    bool field_24;
-    bool field_25;
-    bool field_26;
+    int Override{ 0 };
+    bool field_24{ false };
+    bool field_25{ false };
+    bool field_26{ false };
 };
 
 struct ChangedComponent : public BaseComponent

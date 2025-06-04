@@ -89,14 +89,14 @@ struct StartRequestData
     Guid SpellCastGuid;
     bg3se::interrupt::InterruptEvent Event;
     HashMap<EntityHandle, HashSet<EntityHandle>> Interruptors;
-    uint8_t field_158;
+    uint8_t field_158{ 0 };
 };
 
 struct StopRequestData
 {
     Guid SpellCastGuid;
     bg3se::interrupt::InterruptEvent Event;
-    uint8_t field_118;
+    uint8_t field_118{ 0 };
 };
 
 struct UpdateInterruptorsRequestData
@@ -150,7 +150,7 @@ struct FunctorConditional
     float field_C;
     EntityHandle field_10;
     int field_18;
-    bool WasAdjusted;
+    bool WasAdjusted{ false };
     ConditionRoll Roll;
 };
 

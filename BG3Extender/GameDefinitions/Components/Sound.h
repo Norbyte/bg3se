@@ -29,7 +29,7 @@ struct SoundComponent : public BaseComponent
 struct SoundExternalPath
 {
     STDString Path;
-    AudioCodec Codec;
+    AudioCodec Codec{ AudioCodec::Vorbis };
 };
 
 struct SoundPostEventRequest

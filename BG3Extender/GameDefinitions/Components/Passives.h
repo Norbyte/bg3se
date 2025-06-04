@@ -27,11 +27,11 @@ struct PassiveComponent : public BaseComponent
 
 struct PassiveUsageCount
 {
-    uint16_t field_0;
-    uint16_t field_2;
-    uint16_t field_4;
-    uint16_t field_6;
-    uint16_t field_8;
+    uint16_t field_0{ 0 };
+    uint16_t field_2{ 0 };
+    uint16_t field_4{ 0 };
+    uint16_t field_6{ 0 };
+    uint16_t field_8{ 0 };
 };
 
 struct UsageCountComponent : public BaseComponent
@@ -103,7 +103,7 @@ struct PostponedConditionalRoll
     __int64 field_0;
     __int64 field_8;
     ConditionRoll Roll;
-    uint8_t field_148;
+    uint8_t field_148{ 0 };
 };
 
 struct ConditionalRollInterruptEventOneFrameComponent : public BaseComponent
@@ -123,8 +123,8 @@ DEFINE_ONEFRAME_TAG_COMPONENT(esv::passive, UsageCountIncrementedEventOneFrameCo
 
 struct BasicRollInfo : public StatsRoll
 {
-    ConditionRollType RollType;
-    int DC;
+    ConditionRollType RollType{ 0 };
+    int DC{ 0 };
 };
 
 struct ExecutePassiveRequest

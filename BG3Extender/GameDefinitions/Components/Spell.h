@@ -11,91 +11,91 @@ struct Modification
 {
     struct ModifyAreaRadius
     {
-        SpellModificationValueType ValueType;
-        float AreaRadius;
+        SpellModificationValueType ValueType{ SpellModificationValueType::AdditiveBase };
+        float AreaRadius{ 0.0f };
     };
 
     struct ModifyMaximumTargets
     {
-        SpellModificationValueType ValueType;
-        int32_t MaximumTargets;
+        SpellModificationValueType ValueType{ SpellModificationValueType::AdditiveBase };
+        int32_t MaximumTargets{ 0 };
     };
 
     struct ModifyNumberOfTargets
     {
-        SpellModificationValueType ValueType;
-        int32_t NumberOfTargets;
+        SpellModificationValueType ValueType{ SpellModificationValueType::AdditiveBase };
+        int32_t NumberOfTargets{ 0 };
     };
 
     struct ModifySavingThrowDisadvantage
     {
-        uint8_t SavingThrowDisadvantage;
+        uint8_t SavingThrowDisadvantage{ 0 };
     };
 
     struct ModifySpellFlags
     {
-        uint8_t SpellFlags;
-        uint8_t field_1;
+        uint8_t SpellFlags{ 0 };
+        uint8_t field_1{ 0 };
     };
 
     struct ModifySpellRoll
     {
         STDString Conditions;
         STDString Conditions2;
-        int field_30;
+        int field_30{ 0 };
     };
 
     struct ModifyStatusDuration
     {
-        SpellModificationValueType ValueType;
-        float StatusDuration;
+        SpellModificationValueType ValueType{ SpellModificationValueType::AdditiveBase };
+        float StatusDuration{ .0f };
     };
 
     struct ModifySummonDuration
     {
-        SpellModificationValueType ValueType;
-        float SummonDuration;
+        SpellModificationValueType ValueType{ SpellModificationValueType::AdditiveBase };
+        float SummonDuration{ .0f };
     };
 
     struct ModifySurfaceDuration
     {
-        SpellModificationValueType ValueType;
-        float SurfaceDuration;
+        SpellModificationValueType ValueType{ SpellModificationValueType::AdditiveBase };
+        float SurfaceDuration{ .0f };
     };
 
     struct ModifyTargetRadius
     {
-        SpellModificationValueType ValueType;
-        float TargetRadius;
+        SpellModificationValueType ValueType{ SpellModificationValueType::AdditiveBase };
+        float TargetRadius{ .0f };
     };
 
     struct ModifyUseCosts
     {
-        uint8_t Type;
+        uint8_t Type{ 0 };
         Guid Resource;
         STDString Expression;
-        int Level;
+        int Level{ 0 };
         Guid Resource2;
     };
 
     struct ModifyVisuals
     {
-        uint8_t Visuals;
+        uint8_t Visuals{ 0 };
     };
 
     struct ModifyIconGlow
     {
-        uint8_t IconGlow;
+        uint8_t IconGlow{ 0 };
     };
 
     struct ModifyTooltipDescription
     {
-        uint8_t TooltipDescription;
+        uint8_t TooltipDescription{ 0 };
     };
 
     using Variant = std::variant<ModifyAreaRadius, ModifyMaximumTargets, ModifyNumberOfTargets, ModifySavingThrowDisadvantage, ModifySpellFlags, ModifySpellRoll, ModifyStatusDuration, ModifySummonDuration, ModifySurfaceDuration, ModifyTargetRadius, ModifyUseCosts, ModifyVisuals, ModifyIconGlow, ModifyTooltipDescription>;
 
-    uint8_t field_0;
+    uint8_t field_0{ 0 };
     FixedString Source;
     Variant Modification;
     HashSet<SpellId> Spells;
@@ -105,13 +105,13 @@ struct SpellMeta
 {
     SpellMetaId SpellId;
     EntityHandle BoostHandle;
-    [[bg3::legacy(SelectionType)]] SpellLearningStrategy LearningStrategy;
-    [[bg3::legacy(field_29)]] SpellPrepareType PrepareType;
+    [[bg3::legacy(SelectionType)]] SpellLearningStrategy LearningStrategy{ SpellLearningStrategy::Singular };
+    [[bg3::legacy(field_29)]] SpellPrepareType PrepareType{ SpellPrepareType::Unknown };
     [[bg3::legacy(SpellUUID)]] Guid PreferredCastingResource;
-    AbilityId SpellCastingAbility;
-    SpellCooldownType CooldownType;
+    AbilityId SpellCastingAbility{ AbilityId::None };
+    SpellCooldownType CooldownType{ SpellCooldownType::Default };
     FixedString ContainerSpell;
-    [[bg3::legacy(field_48)]] bool LinkedSpellContainer;
+    [[bg3::legacy(field_48)]] bool LinkedSpellContainer{ false };
 };
 
 struct SpellContainerComponent : public BaseComponent
@@ -167,8 +167,8 @@ struct ScriptedExplosionComponent : public BaseComponent
 struct CooldownData
 {
     SpellId SpellId;
-    SpellCooldownType CooldownType;
-    uint8_t field_29;
+    SpellCooldownType CooldownType{ SpellCooldownType::Default };
+    uint8_t field_29{ 0 };
     float Cooldown;
     Guid field_30;
 };
@@ -197,20 +197,20 @@ struct SpellAiConditionsComponent : public BaseComponent
 
 struct CastRequirements
 {
-    [[bg3::legacy(field_0)]] uint8_t CastContext;
-    [[bg3::legacy(field_4)]] CastRequirementFlags Requirements;
+    [[bg3::legacy(field_0)]] uint8_t CastContext{ 0 };
+    [[bg3::legacy(field_4)]] CastRequirementFlags Requirements{ 0 };
 };
 
 struct SpellData
 {
     SpellId Id;
     [[bg3::legacy(SpellUUID)]] Guid PreferredCastingResource;
-    int32_t UsedCharges;
-    int32_t NumCharges;
+    int32_t UsedCharges{ 0 };
+    int32_t NumCharges{ 0 };
     SpellCooldownType CooldownType;
-    [[bg3::legacy(field_41)]] bool Charged;
-    [[bg3::legacy(field_42)]] SpellPrepareType PrepareType;
-    AbilityId SpellCastingAbility;
+    [[bg3::legacy(field_41)]] bool Charged{ false };
+    [[bg3::legacy(field_42)]] SpellPrepareType PrepareType{ SpellPrepareType::Unknown };
+    AbilityId SpellCastingAbility{ AbilityId::None };
     Array<CastRequirements> CastRequirements;
 };
 
@@ -239,8 +239,8 @@ BEGIN_NS(esv::spell)
 struct OnDamageSpell
 {
     FixedString Spell;
-    int field_4;
-    uint8_t field_8;
+    int field_4{ 0 };
+    uint8_t field_8{ 0 };
 };
 
 struct OnDamageSpellsComponent : public BaseComponent
