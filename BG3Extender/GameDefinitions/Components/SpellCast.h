@@ -906,4 +906,33 @@ struct OnConcentrationClearedEventOneFrameComponent : public BaseComponent
     bool field_12;
 };
 
+struct ConcentrationRequest
+{
+    EntityHandle Caster;
+    SpellId SpellId;
+    ConcentrationTarget Target;
+    bool ClearConcentration{ false };
+    bool BreakConcentration{ false };
+    bool CheckReset{ false };
+    ConcentrationRequestType RequestType{ ConcentrationRequestType::RemoveTarget };
+    std::optional<Guid> SpellCastGuid;
+};
+
+
+struct ConcentrationSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerConcentration, "esv::concentration::ConcentrationSystem")
+
+    [[bg3::hidden]] void* VMT_GameEventListener;
+    [[bg3::hidden]] void* SpellPrototypeManager;
+    [[bg3::hidden]] void* StatusPrototypeManager;
+    [[bg3::hidden]] void* StatusFactory;
+    [[bg3::hidden]] void* FactionContainer;
+    [[bg3::hidden]] void* GlobalSwitches;
+    [[bg3::hidden]] void* UnitTestHelper;
+    uint8_t field_48;
+    Array<ConcentrationRequest> ConcentrationRequests;
+};
+
+
 END_NS()

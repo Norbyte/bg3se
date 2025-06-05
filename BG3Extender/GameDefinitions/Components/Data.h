@@ -435,15 +435,6 @@ struct CanSenseComponent : public BaseComponent
     uint16_t Flags;
 };
 
-struct ConcentrationTarget
-{
-    [[bg3::legacy(field_0)]] EntityHandle Target;
-    [[bg3::legacy(field_8)]] EntityHandle Concentration;
-    [[bg3::legacy(field_10)]] ComponentHandle Status;
-    [[bg3::legacy(field_18)]] int16_t SurfaceIndex;
-    bool field_1A;
-};
-
 struct ConcentrationComponent : public BaseComponent
 {
     DEFINE_COMPONENT(Concentration, "eoc::concentration::ConcentrationComponent")

@@ -36,6 +36,12 @@ inline uint64_t HashMapHash<FixedStringUnhashed>(FixedStringUnhashed const& v)
     return v.Index;
 }
 
+template <>
+inline uint64_t HashMapHash<UserId>(UserId const& v)
+{
+    return v.Id;
+}
+
 template <class T>
 uint32_t GetHashSizeFor(std::span<T const> const& vals, uint32_t maxCollisions)
 {

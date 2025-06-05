@@ -24,6 +24,7 @@ BEGIN_ENUM(ExtSystemType, uint32_t)
     E(ServerSummonDespawn)
     E(ServerCapabilities)
     E(ServerTemplateChange)
+    E(ServerConcentration)
     E(SoundRouting)
     E(Max)
 END_ENUM()
@@ -1789,4 +1790,10 @@ BEGIN_ENUM_NS(esv::spell_cast, SystemEventType, ServerSpellCastSystemEventType, 
     EV(UpdateInterruptors, 0x4C)
     EV(LogicExecutionUpdate, 0x4D)
     EV(PreparationStarting, 0x4E)
+END_ENUM_NS()
+
+
+BEGIN_ENUM_NS(esv::concentration, ConcentrationRequestType, ServerConcentrationRequestType, uint8_t)
+    EV(RemoveTarget, 0x1)
+    EV(AddTarget, 0x2)
 END_ENUM_NS()
