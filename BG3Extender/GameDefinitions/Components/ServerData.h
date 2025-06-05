@@ -33,6 +33,37 @@ struct ExperienceGaveOutComponent : public BaseComponent
     int Experience;
 };
 
+struct ExperienceSystemBase : public BaseSystem
+{
+    [[bg3::hidden]] UnknownSignal field_10;
+};
+
+struct EqualizeExperienceData
+{
+    int Experience;
+    EntityHandle Entity;
+};
+
+struct ExperienceSystem : public ExperienceSystemBase
+{
+    DEFINE_SYSTEM(ServerExperience, "esv::exp::ExperienceSystem")
+
+    [[bg3::hidden]] UnknownSignal field_28;
+    [[bg3::hidden]] void* RPGStats;
+    [[bg3::hidden]] void* BackgroundGoals;
+    [[bg3::hidden]] void* ExperienceRewards;
+    [[bg3::hidden]] void* FactionContainer;
+    [[bg3::hidden]] void* GlobalSwitches;
+    [[bg3::hidden]] void* TagManager;
+    [[bg3::hidden]] void* ExperienceSystemEnvironment;
+    HashSet<EntityHandle> ReevaluateCanGainXP;
+    HashMap<EntityHandle, int> IncreaseExperience;
+    HashMap<EntityHandle, int> OverrideLevel;
+    HashSet<EntityHandle> AvailableLevelChanged;
+    HashMap<EntityHandle, EqualizeExperienceData> EqualizeExperience;
+    HashMap<EntityHandle, HashSet<EntityHandle>> ExperienceOnDestroy;
+};
+
 struct ActivationGroupData
 {
     FixedString field_0;
