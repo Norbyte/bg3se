@@ -64,6 +64,31 @@ struct ExperienceSystem : public ExperienceSystemBase
     HashMap<EntityHandle, HashSet<EntityHandle>> ExperienceOnDestroy;
 };
 
+struct LongRestSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerLongRest, "esv::rest::LongRestSystem")
+
+    EntityHandle RestRequester;
+    bool RestConfirmed;
+    bool Pending;
+    bool RequestSyncedFinish;
+    bool RequestReloadStory;
+    bool RequestUserStateRestore;
+    bool RequestLongRest;
+    Array<bool> AutoConfirmation;
+    HashSet<Guid> SetTimeline;
+    Array<FixedString> ScriptDeny;
+    HashSet<EntityHandle> Finish;
+    HashSet<UserId> FinishConfirmation;
+    [[bg3::hidden]] void* LongRestUnitTestHelper;
+    [[bg3::hidden]] void* EocServer;
+    uint8_t UserDecisionRestType;
+    HashMap<EntityHandle, int> RestSupplies;
+    bool UserDecision;
+    std::optional<bool> SetPlayersAreDreaming;
+};
+
+
 struct ActivationGroupData
 {
     FixedString field_0;
