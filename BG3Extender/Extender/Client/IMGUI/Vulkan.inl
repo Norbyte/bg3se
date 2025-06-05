@@ -8,6 +8,7 @@
 #include <imgui.h>
 #include <backends/imgui_impl_vulkan.h>
 #include <imgui_internal.h>
+#include <cstring>
 
 BEGIN_SE()
 
@@ -233,6 +234,7 @@ public:
 
     void FinishFrame() override
     {
+        ERR("[IMGUI] FinishFrame: curViewport_=%d  -> drawViewport_=%d", curViewport_, drawViewport_);
         // Speculative check to avoid unnecessary locking
         if (!initialized_) return;
 
@@ -682,7 +684,16 @@ private:
 
     void presentPreHook(VkPresentInfoKHR* pPresentInfo)
     {
-        IMGUI_FRAME_DEBUG("presentPreHook log");
+        // Extended start-of-function diagnostics
+        IMGUI_FRAME_DEBUG("presentPreHook start: frameNo=%llu drawViewport=%d pImageIndices=%p", 
+            (unsigned long long)frameNo_, drawViewport_, pPresentInfo->pImageIndices);
+
+        // Some engines leave pImageIndices null and rely on implicit acquisition; bail out if that happens
+        if (pPresentInfo->pImageIndices == nullptr) {
+            IMGUI_FRAME_DEBUG("presentPreHook early exit: pImageIndices is NULL (implicit acquire path)");
+            return;
+        }
+
         auto& vp = viewports_[drawViewport_].Viewport;
         if (!vp.DrawDataP.Valid) return;
     
@@ -691,11 +702,23 @@ private:
         auto& image = swapchain_.images_[imageIndex];
         IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Swap chain image #%d (%p)", imageIndex, image.image);
     
+        // Diagnostic: check fence status before waiting
+        VkResult fenceStatusBefore = vkGetFenceStatus(device_, image.fence);
+        IMGUI_FRAME_DEBUG("presentPreHook: fence status before wait = %d", fenceStatusBefore);
+
         // Wait for the fence from the previous frame to ensure command buffer is available
-        VK_CHECK(vkWaitForFences(device_, 1, &image.fence, VK_TRUE, 50000000));
-        VK_CHECK(vkResetFences(device_, 1, &image.fence));
-        VK_CHECK(vkResetCommandBuffer(image.commandBuffer, 0));
-    
+        VkResult waitRes = vkWaitForFences(device_, 1, &image.fence, VK_TRUE, 50000000);
+        if (waitRes != VK_SUCCESS) {
+            ERR("vkWaitForFences returned %d (timeout / error)", waitRes);
+        } else {
+            IMGUI_FRAME_DEBUG("presentPreHook: fence wait succeeded");
+        }
+
+        VkResult resetRes = vkResetFences(device_, 1, &image.fence);
+        if (resetRes != VK_SUCCESS) {
+            ERR("vkResetFences failed: %d", resetRes);
+        }
+
         // Begin recording command buffer
         VkCommandBufferBeginInfo beginInfo = { VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO };
         beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
@@ -704,7 +727,7 @@ private:
         // Transition image layout to color attachment
         VkImageMemoryBarrier barrierToRender = {
             .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-            .srcAccessMask = VK_ACCESS_ALL_READ_BITS,
+            .srcAccessMask = VK_ACCESS_MEMORY_READ_BIT, // Ensure any previous memory reads (e.g. by the presentation engine) are complete
             .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
             .oldLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
             .newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
@@ -721,8 +744,8 @@ private:
         };
         vkCmdPipelineBarrier(
             image.commandBuffer,
-            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+            VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, // Per spec, transitioning from PRESENT_SRC should wait for BOTTOM_OF_PIPE
+            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
             0,
             0, nullptr,
             0, nullptr,
@@ -753,11 +776,12 @@ private:
         // Transition layout back to present
         VkImageMemoryBarrier barrierToPresent = barrierToRender;
         std::swap(barrierToPresent.oldLayout, barrierToPresent.newLayout);
-        std::swap(barrierToPresent.srcAccessMask, barrierToPresent.dstAccessMask);
+        barrierToPresent.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        barrierToPresent.dstAccessMask = 0; // none required for presentation
         vkCmdPipelineBarrier(
             image.commandBuffer,
-            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+            VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
             0,
             0, nullptr,
             0, nullptr,
@@ -768,10 +792,16 @@ private:
         VK_CHECK(vkEndCommandBuffer(image.commandBuffer));
     
         // Submit command buffer
-        VkPipelineStageFlags waitStages[8] = { VK_PIPELINE_STAGE_ALL_COMMANDS_BIT };
-        const uint32_t waitCount = std::min(pPresentInfo->waitSemaphoreCount, 8u);
-        for (uint32_t i = 1; i < waitCount; i++) waitStages[i] = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
+        VkPipelineStageFlags waitStages[16] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+        const uint32_t waitCount = std::min(pPresentInfo->waitSemaphoreCount, 16u);
+        for (uint32_t i = 1; i < waitCount; i++) waitStages[i] = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
     
+        // Log the final wait-stage mask and associated semaphores
+        for (uint32_t i = 0; i < waitCount; i++) {
+            IMGUI_FRAME_DEBUG("presentPreHook: waitStage[%u]=0x%x sem=%p", 
+                i, (uint32_t)waitStages[i], pPresentInfo->pWaitSemaphores[i]);
+        }
+
         VkSubmitInfo submitInfo = {
             .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
             .waitSemaphoreCount = waitCount,
@@ -784,10 +814,12 @@ private:
         };
     
         VK_CHECK(vkQueueSubmit(renderQueue_, 1, &submitInfo, image.fence));
+        IMGUI_FRAME_DEBUG("presentPreHook: submitted cmd; fence=%p, uiDoneSemaphore=%p", image.fence, image.uiDoneSemaphore);
     
-        // Replace presentInfo wait semaphore with the one we just signaled
-        const_cast<VkSemaphore*>(pPresentInfo->pWaitSemaphores)[0] = image.uiDoneSemaphore;
-        const_cast<uint32_t&>(pPresentInfo->waitSemaphoreCount) = 1;
+        IMGUI_FRAME_DEBUG("presentPreHook: incoming waitSemaphoreCount=%u", pPresentInfo->waitSemaphoreCount);
+        for (uint32_t i = 0; i < pPresentInfo->waitSemaphoreCount && i < 16; i++) {
+            IMGUI_FRAME_DEBUG("    wait[%u]=%p", i, pPresentInfo->pWaitSemaphores[i]);
+        }
     }
     
 
@@ -798,10 +830,18 @@ private:
         // Add detailed logging for debugging
         ERR("[IMGUI] vkQueuePresentKHRHooked called - swapchainCount: %d, swapChain_: %p", 
             pPresentInfo->swapchainCount, swapChain_);
-        
+
+        // Record image index pointer information as some engines may pass NULL
+        ERR("[IMGUI] vkQueuePresentKHRHooked: pImageIndices=%p", pPresentInfo->pImageIndices);
+        if (pPresentInfo->pImageIndices != nullptr && pPresentInfo->swapchainCount > 0) {
+            ERR("[IMGUI] vkQueuePresentKHRHooked: first imageIndex=%u", pPresentInfo->pImageIndices[0]);
+        }
+
         // If we don't have a swapchain yet, we need to capture it from the present info
         if (swapChain_ == VK_NULL_HANDLE && pPresentInfo->swapchainCount > 0) {
+            ERR("[IMGUI] vkQueuePresentKHRHooked: Attempting to acquire globalResourceLock_ for swapchain capture...");
             std::lock_guard _(globalResourceLock_);
+            ERR("[IMGUI] vkQueuePresentKHRHooked: Successfully acquired globalResourceLock_ for swapchain capture.");
             swapChain_ = pPresentInfo->pSwapchains[0];
             ERR("[IMGUI] Captured swapchain from present info: %p", swapChain_);
             
@@ -863,6 +903,12 @@ private:
         }
 
         frameNo_++;
+        // Additional debug: log wait semaphores coming into vkQueuePresent
+        ERR("[IMGUI] vkQueuePresentKHRHooked: waitSemaphoreCount=%u", pPresentInfo->waitSemaphoreCount);
+        for (uint32_t i = 0; i < pPresentInfo->waitSemaphoreCount && i < 16; i++) {
+            ERR("    wait[%u]=%p", i, pPresentInfo->pWaitSemaphores[i]);
+        }
+        // (Don't modify wait semaphores here; they were already adjusted in presentPreHook.)
     }
 
     IMGUIManager& ui_;
