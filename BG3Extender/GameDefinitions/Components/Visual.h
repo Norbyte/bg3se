@@ -666,4 +666,66 @@ struct CharacterIconRenderSystem : public BaseSystem
     [[bg3::hidden]] void* EquipmentVisualsSystem;
 };
 
+struct TradeModeChangeRequest
+{
+    uint16_t field_0;
+    uint8_t field_2;
+};
+
+struct CharacterManager : public BaseSystem
+{
+    DEFINE_SYSTEM(ClientCharacterManager, "ecl::CharacterManager")
+
+    [[bg3::hidden]] void* GameEventListenerVMT;
+    [[bg3::hidden]] void* field_18;
+    [[bg3::hidden]] void* GameStateEventListenerVMT;
+    [[bg3::hidden]] UnknownSignal field_28;
+    [[bg3::hidden]] UnknownSignal field_40;
+    [[bg3::hidden]] UnknownSignal field_58;
+    [[bg3::hidden]] UnknownSignal field_70;
+    [[bg3::hidden]] void* EntityManager;
+    [[bg3::hidden]] void* AnimationBlueprintSystem;
+    [[bg3::hidden]] void* LSVisualSystem;
+    [[bg3::hidden]] void* LEDSystem;
+    [[bg3::hidden]] void* FactionContainer;
+    [[bg3::hidden]] void* EoCGlobalSwitches;
+    [[bg3::hidden]] void* ResourceManager;
+    [[bg3::hidden]] void* GameAnalyticsSystem;
+    [[bg3::hidden]] void* StatusSystem;
+    [[bg3::hidden]] void* TransformSystem;
+    [[bg3::hidden]] void* StatsSystem;
+    [[bg3::hidden]] void* LevelManager;
+    [[bg3::hidden]] void* HUB;
+    [[bg3::hidden]] void* CharacterSoundSystem;
+    [[bg3::hidden]] void* GameActionManager;
+    [[bg3::hidden]] void* PlayerManager;
+    [[bg3::hidden]] void* SpellPrototypeManager;
+    [[bg3::hidden]] Array<void*> field_110;
+    [[bg3::hidden]] Array<void*> field_120;
+    HashSet<EntityHandle> RefreshLights;
+    HashSet<EntityHandle> UpdatePhysicsGroup;
+    HashMap<EntityHandle, HashSet<ItemSlot>> RefreshEquipmentSlot;
+    HashSet<EntityHandle> UpdateObscurity;
+    HashSet<EntityHandle> ReloadVisuals;
+    HashSet<EntityHandle> ReloadPhysics;
+    HashMap<EntityHandle, TradeModeChangeRequest> TradingModeChanges;
+    HashSet<EntityHandle> ChangedTemplates;
+    [[bg3::hidden]] UnknownSignalSubscriber field_2D0;
+    Array<EntityHandle> UpdateCombatCamera;
+    std::array<HashSet<EntityHandle>, 3> UpdateCharacterHighlights;
+    std::array<HashSet<EntityHandle>, 3> UpdateCharacterHighlights2;
+    HashSet<EntityHandle> UpdateRepose;
+    [[bg3::hidden]] UnknownSignalSubscriber field_480;
+    [[bg3::hidden]] UnknownSignalSubscriber field_4D0;
+    [[bg3::hidden]] UnknownSignalSubscriber field_520;
+    [[bg3::hidden]] UnknownSignalSubscriber field_570;
+    [[bg3::hidden]] UnknownSignalSubscriber field_5C0;
+    [[bg3::hidden]] UnknownSignalSubscriber field_610;
+    [[bg3::hidden]] UnknownSignalSubscriber field_660;
+    [[bg3::hidden]] UnknownFunction field_6B0;
+    bool PauseState;
+    bool RestoreCharacters;
+    bool ReloadVisualSets;
+    uint8_t ColorBlindMode;
+};
 END_NS()
