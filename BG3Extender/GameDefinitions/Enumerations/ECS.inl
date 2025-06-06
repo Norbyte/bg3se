@@ -1688,6 +1688,17 @@ BEGIN_BITMASK(SpellAnimationCastEvent, uint8_t)
     EV(TargetingInfo, 5)
 END_ENUM()
 
+BEGIN_BITMASK(ArmorSetState, uint8_t)
+    EV(Normal, 0)
+    EV(Vanity, 1)
+END_ENUM()
+
+BEGIN_BITMASK(IsTradableType, uint8_t)
+    EV(Default, 0)
+    EV(Tradable, 1)
+    EV(NonTradable, 2)
+END_ENUM()
+
 BEGIN_BITMASK(SpellCastPhase, uint8_t)
     EV(None, 0)
     EV(ValidationStart, 1)

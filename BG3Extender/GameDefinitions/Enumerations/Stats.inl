@@ -923,6 +923,15 @@ BEGIN_ENUM(ObscurityState, uint8_t)
 END_ENUM()
 
 
+BEGIN_ENUM(EEquipmentType, uint8_t)
+    EV(Weapon, 0)
+    EV(Unknown1, 1)
+    EV(Shield, 2)
+    EV(Armor, 3)
+    EV(Sentinel, 4)
+END_ENUM()
+
+
 BEGIN_ENUM(ItemSlot, uint8_t)
     EV(Helmet, 0)
     EV(Breast, 1)

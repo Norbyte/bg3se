@@ -13,14 +13,14 @@ struct ArmorComponent : public BaseComponent
     int ArmorClass;
     int AbilityModifierCap;
     uint8_t ArmorClassAbility;
-    uint8_t Shield;
+    EEquipmentType EquipmentType;
 };
 
 struct ArmorSetStateComponent : public BaseComponent
 {
     DEFINE_COMPONENT(ArmorSetState, "eoc::armor_set::StateComponent")
 
-    uint8_t State;
+    ArmorSetState State;
 };
 
 struct AttributeFlagsComponent : public BaseComponent

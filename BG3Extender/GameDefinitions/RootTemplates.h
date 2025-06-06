@@ -184,7 +184,7 @@ struct InventoryItemData
     FixedString UUID;
     FixedString TemplateID;
     int Amount;
-    uint8_t IsTradable;
+    IsTradableType IsTradable;
     uint8_t Type;
     bool CanBePickpocketed;
     bool IsDroppedOnDeath;
@@ -315,7 +315,7 @@ struct CharacterTemplate : public EoCGameObjectTemplate
     OverrideableProperty<bool> IsEquipmentLootable;
     OverrideableProperty<bool> CanBePickedUp;
     OverrideableProperty<bool> CanBePickpocketed;
-    OverrideableProperty<uint8_t> IsTradable;
+    OverrideableProperty<IsTradableType> IsTradable;
     OverrideableProperty<bool> IsDroppedOnDeath;
     OverrideableProperty<uint8_t> LightChannel;
     OverrideableProperty<Guid> Race;
