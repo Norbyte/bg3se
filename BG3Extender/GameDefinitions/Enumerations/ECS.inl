@@ -27,6 +27,8 @@ BEGIN_ENUM(ExtSystemType, uint32_t)
     E(ServerConcentration)
     E(ServerExperience)
     E(ServerLongRest)
+
+    E(ClientEquipmentVisuals)
     E(SoundRouting)
     E(Max)
 END_ENUM()

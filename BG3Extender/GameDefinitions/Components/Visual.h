@@ -445,4 +445,59 @@ struct PaperdollComponent : public BaseComponent
     [[bg3::legacy(field_8)]] bool Combat;
 };
 
+struct LoadAnimationFromVisualRequestData
+{
+    FixedString field_0;
+    FixedString field_4;
+    FixedString field_8;
+    bool field_C;
+};
+
+struct EquipmentRemoveMaterialRequest
+{
+    EntityHandle Entity;
+    FixedString Material;
+    bool field_C;
+    bool RemoveOverlayMaterial;
+    uint8_t CheckFlags;
+};
+
+struct EquipmentUnloadRequest
+{
+    EntityHandle Parent;
+    EntityHandle Visual;
+    EntityHandle Item;
+    ItemSlot Slot;
+};
+
+struct EquipmentVisualsSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ClientEquipmentVisuals, "ecl::EquipmentVisualsSystem")
+
+    [[bg3::hidden]] UnknownSignal field_10;
+    [[bg3::hidden]] UnknownSignal field_28;
+    [[bg3::hidden]] void* EocClient;
+    [[bg3::hidden]] void* LevelManager;
+    [[bg3::hidden]] void* MaterialManager;
+    [[bg3::hidden]] void* LevelInstanceAttachRequestSystem;
+    [[bg3::hidden]] void* EquipmentVisualsUnitTestHelper;
+    [[bg3::hidden]] UnknownFunction field_68;
+    [[bg3::hidden]] UnknownSignalSubscriber field_A8;
+    [[bg3::hidden]] UnknownSignalSubscriber field_F8;
+    Array<EquipmentRemoveMaterialRequest> RemoveMaterials;
+    HashMap<EntityHandle, uint64_t> PendingSlotLoads;
+    HashMap<EntityHandle, HashMap<uint16_t, bg3se::inventory::ContainerSlotData>> InventoryEvents;
+    Array<EquipmentUnloadRequest> UnloadRequests;
+    HashSet<EntityHandle> DyeUpdates;
+    [[bg3::readonly]] int StreamingCount;
+    [[bg3::readonly]] int UnloadVisualRequestCount;
+    [[bg3::hidden]] void* Dispatcher;
+    HashMap<EntityHandle, Array<LoadAnimationFromVisualRequestData>> AnimationSetRequest;
+    HashMap<EntityHandle, HashSet<FixedString>> RemoveAnimationSetRequest;
+    HashSet<EntityHandle> UpdateSplatter;
+    HashMap<EntityHandle, FixedString> InitVisualLevel;
+    HashMap<EntityHandle, EntityHandle> VFXTargetRequest;
+    HashSet<EntityHandle> DestroyVisuals;
+};
+
 END_NS()

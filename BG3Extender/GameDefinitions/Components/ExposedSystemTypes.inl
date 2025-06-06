@@ -23,4 +23,6 @@ T(esv::templates::ChangeSystem)
 T(esv::concentration::ConcentrationSystem)
 T(esv::ExperienceSystem)
 T(esv::LongRestSystem)
+
+T(ecl::EquipmentVisualsSystem)
 T(SoundRoutingSystem)
