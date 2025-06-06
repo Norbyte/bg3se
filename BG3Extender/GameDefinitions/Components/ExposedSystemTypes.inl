@@ -26,4 +26,5 @@ T(esv::LongRestSystem)
 
 T(ecl::EquipmentVisualsSystem)
 T(ecl::VisualSystem)
+T(ecl::CharacterIconRenderSystem)
 T(SoundRoutingSystem)

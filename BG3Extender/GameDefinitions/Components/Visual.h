@@ -522,4 +522,148 @@ struct VisualSystem : public BaseSystem
     [[bg3::hidden]] void* ResourceManager;
 };
 
+
+struct MaterialParameterFloat
+{
+    FixedString Parameter;
+    float Value;
+    bool Override{ false };
+    uint8_t field_9{ 0 };
+    bool Preset{ false };
+};
+
+struct MaterialParameterVec2
+{
+    FixedString Parameter;
+    glm::vec2 Value;
+    bool Override{ false };
+    uint8_t field_9{ 0 };
+    bool Preset{ false };
+};
+
+struct MaterialParameterVec3
+{
+    FixedString Parameter;
+    glm::vec3 Value;
+    bool Override{ false };
+    uint8_t field_9{ 0 };
+    bool Preset{ false };
+};
+
+struct MaterialParameterVec4
+{
+    FixedString Parameter;
+    glm::vec4 Value;
+    bool Override{ false };
+    uint8_t field_9{ 0 };
+    bool Preset{ false };
+};
+
+struct MaterialParameterTexture
+{
+    FixedString Parameter;
+    FixedString Value;
+    bool Override{ false };
+    uint8_t field_9{ 0 };
+    bool Preset{ false };
+};
+
+struct MaterialParameterPresetSlot
+{
+    FixedString field_0;
+    FixedString CCPreset;
+    uint32_t field_8;
+};
+
+struct MaterialParameterPresetsContainer
+{
+    Array<MaterialParameterFloat> FloatOverrides;
+    Array<MaterialParameterVec2> Vec2Overrides;
+    Array<MaterialParameterVec3> Vec3Overrides;
+    Array<MaterialParameterVec4> Vec4Overrides;
+    Array<MaterialParameterTexture> TextureOverrides;
+    Array<MaterialParameterTexture> VirtualTextureOverrides;
+    FixedString field_60;
+    HashMap<FixedString, MaterialParameterPresetSlot> Presets;
+};
+
+struct VisualLocatorAttachment
+{
+    FixedString DisplayName;
+    FixedString LocatorName;
+};
+
+struct VisualSetSlot
+{
+    FixedString field_0;
+    FixedString field_4;
+    FixedString field_8;
+};
+
+struct VisualSetSlots
+{
+    FixedString StatsColorPresetResource;
+    FixedString BodySetVisual;
+    Array<VisualSetSlot> VisualSlots;
+    Array<VisualLocatorAttachment> LocatorAttachments;
+    MaterialParameterPresetsContainer MaterialParameters;
+    LegacyMap<FixedString, MaterialParameterPresetsContainer> Materials;
+    HashMap<FixedString, FixedString> MaterialOverrides;
+    HashMap<FixedString, FixedString> MaterialRemaps;
+    FixedString VisualSet;
+    bool ShowEquipmentVisuals;
+};
+
+
+struct CharacterIconRequestComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClientCharacterIconRequest, "ecl::CharacterIconRequestComponent")
+
+    FixedString field_0;
+    VisualSetSlots VisualSet;
+    Array<FixedString> Equipment;
+    FixedString Template;
+    std::optional<ArmorSetState> ArmorSetState;
+    EntityHandle field_190;
+    STDString Trigger;
+    int field_1B0;
+};
+
+struct CharacterIconResultComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClientCharacterIconResult, "ecl::CharacterIconResultComponent")
+
+    ScratchBuffer Icon;
+};
+
+struct CharacterIconRenderSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ClientCharacterIconRender, "ecl::CharacterIconRenderSystem")
+
+    [[bg3::hidden]] UnknownFunction qword10;
+    HashSet<EntityHandle> IconRequests;
+    HashSet<EntityHandle> DeletedIconRequests;
+    int RenderState;
+    float RenderTimeRemaining;
+    uint32_t ProcessingStage;
+    [[bg3::hidden]] void* IconRenderer;
+    uint32_t PollResult;
+    int field_CC;
+    int field_D0;
+    int field_D4;
+    bool IconRendererSetUp;
+    uint8_t field_D9;
+    uint8_t field_DA;
+    uint8_t field_DB;
+    uint16_t field_DC;
+    uint8_t field_DE;
+    ScratchBuffer Icon;
+    EntityHandle EntityBeingRendered;
+    EntityHandle field_140;
+    uint32_t field_148;
+    EntityHandle RenderCallback;
+    uint32_t SessionCount;
+    [[bg3::hidden]] void* EquipmentVisualsSystem;
+};
+
 END_NS()

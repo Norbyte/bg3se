@@ -30,6 +30,7 @@ BEGIN_ENUM(ExtSystemType, uint32_t)
 
     E(ClientEquipmentVisuals)
     E(ClientVisual)
+    E(ClientCharacterIconRender)
     E(SoundRouting)
     E(Max)
 END_ENUM()
@@ -872,6 +873,10 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
     E(ProjectileRequestTargetTracking)
     E(ProjectileUpdateTargetTracking)
     E(ProjectileSplitThrowableObjectRequest)
+
+    // Custom Icon
+    E(ClientCharacterIconRequest)
+    E(ClientCharacterIconResult)
 
     E(ClientCharacter)
     E(ClientItem)
