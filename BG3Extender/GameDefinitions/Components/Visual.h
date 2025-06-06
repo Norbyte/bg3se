@@ -728,4 +728,45 @@ struct CharacterManager : public BaseSystem
     bool ReloadVisualSets;
     uint8_t ColorBlindMode;
 };
+
+END_NS()
+
+BEGIN_NS(ecl::equipment)
+
+struct EquipmentSlotVisualState
+{
+    EntityHandle Item;
+    uint8_t field_8;
+    uint8_t field_9;
+};
+
+struct VisualsVisibilityStateComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClientEquipmentVisibilityState, "ecl::equipment::VisualsVisibilityStateComponent")
+
+    HashMap<ItemSlot, EquipmentSlotVisualState> Equipment;
+    uint8_t field_40;
+    uint8_t field_41;
+};
+
+struct VisualsDesiredStateComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClientVisualsDesiredState, "ecl::equipment::VisualsDesiredStateComponent")
+
+    HashMap<ItemSlot, EquipmentVisualData> Slots;
+};
+
+struct VisualsVisibilityStateSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ClientVisualsVisibilityState, "ecl::equipment::VisualsVisibilityStateSystem")
+
+    HashMap<EntityHandle, bool> SetVisualState;
+    HashSet<EntityHandle> UnloadVisuals;
+    [[bg3::hidden]] void* CacheTemplateManager;
+    [[bg3::hidden]] void* LevelManager;
+    [[bg3::hidden]] void* GlobalTemplateManager;
+    [[bg3::hidden]] void* ResourceManager;
+    [[bg3::hidden]] void* VisualsVisibilityStateUnitTestHelper;
+};
+
 END_NS()

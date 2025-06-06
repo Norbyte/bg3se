@@ -482,3 +482,10 @@ struct IgnoreSurfacesComponent : public BaseComponent
 
 
 END_NS()
+
+BEGIN_NS(game)
+
+DEFINE_TAG_COMPONENT(ls::game, PauseExcludedComponent, PauseExcluded)
+DEFINE_TAG_COMPONENT(ls::game, PauseComponent, Pause)
+
+END_NS()
