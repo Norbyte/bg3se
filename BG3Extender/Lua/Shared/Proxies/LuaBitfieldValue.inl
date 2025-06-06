@@ -69,7 +69,11 @@ int BitfieldValueMetatable::Index(lua_State* L, CppObjectMetadata& self)
             lua_newtable(L);
             int i = 1;
             for (auto const& val : ei->Values) {
-                if ((self.Value & val.Value) == val.Value) {
+                // Don't return the "0" label
+                if (val.Value != 0
+                    // Don't return composite values
+                    && (val.Value & (val.Value - 1)) == 0 
+                    && (self.Value & val.Value) == val.Value) {
                     settable(L, i, val.Key, -3);
                     i++;
                 }
