@@ -500,4 +500,26 @@ struct EquipmentVisualsSystem : public BaseSystem
     HashSet<EntityHandle> DestroyVisuals;
 };
 
+struct VisualSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ClientVisual, "ecl::VisualSystem")
+
+    [[bg3::hidden]] UnknownSignal field_10;
+    [[bg3::hidden]] UnknownSignalSubscriber field_28;
+    [[bg3::hidden]] UnknownSignalSubscriber field_78;
+    [[bg3::hidden]] UnknownSignalSubscriber field_C8;
+    [[bg3::hidden]] UnknownSignalSubscriber field_118;
+    [[bg3::hidden]] UnknownFunction field_168;
+    HashMap<EntityHandle, bool> ReloadVisuals;
+    HashMap<EntityHandle, uint32_t> ChangeSplatterState;
+    HashMap<EntityHandle, uint32_t> SplatterType;
+    [[bg3::hidden]] __int64 field_268[6];
+    bool ReloadAllVisuals;
+    [[bg3::hidden]] void* LSVisualSystem;
+    [[bg3::hidden]] void* CacheTemplateManager;
+    [[bg3::hidden]] void* LevelManager;
+    [[bg3::hidden]] void* GlobalTemplateManager;
+    [[bg3::hidden]] void* ResourceManager;
+};
+
 END_NS()

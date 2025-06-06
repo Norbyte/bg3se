@@ -29,6 +29,7 @@ BEGIN_ENUM(ExtSystemType, uint32_t)
     E(ServerLongRest)
 
     E(ClientEquipmentVisuals)
+    E(ClientVisual)
     E(SoundRouting)
     E(Max)
 END_ENUM()

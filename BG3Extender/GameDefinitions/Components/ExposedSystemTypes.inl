@@ -25,4 +25,5 @@ T(esv::ExperienceSystem)
 T(esv::LongRestSystem)
 
 T(ecl::EquipmentVisualsSystem)
+T(ecl::VisualSystem)
 T(SoundRoutingSystem)
