@@ -222,10 +222,10 @@ public:
         // Locked check (at this point we're certain noone is manipulating the initialized flag)
         if (!initialized_) return;
 
-        curViewport_ = (curViewport_ + 1) % viewports_.size();
-        // Always use viewport 0 as the main viewport to match FinishFrame and presentPreHook
+        // Always use viewport 0 - no cycling
+        curViewport_ = 0;
         GImGui->Viewports[0] = &viewports_[0].Viewport;
-        ERR("VK: NewFrame - Set main viewport to 0 (curViewport_=%d)", curViewport_);
+        ERR("VK: NewFrame - Using viewport 0");
 
         if (requestReloadFonts_) {
             IMGUI_DEBUG("Rebuilding font atlas");
