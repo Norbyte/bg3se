@@ -185,10 +185,13 @@ public:
         ImGui_ImplVulkan_CreateFontsTexture();
 
         initialized_ = true;
+        
+        // Ensure drawViewport_ is set to a valid value after initialization
+        drawViewport_ = 0;
 
         IMGUI_DEBUG("VK POSTINIT - uiFrameworkStarted %d", uiFrameworkStarted_ ? 1 : 0);
         IMGUI_DEBUG("    Instance %p, PhysicalDevice %p, Device %p", instance_, physicalDevice_, device_);
-        IMGUI_DEBUG("    QueueFamily %d, RenderQueue %p", queueFamily_, renderQueue_, swapChain_);
+        IMGUI_DEBUG("    QueueFamily %d, RenderQueue %p, CommandPool %p", queueFamily_, renderQueue_, swapchain_.commandPool_);
         IMGUI_DEBUG("    PipelineCache %p, DescriptorPool %p, Sampler %p", pipelineCache_, descriptorPool_, sampler_);
         IMGUI_DEBUG("VK SWAPCHAIN");
         IMGUI_DEBUG("    SwapChain %p, RenderPass %p, CommandPool %p", swapChain_, swapchain_.renderPass_, swapchain_.commandPool_);
@@ -220,7 +223,9 @@ public:
         if (!initialized_) return;
 
         curViewport_ = (curViewport_ + 1) % viewports_.size();
-        GImGui->Viewports[0] = &viewports_[curViewport_].Viewport;
+        // Always use viewport 0 as the main viewport to match FinishFrame and presentPreHook
+        GImGui->Viewports[0] = &viewports_[0].Viewport;
+        ERR("VK: NewFrame - Set main viewport to 0 (curViewport_=%d)", curViewport_);
 
         if (requestReloadFonts_) {
             IMGUI_DEBUG("Rebuilding font atlas");
@@ -229,7 +234,7 @@ public:
         }
 
         ImGui_ImplVulkan_NewFrame();
-        IMGUI_FRAME_DEBUG("VK: NewFrame");
+        ERR("VK: NewFrame");
     }
 
     void FinishFrame() override
@@ -243,8 +248,10 @@ public:
         // Locked check (at this point we're certain noone is manipulating the initialized flag)
         if (!initialized_) return;
 
-        auto& vp = viewports_[curViewport_].Viewport;
-        auto& drawLists = viewports_[curViewport_].ClonedDrawLists;
+        // Always use viewport 0 for consistent IMGUI data updates (matches presentPreHook)
+        const int32_t updateViewport = 0;
+        auto& vp = viewports_[updateViewport].Viewport;
+        auto& drawLists = viewports_[updateViewport].ClonedDrawLists;
 
         for (auto list : drawLists) {
             list->~ImDrawList();
@@ -260,8 +267,8 @@ public:
             drawLists.Add(drawList);
         }
 
-        drawViewport_ = curViewport_;
-        IMGUI_FRAME_DEBUG("VK: FinishFrame");
+        drawViewport_ = updateViewport;  // Always set to 0 to match the viewport we're updating
+        ERR("VK: FinishFrame - Updated viewport 0 data (curViewport_=%d)", curViewport_);
     }
 
     void ClearFrame() override
@@ -685,38 +692,107 @@ private:
     void presentPreHook(VkPresentInfoKHR* pPresentInfo)
     {
         // Extended start-of-function diagnostics
-        IMGUI_FRAME_DEBUG("presentPreHook start: frameNo=%llu drawViewport=%d pImageIndices=%p", 
+        ERR("presentPreHook start: frameNo=%llu drawViewport=%d pImageIndices=%p", 
             (unsigned long long)frameNo_, drawViewport_, pPresentInfo->pImageIndices);
 
         // Some engines leave pImageIndices null and rely on implicit acquisition; bail out if that happens
         if (pPresentInfo->pImageIndices == nullptr) {
-            IMGUI_FRAME_DEBUG("presentPreHook early exit: pImageIndices is NULL (implicit acquire path)");
+            ERR("presentPreHook early exit: pImageIndices is NULL (implicit acquire path)");
             return;
         }
 
-        auto& vp = viewports_[drawViewport_].Viewport;
-        if (!vp.DrawDataP.Valid) return;
+        // CRITICAL FIX: Always use viewport 0 for consistent IMGUI rendering
+        // The viewport cycling (0,1,2) was causing IMGUI to only appear 1/3 of the time
+        const int32_t renderViewport = 0;
+        
+        // Log the fix in action
+        if (renderViewport != drawViewport_) {
+            ERR("presentPreHook: VIEWPORT FIX - Using viewport %d instead of drawViewport_ %d", 
+                renderViewport, drawViewport_);
+        }
+        
+        auto& vp = viewports_[renderViewport].Viewport;
+        if (!vp.DrawDataP.Valid) {
+            ERR("presentPreHook: Viewport %d has no valid draw data", renderViewport);
+            return;
+        }
     
         // Get the current swapchain image
         auto imageIndex = pPresentInfo->pImageIndices[0];
         auto& image = swapchain_.images_[imageIndex];
-        IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Swap chain image #%d (%p)", imageIndex, image.image);
+        ERR("vkQueuePresentKHR: Swap chain image #%d (%p), using viewport %d", 
+            imageIndex, image.image, renderViewport);
     
+        // Track frame timing to detect DLSS frame generation patterns
+        static std::chrono::high_resolution_clock::time_point lastFrameTime;
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        auto frameDelta = std::chrono::duration_cast<std::chrono::microseconds>(currentTime - lastFrameTime).count();
+        
+        // Track semaphore patterns more comprehensively
+        static VkSemaphore lastSemaphore = VK_NULL_HANDLE;
+        static uint32_t sameSemasphoreCount = 0;
+        static std::unordered_map<VkSemaphore, uint32_t> semaphoreFrequency;
+        
+        bool semaphoreChanged = false;
+        if (pPresentInfo->waitSemaphoreCount > 0) {
+            VkSemaphore currentSemaphore = pPresentInfo->pWaitSemaphores[0];
+            
+            // Track if semaphore changed
+            if (currentSemaphore != lastSemaphore) {
+                semaphoreChanged = true;
+                sameSemasphoreCount = 0;
+            } else {
+                sameSemasphoreCount++;
+            }
+            
+            // Update frequency tracking
+            semaphoreFrequency[currentSemaphore]++;
+            
+            // Log detailed semaphore info
+            ERR("Semaphore tracking: current=%p, changed=%d, sameCount=%u, deltaTime=%lld us", 
+                currentSemaphore, semaphoreChanged, sameSemasphoreCount, frameDelta);
+            
+            lastSemaphore = currentSemaphore;
+        }
+        
+        // Update frame time
+        lastFrameTime = currentTime;
+
+        // For each swapchain image, ensure we have valid rendering state
+        // This is important because DLSS might present images out of order
+        static std::array<bool, 16> imageRenderedFlags = {}; // Track if image has current frame UI
+        static uint64_t lastFrameNumber = 0;
+        
+        // If frame number changed, reset all flags
+        if (frameNo_ != lastFrameNumber) {
+            std::fill(imageRenderedFlags.begin(), imageRenderedFlags.end(), false);
+            lastFrameNumber = frameNo_;
+        }
+        
+        // Check if this image already has UI rendered for this frame
+        if (imageIndex < imageRenderedFlags.size() && imageRenderedFlags[imageIndex]) {
+            ERR("Image %u already has UI for frame %llu, skipping render", 
+                imageIndex, (unsigned long long)frameNo_);
+            return;
+        }
+
         // Diagnostic: check fence status before waiting
         VkResult fenceStatusBefore = vkGetFenceStatus(device_, image.fence);
-        IMGUI_FRAME_DEBUG("presentPreHook: fence status before wait = %d", fenceStatusBefore);
+        ERR("presentPreHook: fence status before wait = %d", fenceStatusBefore);
 
         // Wait for the fence from the previous frame to ensure command buffer is available
         VkResult waitRes = vkWaitForFences(device_, 1, &image.fence, VK_TRUE, 50000000);
         if (waitRes != VK_SUCCESS) {
             ERR("vkWaitForFences returned %d (timeout / error)", waitRes);
+            return; // Don't proceed if fence wait failed
         } else {
-            IMGUI_FRAME_DEBUG("presentPreHook: fence wait succeeded");
+            ERR("presentPreHook: fence wait succeeded");
         }
 
         VkResult resetRes = vkResetFences(device_, 1, &image.fence);
         if (resetRes != VK_SUCCESS) {
             ERR("vkResetFences failed: %d", resetRes);
+            return; // Don't proceed if fence reset failed
         }
 
         // Begin recording command buffer
@@ -791,17 +867,20 @@ private:
         // End command buffer
         VK_CHECK(vkEndCommandBuffer(image.commandBuffer));
     
-        // Submit command buffer
-        VkPipelineStageFlags waitStages[16] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+        // Create proper wait stages for all semaphores
+        VkPipelineStageFlags waitStages[16];
         const uint32_t waitCount = std::min(pPresentInfo->waitSemaphoreCount, 16u);
-        for (uint32_t i = 1; i < waitCount; i++) waitStages[i] = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        for (uint32_t i = 0; i < waitCount; i++) {
+            waitStages[i] = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        }
     
         // Log the final wait-stage mask and associated semaphores
         for (uint32_t i = 0; i < waitCount; i++) {
-            IMGUI_FRAME_DEBUG("presentPreHook: waitStage[%u]=0x%x sem=%p", 
+            ERR("presentPreHook: waitStage[%u]=0x%x sem=%p", 
                 i, (uint32_t)waitStages[i], pPresentInfo->pWaitSemaphores[i]);
         }
 
+        // Submit command buffer with all original semaphores
         VkSubmitInfo submitInfo = {
             .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
             .waitSemaphoreCount = waitCount,
@@ -813,13 +892,25 @@ private:
             .pSignalSemaphores = &image.uiDoneSemaphore
         };
     
-        VK_CHECK(vkQueueSubmit(renderQueue_, 1, &submitInfo, image.fence));
-        IMGUI_FRAME_DEBUG("presentPreHook: submitted cmd; fence=%p, uiDoneSemaphore=%p", image.fence, image.uiDoneSemaphore);
-    
-        IMGUI_FRAME_DEBUG("presentPreHook: incoming waitSemaphoreCount=%u", pPresentInfo->waitSemaphoreCount);
-        for (uint32_t i = 0; i < pPresentInfo->waitSemaphoreCount && i < 16; i++) {
-            IMGUI_FRAME_DEBUG("    wait[%u]=%p", i, pPresentInfo->pWaitSemaphores[i]);
+        VkResult submitResult = vkQueueSubmit(renderQueue_, 1, &submitInfo, image.fence);
+        if (submitResult != VK_SUCCESS) {
+            ERR("vkQueueSubmit failed: %d", submitResult);
+            return;
         }
+        
+        ERR("presentPreHook: submitted cmd; fence=%p, uiDoneSemaphore=%p", image.fence, image.uiDoneSemaphore);
+    
+        // Mark this image as rendered for this frame
+        if (imageIndex < imageRenderedFlags.size()) {
+            imageRenderedFlags[imageIndex] = true;
+        }
+
+        // Replace the wait semaphore with our uiDoneSemaphore
+        // This ensures the present waits for IMGUI rendering to complete
+        const_cast<VkPresentInfoKHR*>(pPresentInfo)->waitSemaphoreCount = 1;
+        const_cast<VkPresentInfoKHR*>(pPresentInfo)->pWaitSemaphores = &image.uiDoneSemaphore;
+        
+        ERR("presentPreHook: replaced waitSemaphores with uiDoneSemaphore=%p", image.uiDoneSemaphore);
     }
     
 
@@ -853,7 +944,7 @@ private:
         
         if (pPresentInfo->swapchainCount != 1
             || pPresentInfo->pSwapchains[0] != swapChain_) {
-            IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Bad swapchain (%d: %p vs. %p)",
+            ERR("vkQueuePresentKHR: Bad swapchain (%d: %p vs. %p)",
                 pPresentInfo->swapchainCount, 
                 pPresentInfo->swapchainCount ? pPresentInfo->pSwapchains[0] : nullptr,
                 swapChain_);
@@ -884,7 +975,13 @@ private:
             }
         }
 
-        if (initialized_ && drawViewport_ != -1) {
+        if (initialized_) {
+            // Always ensure we have a valid viewport
+            if (drawViewport_ < 0 || drawViewport_ >= viewports_.size()) {
+                drawViewport_ = 0;
+                ERR("[IMGUI] vkQueuePresentKHR: Reset drawViewport_ to 0");
+            }
+            
             // Create a modifiable copy of the present info
             VkPresentInfoKHR modifiedPresentInfo = *pPresentInfo;
             
@@ -896,8 +993,7 @@ private:
             
             ERR("[IMGUI] vkQueuePresentKHR: IMGUI rendering complete for frame %d", frameNo_);
         } else {
-            IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Cannot append command buffer - initialized %d, drawViewport %d",
-                initialized_ ? 1 : 0, drawViewport_);
+            ERR("vkQueuePresentKHR: Cannot append command buffer - not initialized");
             // Still need to call the original function using CallOriginal
             QueuePresentKHRHook_.CallOriginal(queue, pPresentInfo);
         }
@@ -922,7 +1018,7 @@ private:
     VkDescriptorPool descriptorPool_{ VK_NULL_HANDLE };
     VkSampler sampler_{ VK_NULL_HANDLE };
     std::array<ViewportInfo, 3> viewports_;
-    int32_t drawViewport_{ -1 };
+    int32_t drawViewport_{ 0 };  // Changed from -1 to 0 to always have a valid viewport
     int32_t curViewport_{ 0 };
     int32_t frameNo_{ 0 };
     bool textureLimitWarningShown_{ false };
