@@ -905,12 +905,35 @@ private:
             imageRenderedFlags[imageIndex] = true;
         }
 
-        // Replace the wait semaphore with our uiDoneSemaphore
-        // This ensures the present waits for IMGUI rendering to complete
-        const_cast<VkPresentInfoKHR*>(pPresentInfo)->waitSemaphoreCount = 1;
-        const_cast<VkPresentInfoKHR*>(pPresentInfo)->pWaitSemaphores = &image.uiDoneSemaphore;
+        // Preserve original semaphores and add our UI done semaphore for DLSS Frame Generation compatibility.
+        // This ensures the present waits for both original operations and IMGUI rendering to complete.
+        static std::vector<VkSemaphore> combinedSemaphores; // Static to reuse allocated memory and keep pointer valid.
+        combinedSemaphores.clear(); // Clear for current frame's semaphores.
+
+        // Add all original wait semaphores from pPresentInfo.
+        if (pPresentInfo->waitSemaphoreCount > 0 && pPresentInfo->pWaitSemaphores != nullptr) {
+            for (uint32_t i = 0; i < pPresentInfo->waitSemaphoreCount; ++i) {
+                combinedSemaphores.push_back(pPresentInfo->pWaitSemaphores[i]);
+            }
+        }
+
+        // Add our UI-specific semaphore, signaled after UI rendering.
+        combinedSemaphores.push_back(image.uiDoneSemaphore);
+
+        // Update VkPresentInfoKHR with the combined list.
+        // const_cast is used here because pPresentInfo is const but we need to modify its members for the hook.
+        // This is a common pattern in Vulkan hooking scenarios where the hooked function receives a const struct
+        // but needs to alter it before passing it to the original function.
+        // The `combinedSemaphores` vector is static, so its data pointer remains valid for the duration of the
+        // vkQueuePresentKHR call.
+        const_cast<VkPresentInfoKHR*>(pPresentInfo)->waitSemaphoreCount = static_cast<uint32_t>(combinedSemaphores.size());
+        const_cast<VkPresentInfoKHR*>(pPresentInfo)->pWaitSemaphores = combinedSemaphores.data();
         
-        ERR("presentPreHook: replaced waitSemaphores with uiDoneSemaphore=%p", image.uiDoneSemaphore);
+        ERR("presentPreHook: Chained UI semaphore. Total wait semaphores: %u. UI done: %p. First original (if any): %p",
+            static_cast<uint32_t>(combinedSemaphores.size()), 
+            image.uiDoneSemaphore,
+            (pPresentInfo->waitSemaphoreCount > 0 && combinedSemaphores.size() > 1 ? combinedSemaphores[0] : nullptr)
+        );
     }
     
 
@@ -992,19 +1015,34 @@ private:
             QueuePresentKHRHook_.CallOriginal(queue, &modifiedPresentInfo);
             
             ERR("[IMGUI] vkQueuePresentKHR: IMGUI rendering complete for frame %d", frameNo_);
+
+            // Log what was passed in this branch
+            ERR("[IMGUI] vkQueuePresentKHRHooked (Post-Hook): Info passed to original (UI path) - waitSemaphoreCount=%u", modifiedPresentInfo.waitSemaphoreCount);
+            if (modifiedPresentInfo.pWaitSemaphores) {
+                for (uint32_t i = 0; i < modifiedPresentInfo.waitSemaphoreCount && i < 16; i++) {
+                    ERR("    wait[%u]=%p", i, modifiedPresentInfo.pWaitSemaphores[i]);
+                }
+            } else {
+                ERR("    pWaitSemaphores was null on modifiedPresentInfo");
+            }
         } else {
             ERR("vkQueuePresentKHR: Cannot append command buffer - not initialized");
             // Still need to call the original function using CallOriginal
             QueuePresentKHRHook_.CallOriginal(queue, pPresentInfo);
+
+            // Log what was passed in this branch
+            ERR("[IMGUI] vkQueuePresentKHRHooked (Post-Hook): Info passed to original (No UI path) - waitSemaphoreCount=%u", pPresentInfo->waitSemaphoreCount);
+            if (pPresentInfo->pWaitSemaphores) {
+                for (uint32_t i = 0; i < pPresentInfo->waitSemaphoreCount && i < 16; i++) {
+                    ERR("    wait[%u]=%p", i, pPresentInfo->pWaitSemaphores[i]);
+                }
+            } else {
+                ERR("    pWaitSemaphores was null on pPresentInfo");
+            }
         }
 
         frameNo_++;
-        // Additional debug: log wait semaphores coming into vkQueuePresent
-        ERR("[IMGUI] vkQueuePresentKHRHooked: waitSemaphoreCount=%u", pPresentInfo->waitSemaphoreCount);
-        for (uint32_t i = 0; i < pPresentInfo->waitSemaphoreCount && i < 16; i++) {
-            ERR("    wait[%u]=%p", i, pPresentInfo->pWaitSemaphores[i]);
-        }
-        // (Don't modify wait semaphores here; they were already adjusted in presentPreHook.)
+        // Logging moved into if/else branches to ensure correct scope and variable usage.
     }
 
     IMGUIManager& ui_;
