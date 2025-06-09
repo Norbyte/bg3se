@@ -817,25 +817,13 @@ private:
         // End command buffer
         VK_CHECK(vkEndCommandBuffer(image.commandBuffer));
     
-        // Create proper wait stages for all semaphores
-        VkPipelineStageFlags waitStages[16];
-        const uint32_t waitCount = std::min(pPresentInfo->waitSemaphoreCount, 16u);
-        for (uint32_t i = 0; i < waitCount; i++) {
-            waitStages[i] = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-        }
-    
-        // Log the final wait-stage mask and associated semaphores
-        for (uint32_t i = 0; i < waitCount; i++) {
-            ERR("presentPreHook: waitStage[%u]=0x%x sem=%p", 
-                i, (uint32_t)waitStages[i], pPresentInfo->pWaitSemaphores[i]);
-        }
-
-        // Submit command buffer with all original semaphores
+        // Submit command buffer WITHOUT waiting on original semaphores
+        // The present operation will handle all semaphore waiting
         VkSubmitInfo submitInfo = {
             .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-            .waitSemaphoreCount = waitCount,
-            .pWaitSemaphores = pPresentInfo->pWaitSemaphores,
-            .pWaitDstStageMask = waitStages,
+            .waitSemaphoreCount = 0,  // Don't wait on any semaphores
+            .pWaitSemaphores = nullptr,
+            .pWaitDstStageMask = nullptr,
             .commandBufferCount = 1,
             .pCommandBuffers = &image.commandBuffer,
             .signalSemaphoreCount = 1,
