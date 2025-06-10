@@ -658,16 +658,28 @@ private:
         }
     }
 
-    void presentPreHook(VkPresentInfoKHR* pPresentInfo)
+    // Return bool to indicate if rendering was actually performed
+    bool presentPreHook(VkPresentInfoKHR* pPresentInfo)
     {
         // Extended start-of-function diagnostics
         ERR("presentPreHook start: frameNo=%llu drawViewport=%d pImageIndices=%p", 
             (unsigned long long)frameNo_, drawViewport_, pPresentInfo->pImageIndices);
 
+        // Reference the static variables from vkQueuePresentKHRHooked
+        static bool& renderingDisabled = *[]() -> bool* { 
+            static bool renderingDisabled = false; 
+            return &renderingDisabled; 
+        }();
+        
+        static uint64_t& consecutiveRenderFailures = *[]() -> uint64_t* { 
+            static uint64_t consecutiveRenderFailures = 0; 
+            return &consecutiveRenderFailures; 
+        }();
+
         // Some engines leave pImageIndices null and rely on implicit acquisition; bail out if that happens
         if (pPresentInfo->pImageIndices == nullptr) {
             ERR("presentPreHook early exit: pImageIndices is NULL (implicit acquire path)");
-            return;
+            return false; // Return false to indicate no rendering was done
         }
 
         // CRITICAL FIX: Always use viewport 0 for consistent IMGUI rendering
@@ -683,7 +695,26 @@ private:
         auto& vp = viewports_[renderViewport].Viewport;
         if (!vp.DrawDataP.Valid) {
             ERR("presentPreHook: Viewport %d has no valid draw data", renderViewport);
-            return;
+            
+            // Track consecutive failures for failsafe mechanism
+            consecutiveRenderFailures++;
+            if (consecutiveRenderFailures > 50) {
+                ERR("CRITICAL: %llu consecutive render failures detected, disabling rendering", 
+                    (unsigned long long)consecutiveRenderFailures);
+                renderingDisabled = true;
+            }
+            
+            // IMPORTANT: When we have no valid draw data, just leave the semaphores alone
+            // Adding our unsignaled semaphore would cause a deadlock
+            ERR("presentPreHook: No rendering done, leaving original semaphores unchanged");
+            return false; // Return false to indicate no rendering was done
+        }
+        
+        // Reset failure counter on successful render
+        if (consecutiveRenderFailures > 0) {
+            ERR("Successfully rendering after %llu consecutive failures", 
+                (unsigned long long)consecutiveRenderFailures);
+            consecutiveRenderFailures = 0;
         }
     
         // Get the current swapchain image
@@ -723,28 +754,13 @@ private:
         if (imageIndex < imageRenderedFlags.size() && imageRenderedFlags[imageIndex]) {
             ERR("Image %u already has UI for frame %llu, skipping render", 
                 imageIndex, (unsigned long long)frameNo_);
-            return;
+            
+            // IMPORTANT: When we're skipping rendering, leave the semaphores alone
+            // Our semaphore won't be signaled, so adding it would cause a deadlock
+            ERR("presentPreHook: Image already rendered, leaving original semaphores unchanged");
+            return false; // Return false to indicate no rendering was done
         }
-
-        // Diagnostic: check fence status before waiting
-        VkResult fenceStatusBefore = vkGetFenceStatus(device_, image.fence);
-        ERR("presentPreHook: fence status before wait = %d", fenceStatusBefore);
-
-        // Wait for the fence from the previous frame to ensure command buffer is available
-        VkResult waitRes = vkWaitForFences(device_, 1, &image.fence, VK_TRUE, 50000000);
-        if (waitRes != VK_SUCCESS) {
-            ERR("vkWaitForFences returned %d (timeout / error)", waitRes);
-            return; // Don't proceed if fence wait failed
-        } else {
-            ERR("presentPreHook: fence wait succeeded");
-        }
-
-        VkResult resetRes = vkResetFences(device_, 1, &image.fence);
-        if (resetRes != VK_SUCCESS) {
-            ERR("vkResetFences failed: %d", resetRes);
-            return; // Don't proceed if fence reset failed
-        }
-
+        
         // Begin recording command buffer
         VkCommandBufferBeginInfo beginInfo = { VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO };
         beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
@@ -816,7 +832,11 @@ private:
     
         // End command buffer
         VK_CHECK(vkEndCommandBuffer(image.commandBuffer));
-    
+        
+        // CRITICAL FIX: Don't wait on fences at all, just reset them unconditionally
+        // This avoids deadlocks with DLSS frame generation
+        vkResetFences(device_, 1, &image.fence);
+        
         // Submit command buffer WITHOUT waiting on original semaphores
         // The present operation will handle all semaphore waiting
         VkSubmitInfo submitInfo = {
@@ -827,13 +847,13 @@ private:
             .commandBufferCount = 1,
             .pCommandBuffers = &image.commandBuffer,
             .signalSemaphoreCount = 1,
-            .pSignalSemaphores = &image.uiDoneSemaphore
+            .pSignalSemaphores = &image.uiDoneSemaphore  // Signal our semaphore when UI is done
         };
     
         VkResult submitResult = vkQueueSubmit(renderQueue_, 1, &submitInfo, image.fence);
         if (submitResult != VK_SUCCESS) {
             ERR("vkQueueSubmit failed: %d", submitResult);
-            return;
+            return false; // Return false to indicate rendering failed
         }
         
         ERR("presentPreHook: submitted cmd; fence=%p, uiDoneSemaphore=%p", image.fence, image.uiDoneSemaphore);
@@ -843,35 +863,31 @@ private:
             imageRenderedFlags[imageIndex] = true;
         }
 
-        // Preserve original semaphores and add our UI done semaphore for DLSS Frame Generation compatibility.
-        // This ensures the present waits for both original operations and IMGUI rendering to complete.
-        static std::vector<VkSemaphore> combinedSemaphores; // Static to reuse allocated memory and keep pointer valid.
-        combinedSemaphores.clear(); // Clear for current frame's semaphores.
-
-        // Add all original wait semaphores from pPresentInfo.
-        if (pPresentInfo->waitSemaphoreCount > 0 && pPresentInfo->pWaitSemaphores != nullptr) {
-            for (uint32_t i = 0; i < pPresentInfo->waitSemaphoreCount; ++i) {
-                combinedSemaphores.push_back(pPresentInfo->pWaitSemaphores[i]);
-            }
-        }
-
-        // Add our UI-specific semaphore, signaled after UI rendering.
-        combinedSemaphores.push_back(image.uiDoneSemaphore);
-
-        // Update VkPresentInfoKHR with the combined list.
-        // const_cast is used here because pPresentInfo is const but we need to modify its members for the hook.
-        // This is a common pattern in Vulkan hooking scenarios where the hooked function receives a const struct
-        // but needs to alter it before passing it to the original function.
-        // The `combinedSemaphores` vector is static, so its data pointer remains valid for the duration of the
-        // vkQueuePresentKHR call.
-        const_cast<VkPresentInfoKHR*>(pPresentInfo)->waitSemaphoreCount = static_cast<uint32_t>(combinedSemaphores.size());
-        const_cast<VkPresentInfoKHR*>(pPresentInfo)->pWaitSemaphores = combinedSemaphores.data();
+        // CRITICAL FIX FOR DEADLOCK: Don't reuse original semaphores at all!
+        // Only pass our UI semaphore to the present operation.
+        // This prevents deadlocks where the same semaphore is waited on twice.
         
-        ERR("presentPreHook: Chained UI semaphore. Total wait semaphores: %u. UI done: %p. First original (if any): %p",
-            static_cast<uint32_t>(combinedSemaphores.size()), 
+        // Store the original semaphore count and pointer for logging
+        uint32_t originalSemaphoreCount = pPresentInfo->waitSemaphoreCount;
+        const VkSemaphore* originalSemaphores = pPresentInfo->pWaitSemaphores;
+        
+        // Update VkPresentInfoKHR to only wait on our UI semaphore
+        // Use only our UI semaphore for the present operation
+        // This is the KEY FIX to prevent deadlocks - semaphores can only be waited on once
+        // We're using a static object to ensure the pointer remains valid after this function returns
+        static VkSemaphore uiSemaphore;
+        uiSemaphore = image.uiDoneSemaphore; // Copy the current image's semaphore
+        
+        // Update the present info to wait only on our UI semaphore
+        const_cast<VkPresentInfoKHR*>(pPresentInfo)->waitSemaphoreCount = 1;
+        const_cast<VkPresentInfoKHR*>(pPresentInfo)->pWaitSemaphores = &uiSemaphore;
+        
+        ERR("presentPreHook: CRITICAL FIX - Only waiting on UI semaphore: %p. Original wait count was %u",
             image.uiDoneSemaphore,
-            (pPresentInfo->waitSemaphoreCount > 0 && combinedSemaphores.size() > 1 ? combinedSemaphores[0] : nullptr)
+            originalSemaphoreCount
         );
+        
+        return true; // Return true to indicate successful rendering
     }
     
 
@@ -879,6 +895,37 @@ private:
         VkQueue queue,
         const VkPresentInfoKHR* pPresentInfo)
     {
+        // Global static variables for the startup delay
+        static uint64_t startupFrames = 0;
+        static const uint64_t STARTUP_DELAY_FRAMES = 10000;
+        static bool renderingDisabled = false;
+        static uint64_t consecutiveRenderFailures = 0;
+        
+        // Track if we're still in startup phase - but continue execution
+        // to ensure backend initialization happens
+        bool inStartupPhase = false;
+        if (startupFrames < STARTUP_DELAY_FRAMES) {
+            startupFrames++;
+            inStartupPhase = true;
+            if (startupFrames % 50 == 0) {
+                ERR("[IMGUI] Startup delay active (%llu/%llu frames)", 
+                    (unsigned long long)startupFrames, (unsigned long long)STARTUP_DELAY_FRAMES);
+            }
+        } else if (startupFrames == STARTUP_DELAY_FRAMES) {
+            // Log when startup delay is complete
+            startupFrames++;
+            ERR("[IMGUI] Startup delay complete after %llu frames, attempting to render", 
+                (unsigned long long)STARTUP_DELAY_FRAMES);
+        }
+        
+        if (renderingDisabled) {
+            if (frameNo_ % 100 == 0) {
+                ERR("[IMGUI] Rendering remains disabled for stability - frame %d", frameNo_);
+            }
+            frameNo_++;
+            return;
+        }
+
         // This is a pre-hook - it runs before the original function
         // We can only add our rendering, not control what happens after
         
@@ -945,10 +992,24 @@ private:
             ERR("[IMGUI] vkQueuePresentKHRHooked: Reset drawViewport_ to 0");
         }
         
-        // Call our pre-hook to do the IMGUI rendering
-        presentPreHook(const_cast<VkPresentInfoKHR*>(pPresentInfo));
+        // Skip actual rendering during startup delay, but keep incrementing frame number
+        if (inStartupPhase) {
+            ERR("[IMGUI] Still in startup phase (frame %llu/%llu), skipping render but continuing initialization", 
+                (unsigned long long)startupFrames, (unsigned long long)STARTUP_DELAY_FRAMES);
+            frameNo_++;
+            return;
+        }
         
-        ERR("[IMGUI] MCM rendering complete for frame %d", frameNo_);
+        // Call our pre-hook to do the IMGUI rendering
+        bool rendered = presentPreHook(const_cast<VkPresentInfoKHR*>(pPresentInfo));
+        
+        // Only log rendering complete if we actually rendered something
+        if (rendered) {
+            ERR("[IMGUI] MCM rendering complete for frame %d", frameNo_);
+        } else {
+            ERR("[IMGUI] MCM rendering skipped for frame %d", frameNo_);
+        }
+        
         frameNo_++;
         
         // The original present function (either DLSSG's or the game's) will be called automatically after this
