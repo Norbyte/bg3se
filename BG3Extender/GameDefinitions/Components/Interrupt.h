@@ -257,11 +257,8 @@ struct ManagementSystem : public BaseSystem
 
     [[bg3::hidden]] void* InterruptPrototypeManager;
     [[bg3::hidden]] UnknownFunction field_18;
+    HashSet<EntityHandle> RemoveContainers;
     HashMap<EntityHandle, bool> IsAsk;
-    [[bg3::hidden]] void* field_98;
-    [[bg3::hidden]] void* qwordA0;
-    Array<EntityHandle> PrototypeInteractionRequests;
-    Array<bool> field_B8;
     HashMap<EntityHandle, bool> IsEnabled;
 };
 

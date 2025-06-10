@@ -135,7 +135,6 @@ struct TargetContextData : public ContextData
     AttackDesc Attack;
     uint32_t StatusEvent{ 0 };
     FixedString StatusId;
-    bool IsFromItem{ false };
 };
 
 struct NearbyAttackedContextData : public ContextData

@@ -365,7 +365,6 @@ local function ValidateGlobals()
     Ext.Types.Validate(Ext.Stats.GetStatsManager())
     Ext.Types.Validate(Ext.Mod.GetModManager())
     Ext.Types.Validate(Ext.Mod.GetBaseMod())
-    Ext.Types.Validate(Ext.Level.GetActivePathfindingRequests())
 
     if Ext.UI then
         Ext.Types.Validate(Ext.Input.GetInputManager())
@@ -383,6 +382,35 @@ local function ValidateGlobals()
         ValidateDialogManager(dialogMgr)
     end
 end
+
+local WatchEntities = {}
+
+function WatchSingletons()
+    WatchEntities = {}
+    for _,comp in pairs(Ext.Enums.ExtComponentType) do
+        if type(comp) ~= "number" then
+            local comps = Ext.Entity.GetAllEntitiesWithComponent(comp)
+            if #comps == 1 then
+                WatchEntities[#WatchEntities+1] = {comps[1], comp}
+            end
+        end
+    end
+
+    print("Set up watcher for " .. #WatchEntities .. " singletons")
+
+    Ext.Events.Tick:Subscribe(function () 
+        for _,defn in pairs(WatchEntities) do
+            local comp = defn[1][defn[2]]
+            if comp ~= nil then
+                Ext.Types.Validate(comp)
+            end
+        end
+    end)
+end
+
+Ext.RegisterConsoleCommand("se_watchsingletons", function ()
+    WatchSingletons()
+end)
 
 Ext.RegisterConsoleCommand("se_entitytest", function ()
     ValidateEntities()

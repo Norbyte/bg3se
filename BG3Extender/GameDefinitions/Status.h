@@ -225,9 +225,6 @@ struct StatusInvisible : public StatusBoost
 struct StatusKnockedDown : public Status
 {
     static constexpr auto Type = StatusType::KNOCKED_DOWN;
-
-    uint8_t KnockedDownState;
-    bool IsInstant;
 };
 
 struct StatusMaterial : public Status

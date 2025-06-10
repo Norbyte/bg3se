@@ -51,7 +51,7 @@ struct DataCacheSingletonComponent : public BaseComponent
 {
     DEFINE_COMPONENT(SpellCastDataCache, "eoc::spell_cast::DataCacheSingletonComponent")
 
-    HashMap<FixedString, DataCache> Spells;
+    HashMap<Guid, DataCache> Spells;
 };
 
 struct IsCastingComponent : public BaseComponent
@@ -278,7 +278,8 @@ struct CastCancelRequest
     EntityHandle Caster;
     std::optional<Guid> SpellCastGuid;
     bool Forced{ false };
-    bool CharacterReassigned{ false };
+    // Editor only?
+    // bool CharacterReassigned{ false };
 };
 
 struct CastConfirmRequest
@@ -323,8 +324,8 @@ struct CastRequestsComponent : public BaseComponent
     DEFINE_COMPONENT(ServerSpellCastRequests, "esv::spell_cast::CastRequestsComponent")
 
     Array<CastStartRequest> StartRequests;
-    Array<CastConfirmRequest> ConfirmRequests;
     Array<CastCancelRequest> CancelRequests;
+    Array<CastConfirmRequest> ConfirmRequests;
     Array<PreviewSetRequest> PreviewSetRequests;
 };
 

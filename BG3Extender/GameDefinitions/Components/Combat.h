@@ -26,6 +26,14 @@ struct ParticipantComponent : public BaseComponent
     Guid AiHint;
 };
 
+struct CombatPosition
+{
+    EntityHandle Entity;
+    glm::vec3 field_8;
+    float field_14;
+    double field_18;
+};
+
 struct StateComponent : public BaseComponent
 {
     DEFINE_COMPONENT(CombatState, "eoc::combat::StateComponent")
@@ -39,7 +47,7 @@ struct StateComponent : public BaseComponent
     uint8_t field_AC;
     bool IsInNarrativeCombat;
     float field_B0;
-    Array<EntityHandle> field_B8;
+    Array<CombatPosition> field_B8;
     uint8_t field_D0;
 };
 

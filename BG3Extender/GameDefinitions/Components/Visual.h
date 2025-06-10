@@ -553,7 +553,7 @@ struct MaterialParameterVec3
 struct MaterialParameterVec4
 {
     FixedString Parameter;
-    glm::vec4 Value;
+    glm::aligned_highp_vec4 Value;
     bool Override{ false };
     uint8_t field_9{ 0 };
     bool Preset{ false };
@@ -570,7 +570,7 @@ struct MaterialParameterTexture
 
 struct MaterialParameterPresetSlot
 {
-    FixedString field_0;
+    FixedString GroupName;
     FixedString CCPreset;
     uint32_t field_8;
 };
@@ -595,14 +595,15 @@ struct VisualLocatorAttachment
 
 struct VisualSetSlot
 {
-    FixedString field_0;
-    FixedString field_4;
+    FixedString Slot;
+    FixedString Visual;
     FixedString field_8;
 };
 
 struct VisualSetSlots
 {
-    FixedString StatsColorPresetResource;
+    // Editor only
+    // FixedString StatsColorPresetResource;
     FixedString BodySetVisual;
     Array<VisualSetSlot> VisualSlots;
     Array<VisualLocatorAttachment> LocatorAttachments;
@@ -619,7 +620,7 @@ struct CharacterIconRequestComponent : public BaseComponent
 {
     DEFINE_COMPONENT(ClientCharacterIconRequest, "ecl::CharacterIconRequestComponent")
 
-    FixedString field_0;
+    FixedString Visual;
     VisualSetSlots VisualSet;
     Array<FixedString> Equipment;
     FixedString Template;

@@ -731,6 +731,7 @@ BEGIN_ENUM(CauseType, uint8_t)
     EV(AURA, 8)
     EV(InventoryItem, 9)
     EV(WorldItemThrow, 10)
+    EV(Unknown11, 11)
 END_ENUM()
 
 

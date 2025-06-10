@@ -157,13 +157,14 @@ struct HitRequest
     EntityHandle TargetProxy;
     HitDesc Desc;
     HitWith HitWith{ HitWith::None };
+    uint8_t field_1C1{ 0 };
     int StoryActionId{ -1 };
     ActionOriginator Originator;
     AbilityId Ability{ AbilityId::None };
     EntityHandle Weapon;
-    bool FromFunctor{ false };
-    bool field_1F9{ false };
-    uint8_t field_1FA{ 0 };
+    bool DecreaseDelayDeathCount{ false };
+    bool SkipNotifications{ false };
+    bool field_1FA{ false };
 };
 
 struct ReactionRequest

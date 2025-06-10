@@ -107,11 +107,12 @@ struct SummonDesc
     glm::vec3 Position{ .0f, .0f, .0f };
     glm::quat Rotation{ .0f, .0f, .0f, 1.0f };
     std::optional<float> Lifetime;
-    bool field_34{ false };
     HashSet<FixedString> StatusesToApply;
     SpellIdWithPrototype SpellId;
+    bool IsFromFunctor{ false };
     bool AddToExistingConcentration{ false };
     bool ApplyLateJoinPenalty{ false };
+    bool UseCasterPassives{ false };
     ActionOriginator Originator;
     FixedString Container;
     EntityHandle AttachToProjectile;

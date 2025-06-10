@@ -129,7 +129,6 @@ struct SpellComponent : public BaseComponent
     EntityHandle Spell;
     bg3se::spell_cast::IntermediateTarget Target;
     int Index;
-    bool ConsumeStack;
 };
 
 struct InitializationData
