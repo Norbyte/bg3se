@@ -2082,7 +2082,7 @@ void IMGUIManager::Update()
     }
 
     if (frameNo_ == 0) {
-        IMGUI_DEBUG("Draw initial frame");
+        ERR("Draw initial frame");
     }
 
     frameNo_++;
