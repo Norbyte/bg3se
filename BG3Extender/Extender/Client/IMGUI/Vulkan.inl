@@ -46,7 +46,7 @@ public:
 
     ~VulkanBackend() override
     {
-        IMGUI_DEBUG("Destroying VK backend");
+        ERR("Destroying VK backend");
         releaseSwapChain(swapchain_);
         DestroyUI();
         DisableHooks();
@@ -56,7 +56,7 @@ public:
     {
         if (CreateInstanceHook_.IsWrapped()) return;
 
-        IMGUI_DEBUG("VulkanBackend::EnableHooks()");
+        ERR("VulkanBackend::EnableHooks()");
 
         DetourTransactionBegin();
         DetourUpdateThread(GetCurrentThread());
@@ -102,7 +102,7 @@ public:
     {
         if (!CreateInstanceHook_.IsWrapped()) return;
 
-        IMGUI_DEBUG("VulkanBackend::DisableHooks()");
+        ERR("VulkanBackend::DisableHooks()");
 
         DetourTransactionBegin();
         DetourUpdateThread(GetCurrentThread());
@@ -120,7 +120,7 @@ public:
     {
         if (initialized_) return;
 
-        IMGUI_DEBUG("VulkanBackend::InitializeUI()");
+        ERR("VulkanBackend::InitializeUI()");
 
         VkDescriptorPoolSize poolSize
         {
@@ -152,7 +152,7 @@ public:
         };
         VK_CHECK(vkCreateSampler(device_, &samplerInfo, nullptr, &sampler_));
 
-        IMGUI_DEBUG("VK initialization: desc pool %p, sampler %p", descriptorPool_, sampler_);
+        ERR("VK initialization: desc pool %p, sampler %p", descriptorPool_, sampler_);
 
         ImGui_ImplVulkan_InitInfo init_info = {};
         init_info.Instance = instance_;
@@ -180,15 +180,15 @@ public:
 
         initialized_ = true;
 
-        IMGUI_DEBUG("VK POSTINIT - uiFrameworkStarted %d", uiFrameworkStarted_ ? 1 : 0);
-        IMGUI_DEBUG("    Instance %p, PhysicalDevice %p, Device %p", instance_, physicalDevice_, device_);
-        IMGUI_DEBUG("    QueueFamily %d, RenderQueue %p", queueFamily_, renderQueue_, swapChain_);
-        IMGUI_DEBUG("    PipelineCache %p, DescriptorPool %p, Sampler %p", pipelineCache_, descriptorPool_, sampler_);
-        IMGUI_DEBUG("VK SWAPCHAIN");
-        IMGUI_DEBUG("    SwapChain %p, RenderPass %p, CommandPool %p", swapChain_, swapchain_.renderPass_, swapchain_.commandPool_);
-        IMGUI_DEBUG("VK FRAMEBUFFERS");
+        ERR("VK POSTINIT - uiFrameworkStarted %d", uiFrameworkStarted_ ? 1 : 0);
+        ERR("    Instance %p, PhysicalDevice %p, Device %p", instance_, physicalDevice_, device_);
+        ERR("    QueueFamily %d, RenderQueue %p", queueFamily_, renderQueue_, swapChain_);
+        ERR("    PipelineCache %p, DescriptorPool %p, Sampler %p", pipelineCache_, descriptorPool_, sampler_);
+        ERR("VK SWAPCHAIN");
+        ERR("    SwapChain %p, RenderPass %p, CommandPool %p", swapChain_, swapchain_.renderPass_, swapchain_.commandPool_);
+        ERR("VK FRAMEBUFFERS");
         for (auto const& image : swapchain_.images_) {
-            IMGUI_DEBUG("    Image %p, FB %p, View %p, Fence %p", image.image, image.framebuffer, image.view, image.fence);
+            ERR("    Image %p, FB %p, View %p, Fence %p", image.image, image.framebuffer, image.view, image.fence);
         }
     }
 
@@ -196,7 +196,7 @@ public:
     {
         if (!initialized_) return;
 
-        IMGUI_DEBUG("VK shutdown");
+        ERR("VK shutdown");
 
         ImGui_ImplVulkan_Shutdown();
         drawViewport_ = -1;
@@ -217,13 +217,13 @@ public:
         GImGui->Viewports[0] = &viewports_[curViewport_].Viewport;
 
         if (requestReloadFonts_) {
-            IMGUI_DEBUG("Rebuilding font atlas");
+            ERR("Rebuilding font atlas");
             ImGui_ImplVulkan_DestroyFontsTexture();
             requestReloadFonts_ = false;
         }
 
         ImGui_ImplVulkan_NewFrame();
-        IMGUI_FRAME_DEBUG("VK: NewFrame");
+        ERR("VK: NewFrame");
     }
 
     void FinishFrame() override
@@ -254,7 +254,7 @@ public:
         }
 
         drawViewport_ = curViewport_;
-        IMGUI_FRAME_DEBUG("VK: FinishFrame");
+        ERR("VK: FinishFrame");
     }
 
     void ClearFrame() override
@@ -345,17 +345,17 @@ private:
         VkInstance* pInstance,
         VkResult result)
     {
-        IMGUI_DEBUG("vkCreateInstance -> %p, %d", *pInstance, result);
+        ERR("vkCreateInstance -> %p, %d", *pInstance, result);
         if (pCreateInfo->pApplicationInfo != nullptr && pCreateInfo->pApplicationInfo->pApplicationName != nullptr) {
-            IMGUI_DEBUG("App=%s", pCreateInfo->pApplicationInfo->pApplicationName);
+            ERR("App=%s", pCreateInfo->pApplicationInfo->pApplicationName);
         }
 
         for (uint32_t i = 0; i < pCreateInfo->enabledLayerCount; i++) {
-            IMGUI_DEBUG("Layer=%s", pCreateInfo->ppEnabledLayerNames[i]);
+            ERR("Layer=%s", pCreateInfo->ppEnabledLayerNames[i]);
         }
 
         for (uint32_t i = 0; i < pCreateInfo->enabledExtensionCount; i++) {
-            IMGUI_DEBUG("Extension=%s", pCreateInfo->ppEnabledExtensionNames[i]);
+            ERR("Extension=%s", pCreateInfo->ppEnabledExtensionNames[i]);
         }
 
         if (result != VK_SUCCESS) return;
@@ -363,7 +363,7 @@ private:
         instance_ = *pInstance;
 
         if (!CreateDeviceHook_.IsWrapped()) {
-            IMGUI_DEBUG("Hooking CreateDevice()");
+            ERR("Hooking CreateDevice()");
 
             DetourTransactionBegin();
             DetourUpdateThread(GetCurrentThread());
@@ -386,18 +386,18 @@ void vkCreateDeviceHooked(
     VkResult                       result)
 {
 // ── basic diagnostics ───────────────────────────────────────────────────
-IMGUI_DEBUG("vkCreateDevice flags=%x -> %p, %d",
+ERR("vkCreateDevice flags=%x -> %p, %d",
             pCreateInfo->flags, *pDevice, result);
 
 for (uint32_t i = 0; i < pCreateInfo->queueCreateInfoCount; ++i) {
     const auto& q = pCreateInfo->pQueueCreateInfos[i];
-    IMGUI_DEBUG("  Queue[%u] flags=%x fam=%u cnt=%u",
+    ERR("  Queue[%u] flags=%x fam=%u cnt=%u",
                 i, q.flags, q.queueFamilyIndex, q.queueCount);
 }
 for (uint32_t i = 0; i < pCreateInfo->enabledLayerCount; ++i)
-    IMGUI_DEBUG("  Layer  : %s", pCreateInfo->ppEnabledLayerNames[i]);
+    ERR("  Layer  : %s", pCreateInfo->ppEnabledLayerNames[i]);
 for (uint32_t i = 0; i < pCreateInfo->enabledExtensionCount; ++i)
-    IMGUI_DEBUG("  Ext    : %s", pCreateInfo->ppEnabledExtensionNames[i]);
+    ERR("  Ext    : %s", pCreateInfo->ppEnabledExtensionNames[i]);
 
 // bail out if creation failed
 if (result != VK_SUCCESS)
@@ -424,7 +424,7 @@ if (result != VK_SUCCESS)
         {
             queueFamily_ = fam;
             vkGetDeviceQueue(device_, fam, 0, &renderQueue_);
-            IMGUI_DEBUG("Detected graphics queue family %u, queue=%p", fam, renderQueue_);
+            ERR("Detected graphics queue family %u, queue=%p", fam, renderQueue_);
             break;
         }
     }
@@ -452,7 +452,7 @@ PFN_vkQueuePresentKHR nextPresent =
 // ── install detours exactly once ────────────────────────────────────────
 if (!CreatePipelineCacheHook_.IsWrapped())
 {
-    IMGUI_DEBUG("Hooking Vulkan device-level functions");
+    ERR("Hooking Vulkan device-level functions");
 
     DetourTransactionBegin();
     DetourUpdateThread(GetCurrentThread());
@@ -473,7 +473,7 @@ if (!CreatePipelineCacheHook_.IsWrapped())
         if (device != device_) return;
 
         std::lock_guard _(globalResourceLock_);
-        IMGUI_DEBUG("VK device destroyed");
+        ERR("VK device destroyed");
 
         DestroyUI();
         releaseSwapChain(swapchain_);
@@ -503,7 +503,7 @@ if (!CreatePipelineCacheHook_.IsWrapped())
     {
         if (result != VK_SUCCESS) return;
 
-        IMGUI_DEBUG("VK pipeline cache created: %p", *pPipelineCache);
+        ERR("VK pipeline cache created: %p", *pPipelineCache);
         pipelineCache_ = *pPipelineCache;
     }
 
@@ -517,7 +517,7 @@ if (!CreatePipelineCacheHook_.IsWrapped())
         if (result != VK_SUCCESS) return;
 
         std::lock_guard _(globalResourceLock_);
-        IMGUI_DEBUG("VK swap chain created: %p", *pSwapchain);
+        ERR("VK swap chain created: %p", *pSwapchain);
         swapChain_ = *pSwapchain;
         collectSwapChainInfo(pCreateInfo);
     }
@@ -530,7 +530,7 @@ if (!CreatePipelineCacheHook_.IsWrapped())
         if (device != device_ || swapchain != swapChain_) return;
 
         std::lock_guard _(globalResourceLock_);
-        IMGUI_DEBUG("VK swap chain destroyed");
+        ERR("VK swap chain destroyed");
         DestroyUI();
         releaseSwapChain(swapchain_);
 
@@ -567,7 +567,7 @@ if (!CreatePipelineCacheHook_.IsWrapped())
 
         swapInfo.width_ = pCreateInfo->imageExtent.width;
         swapInfo.height_ = pCreateInfo->imageExtent.height;
-        IMGUI_DEBUG("Swap chain size: %d x %d", swapInfo.width_, swapInfo.height_);
+        ERR("Swap chain size: %d x %d", swapInfo.width_, swapInfo.height_);
 
         {
             VkAttachmentDescription attDesc = {
@@ -707,7 +707,7 @@ if (!CreatePipelineCacheHook_.IsWrapped())
         if (!vp.DrawDataP.Valid) return;
 
         auto& image = swapchain_.images_[pPresentInfo->pImageIndices[0]];
-        IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Swap chain image #%d (%p)", pPresentInfo->pImageIndices[0], image.image);
+        ERR("vkQueuePresentKHR: Swap chain image #%d (%p)", pPresentInfo->pImageIndices[0], image.image);
 
         // wait for this command buffer to be free
         // If this ring has never been used the fence is signalled on creation.
@@ -821,7 +821,7 @@ if (!CreatePipelineCacheHook_.IsWrapped())
     {
         if (pPresentInfo->swapchainCount != 1
             || pPresentInfo->pSwapchains[0] != swapChain_) {
-            IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Bad swapchain (%d: %p vs. %p)",
+            ERR("vkQueuePresentKHR: Bad swapchain (%d: %p vs. %p)",
                 pPresentInfo->swapchainCount, 
                 pPresentInfo->swapchainCount ? pPresentInfo->pSwapchains[0] : nullptr,
                 swapChain_);
@@ -831,13 +831,13 @@ if (!CreatePipelineCacheHook_.IsWrapped())
 
         std::lock_guard _(globalResourceLock_);
         if (!initialized_) {
-            IMGUI_DEBUG("vkQueuePresentKHR: Render backend initialized yet");
+            ERR("vkQueuePresentKHR: Render backend initialized yet");
             frameNo_ = 0;
 
             if (!uiFrameworkStarted_) {
                 ui_.OnRenderBackendInitialized();
                 uiFrameworkStarted_ = true;
-                IMGUI_DEBUG("vkQueuePresentKHR: uiFrameworkStarted_ = true");
+                ERR("vkQueuePresentKHR: uiFrameworkStarted_ = true");
 
                 for (auto i = 0; i < viewports_.size(); i++) {
                     viewports_[i].Viewport = *GImGui->Viewports[0];
@@ -853,7 +853,7 @@ if (!CreatePipelineCacheHook_.IsWrapped())
         if (initialized_ && drawViewport_ != -1) {
             presentPreHook(const_cast<VkPresentInfoKHR*>(pPresentInfo));
         } else {
-            IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Cannot append command buffer - initialized %d, drawViewport %d",
+            ERR("vkQueuePresentKHR: Cannot append command buffer - initialized %d, drawViewport %d",
                 initialized_ ? 1 : 0, drawViewport_);
         }
 
