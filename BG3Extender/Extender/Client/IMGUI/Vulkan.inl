@@ -375,77 +375,98 @@ private:
         }
     }
 
-    void vkCreateDeviceHooked(
-        VkPhysicalDevice physicalDevice,
-        const VkDeviceCreateInfo* pCreateInfo,
-        const VkAllocationCallbacks* pAllocator,
-        VkDevice* pDevice,
-        VkResult result)
+// ---------------------------------------------------------------------------
+// VulkanBackend::vkCreateDeviceHooked
+// ---------------------------------------------------------------------------
+void vkCreateDeviceHooked(
+    VkPhysicalDevice               physicalDevice,
+    const VkDeviceCreateInfo*      pCreateInfo,
+    const VkAllocationCallbacks*   pAllocator,
+    VkDevice*                      pDevice,
+    VkResult                       result)
+{
+// ── basic diagnostics ───────────────────────────────────────────────────
+IMGUI_DEBUG("vkCreateDevice flags=%x -> %p, %d",
+            pCreateInfo->flags, *pDevice, result);
+
+for (uint32_t i = 0; i < pCreateInfo->queueCreateInfoCount; ++i) {
+    const auto& q = pCreateInfo->pQueueCreateInfos[i];
+    IMGUI_DEBUG("  Queue[%u] flags=%x fam=%u cnt=%u",
+                i, q.flags, q.queueFamilyIndex, q.queueCount);
+}
+for (uint32_t i = 0; i < pCreateInfo->enabledLayerCount; ++i)
+    IMGUI_DEBUG("  Layer  : %s", pCreateInfo->ppEnabledLayerNames[i]);
+for (uint32_t i = 0; i < pCreateInfo->enabledExtensionCount; ++i)
+    IMGUI_DEBUG("  Ext    : %s", pCreateInfo->ppEnabledExtensionNames[i]);
+
+// bail out if creation failed
+if (result != VK_SUCCESS)
+    return;
+
+// ── remember device / queue family / graphics queue ────────────────────
+{
+    std::lock_guard _(globalResourceLock_);
+
+    physicalDevice_ = physicalDevice;
+    device_         = *pDevice;
+
+    uint32_t numFamilies = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice_, &numFamilies, nullptr);
+
+    Array<VkQueueFamilyProperties> families;
+    families.resize(numFamilies);
+    vkGetPhysicalDeviceQueueFamilyProperties(
+        physicalDevice_, &numFamilies, families.raw_buf());
+
+    for (uint32_t fam = 0; fam < numFamilies; ++fam)
     {
-        IMGUI_DEBUG("vkCreateDevice flags=%x -> %p, %d", pCreateInfo->flags, *pDevice, result);
-
-        for (uint32_t i = 0; i < pCreateInfo->queueCreateInfoCount; i++) {
-            auto const& queue = pCreateInfo->pQueueCreateInfos[i];
-            IMGUI_DEBUG("Queue=%x, %d, %d", queue.flags, queue.queueFamilyIndex, queue.queueCount);
-        }
-
-        for (uint32_t i = 0; i < pCreateInfo->enabledLayerCount; i++) {
-            IMGUI_DEBUG("Layer=%s", pCreateInfo->ppEnabledLayerNames[i]);
-        }
-
-        for (uint32_t i = 0; i < pCreateInfo->enabledExtensionCount; i++) {
-            IMGUI_DEBUG("Extension=%s", pCreateInfo->ppEnabledExtensionNames[i]);
-        }
-
-        if (result != VK_SUCCESS) return;
-
-        std::lock_guard _(globalResourceLock_);
-        physicalDevice_ = physicalDevice;
-        device_ = *pDevice;
-        
-        uint32_t numFamilies;
-        vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice_, &numFamilies, nullptr);
-        Array<VkQueueFamilyProperties> families;
-        families.resize(numFamilies);
-        vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice_, &numFamilies, families.raw_buf());
-
-        uint32_t queueFamily{ 0 };
-        VkQueue queue{ nullptr };
-        for (auto const& family : families) {
-            if (family.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
-                vkGetDeviceQueue(device_, queueFamily, 0, &queue);
-                queueFamily_ = queueFamily;
-                renderQueue_ = queue;
-                break;
-            }
-
-            queueFamily++;
-        }
-
-        IMGUI_DEBUG("Detected graphics queue family %d, %p", queueFamily, queue);
-
-        auto createPipelineCache = (PFN_vkCreatePipelineCache*)vkGetDeviceProcAddr(*pDevice, "vkCreatePipelineCache");
-        auto createSwapchainKHR = (PFN_vkCreateSwapchainKHR)vkGetDeviceProcAddr(*pDevice, "vkCreateSwapchainKHR");
-        auto destroySwapchainKHR = (PFN_vkDestroySwapchainKHR)vkGetDeviceProcAddr(*pDevice, "vkDestroySwapchainKHR");
-        // NEW – always forward to DLSS-FG if it is present, else fall back to the game's ptr
-        auto gamePresent      = (PFN_vkQueuePresentKHR*)vkGetDeviceProcAddr(*pDevice, "vkQueuePresentKHR");
-        PFN_vkQueuePresentKHR nextPresent =
-        dlssgPresentFunction_ ? dlssgPresentFunction_         // sl.interposer.dll took over
-                                  : reinterpret_cast<PFN_vkQueuePresentKHR>(gamePresent);
-
-        if (!CreatePipelineCacheHook_.IsWrapped()) {
-            IMGUI_DEBUG("Hooking CreatePipelineCache()");
-
-            DetourTransactionBegin();
-            DetourUpdateThread(GetCurrentThread());
-            CreatePipelineCacheHook_.Wrap(ResolveFunctionTrampoline(createPipelineCache));
-            CreateSwapchainKHRHook_.Wrap(ResolveFunctionTrampoline(createSwapchainKHR));
-            DestroySwapchainKHRHook_.Wrap(ResolveFunctionTrampoline(destroySwapchainKHR));
-            //originalGamePresentFunction_ = queuePresentKHR;
-            QueuePresentKHRHook_.Wrap(ResolveFunctionTrampoline(nextPresent));
-            DetourTransactionCommit();
+        if (families[fam].queueFlags & VK_QUEUE_GRAPHICS_BIT)
+        {
+            queueFamily_ = fam;
+            vkGetDeviceQueue(device_, fam, 0, &renderQueue_);
+            IMGUI_DEBUG("Detected graphics queue family %u, queue=%p", fam, renderQueue_);
+            break;
         }
     }
+}
+
+// ── resolve original Vulkan entry points we want to wrap ───────────────
+auto  vkCreatePipelineCache = reinterpret_cast<PFN_vkCreatePipelineCache>(
+    vkGetDeviceProcAddr(*pDevice, "vkCreatePipelineCache"));
+
+auto  vkCreateSwapchainKHR  = reinterpret_cast<PFN_vkCreateSwapchainKHR>(
+    vkGetDeviceProcAddr(*pDevice, "vkCreateSwapchainKHR"));
+
+auto  vkDestroySwapchainKHR = reinterpret_cast<PFN_vkDestroySwapchainKHR>(
+    vkGetDeviceProcAddr(*pDevice, "vkDestroySwapchainKHR"));
+
+auto  gamePresent           = reinterpret_cast<PFN_vkQueuePresentKHR>(
+    vkGetDeviceProcAddr(*pDevice, "vkQueuePresentKHR"));
+
+// Decide which function we should forward to **after** our PreHook runs.
+// If sl.interposer.dll (DLSS-FG) was found earlier, forward to it;
+// otherwise fall back to the game’s original pointer.
+PFN_vkQueuePresentKHR nextPresent =
+    dlssgPresentFunction_ ? dlssgPresentFunction_ : gamePresent;
+
+// ── install detours exactly once ────────────────────────────────────────
+if (!CreatePipelineCacheHook_.IsWrapped())
+{
+    IMGUI_DEBUG("Hooking Vulkan device-level functions");
+
+    DetourTransactionBegin();
+    DetourUpdateThread(GetCurrentThread());
+
+    CreatePipelineCacheHook_.Wrap(ResolveFunctionTrampoline(vkCreatePipelineCache));
+    CreateSwapchainKHRHook_.Wrap (ResolveFunctionTrampoline(vkCreateSwapchainKHR));
+    DestroySwapchainKHRHook_.Wrap(ResolveFunctionTrampoline(vkDestroySwapchainKHR));
+    QueuePresentKHRHook_.Wrap    (ResolveFunctionTrampoline(nextPresent));
+
+    // our PreHook was already registered in EnableHooks()
+    DetourTransactionCommit();
+}
+}
+
 
     void vkDestroyDeviceHooked(VkDevice device, const VkAllocationCallbacks* pAllocator)
     {
@@ -691,7 +712,7 @@ private:
         // wait for this command buffer to be free
         // If this ring has never been used the fence is signalled on creation.
         // this should generally be a no-op because we only get here when we've acquired the image
-        VK_CHECK(vkWaitForFences(device_, 1, &image.fence, VK_TRUE, 50000000));
+        VK_CHECK(vkWaitForFences(device_, 1, &image.fence, VK_TRUE, UINT64_MAX));
 
         VK_CHECK(vkResetFences(device_, 1, &image.fence));
 
@@ -783,8 +804,15 @@ private:
 
         // the next thing waits on our new semaphore - whether a subsequent overlay render or the
         // present
-        const_cast<VkSemaphore*>(pPresentInfo->pWaitSemaphores)[0] = submitInfo.pSignalSemaphores[0];
-        pPresentInfo->waitSemaphoreCount = 1;
+        //const_cast<VkSemaphore*>(pPresentInfo->pWaitSemaphores)[0] = submitInfo.pSignalSemaphores[0];
+        //pPresentInfo->waitSemaphoreCount = 1;
+        // append uiDone instead of overwriting the game's list (works even if list is empty)
+        static thread_local VkSemaphore semBuffer[8];
+        uint32_t orig = pPresentInfo->waitSemaphoreCount;
+        std::memcpy(semBuffer, pPresentInfo->pWaitSemaphores, orig * sizeof(VkSemaphore));
+        semBuffer[orig]           = image.uiDoneSemaphore;
+        pPresentInfo->pWaitSemaphores  = semBuffer;
+        pPresentInfo->waitSemaphoreCount = orig + 1;
     }
 
     void vkQueuePresentKHRHooked(
