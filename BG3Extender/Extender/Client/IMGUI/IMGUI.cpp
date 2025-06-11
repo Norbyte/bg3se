@@ -2059,7 +2059,7 @@ void IMGUIManager::Update()
         || !objects_
         || !renderer_->IsInitialized()) {
 
-        IMGUI_FRAME_DEBUG("Skip drawing - enableUI %d, initialized %d, objects %d, rendererInitialized %d",
+        ERR("Skip drawing - enableUI %d, initialized %d, objects %d, rendererInitialized %d",
             enableUI_ ? 1 : 0, initialized_ ? 1 : 0, objects_ ? 1 : 0, renderer_->IsInitialized() ? 1 : 0);
         frameNo_++;
         return;
