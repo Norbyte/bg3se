@@ -10,6 +10,7 @@
 #include <imgui_internal.h>
 #include <cstring>
 
+
 BEGIN_SE()
 
 #define VK_HOOK(name) enum class Vk##name##HookTag {}; \
@@ -70,7 +71,7 @@ public:
         CreateSwapchainKHRHook_.SetPostHook(&VulkanBackend::vkCreateSwapchainKHRHooked, this);
         DestroySwapchainKHRHook_.SetPreHook(&VulkanBackend::vkDestroySwapchainKHRHooked, this);
         QueuePresentKHRHook_.SetPreHook(&VulkanBackend::vkQueuePresentKHRHooked, this);
-        
+
         HMODULE hUpscaler = LoadLibraryW(L"upscaler.dll");
         if (hUpscaler)
             ERR("[EXTUI_HOOK_SETUP] upscaler.dll loaded");
@@ -178,13 +179,10 @@ public:
         ImGui_ImplVulkan_CreateFontsTexture();
 
         initialized_ = true;
-        
-        // Ensure drawViewport_ is set to a valid value after initialization
-        drawViewport_ = 0;
 
         IMGUI_DEBUG("VK POSTINIT - uiFrameworkStarted %d", uiFrameworkStarted_ ? 1 : 0);
         IMGUI_DEBUG("    Instance %p, PhysicalDevice %p, Device %p", instance_, physicalDevice_, device_);
-        IMGUI_DEBUG("    QueueFamily %d, RenderQueue %p, CommandPool %p", queueFamily_, renderQueue_, swapchain_.commandPool_);
+        IMGUI_DEBUG("    QueueFamily %d, RenderQueue %p", queueFamily_, renderQueue_, swapChain_);
         IMGUI_DEBUG("    PipelineCache %p, DescriptorPool %p, Sampler %p", pipelineCache_, descriptorPool_, sampler_);
         IMGUI_DEBUG("VK SWAPCHAIN");
         IMGUI_DEBUG("    SwapChain %p, RenderPass %p, CommandPool %p", swapChain_, swapchain_.renderPass_, swapchain_.commandPool_);
@@ -215,10 +213,8 @@ public:
         // Locked check (at this point we're certain noone is manipulating the initialized flag)
         if (!initialized_) return;
 
-        // Always use viewport 0 - no cycling
-        curViewport_ = 0;
-        GImGui->Viewports[0] = &viewports_[0].Viewport;
-        ERR("VK: NewFrame - Using viewport 0");
+        curViewport_ = (curViewport_ + 1) % viewports_.size();
+        GImGui->Viewports[0] = &viewports_[curViewport_].Viewport;
 
         if (requestReloadFonts_) {
             IMGUI_DEBUG("Rebuilding font atlas");
@@ -227,14 +223,38 @@ public:
         }
 
         ImGui_ImplVulkan_NewFrame();
-        ERR("VK: NewFrame");
+        IMGUI_FRAME_DEBUG("VK: NewFrame");
     }
 
     void FinishFrame() override
     {
-        // FinishFrame is called by the IMGUI framework but we handle all rendering in presentPreHook
-        // Just return early to avoid conflicts
-        return;
+        // Speculative check to avoid unnecessary locking
+        if (!initialized_) return;
+
+        std::lock_guard _(globalResourceLock_);
+
+        // Locked check (at this point we're certain noone is manipulating the initialized flag)
+        if (!initialized_) return;
+
+        auto& vp = viewports_[curViewport_].Viewport;
+        auto& drawLists = viewports_[curViewport_].ClonedDrawLists;
+
+        for (auto list : drawLists) {
+            list->~ImDrawList();
+            IM_FREE(list);
+        }
+
+        drawLists.clear();
+
+        for (int i = 0; i < vp.DrawDataP.CmdLists.Size; i++) {
+            auto list = vp.DrawDataP.CmdLists[i];
+            auto drawList = list->CloneOutput();
+            vp.DrawDataP.CmdLists[i] = drawList;
+            drawLists.Add(drawList);
+        }
+
+        drawViewport_ = curViewport_;
+        IMGUI_FRAME_DEBUG("VK: FinishFrame");
     }
 
     void ClearFrame() override
@@ -404,10 +424,14 @@ private:
 
         IMGUI_DEBUG("Detected graphics queue family %d, %p", queueFamily, queue);
 
-        auto createPipelineCache = (PFN_vkCreatePipelineCache)vkGetDeviceProcAddr(*pDevice, "vkCreatePipelineCache");
+        auto createPipelineCache = (PFN_vkCreatePipelineCache*)vkGetDeviceProcAddr(*pDevice, "vkCreatePipelineCache");
         auto createSwapchainKHR = (PFN_vkCreateSwapchainKHR)vkGetDeviceProcAddr(*pDevice, "vkCreateSwapchainKHR");
         auto destroySwapchainKHR = (PFN_vkDestroySwapchainKHR)vkGetDeviceProcAddr(*pDevice, "vkDestroySwapchainKHR");
-        auto queuePresentKHR = (PFN_vkQueuePresentKHR)vkGetDeviceProcAddr(*pDevice, "vkQueuePresentKHR");
+        // NEW – always forward to DLSS-FG if it is present, else fall back to the game's ptr
+        auto gamePresent      = (PFN_vkQueuePresentKHR*)vkGetDeviceProcAddr(*pDevice, "vkQueuePresentKHR");
+        PFN_vkQueuePresentKHR nextPresent =
+        dlssgPresentFunction_ ? dlssgPresentFunction_         // sl.interposer.dll took over
+                                  : reinterpret_cast<PFN_vkQueuePresentKHR>(gamePresent);
 
         if (!CreatePipelineCacheHook_.IsWrapped()) {
             IMGUI_DEBUG("Hooking CreatePipelineCache()");
@@ -417,11 +441,9 @@ private:
             CreatePipelineCacheHook_.Wrap(ResolveFunctionTrampoline(createPipelineCache));
             CreateSwapchainKHRHook_.Wrap(ResolveFunctionTrampoline(createSwapchainKHR));
             DestroySwapchainKHRHook_.Wrap(ResolveFunctionTrampoline(destroySwapchainKHR));
-            originalGamePresentFunction_ = queuePresentKHR;
-            QueuePresentKHRHook_.Wrap(ResolveFunctionTrampoline(queuePresentKHR));
+            //originalGamePresentFunction_ = queuePresentKHR;
+            QueuePresentKHRHook_.Wrap(ResolveFunctionTrampoline(nextPresent));
             DetourTransactionCommit();
-            
-            IMGUI_DEBUG("Hooked game's vkQueuePresentKHR at %p", queuePresentKHR);
         }
     }
 
@@ -658,300 +680,120 @@ private:
         }
     }
 
-    // Return bool to indicate if rendering was actually performed
-    bool presentPreHook(VkPresentInfoKHR* pPresentInfo)
+    void presentPreHook(VkPresentInfoKHR* pPresentInfo)
     {
-        // Extended start-of-function diagnostics
-        ERR("presentPreHook start: frameNo=%llu drawViewport=%d pImageIndices=%p", 
-            (unsigned long long)frameNo_, drawViewport_, pPresentInfo->pImageIndices);
+        auto& vp = viewports_[drawViewport_].Viewport;
+        if (!vp.DrawDataP.Valid) return;
 
-        // Reference the static variables from vkQueuePresentKHRHooked
-        static bool& renderingDisabled = *[]() -> bool* { 
-            static bool renderingDisabled = false; 
-            return &renderingDisabled; 
-        }();
-        
-        static uint64_t& consecutiveRenderFailures = *[]() -> uint64_t* { 
-            static uint64_t consecutiveRenderFailures = 0; 
-            return &consecutiveRenderFailures; 
-        }();
+        auto& image = swapchain_.images_[pPresentInfo->pImageIndices[0]];
+        IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Swap chain image #%d (%p)", pPresentInfo->pImageIndices[0], image.image);
 
-        // Some engines leave pImageIndices null and rely on implicit acquisition; bail out if that happens
-        if (pPresentInfo->pImageIndices == nullptr) {
-            ERR("presentPreHook early exit: pImageIndices is NULL (implicit acquire path)");
-            return false; // Return false to indicate no rendering was done
-        }
+        // wait for this command buffer to be free
+        // If this ring has never been used the fence is signalled on creation.
+        // this should generally be a no-op because we only get here when we've acquired the image
+        VK_CHECK(vkWaitForFences(device_, 1, &image.fence, VK_TRUE, 50000000));
 
-        // CRITICAL FIX: Always use viewport 0 for consistent IMGUI rendering
-        // The viewport cycling (0,1,2) was causing IMGUI to only appear 1/3 of the time
-        const int32_t renderViewport = 0;
-        
-        // Log the fix in action
-        if (renderViewport != drawViewport_) {
-            ERR("presentPreHook: VIEWPORT FIX - Using viewport %d instead of drawViewport_ %d", 
-                renderViewport, drawViewport_);
-        }
-        
-        auto& vp = viewports_[renderViewport].Viewport;
-        if (!vp.DrawDataP.Valid) {
-            ERR("presentPreHook: Viewport %d has no valid draw data", renderViewport);
-            
-            // Track consecutive failures for failsafe mechanism
-            consecutiveRenderFailures++;
-            if (consecutiveRenderFailures > 50) {
-                ERR("CRITICAL: %llu consecutive render failures detected, disabling rendering", 
-                    (unsigned long long)consecutiveRenderFailures);
-                renderingDisabled = true;
-            }
-            
-            // IMPORTANT: When we have no valid draw data, just leave the semaphores alone
-            // Adding our unsignaled semaphore would cause a deadlock
-            ERR("presentPreHook: No rendering done, leaving original semaphores unchanged");
-            return false; // Return false to indicate no rendering was done
-        }
-        
-        // Reset failure counter on successful render
-        if (consecutiveRenderFailures > 0) {
-            ERR("Successfully rendering after %llu consecutive failures", 
-                (unsigned long long)consecutiveRenderFailures);
-            consecutiveRenderFailures = 0;
-        }
-    
-        // Get the current swapchain image
-        uint32_t imageIndex = pPresentInfo->pImageIndices[0];
-        auto& image = swapchain_.images_[imageIndex];
-        ERR("vkQueuePresentKHR: Swap chain image #%d (%p), using viewport %d", 
-            imageIndex, image.image, renderViewport);
-    
-        // Track frame timing to detect DLSS frame generation patterns
-        static std::chrono::high_resolution_clock::time_point lastFrameTime;
-        auto currentTime = std::chrono::high_resolution_clock::now();
-        auto frameDelta = std::chrono::duration_cast<std::chrono::microseconds>(currentTime - lastFrameTime).count();
-        
-        // Track semaphore patterns more comprehensively
-        static VkSemaphore lastSemaphore = VK_NULL_HANDLE;
-        static uint32_t sameSemasphoreCount = 0;
-        static std::unordered_map<VkSemaphore, uint32_t> semaphoreFrequency;
-        
-        bool semaphoreChanged = false;
-        VkSemaphore currentSemaphore = VK_NULL_HANDLE;
-        
-        // Update frame time
-        lastFrameTime = currentTime;
+        VK_CHECK(vkResetFences(device_, 1, &image.fence));
 
-        // For each swapchain image, ensure we have valid rendering state
-        // This is important because DLSS might present images out of order
-        static std::array<bool, 16> imageRenderedFlags = {}; // Track if image has current frame UI
-        static uint64_t lastFrameNumber = 0;
-        
-        // If frame number changed, reset all flags
-        if (frameNo_ != lastFrameNumber) {
-            std::fill(imageRenderedFlags.begin(), imageRenderedFlags.end(), false);
-            lastFrameNumber = frameNo_;
-        }
-        
-        // Check if this image already has UI rendered for this frame
-        if (imageIndex < imageRenderedFlags.size() && imageRenderedFlags[imageIndex]) {
-            ERR("Image %u already has UI for frame %llu, skipping render", 
-                imageIndex, (unsigned long long)frameNo_);
-            
-            // IMPORTANT: When we're skipping rendering, leave the semaphores alone
-            // Our semaphore won't be signaled, so adding it would cause a deadlock
-            ERR("presentPreHook: Image already rendered, leaving original semaphores unchanged");
-            return false; // Return false to indicate no rendering was done
-        }
-        
-        // Begin recording command buffer
-        VkCommandBufferBeginInfo beginInfo = { VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO };
-        beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+        VK_CHECK(vkResetCommandBuffer(image.commandBuffer, 0));
+
+        VkCommandBufferBeginInfo beginInfo = { VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO, NULL,
+                                              VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT };
+
         VK_CHECK(vkBeginCommandBuffer(image.commandBuffer, &beginInfo));
-    
-        // Transition image layout to color attachment
-        VkImageMemoryBarrier barrierToRender = {
-            .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-            .srcAccessMask = VK_ACCESS_MEMORY_READ_BIT, // Ensure any previous memory reads (e.g. by the presentation engine) are complete
-            .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-            .oldLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-            .newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-            .srcQueueFamilyIndex = queueFamily_,
-            .dstQueueFamilyIndex = queueFamily_,
-            .image = image.image,
-            .subresourceRange = {
-                .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-                .baseMipLevel = 0,
-                .levelCount = 1,
-                .baseArrayLayer = 0,
-                .layerCount = 1
-            }
-        };
-        vkCmdPipelineBarrier(
-            image.commandBuffer,
-            VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, // Per spec, transitioning from PRESENT_SRC should wait for BOTTOM_OF_PIPE
-            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+
+        VkImageMemoryBarrier bbBarrier = {
+            VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+            NULL,
             0,
-            0, nullptr,
-            0, nullptr,
-            1, &barrierToRender
-        );
-    
-        // Begin render pass
-        VkClearValue clearValue = {};
-        VkRenderPassBeginInfo renderPassInfo = {
-            .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-            .renderPass = swapchain_.renderPass_,
-            .framebuffer = image.framebuffer,
-            .renderArea = {
-                .offset = {0, 0},
-                .extent = {swapchain_.width_, swapchain_.height_}
-            },
-            .clearValueCount = 1,
-            .pClearValues = &clearValue
-        };
-        vkCmdBeginRenderPass(image.commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-    
-        // Render ImGui draw data
-        ImGui_ImplVulkan_RenderDrawData(&vp.DrawDataP, image.commandBuffer);
-    
-        // End render pass
-        vkCmdEndRenderPass(image.commandBuffer);
-    
-        // Transition layout back to present
-        VkImageMemoryBarrier barrierToPresent = barrierToRender;
-        std::swap(barrierToPresent.oldLayout, barrierToPresent.newLayout);
-        barrierToPresent.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-        barrierToPresent.dstAccessMask = 0; // none required for presentation
-        vkCmdPipelineBarrier(
-            image.commandBuffer,
-            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-            VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
             0,
-            0, nullptr,
-            0, nullptr,
-            1, &barrierToPresent
-        );
-    
-        // End command buffer
-        VK_CHECK(vkEndCommandBuffer(image.commandBuffer));
-        
-        // CRITICAL FIX: Don't wait on fences at all, just reset them unconditionally
-        // This avoids deadlocks with DLSS frame generation
-        vkResetFences(device_, 1, &image.fence);
-        
-        // Submit command buffer WITHOUT waiting on original semaphores
-        // The present operation will handle all semaphore waiting
-        VkSubmitInfo submitInfo = {
-            .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-            .waitSemaphoreCount = 0,  // Don't wait on any semaphores
-            .pWaitSemaphores = nullptr,
-            .pWaitDstStageMask = nullptr,
-            .commandBufferCount = 1,
-            .pCommandBuffers = &image.commandBuffer,
-            .signalSemaphoreCount = 1,
-            .pSignalSemaphores = &image.uiDoneSemaphore  // Signal our semaphore when UI is done
+            VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+            VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+            queueFamily_,
+            queueFamily_,
+            image.image,
+            {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1},
         };
-    
-        VkResult submitResult = vkQueueSubmit(renderQueue_, 1, &submitInfo, image.fence);
-        if (submitResult != VK_SUCCESS) {
-            ERR("vkQueueSubmit failed: %d", submitResult);
-            return false; // Return false to indicate rendering failed
-        }
-        
-        ERR("presentPreHook: submitted cmd; fence=%p, uiDoneSemaphore=%p", image.fence, image.uiDoneSemaphore);
-    
-        // Mark this image as rendered for this frame
-        if (imageIndex < imageRenderedFlags.size()) {
-            imageRenderedFlags[imageIndex] = true;
+
+        bbBarrier.srcAccessMask = VK_ACCESS_ALL_READ_BITS;
+        bbBarrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+        vkCmdPipelineBarrier(image.commandBuffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0,
+            NULL,
+            0, NULL,
+            1, &bbBarrier);
+
+        uint32_t ringIdx = 0;
+
+        VkSubmitInfo submitInfo = { VK_STRUCTURE_TYPE_SUBMIT_INFO };
+
+        VkPipelineStageFlags waitStages[3] = { VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT };
+
+        // wait on the present's semaphores
+        submitInfo.pWaitDstStageMask = waitStages;
+        submitInfo.pWaitSemaphores = pPresentInfo->pWaitSemaphores;
+        submitInfo.waitSemaphoreCount = pPresentInfo->waitSemaphoreCount;
+
+        // and signal overlaydone
+        submitInfo.pSignalSemaphores = &image.uiDoneSemaphore;
+        submitInfo.signalSemaphoreCount = 1;
+
+        {
+            VkClearValue clearval = {};
+            VkRenderPassBeginInfo rpbegin = {
+                VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+                NULL,
+                swapchain_.renderPass_,
+                image.framebuffer,
+                {{
+                     0,
+                     0,
+                 },
+                 {swapchain_.width_, swapchain_.height_}},
+                1,
+                &clearval,
+            };
+            vkCmdBeginRenderPass(image.commandBuffer, &rpbegin, VK_SUBPASS_CONTENTS_INLINE);
         }
 
-        // CRITICAL FIX FOR DEADLOCK: Don't reuse original semaphores at all!
-        // Only pass our UI semaphore to the present operation.
-        // This prevents deadlocks where the same semaphore is waited on twice.
-        
-        // Store the original semaphore count and pointer for logging
-        uint32_t originalSemaphoreCount = pPresentInfo->waitSemaphoreCount;
-        const VkSemaphore* originalSemaphores = pPresentInfo->pWaitSemaphores;
-        
-        // Update VkPresentInfoKHR to only wait on our UI semaphore
-        // Use only our UI semaphore for the present operation
-        // This is the KEY FIX to prevent deadlocks - semaphores can only be waited on once
-        // We're using a static object to ensure the pointer remains valid after this function returns
-        static VkSemaphore uiSemaphore;
-        uiSemaphore = image.uiDoneSemaphore; // Copy the current image's semaphore
-        
-        // Update the present info to wait only on our UI semaphore
-        const_cast<VkPresentInfoKHR*>(pPresentInfo)->waitSemaphoreCount = 1;
-        const_cast<VkPresentInfoKHR*>(pPresentInfo)->pWaitSemaphores = &uiSemaphore;
-        
-        ERR("presentPreHook: CRITICAL FIX - Only waiting on UI semaphore: %p. Original wait count was %u",
-            image.uiDoneSemaphore,
-            originalSemaphoreCount
-        );
-        
-        return true; // Return true to indicate successful rendering
+        ImGui_ImplVulkan_RenderDrawData(&vp.DrawDataP, image.commandBuffer);
+
+        vkCmdEndRenderPass(image.commandBuffer);
+
+        std::swap(bbBarrier.srcQueueFamilyIndex, bbBarrier.dstQueueFamilyIndex);
+        std::swap(bbBarrier.oldLayout, bbBarrier.newLayout);
+        bbBarrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        bbBarrier.dstAccessMask = VK_ACCESS_ALL_READ_BITS;
+
+        vkCmdPipelineBarrier(image.commandBuffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0,
+            NULL,
+            0, NULL,
+            1, &bbBarrier);
+
+        VK_CHECK(vkEndCommandBuffer(image.commandBuffer));
+
+        {
+            submitInfo.commandBufferCount = 1;
+            submitInfo.pCommandBuffers = &image.commandBuffer;
+
+            VK_CHECK(vkQueueSubmit(renderQueue_, 1, &submitInfo, image.fence));
+        }
+
+        // the next thing waits on our new semaphore - whether a subsequent overlay render or the
+        // present
+        const_cast<VkSemaphore*>(pPresentInfo->pWaitSemaphores)[0] = submitInfo.pSignalSemaphores[0];
+        pPresentInfo->waitSemaphoreCount = 1;
     }
-    
 
     void vkQueuePresentKHRHooked(
         VkQueue queue,
         const VkPresentInfoKHR* pPresentInfo)
     {
-        // Global static variables for the startup delay
-        static uint64_t startupFrames = 0;
-        static const uint64_t STARTUP_DELAY_FRAMES = 10000;
-        static bool renderingDisabled = false;
-        static uint64_t consecutiveRenderFailures = 0;
-        
-        // Track if we're still in startup phase - but continue execution
-        // to ensure backend initialization happens
-        bool inStartupPhase = false;
-        if (startupFrames < STARTUP_DELAY_FRAMES) {
-            startupFrames++;
-            inStartupPhase = true;
-            if (startupFrames % 50 == 0) {
-                ERR("[IMGUI] Startup delay active (%llu/%llu frames)", 
-                    (unsigned long long)startupFrames, (unsigned long long)STARTUP_DELAY_FRAMES);
-            }
-        } else if (startupFrames == STARTUP_DELAY_FRAMES) {
-            // Log when startup delay is complete
-            startupFrames++;
-            ERR("[IMGUI] Startup delay complete after %llu frames, attempting to render", 
-                (unsigned long long)STARTUP_DELAY_FRAMES);
-        }
-        
-        if (renderingDisabled) {
-            if (frameNo_ % 100 == 0) {
-                ERR("[IMGUI] Rendering remains disabled for stability - frame %d", frameNo_);
-            }
-            frameNo_++;
-            return;
-        }
-
-        // This is a pre-hook - it runs before the original function
-        // We can only add our rendering, not control what happens after
-        
-        // Add detailed logging for debugging
-        ERR("[IMGUI] vkQueuePresentKHRHooked called - swapchainCount: %d, swapChain_: %p", 
-            pPresentInfo->swapchainCount, swapChain_);
-
-        // Record image index pointer information as some engines may pass NULL
-        ERR("[IMGUI] vkQueuePresentKHRHooked: pImageIndices=%p", pPresentInfo->pImageIndices);
-        if (pPresentInfo->pImageIndices != nullptr && pPresentInfo->swapchainCount > 0) {
-            ERR("[IMGUI] vkQueuePresentKHRHooked: first imageIndex=%u", pPresentInfo->pImageIndices[0]);
-        }
-
-        // If we don't have a swapchain yet, we need to capture it from the present info
-        if (swapChain_ == VK_NULL_HANDLE && pPresentInfo->swapchainCount > 0) {
-            ERR("[IMGUI] vkQueuePresentKHRHooked: Attempting to acquire globalResourceLock_ for swapchain capture...");
-            std::lock_guard _(globalResourceLock_);
-            ERR("[IMGUI] vkQueuePresentKHRHooked: Successfully acquired globalResourceLock_ for swapchain capture.");
-            swapChain_ = pPresentInfo->pSwapchains[0];
-            ERR("[IMGUI] Captured swapchain from present info: %p", swapChain_);
-            return; // Don't render yet
-        }
-        
         if (pPresentInfo->swapchainCount != 1
             || pPresentInfo->pSwapchains[0] != swapChain_) {
-            ERR("vkQueuePresentKHR: Bad swapchain (%d: %p vs. %p)",
+            IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Bad swapchain (%d: %p vs. %p)",
                 pPresentInfo->swapchainCount, 
                 pPresentInfo->swapchainCount ? pPresentInfo->pSwapchains[0] : nullptr,
                 swapChain_);
@@ -961,7 +803,7 @@ private:
 
         std::lock_guard _(globalResourceLock_);
         if (!initialized_) {
-            ERR("[IMGUI] vkQueuePresentKHR: Render backend not initialized yet");
+            IMGUI_DEBUG("vkQueuePresentKHR: Render backend initialized yet");
             frameNo_ = 0;
 
             if (!uiFrameworkStarted_) {
@@ -978,43 +820,18 @@ private:
                 ui_.OnRenderBackendInitialized();
                 InitializeUI();
             }
-            
-            // Don't try to render on the initialization frame
-            ERR("[IMGUI] Initialization complete, skipping render for this frame");
-            frameNo_++;
-            return;
         }
 
-        // Now we're initialized and ready to render
-        // Always ensure we have a valid viewport
-        if (drawViewport_ < 0 || drawViewport_ >= viewports_.size()) {
-            drawViewport_ = 0;
-            ERR("[IMGUI] vkQueuePresentKHRHooked: Reset drawViewport_ to 0");
-        }
-        
-        // Skip actual rendering during startup delay, but keep incrementing frame number
-        if (inStartupPhase) {
-            ERR("[IMGUI] Still in startup phase (frame %llu/%llu), skipping render but continuing initialization", 
-                (unsigned long long)startupFrames, (unsigned long long)STARTUP_DELAY_FRAMES);
-            frameNo_++;
-            return;
-        }
-        
-        // Call our pre-hook to do the IMGUI rendering
-        bool rendered = presentPreHook(const_cast<VkPresentInfoKHR*>(pPresentInfo));
-        
-        // Only log rendering complete if we actually rendered something
-        if (rendered) {
-            ERR("[IMGUI] MCM rendering complete for frame %d", frameNo_);
+        if (initialized_ && drawViewport_ != -1) {
+            presentPreHook(const_cast<VkPresentInfoKHR*>(pPresentInfo));
         } else {
-            ERR("[IMGUI] MCM rendering skipped for frame %d", frameNo_);
+            IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Cannot append command buffer - initialized %d, drawViewport %d",
+                initialized_ ? 1 : 0, drawViewport_);
         }
-        
+
         frameNo_++;
-        
-        // The original present function (either DLSSG's or the game's) will be called automatically after this
     }
-    
+
     IMGUIManager& ui_;
     VkInstance instance_{ VK_NULL_HANDLE };
     VkPhysicalDevice physicalDevice_{ VK_NULL_HANDLE };
@@ -1026,7 +843,7 @@ private:
     VkDescriptorPool descriptorPool_{ VK_NULL_HANDLE };
     VkSampler sampler_{ VK_NULL_HANDLE };
     std::array<ViewportInfo, 3> viewports_;
-    int32_t drawViewport_{ 0 };  // Changed from -1 to 0 to always have a valid viewport
+    int32_t drawViewport_{ -1 };
     int32_t curViewport_{ 0 };
     int32_t frameNo_{ 0 };
     bool textureLimitWarningShown_{ false };
@@ -1046,12 +863,10 @@ private:
 
     SwapchainInfo swapchain_;
     uint32_t textures_{ 0 };
-
     // Store DLSSG's present function separately
     PFN_vkQueuePresentKHR dlssgPresentFunction_{ nullptr };
-    
     // Store the original game's present function
-    PFN_vkQueuePresentKHR originalGamePresentFunction_{ nullptr };
+    //PFN_vkQueuePresentKHR originalGamePresentFunction_{ nullptr };
 };
 
 END_NS()
