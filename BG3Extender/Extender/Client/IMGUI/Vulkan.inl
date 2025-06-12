@@ -120,7 +120,7 @@ public:
     {
         if (initialized_) return;
 
-        ERR("VulkanBackend::InitializeUI()");
+        ERR("VulkanBackend::InitializeUI() - Entry - drawViewport_: %d", drawViewport_);
 
         VkDescriptorPoolSize poolSize
         {
@@ -178,9 +178,14 @@ public:
         ImGui_ImplVulkan_Init(&init_info);
         ImGui_ImplVulkan_CreateFontsTexture();
 
+        // Ensure drawViewport_ is set so first frame after initialization can render
+        // Otherwise presentPreHook won't be called due to drawViewport_ being -1
+        //drawViewport_ = 0;
+        
         initialized_ = true;
 
-        ERR("VK POSTINIT - uiFrameworkStarted %d", uiFrameworkStarted_ ? 1 : 0);
+        ERR("VK POSTINIT - initialized: %d, drawViewport_: %d, uiFrameworkStarted: %d", 
+            initialized_ ? 1 : 0, drawViewport_, uiFrameworkStarted_ ? 1 : 0);
         ERR("    Instance %p, PhysicalDevice %p, Device %p", instance_, physicalDevice_, device_);
         ERR("    QueueFamily %d, RenderQueue %p", queueFamily_, renderQueue_, swapChain_);
         ERR("    PipelineCache %p, DescriptorPool %p, Sampler %p", pipelineCache_, descriptorPool_, sampler_);
@@ -229,12 +234,20 @@ public:
     void FinishFrame() override
     {
         // Speculative check to avoid unnecessary locking
-        if (!initialized_) return;
+        if (!initialized_) {
+            ERR("VK: FinishFrame - skipped (not initialized)");
+            return;
+        }
 
         std::lock_guard _(globalResourceLock_);
 
         // Locked check (at this point we're certain noone is manipulating the initialized flag)
-        if (!initialized_) return;
+        if (!initialized_) {
+            ERR("VK: FinishFrame - skipped after lock (not initialized)");
+            return;
+        }
+        
+        ERR("VK: FinishFrame - initializing with curViewport: %d, drawViewport_ before: %d", curViewport_, drawViewport_);
 
         auto& vp = viewports_[curViewport_].Viewport;
         auto& drawLists = viewports_[curViewport_].ClonedDrawLists;
@@ -254,13 +267,18 @@ public:
         }
 
         drawViewport_ = curViewport_;
-        ERR("VK: FinishFrame");
+        ERR("VK: FinishFrame - set drawViewport_ to %d, have %d draw lists", 
+            drawViewport_, vp.DrawDataP.CmdLists.Size);
     }
 
     void ClearFrame() override
     {
-        if (!initialized_) return;
+        if (!initialized_) {
+            ERR("VK: ClearFrame - skipped (not initialized)");
+            return;
+        }
 
+        ERR("VK: ClearFrame - setting drawViewport_ from %d to -1", drawViewport_);
         drawViewport_ = -1;
     }
 
@@ -703,8 +721,15 @@ if (!CreatePipelineCacheHook_.IsWrapped())
 
     void presentPreHook(VkPresentInfoKHR* pPresentInfo)
     {
+        ERR("presentPreHook: Called for viewport %d", drawViewport_);
+        
         auto& vp = viewports_[drawViewport_].Viewport;
-        if (!vp.DrawDataP.Valid) return;
+        if (!vp.DrawDataP.Valid) {
+            ERR("presentPreHook: DrawData not valid for viewport %d", drawViewport_);
+            return;
+        }
+        
+        ERR("presentPreHook: DrawData valid, CmdListsCount=%d", vp.DrawDataP.CmdListsCount);
 
         auto& image = swapchain_.images_[pPresentInfo->pImageIndices[0]];
         ERR("vkQueuePresentKHR: Swap chain image #%d (%p)", pPresentInfo->pImageIndices[0], image.image);
@@ -831,7 +856,7 @@ if (!CreatePipelineCacheHook_.IsWrapped())
 
         std::lock_guard _(globalResourceLock_);
         if (!initialized_) {
-            ERR("vkQueuePresentKHR: Render backend initialized yet");
+            ERR("vkQueuePresentKHR: Render backend not initialized yet - drawViewport_=%d", drawViewport_);
             frameNo_ = 0;
 
             if (!uiFrameworkStarted_) {
@@ -851,6 +876,8 @@ if (!CreatePipelineCacheHook_.IsWrapped())
         }
 
         if (initialized_ && drawViewport_ != -1) {
+            ERR("vkQueuePresentKHR: Calling presentPreHook - initialized %d, drawViewport %d",
+                initialized_ ? 1 : 0, drawViewport_);
             presentPreHook(const_cast<VkPresentInfoKHR*>(pPresentInfo));
         } else {
             ERR("vkQueuePresentKHR: Cannot append command buffer - initialized %d, drawViewport %d",
