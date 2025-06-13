@@ -94,6 +94,13 @@ public:
                 dlssgPresentFunction_ = slQueuePresent;
                 ERR("[EXTUI_HOOK_SETUP] Stored DLSSG vkQueuePresentKHR @ %p", dlssgPresentFunction_);
                 // DO NOT re-hook! We keep our original hook on the game's vkQueuePresentKHR
+                
+                // Get all other DLSS-FG Vulkan functions we need
+                dlssgCreateSwapchainKHR_ = reinterpret_cast<PFN_vkCreateSwapchainKHR>(
+                    GetProcAddress(sl, "vkCreateSwapchainKHR"));
+                    
+                ERR("[EXTUI_HOOK_SETUP] Retrieved DLSS-FG Vulkan functions:");
+                ERR("  vkCreateSwapchainKHR: %p", dlssgCreateSwapchainKHR_);
             }
         }
     }
@@ -151,7 +158,6 @@ public:
             .maxLod = VK_LOD_CLAMP_NONE,
         };
         VK_CHECK(vkCreateSampler(device_, &samplerInfo, nullptr, &sampler_));
-
         ERR("VK initialization: desc pool %p, sampler %p", descriptorPool_, sampler_);
 
         ImGui_ImplVulkan_InitInfo init_info = {};
@@ -461,28 +467,33 @@ auto  vkDestroySwapchainKHR = reinterpret_cast<PFN_vkDestroySwapchainKHR>(
 auto  gamePresent           = reinterpret_cast<PFN_vkQueuePresentKHR>(
     vkGetDeviceProcAddr(*pDevice, "vkQueuePresentKHR"));
 
-// Decide which function we should forward to **after** our PreHook runs.
-// If sl.interposer.dll (DLSS-FG) was found earlier, forward to it;
-// otherwise fall back to the game’s original pointer.
-PFN_vkQueuePresentKHR nextPresent =
-    dlssgPresentFunction_ ? dlssgPresentFunction_ : gamePresent;
+    // Decide which functions we should hook based on DLSS-FG availability
+    PFN_vkQueuePresentKHR nextPresent =
+        dlssgPresentFunction_ ? dlssgPresentFunction_ : gamePresent;
+    
+    // For vkCreateSwapchainKHR, use DLSS-FG's version if available
+    PFN_vkCreateSwapchainKHR nextCreateSwapchain =
+        dlssgCreateSwapchainKHR_ ? dlssgCreateSwapchainKHR_ : vkCreateSwapchainKHR;
 
-// ── install detours exactly once ────────────────────────────────────────
-if (!CreatePipelineCacheHook_.IsWrapped())
-{
-    ERR("Hooking Vulkan device-level functions");
+    // ── install detours exactly once ────────────────────────────────────────
+    if (!CreatePipelineCacheHook_.IsWrapped())
+    {
+        ERR("Hooking Vulkan device-level functions");
+        if (dlssgCreateSwapchainKHR_) {
+            ERR("DLSS-FG detected - hooking DLSS-FG's vkCreateSwapchainKHR");
+        }
 
-    DetourTransactionBegin();
-    DetourUpdateThread(GetCurrentThread());
+        DetourTransactionBegin();
+        DetourUpdateThread(GetCurrentThread());
 
-    CreatePipelineCacheHook_.Wrap(ResolveFunctionTrampoline(vkCreatePipelineCache));
-    CreateSwapchainKHRHook_.Wrap (ResolveFunctionTrampoline(vkCreateSwapchainKHR));
-    DestroySwapchainKHRHook_.Wrap(ResolveFunctionTrampoline(vkDestroySwapchainKHR));
-    QueuePresentKHRHook_.Wrap    (ResolveFunctionTrampoline(nextPresent));
+        CreatePipelineCacheHook_.Wrap(ResolveFunctionTrampoline(vkCreatePipelineCache));
+        CreateSwapchainKHRHook_.Wrap (ResolveFunctionTrampoline(nextCreateSwapchain));
+        DestroySwapchainKHRHook_.Wrap(ResolveFunctionTrampoline(vkDestroySwapchainKHR));
+        QueuePresentKHRHook_.Wrap    (ResolveFunctionTrampoline(nextPresent));
 
-    // our PreHook was already registered in EnableHooks()
-    DetourTransactionCommit();
-}
+        // our PreHook was already registered in EnableHooks()
+        DetourTransactionCommit();
+    }
 }
 
 
@@ -533,10 +544,16 @@ if (!CreatePipelineCacheHook_.IsWrapped())
         VkResult result)
     {
         if (result != VK_SUCCESS) return;
-
         std::lock_guard _(globalResourceLock_);
-        ERR("VK swap chain created: %p", *pSwapchain);
+        ERR("VK swap chain created: %p (old swapchain was %p)", *pSwapchain, swapChain_);
+        
+        // Update our swapchain reference - this could be either the game's swapchain
+        // or DLSS-FG's swapchain, we need to track the latest one
         swapChain_ = *pSwapchain;
+        
+        if (isDlssgActive()) {
+            ERR("DLSS-FG is active - this might be DLSS-FG's internal swapchain");
+        }
         collectSwapChainInfo(pCreateInfo);
     }
 
@@ -722,25 +739,39 @@ if (!CreatePipelineCacheHook_.IsWrapped())
     void presentPreHook(VkPresentInfoKHR* pPresentInfo)
     {
         ERR("presentPreHook: Called for viewport %d", drawViewport_);
-        
         auto& vp = viewports_[drawViewport_].Viewport;
-        if (!vp.DrawDataP.Valid) {
-            ERR("presentPreHook: DrawData not valid for viewport %d", drawViewport_);
+        
+        if (!vp.DrawDataP.Valid || vp.DrawDataP.CmdListsCount == 0) {
+            ERR("presentPreHook: DrawData valid=%d, CmdListsCount=%d", vp.DrawDataP.Valid, vp.DrawDataP.CmdListsCount);
             return;
         }
         
         ERR("presentPreHook: DrawData valid, CmdListsCount=%d", vp.DrawDataP.CmdListsCount);
-
-        auto& image = swapchain_.images_[pPresentInfo->pImageIndices[0]];
-        ERR("vkQueuePresentKHR: Swap chain image #%d (%p)", pPresentInfo->pImageIndices[0], image.image);
-
+        
+        ERR("presentPreHook: DLSS-FG active: %s", isDlssgActive() ? "YES" : "NO");
+        
+        if (!swapchain_.images_.size()) {
+            ERR("presentPreHook: No swapchain images available!");
+            return;
+        }
+        
+        uint32_t imageIdx = pPresentInfo->pImageIndices[0];
+        if (imageIdx >= swapchain_.images_.size()) {
+            ERR("presentPreHook: Invalid image index %d (max %d)", imageIdx, (uint32_t)swapchain_.images_.size());
+            return;
+        }
+        
+        auto& image = swapchain_.images_[imageIdx];
+        
+        ERR("presentPreHook: Processing swapchain image #%d (%p)", imageIdx, image.image);
+        ERR("presentPreHook: Our swapchain=%p, pSwapchains[0]=%p", swapChain_, pPresentInfo->pSwapchains[0]);
+        ERR("presentPreHook: Image dimensions: %dx%d", swapchain_.width_, swapchain_.height_);
+        
         // wait for this command buffer to be free
         // If this ring has never been used the fence is signalled on creation.
         // this should generally be a no-op because we only get here when we've acquired the image
         VK_CHECK(vkWaitForFences(device_, 1, &image.fence, VK_TRUE, UINT64_MAX));
-
         VK_CHECK(vkResetFences(device_, 1, &image.fence));
-
         VK_CHECK(vkResetCommandBuffer(image.commandBuffer, 0));
 
         VkCommandBufferBeginInfo beginInfo = { VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO, NULL,
@@ -807,16 +838,27 @@ if (!CreatePipelineCacheHook_.IsWrapped())
 
         vkCmdEndRenderPass(image.commandBuffer);
 
-        std::swap(bbBarrier.srcQueueFamilyIndex, bbBarrier.dstQueueFamilyIndex);
-        std::swap(bbBarrier.oldLayout, bbBarrier.newLayout);
-        bbBarrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-        bbBarrier.dstAccessMask = VK_ACCESS_ALL_READ_BITS;
+        VkImageMemoryBarrier bbBarrier2 = {
+            VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+            NULL,
+            0,
+            0,
+            VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+            VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+            queueFamily_,
+            queueFamily_,
+            image.image,
+            {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1},
+        };
+
+        bbBarrier2.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        bbBarrier2.dstAccessMask = VK_ACCESS_ALL_READ_BITS;
 
         vkCmdPipelineBarrier(image.commandBuffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
             VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0,
             NULL,
             0, NULL,
-            1, &bbBarrier);
+            1, &bbBarrier2);
 
         VK_CHECK(vkEndCommandBuffer(image.commandBuffer));
 
@@ -844,14 +886,9 @@ if (!CreatePipelineCacheHook_.IsWrapped())
         VkQueue queue,
         const VkPresentInfoKHR* pPresentInfo)
     {
-        if (pPresentInfo->swapchainCount != 1
-            || pPresentInfo->pSwapchains[0] != swapChain_) {
-            ERR("vkQueuePresentKHR: Bad swapchain (%d: %p vs. %p)",
-                pPresentInfo->swapchainCount, 
-                pPresentInfo->swapchainCount ? pPresentInfo->pSwapchains[0] : nullptr,
-                swapChain_);
-            frameNo_++;
-            return;
+        if (pPresentInfo->swapchainCount > 0) {
+            ERR("vkQueuePresentKHR: Presenting swapchain %p (our tracked swapchain: %p)",
+                pPresentInfo->pSwapchains[0], swapChain_);
         }
 
         std::lock_guard _(globalResourceLock_);
@@ -878,6 +915,8 @@ if (!CreatePipelineCacheHook_.IsWrapped())
         if (initialized_ && drawViewport_ != -1) {
             ERR("vkQueuePresentKHR: Calling presentPreHook - initialized %d, drawViewport %d",
                 initialized_ ? 1 : 0, drawViewport_);
+            ERR("vkQueuePresentKHR: present queue = %p graphics queue = %p", queue, renderQueue_);
+            
             presentPreHook(const_cast<VkPresentInfoKHR*>(pPresentInfo));
         } else {
             ERR("vkQueuePresentKHR: Cannot append command buffer - initialized %d, drawViewport %d",
@@ -920,8 +959,14 @@ if (!CreatePipelineCacheHook_.IsWrapped())
     uint32_t textures_{ 0 };
     // Store DLSSG's present function separately
     PFN_vkQueuePresentKHR dlssgPresentFunction_{ nullptr };
+    // Store DLSS-FG's vkCreateSwapchainKHR for swapchain recreation
+    PFN_vkCreateSwapchainKHR dlssgCreateSwapchainKHR_{ nullptr };
+    
     // Store the original game's present function
     //PFN_vkQueuePresentKHR originalGamePresentFunction_{ nullptr };
+    
+    // Helper functions to route Vulkan calls through DLSS-FG when active
+    inline bool isDlssgActive() const { return dlssgPresentFunction_ != nullptr; }
 };
 
 END_NS()
