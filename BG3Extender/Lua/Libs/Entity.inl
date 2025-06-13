@@ -252,9 +252,9 @@ void ClearTrace(lua_State* L)
     State::FromLua(L)->GetEntitySystemHelpers()->GetLog().Clear();
 }
 
-Array<STDString> GetRegisteredComponentTypes(lua_State* L, bool oneFrame)
+Array<StringView> GetRegisteredComponentTypes(lua_State* L, std::optional<bool> oneFrame, std::optional<bool> mapped)
 {
-    Array<STDString> types;
+    Array<StringView> types;
     
     auto helpers = State::FromLua(L)->GetEntitySystemHelpers();
     auto const& registry = helpers->GetEntityWorld()->ComponentRegistry_;
@@ -262,7 +262,9 @@ Array<STDString> GetRegisteredComponentTypes(lua_State* L, bool oneFrame)
         if (registry.Bitmask[i]) {
             auto const& component = registry.Types[i];
             auto name = helpers->GetComponentName(component.TypeId);
-            if (name && IsOneFrame(component.TypeId) == oneFrame) {
+            if (name 
+                && (!oneFrame || IsOneFrame(component.TypeId) == *oneFrame)
+                && (!mapped || (bool)helpers->GetComponentType(component.TypeId) == *mapped)) {
                 types.push_back(*name);
             }
         }
