@@ -81,6 +81,15 @@ struct TopOwnerComponent : public BaseComponent
     EntityHandle TopOwner;
 };
 
+struct TradeBuybackDataComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(TradeBuybackData, "eoc::inventory::TradeBuybackDataComponent")
+
+    uint16_t Amount;
+    EntityHandle Trader;
+    EntityHandle Buyer;
+};
+
 struct WeightComponent : public BaseComponent
 {
     DEFINE_COMPONENT(InventoryWeight, "eoc::inventory::WeightComponent")
@@ -107,6 +116,7 @@ DEFINE_TAG_COMPONENT(eoc::inventory, CanBeInComponent, CanBeInInventory)
 DEFINE_TAG_COMPONENT(eoc::inventory, CannotBePickpocketedComponent, CannotBePickpocketed)
 DEFINE_TAG_COMPONENT(eoc::inventory, CannotBeTakenOutComponent, CannotBeTakenOut)
 DEFINE_TAG_COMPONENT(eoc::inventory, DropOnDeathBlockedComponent, DropOnDeathBlocked)
+DEFINE_TAG_COMPONENT(eoc::inventory, IsLockedComponent, InventoryLocked)
 DEFINE_TAG_COMPONENT(eoc::inventory, NewItemsInsideComponent, NewItemsInside)
 DEFINE_TAG_COMPONENT(eoc::inventory, NonTradableComponent, NonTradable)
 

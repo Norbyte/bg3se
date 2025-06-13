@@ -8,7 +8,7 @@
 #define CHECKR(expr) if (!(expr)) return false;
 
 #if defined(_DEBUG)
-#define ENABLE_FLAKY_HEURISTICS
+#undef ENABLE_FLAKY_HEURISTICS
 #undef ENABLE_GUESSWORK_HEURISTICS
 #endif
 

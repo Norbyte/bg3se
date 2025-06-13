@@ -38,10 +38,13 @@ struct PortalComponent : public BaseComponent
 };
 
 
+DEFINE_TAG_COMPONENT(eoc::item, DestroyingComponent, ItemDestroying)
 DEFINE_TAG_COMPONENT(eoc::item, DoorComponent, IsDoor)
 DEFINE_TAG_COMPONENT(eoc::item, ExamineDisabledComponent, ExamineDisabled)
 DEFINE_TAG_COMPONENT(eoc::item, HasMovedComponent, ItemHasMoved)
 DEFINE_TAG_COMPONENT(eoc::item, HasOpenedComponent, HasOpened)
+DEFINE_TAG_COMPONENT(eoc::item, InUseComponent, ItemInUse)
+DEFINE_TAG_COMPONENT(eoc::item, IsPoisonedComponent, ItemIsPoisoned)
 DEFINE_TAG_COMPONENT(eoc::item, IsGoldComponent, IsGold)
 DEFINE_TAG_COMPONENT(eoc::item, ItemComponent, IsItem)
 DEFINE_TAG_COMPONENT(eoc::item, NewInInventoryComponent, NewInInventory)

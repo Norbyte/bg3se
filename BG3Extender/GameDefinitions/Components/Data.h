@@ -54,17 +54,6 @@ struct DetachedComponent : public BaseComponent
     uint32_t Flags;
 };
 
-
-struct ExperienceComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(Experience, "eoc::exp::ExperienceComponent")
-
-    int CurrentLevelExperience;
-    int NextLevelExperience;
-    int TotalExperience;
-    uint8_t field_28;
-};
-
 struct HealthComponent : public BaseComponent
 {
     DEFINE_COMPONENT(Health, "eoc::HealthComponent")
@@ -370,15 +359,8 @@ struct CanDoRestComponent : public BaseComponent
 struct CanModifyHealthComponent : public BaseComponent
 {
     DEFINE_COMPONENT(CanModifyHealth, "eoc::CanModifyHealthComponent")
-        
+
     uint16_t Flags;
-};
-
-struct AvailableLevelComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(AvailableLevel, "eoc::exp::AvailableLevelComponent")
-
-    int Level;
 };
 
 struct CanBeLootedComponent : public BaseComponent
@@ -471,12 +453,14 @@ struct GravityDisabledUntilMovedComponent : public BaseComponent
 };
 
 DEFINE_TAG_COMPONENT(eoc, GravityDisabledComponent, GravityDisabled)
-DEFINE_TAG_COMPONENT(eoc::improvised_weapon, CanBeWieldedComponent, CanBeWielded)
 DEFINE_TAG_COMPONENT(eoc::tag, AvatarComponent, Avatar)
 DEFINE_TAG_COMPONENT(eoc::tag, HasExclamationDialogComponent, HasExclamationDialog)
 DEFINE_TAG_COMPONENT(eoc::tag, TraderComponent, Trader)
 DEFINE_TAG_COMPONENT(eoc::ambush, AmbushingComponent, Ambushing)
 DEFINE_TAG_COMPONENT(eoc::trade, CanTradeComponent, CanTrade)
+DEFINE_TAG_COMPONENT(eoc::falling, IsFallingComponent, IsFalling)
+DEFINE_TAG_COMPONENT(eoc::heal, MaxIncomingComponent, HealMaxIncoming)
+DEFINE_TAG_COMPONENT(eoc::heal, MaxOutgoingComponent, HealMaxOutgoing)
 
 struct InteractionFilterComponent : public BaseComponent
 {
@@ -624,6 +608,29 @@ struct GoalsComponent : public BaseComponent
 
 END_NS()
 
+BEGIN_NS(eoc::exp)
+
+struct ExperienceComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(Experience, "eoc::exp::ExperienceComponent")
+
+    int CurrentLevelExperience;
+    int NextLevelExperience;
+    int TotalExperience;
+    uint8_t field_28;
+};
+
+struct AvailableLevelComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(AvailableLevel, "eoc::exp::AvailableLevelComponent")
+
+    int Level;
+};
+
+DEFINE_TAG_COMPONENT(eoc::exp, CanLevelUpComponent, CanLevelUp)
+
+END_NS()
+
 BEGIN_NS(eoc::hotbar)
 
 struct Slot
@@ -681,23 +688,42 @@ struct StartingDateComponent : public BaseComponent
 
 END_NS()
 
-BEGIN_NS(eoc::ftb)
+BEGIN_NS(eoc::improvised_weapon)
 
-struct ParticipantComponent : public BaseComponent
+struct WieldedComponent : public BaseComponent
 {
-    DEFINE_COMPONENT(FTBParticipant, "eoc::ftb::ParticipantComponent")
+    DEFINE_COMPONENT(ImprovisedWeaponWielded, "eoc::improvised_weapon::WieldedComponent")
 
-    EntityHandle field_18;
+    EntityHandle Wielder;
+    uint8_t field_8;
+    uint8_t field_9;
 };
 
-struct ZoneBlockReasonComponent : public BaseComponent
+struct WieldingComponent : public BaseComponent
 {
-    DEFINE_COMPONENT(FTBZoneBlockReason, "eoc::ftb::ZoneBlockReasonComponent")
+    DEFINE_COMPONENT(ImprovisedWeaponWielding, "eoc::improvised_weapon::WieldingComponent")
 
-    uint8_t Reason;
+    EntityHandle Weapon;
 };
 
-DEFINE_TAG_COMPONENT(eoc::ftb, RespectComponent, FTBRespect)
+DEFINE_TAG_COMPONENT(eoc::improvised_weapon, CanBeWieldedComponent, CanBeWielded)
+
+END_NS()
+
+BEGIN_NS(eoc::pickup)
+
+struct PickUpRequestComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(PickUpRequest, "eoc::pickup::PickUpRequestComponent")
+
+    Guid field_0;
+    uint8_t State;
+};
+
+DEFINE_TAG_COMPONENT(eoc::pickup, PickUpExecutingComponent, PickUpExecuting)
+
+END_NS()
+
 BEGIN_NS(eoc::rest)
 
 struct LongRestStateComponent : public BaseComponent
