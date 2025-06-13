@@ -1132,7 +1132,11 @@ void Table::StyledRender(DrawingContext& context)
 
 bool Table::BeginRender(DrawingContext& context)
 {
-    rendering_ = ImGui::BeginTable(Label.c_str(), (int)Columns, (ImGuiTableFlags)Flags, context.Scale(ToImVec(Size)));
+    // Handle possible discrepancy between Columns and # of items in ColumnDefs (use whichever is higher).
+    // IMGUI will crash if we try to add more columns than the col count in BeginTable()
+    auto cols = std::max(Columns, ColumnDefs.size());
+
+    rendering_ = ImGui::BeginTable(Label.c_str(), (int)cols, (ImGuiTableFlags)Flags, context.Scale(ToImVec(Size)));
 
     if (rendering_) {
         for (auto const& def : ColumnDefs) {
