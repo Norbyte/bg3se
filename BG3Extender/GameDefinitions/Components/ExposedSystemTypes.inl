@@ -23,6 +23,7 @@ T(esv::templates::ChangeSystem)
 T(esv::concentration::ConcentrationSystem)
 T(esv::ExperienceSystem)
 T(esv::LongRestSystem)
+T(esv::ftb::ZoneSystem)
 
 T(ecl::EquipmentVisualsSystem)
 T(ecl::VisualSystem)

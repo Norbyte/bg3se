@@ -240,7 +240,7 @@ void AiPath::UsePlayerWeighting(lua_State* L, std::optional<bool> avoidObstacles
 
     bool inCombat{ false };
     if (Source) {
-        auto combat = helpers->GetComponent<combat::ParticipantComponent>(Source);
+        auto combat = helpers->GetComponent<eoc::combat::ParticipantComponent>(Source);
         if (combat) {
             inCombat = (bool)combat->CombatHandle;
         }
