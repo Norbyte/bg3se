@@ -193,13 +193,6 @@ struct DisarmableComponent : public BaseComponent
     uint8_t field_11;
 };
 
-struct ShortRestComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(ShortRest, "eoc::rest::ShortRestComponent")
-
-    uint8_t StateId;
-};
-
 struct IsSummonComponent : public BaseComponent
 {
     DEFINE_COMPONENT(IsSummon, "eoc::summon::IsSummonComponent")
@@ -705,6 +698,125 @@ struct ZoneBlockReasonComponent : public BaseComponent
 };
 
 DEFINE_TAG_COMPONENT(eoc::ftb, RespectComponent, FTBRespect)
+BEGIN_NS(eoc::rest)
+
+struct LongRestStateComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(LongRestState, "eoc::rest::LongRestState")
+
+    LongRestState State;
+    bool WaitingForOthers;
+    bool FinishConfirmed;
+    bool Finishing;
+    RestCancelReason CancelReason;
+    FixedString field_8;
+    EntityHandle Requester;
+};
+
+struct LongRestTimeline : public BaseComponent
+{
+    DEFINE_COMPONENT(LongRestTimeline, "eoc::rest::LongRestTimeline")
+
+    Guid Timeline;
+};
+
+struct LongRestTimers : public BaseComponent
+{
+    DEFINE_COMPONENT(LongRestTimers, "eoc::rest::LongRestTimers")
+
+    int field_0;
+};
+
+struct LongRestUsers : public BaseComponent
+{
+    DEFINE_COMPONENT(LongRestUsers, "eoc::rest::LongRestUsers")
+
+    bool RequestRestore;
+    HashMap<UserId, LongRestUserState> States;
+    HashSet<UserId> FinishConfirmation;
+};
+
+struct RestingEntities : public BaseComponent
+{
+    DEFINE_COMPONENT(RestingEntities, "eoc::rest::RestingEntities")
+
+    HashSet<EntityHandle> ScriptFinished;
+    HashSet<EntityHandle> RestRequested;
+    HashSet<EntityHandle> RestStarted;
+    HashSet<EntityHandle> Party;
+    bool HasSurfaces;
+};
+
+
+DEFINE_TAG_COMPONENT(eoc::rest, ShortRestComponent, ShortRest)
+DEFINE_TAG_COMPONENT(eoc::rest, LongRestInScriptPhase, LongRestInScriptPhase)
+
+END_NS()
+
+BEGIN_NS(esv::rest)
+
+struct PendingTypeComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerRestPendingType, "esv::rest::PendingTypeComponent")
+
+    RestCancelReason CancelReason;
+    HashMap<EntityHandle, int> Supplies;
+};
+
+struct RestTypeChosenEventOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(ServerRestTypeChosenEvent, "esv::rest::RestTypeChosenEventOneFrameComponent")
+
+    RestCancelReason CancelReason;
+    HashMap<EntityHandle, int> Supplies;
+    bool UserDecision;
+};
+
+struct ShortRestResultEventOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(ServerShortRestResultEvent, "esv::rest::ShortRestResultEventOneFrameComponent")
+
+    bool Rested;
+    RestErrorFlags ErrorFlags;
+};
+
+
+DEFINE_TAG_COMPONENT(esv::rest, ShortRestConsumeResourcesComponent, ShortRestConsumeResources)
+
+struct LongRestSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerLongRest, "esv::rest::LongRestSystem")
+
+    EntityHandle RestRequester;
+    bool RestConfirmed;
+    bool Pending;
+    bool RequestSyncedFinish;
+    bool RequestReloadStory;
+    bool RequestUserStateRestore;
+    bool RequestLongRest;
+    Array<bool> AutoConfirmation;
+    HashSet<Guid> SetTimeline;
+    Array<FixedString> ScriptDeny;
+    HashSet<EntityHandle> Finish;
+    HashSet<UserId> FinishConfirmation;
+    [[bg3::hidden]] void* LongRestUnitTestHelper;
+    [[bg3::hidden]] void* EocServer;
+    uint8_t UserDecisionRestType;
+    HashMap<EntityHandle, int> RestSupplies;
+    bool UserDecision;
+    std::optional<bool> SetPlayersAreDreaming;
+};
+
+struct ShortRestSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerShortRest, "esv::rest::ShortRestSystem")
+
+    [[bg3::hidden]] UnknownSignal qword10;
+    [[bg3::hidden]] UnknownSignal qword28;
+    HashMap<EntityHandle, bool> UIRequest;
+    HashMap<EntityHandle, bool> ReConRequest;
+    HashMap<EntityHandle, bool> FunctorRequest;
+};
 
 END_NS()
 
