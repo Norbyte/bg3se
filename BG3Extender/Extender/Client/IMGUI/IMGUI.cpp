@@ -2060,19 +2060,19 @@ void IMGUIManager::UpdateStyle()
 
 void IMGUIManager::Update()
 {
-    ERR("IMGUIManager::Update() - Frame %d - State: UI=%d Init=%d Objects=%d Backend=%d", 
-        frameNo_, enableUI_ ? 1 : 0, initialized_ ? 1 : 0, objects_ ? 1 : 0, renderer_->IsInitialized() ? 1 : 0);
     
     if (!enableUI_
         || !initialized_
         || !objects_
         || !renderer_->IsInitialized()) {
 
-        ERR("Skip drawing - enableUI %d, initialized %d, objects %d, rendererInitialized %d",
-            enableUI_ ? 1 : 0, initialized_ ? 1 : 0, objects_ ? 1 : 0, renderer_->IsInitialized() ? 1 : 0);
+        //ERR("Skip drawing - enableUI %d, initialized %d, objects %d, rendererInitialized %d",
+        //    enableUI_ ? 1 : 0, initialized_ ? 1 : 0, objects_ ? 1 : 0, renderer_->IsInitialized() ? 1 : 0);
         frameNo_++;
         return;
     }
+    ERR("IMGUIManager::Update() - Frame %d - State: UI=%d Init=%d Objects=%d Backend=%d", 
+        frameNo_, enableUI_ ? 1 : 0, initialized_ ? 1 : 0, objects_ ? 1 : 0, renderer_->IsInitialized() ? 1 : 0);
 
     if (scale_ != requestedScale_ 
         || uiScaleMultiplier_ != requestedUiScaleMultiplier_

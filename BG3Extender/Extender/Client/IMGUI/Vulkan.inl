@@ -886,10 +886,6 @@ auto  gamePresent           = reinterpret_cast<PFN_vkQueuePresentKHR>(
         VkQueue queue,
         const VkPresentInfoKHR* pPresentInfo)
     {
-        if (pPresentInfo->swapchainCount > 0) {
-            ERR("vkQueuePresentKHR: Presenting swapchain %p (our tracked swapchain: %p)",
-                pPresentInfo->pSwapchains[0], swapChain_);
-        }
 
         std::lock_guard _(globalResourceLock_);
         if (!initialized_) {
@@ -913,14 +909,18 @@ auto  gamePresent           = reinterpret_cast<PFN_vkQueuePresentKHR>(
         }
 
         if (initialized_ && drawViewport_ != -1) {
+            if (pPresentInfo->swapchainCount > 0) {
+                ERR("vkQueuePresentKHR: Presenting swapchain %p (our tracked swapchain: %p)",
+                    pPresentInfo->pSwapchains[0], swapChain_);
+            }
             ERR("vkQueuePresentKHR: Calling presentPreHook - initialized %d, drawViewport %d",
                 initialized_ ? 1 : 0, drawViewport_);
             ERR("vkQueuePresentKHR: present queue = %p graphics queue = %p", queue, renderQueue_);
             
             presentPreHook(const_cast<VkPresentInfoKHR*>(pPresentInfo));
         } else {
-            ERR("vkQueuePresentKHR: Cannot append command buffer - initialized %d, drawViewport %d",
-                initialized_ ? 1 : 0, drawViewport_);
+            //ERR("vkQueuePresentKHR: Cannot append command buffer - initialized %d, drawViewport %d",
+            //    initialized_ ? 1 : 0, drawViewport_);
         }
 
         frameNo_++;
