@@ -440,6 +440,12 @@ bool ValidateRef(TrackedCompactSet<TE> const* v, Overload<TrackedCompactSet<TE>>
     return ValidateLinearContainer(v->Buf, v->Size, v->Capacity);
 }
 
+template <class TE>
+bool ValidateRef(MiniCompactSet<TE> const* v, Overload<MiniCompactSet<TE>>)
+{
+    return ValidateLinearContainer(v->Buf, v->Size, v->Capacity);
+}
+
 template <class TE, unsigned N>
 bool ValidateRef(Noesis::Vector<TE, N> const* v, Overload<Noesis::Vector<TE, N>>)
 {
@@ -617,6 +623,12 @@ template <class TE>
 bool Validate(TrackedCompactSet<TE> const* v, Overload<TrackedCompactSet<TE>>)
 {
     return ValidateRef(v, Overload<TrackedCompactSet<TE>>{});
+}
+
+template <class TE>
+bool Validate(MiniCompactSet<TE> const* v, Overload<MiniCompactSet<TE>>)
+{
+    return ValidateRef(v, Overload<MiniCompactSet<TE>>{});
 }
 
 template <class TE, unsigned N>

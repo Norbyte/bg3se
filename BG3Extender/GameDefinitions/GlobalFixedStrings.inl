@@ -139,6 +139,7 @@ FS(decal);
 FS(prefab);
 FS(light);
 FS(CombinedLight);
+FS(TileConstruction);
 
 // Default IMGUI fonts
 FS(Tiny);

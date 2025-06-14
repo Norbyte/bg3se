@@ -71,6 +71,16 @@ inline void PushReturnValue(lua_State* L, TrackedCompactSet<T>* v)
     }
 }
 
+template <class T>
+inline void PushReturnValue(lua_State* L, MiniCompactSet<T>* v)
+{
+    if constexpr (!IsByVal<T>) {
+        MakeObjectRef(L, v);
+    } else {
+        LuaWrite(L, v);
+    }
+}
+
 template <class TKey, class TValue>
 inline void PushReturnValue(lua_State* L, LegacyRefMap<TKey, TValue>* v)
 {

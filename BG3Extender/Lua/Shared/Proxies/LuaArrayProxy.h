@@ -664,6 +664,18 @@ public:
     }
 
     template <class T>
+    inline static void Make(lua_State* L, MiniCompactSet<T>* object, LifetimeHandle lifetime)
+    {
+        MakeImpl(L, object, lifetime, GetImplementation<DynamicArrayProxyImpl<MiniCompactSet<T>, T, 9>>());
+    }
+
+    template <class T>
+    inline static void Make(lua_State* L, MiniCompactSet<T> const* object, LifetimeHandle lifetime)
+    {
+        MakeImpl(L, object, lifetime, GetImplementation<DynamicArrayProxyImpl<MiniCompactSet<T>, T, 9>>());
+    }
+
+    template <class T>
     inline static void Make(lua_State* L, Queue<T>* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, object, lifetime, GetImplementation<DynamicArrayProxyImpl<Queue<T>, T, 7>>());

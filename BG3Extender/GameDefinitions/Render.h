@@ -445,7 +445,7 @@ struct Visual : public MoveableObject
     };
 
 
-    struct [[bg3::hidden]] SkeletonSlot
+    struct SkeletonSlot
     {
         struct Remap
         {
@@ -456,15 +456,11 @@ struct Visual : public MoveableObject
         FixedString RemapperSlot;
         int field_4;
         Skeleton* Skeleton;
-        Remap* Remaps;
-        uint8_t RemapsCapacity;
-        uint8_t RemapsSize;
+        MiniCompactSet<Remap> Remaps;
     };
 
     [[bg3::hidden]] void* field_80;
-    [[bg3::hidden]] SkeletonSlot** SkeletonSlots;
-    [[bg3::hidden]] uint8_t SkeletonSlotsCapacity;
-    [[bg3::hidden]] uint8_t SkeletonSlotsSize;
+    MiniCompactSet<SkeletonSlot*> SkeletonSlots;
     Array<ObjectDesc> ObjectDescs;
     Array<float> LODDistances;
     Array<Attachment> Attachments;

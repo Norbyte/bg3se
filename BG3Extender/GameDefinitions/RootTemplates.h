@@ -70,6 +70,7 @@ struct GameObjectTemplate
     STDString FileName;
 };
 
+
 struct TemplateTagContainer
 {
     HashSet<Guid> DirectTags;
@@ -664,6 +665,166 @@ struct CombinedLightTemplate : public LightTemplate
     OverrideableProperty<bool> IsSunlight;
 };
 
+struct ConstructionVertexElement
+{
+    glm::vec3 Position;
+    glm::vec2 UV;
+    int field_14;
+    int field_18;
+    int field_1C;
+    int field_20;
+};
+
+struct ConstructionPointSchema
+{
+    glm::vec4 Rotation;
+    glm::vec3 Position;
+    glm::vec3 Scale;
+    Guid InstanceId;
+    uint8_t field_38;
+    uint8_t field_39;
+};
+
+struct ConstructionPoint : public ConstructionPointSchema
+{
+    uint8_t field_40;
+    uint8_t field_41;
+    Array<ConstructionPoint*> Branches;
+};
+
+struct ConstructionSpline : public ProtectedGameObject<ConstructionSpline>
+{
+    Guid InstanceId;
+    [[bg3::hidden]] HashSet<ConstructionPoint*> Points;
+    [[bg3::hidden]] LegacyRefMap<void*, void*>* field_40;
+};
+
+struct ConstructionTileTemplate;
+
+struct TileSetNeighbourPointTileList
+{
+    uint32_t NonOptimalTilesStart;
+    uint32_t NonOptimalTilesEnd;
+    Array<ConstructionTileTemplate*> LeftCornerTiles;
+    Array<ConstructionTileTemplate*> RightCornerTiles;
+    Array<ConstructionTileTemplate*> StraightTiles;
+};
+
+struct TileSetConstructionNeighbourPoint
+{
+    Array<Guid> NeighbourPoints;
+    HashMap<uint8_t, TileSetNeighbourPointTileList*> NeighbourLists;
+};
+
+struct TileSetConstructionLine;
+
+struct TileSetConstructionPoint : public ProtectedGameObject<TileSetConstructionPoint>
+{
+    [[bg3::hidden]] void* VMT;
+    Array<TileSetConstructionLine*> Lines;
+    [[bg3::hidden]] Array<void*> field_18;
+    Array<TileSetConstructionNeighbourPoint*> NeighbourPoints;
+    ConstructionPoint* Point;
+    uint8_t byte40;
+    uint8_t byte41;
+    bool ConstructionPointStop;
+};
+
+struct TileSetConstructionLine
+{
+    Array<TileSetConstructionPoint*> Points;
+    TileSetConstructionPoint* Start;
+    TileSetConstructionPoint* End;
+    Guid InstanceId;
+};
+
+
+struct ConstructionFillingTemplate : public ProtectedGameObject<ConstructionFillingTemplate>
+{
+    virtual ~ConstructionFillingTemplate();
+
+    Array<FixedString> FadeChildren;
+    Array<ConstructionVertexElement> Vertices;
+    Array<uint16_t> Indices;
+    STDString Name;
+    FixedString Id;
+    FixedString Material;
+    FixedString Physics;
+    FixedString FadeGroup;
+    float Tiling;
+    float UVRotation;
+    glm::vec2 UVOffset;
+    float Scale;
+    glm::vec4 Rotation;
+    glm::vec3 Translate;
+    glm::vec3 BoundMin;
+    glm::vec3 BoundMax;
+    bool WalkOn;
+    bool SeeThrough;
+    bool Fadeable;
+    bool HierarchyOnlyFade;
+    Guid HLOD;
+    [[bg3::hidden]] void* gapC0;
+    Array<ConstructionSpline*> Splines;
+    uint8_t field_D8;
+    bool HiddenFromMinimapRendering;
+};
+
+struct ConstructionTileTemplate
+{
+    virtual ~ConstructionTileTemplate();
+
+    Array<Transform> Transforms;
+    Guid Tile;
+    Guid HLOD;
+    FixedString UUID;
+    FixedString OverridePhysicsResource;
+    glm::vec4 Rotation;
+    glm::vec3 Translate;
+    float ScaleX;
+    float Scale;
+    uint8_t ShootThroughType;
+    bool WalkOn;
+    bool Climbable;
+    bool ShootThrough;
+    bool CanSeeThrough;
+    bool WalkThrough;
+    bool ClickThrough;
+    [[bg3::hidden]] HashSet<void*> ReferenceFromNeighbourPoint; // TileSetNeighbourPointTileList*
+    Guid TemplateGuid;
+    int Side;
+    uint8_t gapA4;
+    bool Flip;
+    bool Stretchable;
+};
+
+struct ConstructionTemplate : public GameObjectTemplate
+{
+    __int64 field_100;
+    __int64 field_108;
+    Array<ConstructionTileTemplate*> Tiles;
+    Array<FixedString> FadeChildren;
+    OverrideableProperty<FixedString> FadeGroup;
+    OverrideableProperty<FixedString> TileSet;
+    OverrideableProperty<bool> ConstructionBend;
+    OverrideableProperty<bool> Fadeable;
+    OverrideableProperty<bool> SeeThrough;
+    OverrideableProperty<bool> HierarchyOnlyFade;
+    // Editor only?
+    // [[bg3::hidden]] Array<TileSetConstructionPoint*> Points;
+    // [[bg3::hidden]] Array<TileSetConstructionLine*> Lines;
+    // [[bg3::hidden]] void* Spline;
+    // [[bg3::hidden]] LegacyRefMap<int, int>* field_170;
+    // [[bg3::hidden]] LegacyRefMap<int, int>* field_178;
+    // OverrideableProperty<bool> WalkOn;
+    // OverrideableProperty<bool> Climbable;
+    // OverrideableProperty<bool> ShootThrough;
+    // OverrideableProperty<uint8_t> ShootThroughType;
+    // OverrideableProperty<bool> CanSeeThrough;
+    // OverrideableProperty<bool> WalkThrough;
+    // OverrideableProperty<bool> ClickThrough;
+    // OverrideableProperty<bool> ConstructionPlaceTwoTiles;
+};
 
 
 struct [[bg3::hidden]] GlobalTemplateBank

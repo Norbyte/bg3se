@@ -512,30 +512,26 @@ struct AnimationBlueprintResource : public TwoStepLoadableResource
     // Guid PreviewVisualResourceID;
 };
 
+struct AnimationDesc
+{
+    FixedString ID;
+    AnimationSetAnimationFlags flags;
+};
+
+struct AnimationSubSet
+{
+    LegacyRefMap<FixedString, AnimationDesc> Animation;
+    FixedString FallBackSubSet;
+};
+
+struct AnimationSet
+{
+    LegacyRefMap<FixedString, AnimationSubSet> AnimationSubSets;
+};
+
 struct AnimationSetResource : public LoadableResource
 {
-    struct Subset
-    {
-        struct Animations
-        {
-            FixedString ID;
-            AnimationSetAnimationFlags flags;
-            [[bg3::hidden]] __int8 field_5;
-            [[bg3::hidden]] __int16 field_6;
-            [[bg3::hidden]] __int32 field_8;
-        };
-
-        LegacyRefMap<FixedString, Animations> Animation;
-        FixedString FallBackSubSet;
-        [[bg3::hidden]] __int32 field_14;
-    };
-
-    struct Bank
-    {
-        LegacyRefMap<FixedString, Subset> AnimationSubSets;
-    };
-
-    Bank* AnimationBank;
+    AnimationSet* AnimationBank;
 };
 
 struct AtmosphereResource : public LoadableResource

@@ -226,6 +226,31 @@ namespace bg3se::lua
         return s;
     }
 
+    template <class T, class Allocator, bool StoreSize>
+    LuaSerializer& serialize(LuaSerializer& s, MiniCompactSet<T>& v)
+    {
+        s.BeginObject();
+        if (s.IsWriting) {
+            int i = 1;
+            for (auto& val : v) {
+                StackCheck _(s.L);
+                push(s.L, i++);
+                serialize(s, val);
+                lua_rawset(s.L, -3);
+            }
+        } else {
+            v.clear();
+            for (auto idx : iterate(s.L, -1)) {
+                StackCheck _(s.L);
+                T temp{};
+                serialize(s, temp);
+                v.Add(temp);
+            }
+        }
+        s.EndObject();
+        return s;
+    }
+
     template <class T>
     LuaSerializer& serialize(LuaSerializer& s, Array<T>& v)
     {

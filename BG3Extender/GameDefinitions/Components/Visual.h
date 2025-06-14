@@ -166,6 +166,26 @@ struct AnimationTag
     uint8_t field_10;
 };
 
+struct AnimationSetEntry
+{
+    FixedString Slot;
+    FixedString Resource;
+    FixedString Type;
+    [[bg3::hidden]] AnimationTag* TagsStart;
+    [[bg3::hidden]] AnimationTag* TagsEnd;
+    bool Dynamic;
+};
+
+struct AnimationSetComponent : public BaseComponent
+{
+    DEFINE_PROXY_COMPONENT(AnimationSet, "ls::AnimationSetComponent")
+
+    MiniCompactSet<AnimationSetEntry> Entries;
+    FixedString FallbackSubSet;
+    [[bg3::hidden]] void* PAD;
+};
+
+DEFINE_TAG_COMPONENT(ls, AnimationUpdateComponent, AnimationUpdate)
 
 struct AnimationWaterfallComponent : public BaseComponent
 {
@@ -252,6 +272,65 @@ struct CombinedLightComponent : public MoveableObject
     Transform Transform;
 };
 
+struct StandardGameObject : public ProtectedGameObject<StandardGameObject>
+{
+    [[bg3::hidden]] void* VMT;
+    [[bg3::hidden]] void* VMT2;
+    ecs::EntityRef GameObjectEntity;
+    [[bg3::hidden]] void* field_20;
+    FixedString Level;
+    uint16_t GameObjectFlags;
+};
+
+struct ConstructionTile : public StandardGameObject
+{
+    DEFINE_COMPONENT(ConstructionTile, "ls::ConstructionTile")
+
+    Guid InstanceId;
+    EntityHandle Entity;
+    EntityHandle field_48;
+    ConstructionTileTemplate* Template;
+    FixedString Construction;
+    FixedString field_5C;
+    float Scale;
+    uint8_t Flags;
+};
+
+struct ConstructionFilling : public StandardGameObject
+{
+    DEFINE_COMPONENT(ConstructionFilling, "ls::ConstructionFilling")
+
+    struct Guid InstanceId;
+    EntityHandle Entity;
+    ConstructionFillingTemplate* Template;
+    RenderableObject* Renderable;
+    RenderableObject* Renderable2;
+    FixedString Construction;
+    FixedString FadeGroup;
+    FixedString Material;
+    FixedString Physics;
+    FixedString Id;
+    float Tiling;
+    bool WalkOn;
+    bool SeeThrough;
+    bool Fadeable;
+    bool HierarchyOnlyFade;
+};
+
+struct Construction : public ProtectedGameObject<Construction>
+{
+    DEFINE_COMPONENT(Construction, "ls::Construction")
+
+    [[bg3::hidden]] void* field_0;
+    [[bg3::hidden]] UnknownSignal field_8;
+    Array<EntityHandle> Tiles;
+    Array<EntityHandle> Filling;
+    Guid InstanceId;
+    ConstructionTemplate* Template;
+};
+
+
+DEFINE_TAG_COMPONENT(ls, IsSeeThroughComponent, IsSeeThrough)
 
 END_SE()
 

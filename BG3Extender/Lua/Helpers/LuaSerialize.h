@@ -59,6 +59,17 @@ void SerializeArray(lua_State* L, TrackedCompactSet<TK> const* obj)
 }
 
 template <class TK>
+void SerializeArray(lua_State* L, MiniCompactSet<TK> const* obj)
+{
+    StackCheck _(L, 1);
+    lua_createtable(L, (int)obj->size(), 0);
+    for (uint32_t i = 0; i < obj->size(); i++) {
+        Serialize(L, &(*obj)[i]);
+        lua_rawseti(L, -2, i + 1);
+    }
+}
+
+template <class TK>
 void SerializeArray(lua_State* L, Queue<TK> const* obj)
 {
     StackCheck _(L, 1);
