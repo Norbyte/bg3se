@@ -31,5 +31,6 @@
 #include <GameDefinitions/Components/Status.h>
 #include <GameDefinitions/Components/Summon.h>
 #include <GameDefinitions/Components/Timeline.h>
+#include <GameDefinitions/Components/Trigger.h>
 #include <GameDefinitions/Dialog.h>
 #include <GameDefinitions/Picking.h>

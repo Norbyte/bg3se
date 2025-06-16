@@ -14,11 +14,11 @@ void LuaPolymorphic<GameObjectTemplate>::MakeRef(lua_State* L, GameObjectTemplat
     MAKE_REF(strprojectile, ProjectileTemplate)
     MAKE_REF(strsurface, SurfaceTemplate)
     MAKE_REF(strlight, LightTemplate)
+    MAKE_REF(strtrigger, TriggerTemplate)
     MAKE_REF(strCombinedLight, CombinedLightTemplate)
     MAKE_REF(strTileConstruction, ConstructionTemplate)
     // TODO - These mappings are disabled until they are updated
     //MAKE_REF(strLevelTemplate, LevelTemplate)
-    //MAKE_REF(strtrigger, TriggerTemplate)
     //MAKE_REF(strdecal, DecalTemplate)
     //MAKE_REF(strprefab, PrefabTemplate)
 

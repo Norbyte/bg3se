@@ -661,6 +661,7 @@ sources = [
     'GameDefinitions/Components/Summon.h',
     'GameDefinitions/Components/Tadpole.h',
     'GameDefinitions/Components/Timeline.h',
+    'GameDefinitions/Components/Trigger.h',
     'GameDefinitions/Stats/Functors.h',
     'GameDefinitions/Stats/Prototype.h',
     'GameDefinitions/Stats/UseActions.h',

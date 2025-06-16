@@ -826,6 +826,56 @@ struct ConstructionTemplate : public GameObjectTemplate
     // OverrideableProperty<bool> ConstructionPlaceTwoTiles;
 };
 
+struct ITriggerData : public ProtectedGameObject<ITriggerData>
+{
+    virtual ~ITriggerData() = 0;
+};
+
+struct ITriggerPhysicsData : public ProtectedGameObject<ITriggerPhysicsData>
+{
+    virtual ~ITriggerPhysicsData() = 0;
+};
+
+struct TriggerPhysicsSphere : public ITriggerPhysicsData
+{
+    float Radius;
+};
+
+struct TriggerPhysicsBox : public ITriggerPhysicsData
+{
+    glm::vec3 Extents;
+};
+
+struct TriggerPhysicsPoly : public ITriggerPhysicsData
+{
+    Array<glm::vec2> Points;
+    float Height;
+};
+
+struct TriggerTemplate : public GameObjectTemplate
+{
+    [[bg3::hidden]] ITriggerData* TriggerData;
+    [[bg3::hidden]] ITriggerPhysicsData* PhysicsData;
+    OverrideableProperty<FixedString> TriggerType;
+    OverrideableProperty<uint8_t> PhysicsType;
+    OverrideableProperty<glm::vec4> Color;
+    OverrideableProperty<FixedString> TriggerGizmoOverride;
+    OverrideableProperty<bool> Fadeable;
+    OverrideableProperty<bool> HierarchyOnlyFade;
+    OverrideableProperty<bool> FadeGroupOnly;
+    OverrideableProperty<bool> IgnoreRaycast;
+    OverrideableProperty<FixedString> FadeGroup;
+    OverrideableProperty<Array<FixedString>> FadeChildren;
+    OverrideableProperty<glm::vec4> GizmoColorOverride;
+    OverrideableProperty<bool> UsingGizmoColorOverride;
+    OverrideableProperty<bool> HasCustomPoint;
+    OverrideableProperty<bg3se::Transform> CustomPointTransform;
+    [[bg3::hidden]] OverrideableProperty<Array<void*>> ConstellationConfigGlobalParameters;
+    OverrideableProperty<FixedString> ConstellationConfigName;
+    OverrideableProperty<uint8_t> EventSendingMode;
+    OverrideableProperty<bool> OnlyCharacterEvents;
+};
+
 
 struct [[bg3::hidden]] GlobalTemplateBank
 {
