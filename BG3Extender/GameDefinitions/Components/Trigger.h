@@ -446,6 +446,7 @@ struct [[bg3::component]] StatsAreaTrigger : public AreaTriggerBase
     DEFINE_PROXY_COMPONENT(ServerStatsAreaTrigger, "esv::StatsAreaTrigger")
 
     Guid AreaLevelOverrideGuid;
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct [[bg3::component]] SoundVolumeTrigger : public bg3se::SoundVolumeTrigger
@@ -461,6 +462,7 @@ struct [[bg3::component]] AIHintAreaTrigger : public AreaTriggerBase
     DEFINE_PROXY_COMPONENT(ServerAIHintAreaTrigger, "esv::AIHintAreaTrigger")
 
     bool IsAnchor;
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct [[bg3::component]] CrowdCharacterTrigger : public AreaTriggerBase
@@ -491,6 +493,7 @@ struct [[bg3::component]] CrowdCharacterTrigger : public AreaTriggerBase
     Array<FixedString> PointsOfInterest;
     Array<CrowdCharacterCustomAnimation> CustomAnimations;
     Array<CrowdCharacterDynamicAnimationTag> DynamicAnimationTags;
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct [[bg3::component]] ChasmSeederTrigger : public PointTriggerBase
@@ -500,6 +503,7 @@ struct [[bg3::component]] ChasmSeederTrigger : public PointTriggerBase
     int32_t MaxChasmTiles;
     float MaxChasmHeightOffset;
     Array<FixedString> Triggers;
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct [[bg3::component]] TeleportTrigger : public PointTriggerBase
@@ -508,16 +512,21 @@ struct [[bg3::component]] TeleportTrigger : public PointTriggerBase
 
     float Angle;
     bool Zoom;
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct [[bg3::component]] CampRegionTrigger : public AreaTriggerBase
 {
     DEFINE_PROXY_COMPONENT(ServerCampRegionTrigger, "esv::CampRegionTrigger")
+    
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct [[bg3::component]] EocAreaTrigger : public AreaTriggerBase
 {
     DEFINE_PROXY_COMPONENT(ServerEocAreaTrigger, "esv::EocAreaTrigger")
+
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct [[bg3::component]] StartTrigger : public PointTriggerBase
@@ -526,6 +535,7 @@ struct [[bg3::component]] StartTrigger : public PointTriggerBase
 
     uint8_t Player;
     float Angle;
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct [[bg3::component]] AtmosphereTrigger : public bg3se::AtmosphereTrigger
@@ -533,6 +543,7 @@ struct [[bg3::component]] AtmosphereTrigger : public bg3se::AtmosphereTrigger
     DEFINE_PROXY_COMPONENT(ServerAtmosphereTrigger, "esv::AtmosphereTrigger")
 
     EntityHandle Entity;
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct [[bg3::component]] CrimeAreaTrigger : public AreaTriggerBase
@@ -542,6 +553,7 @@ struct [[bg3::component]] CrimeAreaTrigger : public AreaTriggerBase
     int MinimumTension;
     FixedString field_7C;
     __int64 field_80;
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct [[bg3::component]] CrimeRegionTrigger : public AreaTriggerBase
@@ -549,6 +561,7 @@ struct [[bg3::component]] CrimeRegionTrigger : public AreaTriggerBase
     DEFINE_PROXY_COMPONENT(ServerCrimeRegionTrigger, "esv::CrimeRegionTrigger")
 
     FixedString Region;
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct [[bg3::component]] EventTrigger : public AreaTriggerBase
@@ -557,6 +570,7 @@ struct [[bg3::component]] EventTrigger : public AreaTriggerBase
 
     FixedString EnterEvent;
     FixedString LeaveEvent;
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct [[bg3::component]] FloorTrigger : bg3se::FloorTrigger
@@ -564,6 +578,7 @@ struct [[bg3::component]] FloorTrigger : bg3se::FloorTrigger
     DEFINE_PROXY_COMPONENT(ServerFloorTrigger, "esv::FloorTrigger")
 
     EntityHandle Entity;
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct [[bg3::component]] PortalTrigger : public bg3se::PortalTrigger
@@ -571,6 +586,7 @@ struct [[bg3::component]] PortalTrigger : public bg3se::PortalTrigger
     DEFINE_PROXY_COMPONENT(ServerPortalTrigger, "esv::PortalTrigger")
 
     EntityHandle Entity;
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct [[bg3::component]] RoomTrigger : public bg3se::RoomTrigger
@@ -579,11 +595,14 @@ struct [[bg3::component]] RoomTrigger : public bg3se::RoomTrigger
 
     EntityHandle Entity;
     uint8_t field_78;
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct [[bg3::component]] AvatarContainerTrigger : public PointTriggerBase
 {
     DEFINE_PROXY_COMPONENT(ServerAvatarContainerTrigger, "esv::AvatarContainerTrigger")
+
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct [[bg3::component]] CampChestTrigger : public PointTriggerBase
@@ -591,6 +610,7 @@ struct [[bg3::component]] CampChestTrigger : public PointTriggerBase
     DEFINE_PROXY_COMPONENT(ServerCampChestTrigger, "esv::CampChestTrigger")
 
     uint8_t Index;
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct [[bg3::component]] ChasmRegionTrigger : public AreaTriggerBase
@@ -598,6 +618,7 @@ struct [[bg3::component]] ChasmRegionTrigger : public AreaTriggerBase
     DEFINE_PROXY_COMPONENT(ServerChasmRegionTrigger, "esv::ChasmRegionTrigger")
 
     Array<FixedString> Triggers;
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct [[bg3::component]] ExplorationTrigger : public AreaTriggerBase
@@ -606,6 +627,7 @@ struct [[bg3::component]] ExplorationTrigger : public AreaTriggerBase
 
     Guid ExplorationReward;
     int LevelOverride;
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct [[bg3::component]] MusicVolumeTrigger : public AreaTriggerBase
@@ -613,6 +635,7 @@ struct [[bg3::component]] MusicVolumeTrigger : public AreaTriggerBase
     DEFINE_PROXY_COMPONENT(ServerMusicVolumeTrigger, "esv::MusicVolumeTrigger")
 
     Array<MusicVolumeEvent> Events;
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct MusicVolumeTriggerState
@@ -632,17 +655,23 @@ struct [[bg3::component]] TimelineSceneTrigger : public bg3se::TimelineSceneTrig
 {
     DEFINE_PROXY_COMPONENT(ServerTimelineSceneTrigger, "esv::TimelineSceneTrigger")
 
+    [[bg3::hidden]] void* field_A8;
     EntityHandle Entity;
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct [[bg3::component]] BlockBronzeTimelinePlacementTrigger : public AreaTriggerBase
 {
     DEFINE_PROXY_COMPONENT(ServerBlockBronzeTimelinePlacementTrigger, "esv::BlockBronzeTimelinePlacementTrigger")
+
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct [[bg3::component]] AiGridAreaTrigger : public AreaTriggerBase
 {
     DEFINE_PROXY_COMPONENT(ServerAiGridAreaTrigger, "esv::AiGridAreaTrigger")
+
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct [[bg3::component]] RegionTrigger : public AreaTriggerBase
@@ -650,6 +679,7 @@ struct [[bg3::component]] RegionTrigger : public AreaTriggerBase
     DEFINE_PROXY_COMPONENT(ServerRegionTrigger, "esv::RegionTrigger")
 
     bool RegionMaskRegionInWorld;
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct [[bg3::component]] LightingTrigger : public bg3se::LightingTrigger
@@ -657,11 +687,14 @@ struct [[bg3::component]] LightingTrigger : public bg3se::LightingTrigger
     DEFINE_PROXY_COMPONENT(ServerLightingTrigger, "esv::LightingTrigger")
 
     EntityHandle Entity;
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct [[bg3::component]] EocPointTrigger : public PointTriggerBase
 {
     DEFINE_PROXY_COMPONENT(ServerEocPointTrigger, "esv::EocPointTrigger")
+
+    [[bg3::hidden]] void* _PAD;
 };
 
 END_NS()

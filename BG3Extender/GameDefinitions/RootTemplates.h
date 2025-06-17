@@ -858,7 +858,7 @@ struct TriggerTemplate : public GameObjectTemplate
     [[bg3::hidden]] ITriggerPhysicsData* PhysicsData;
     OverrideableProperty<FixedString> TriggerType;
     OverrideableProperty<uint8_t> PhysicsType;
-    OverrideableProperty<glm::vec4> Color;
+    OverrideableProperty<glm::aligned_highp_vec4> Color;
     OverrideableProperty<FixedString> TriggerGizmoOverride;
     OverrideableProperty<bool> Fadeable;
     OverrideableProperty<bool> HierarchyOnlyFade;
@@ -866,7 +866,7 @@ struct TriggerTemplate : public GameObjectTemplate
     OverrideableProperty<bool> IgnoreRaycast;
     OverrideableProperty<FixedString> FadeGroup;
     OverrideableProperty<Array<FixedString>> FadeChildren;
-    OverrideableProperty<glm::vec4> GizmoColorOverride;
+    OverrideableProperty<glm::aligned_highp_vec4> GizmoColorOverride;
     OverrideableProperty<bool> UsingGizmoColorOverride;
     OverrideableProperty<bool> HasCustomPoint;
     OverrideableProperty<bg3se::Transform> CustomPointTransform;

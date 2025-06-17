@@ -10,7 +10,7 @@ SystemEventHooks::~SystemEventHooks()
 {
     for (uint32_t i = 0; i < hookedSystems_.size(); i++) {
         if (hookedSystemMask_[i]) {
-            ecs_->SetSystemUpdateHook((ecs::SystemTypeIndex)i,{}, {});
+            ecs_->SetSystemUpdateHook((ecs::SystemTypeIndex)i, {}, {});
             hookedSystemMask_.Clear(i);
         }
     }
@@ -21,6 +21,7 @@ void SystemEventHooks::BindECS()
     ecs_ = state_.GetEntitySystemHelpers();
     hookedSystems_.clear();
     hookedSystems_.resize(ecs_->GetEntityWorld()->Systems.Systems.size());
+    context_ = state_.IsClient() ? ContextType::Client : ContextType::Server;
 }
 
 void SystemEventHooks::FireDeferredEvents()
@@ -103,11 +104,8 @@ void SystemEventHooks::OnSystemPreUpdate(ecs::EntitySystemHelpersBase*, BaseSyst
     assert(hookedSystemMask_[(unsigned)systemType]);
     auto& hooks = hookedSystems_[(unsigned)systemType];
 
-    for (auto index : hooks.PreUpdateHooks) {
-        auto hook = subscriptions_.Find(index);
-        if (hook != nullptr) {
-            CallHandler(systemType, *hook, index);
-        }
+    if (!hooks.PreUpdateHooks.empty()) {
+        RunHooks(systemType, hooks.PreUpdateHooks);
     }
 }
 
@@ -116,10 +114,22 @@ void SystemEventHooks::OnSystemPostUpdate(ecs::EntitySystemHelpersBase*, BaseSys
     assert(hookedSystemMask_[(unsigned)systemType]);
     auto& hooks = hookedSystems_[(unsigned)systemType];
 
-    for (auto index : hooks.PostUpdateHooks) {
-        auto hook = subscriptions_.Find(index);
-        if (hook != nullptr) {
-            CallHandler(systemType, *hook, index);
+    if (!hooks.PostUpdateHooks.empty()) {
+        RunHooks(systemType, hooks.PostUpdateHooks);
+    }
+}
+
+void SystemEventHooks::RunHooks(ecs::SystemTypeIndex type, Array<SubscriptionIndex> const& hooks)
+{
+    ContextGuardAnyThread _(context_);
+    LuaVirtualPin lua(state_.GetExtensionState());
+
+    if (lua) {
+        for (auto index : hooks) {
+            auto hook = subscriptions_.Find(index);
+            if (hook != nullptr) {
+                CallHandler(type, *hook, index);
+            }
         }
     }
 }
@@ -144,10 +154,7 @@ void SystemEventHooks::CallHandler(ecs::SystemTypeIndex type, SystemHook& hook, 
         hook.Active = false;
     }
 
-    LuaVirtualPin lua(state_.GetExtensionState());
-    if (lua) {
-        CallHandlerUnsafe(type, hook, index);
-    }
+    CallHandlerUnsafe(type, hook, index);
 }
 
 END_NS()

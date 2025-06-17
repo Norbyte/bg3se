@@ -32,12 +32,14 @@ private:
     };
 
     State& state_;
+    ContextType context_{ ContextType::None };
     ecs::EntitySystemHelpersBase* ecs_{ nullptr };
     BitSet<> hookedSystemMask_;
     Array<SystemHooks> hookedSystems_;
     SaltedPool<SystemHook> subscriptions_;
     Array<SubscriptionIndex> deferredUnsubscriptions_;
 
+    void RunHooks(ecs::SystemTypeIndex type, Array<SubscriptionIndex> const& hooks);
     void CallHandler(ecs::SystemTypeIndex type, SystemHook& hook, SubscriptionIndex index);
     void CallHandlerUnsafe(ecs::SystemTypeIndex type, SystemHook& hook, SubscriptionIndex index);
 

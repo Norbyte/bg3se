@@ -13,6 +13,7 @@ ContextType GetCurrentContextType()
 ContextGuard::ContextGuard(ContextType ctx)
     : context_(ctx)
 {
+    se_assert(ctx != ContextType::None);
     se_assert(gCurrentContext == ContextType::None || gCurrentContext == ctx);
     previousContext_ = gCurrentContext;
     gCurrentContext = context_;
@@ -27,6 +28,7 @@ ContextGuard::~ContextGuard()
 ContextGuardAnyThread::ContextGuardAnyThread(ContextType ctx)
     : context_(ctx)
 {
+    se_assert(ctx != ContextType::None);
     previousContext_ = gCurrentContext;
     gCurrentContext = context_;
 }
