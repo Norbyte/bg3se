@@ -24,6 +24,7 @@ P_RO(IsBitfield)
 P_RO(IsBuiltin)
 P_RO(ModuleRole)
 P_RO(ComponentName)
+P_RO(SystemName)
 END_CLS()
 
 

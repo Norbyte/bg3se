@@ -1107,9 +1107,25 @@ function Generator:GenerateEnums()
     self:EmitEmptyLine()
 end
 
+function Generator:GenerateSystems()
+    self:EmitEmptyLine()
+    self:EmitComment("@class Ext_System")
+    
+    local types = Ext.Types.GetAllTypes()
+    for _,name in pairs(types) do
+        local type = Ext.Types.GetTypeInfo(name)
+        if type.SystemName ~= "" then
+            self:EmitFieldComment(type.SystemName .. " " .. self:MakeTypeName(type.TypeName))
+        end
+    end
+    
+    self:EmitEmptyLine()
+end
+
 function Generator:EmitExt(role, declareGlobal)
     if declareGlobal then
         self:GenerateEnums()
+        self:GenerateSystems()
     end
 
     self:EmitComment("@class Ext" .. (role or ""))
@@ -1142,6 +1158,8 @@ function Generator:EmitExt(role, declareGlobal)
 
     if declareGlobal then
         self:EmitFieldComment("Enums Ext_Enums")
+        self:EmitFieldComment("System Ext_System")
+
         self:EmitLine("Ext = {Events = {}}")
         self:EmitEmptyLine()
         self:EmitEmptyLine()

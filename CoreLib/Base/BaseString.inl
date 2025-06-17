@@ -174,6 +174,10 @@ FixedString::FixedString(char const* str)
     : FixedStringBase(CreateFixedString(StringView(str, (uint32_t)strlen(str))))
 {}
 
+FixedString::FixedString(nullptr_t)
+    : FixedStringBase()
+{}
+
 
 FixedStringUnhashed::FixedStringUnhashed(StringView str)
     : FixedStringBase(CreateFixedString(str))

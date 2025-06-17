@@ -35,6 +35,8 @@ struct ExperienceGaveOutComponent : public BaseComponent
 
 struct ExperienceSystemBase : public BaseSystem
 {
+    static constexpr nullptr_t SystemName = nullptr;
+
     [[bg3::hidden]] UnknownSignal field_10;
 };
 

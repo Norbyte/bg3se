@@ -162,6 +162,7 @@ namespace bg3se
 
         explicit FixedString(StringView str);
         explicit FixedString(char const* str);
+        explicit FixedString(nullptr_t);
 
         inline FixedString(FixedString const& fs)
             : FixedStringBase(fs.Index)
