@@ -25,6 +25,7 @@ T(esv::ExperienceSystem)
 T(esv::rest::LongRestSystem)
 T(esv::rest::ShortRestSystem)
 T(esv::ftb::ZoneSystem)
+T(esv::status::RequestSystem)
 
 T(ecl::EquipmentVisualsSystem)
 T(ecl::VisualSystem)

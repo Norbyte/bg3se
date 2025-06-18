@@ -150,7 +150,7 @@ struct DestroyStatusRequest
     FixedString StatusCause;
     EntityHandle CauseHandle;
     FixedString StatusId;
-    StatusType Type{ 0 };
+    StatusType StatusType{ 0 };
     EntityHandle Source;
     EntityHandle Status;
     ComponentHandle StatusHandle;
@@ -191,7 +191,7 @@ struct OnStatusEventRequest
 
 struct OnStatusTurnStartRequest
 {
-    EntityHandle SyncEntity;
+    ComponentHandle Status;
     EntityHandle Owner;
 };
 
@@ -251,8 +251,9 @@ struct StatusRequestsComponent : public BaseComponent
     Array<AppliedEventRequest> AppliedEvent;
     Array<RefreshRequest> Refresh;
     Array<DestroyedEventRequest> DestroyedEvent;
-    bool ActivateStatusVisuals;
-    bool DeactivateStatusVisuals;
+    // Editor only
+    // bool ActivateStatusVisuals;
+    // bool DeactivateStatusVisuals;
 };
 
 struct AddedStatusAuraEffectEventOneFrameComponent : public BaseComponent
@@ -423,9 +424,10 @@ struct RequestSystem : public BaseSystem
     Array<RefreshRequest> Refresh;
     Array<DestroyedEventRequest> DestroyedEvent;
     HashMap<EntityHandle, uint32_t> StatusEvents;
-    HashMap<EntityHandle, FixedString> field_2F0;
-    bool ActivateStatusVisuals;
-    bool DeactivateStatusVisuals;
+    // Editor only
+    // HashMap<EntityHandle, FixedString> field_2F0;
+    // bool ActivateStatusVisuals;
+    // bool DeactivateStatusVisuals;
 };
 
 
