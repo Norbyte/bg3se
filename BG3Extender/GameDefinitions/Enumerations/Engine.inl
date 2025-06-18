@@ -541,6 +541,13 @@ BEGIN_ENUM(SoundEventType, uint32_t)
     EV(CineHUD, 4)
 END_ENUM()
 
+BEGIN_BITMASK(SoundEventFlags, uint32_t)
+    EV(SoundCache, 1)
+    EV(UnloadCallback, 2)
+    EV(WaitForLoad, 4)
+    EV(EnableGetSourcePlayPosition, 8)
+END_ENUM()
+
 BEGIN_BITMASK_NS(ecl, CharacterTaskFlags, ClientCharacterTaskFlags, uint32_t)
     EV(IsExecuting, 0x1)
     EV(OverrideCursorOnHover, 0x2)

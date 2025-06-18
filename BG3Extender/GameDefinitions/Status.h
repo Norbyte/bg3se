@@ -91,7 +91,8 @@ struct Status : public ProtectedGameObject<Status>
 struct EntityAuraStatus
 {
     EntityHandle Entity;
-    EntityHandle AuraStatus;
+    uint32_t Time;
+    FixedString StatusId;
 };
 
 struct Aura : public ProtectedGameObject<Aura>
@@ -100,7 +101,7 @@ struct Aura : public ProtectedGameObject<Aura>
     float Radius;
     stats::Functors* Functors;
     uint8_t Flags;
-    Array<EntityAuraStatus> EntityAuraStatuses;
+    Array<Array<EntityAuraStatus>> EntityAuraStatuses;
     ecs::EntityRef Source;
     int32_t StoryActionId;
     Guid SpellCastSourceUuid;
