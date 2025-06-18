@@ -29,6 +29,7 @@ BEGIN_ENUM(ExtSystemType, uint32_t)
     E(ServerShortRest)
     E(ServerLongRest)
     E(ServerFTBZone)
+    E(ServerStatusRequest)
 
     E(ClientEquipmentVisuals)
     E(ClientVisual)
@@ -640,6 +641,7 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
     E(ServerStatusAddedFromSaveLoad)
     E(ServerStatusAura)
     E(ServerStatusAuraContainer)
+    E(ServerStatusRequests)
 
     // Status events
     E(ServerAddedStatusAuraEffectEvent)
@@ -1208,6 +1210,19 @@ END_ENUM_NS()
 
 BEGIN_BITMASK_NS(esv, StatusFlags5, ServerStatusFlags5, uint8_t)
     EV(HasTriedEntering, 1)
+END_ENUM_NS()
+
+
+BEGIN_ENUM_NS(esv, DestroyStatusRequestType, ServerDestroyStatusRequestType, uint8_t)
+    EV(StatusType, 0)
+    EV(StatusID, 1)
+    EV(StatusEntity, 3)
+    EV(StatusHandle, 4)
+    EV(SourceEquippedItem, 5)
+    EV(RestingEntityInventory, 6)
+    EV(Death, 7)
+    EV(Cause, 8)
+    EV(DifficultyStatus, 9)
 END_ENUM_NS()
 
 

@@ -122,24 +122,157 @@ struct AuraContainerComponent : public BaseComponent
     Array<Aura> Auras;
 };
 
+struct CreateStatusRequest
+{
+    FixedString StatusId;
+    ComponentHandle StatusHandle;
+    bool byte10{ false };
+    bool SavegameLoading{ false };
+    uint8_t byte12{ 0 };
+    std::optional<SpellId> Spell;
+    EntityHandle Owner;
+    EntityHandle SourceEquippedItem;
+    float Duration{ -1.0f };
+    EntityHandle SourceUsedItem;
+    int32_t StoryActionId{ 0 };
+    FixedString DifficultyStatus;
+    bool ApplyKnockedOut{ false };
+    bool KeepAlive{ false };
+    bool Force{ false };
+    EntityHandle Cause;
+    CauseType CauseType{ CauseType::None };
+};
+
+struct DestroyStatusRequest
+{
+    DestroyStatusRequestType Type{ DestroyStatusRequestType::StatusType };
+    EntityHandle Owner;
+    FixedString StatusCause;
+    EntityHandle CauseHandle;
+    FixedString StatusId;
+    StatusType Type{ 0 };
+    EntityHandle Source;
+    EntityHandle Status;
+    ComponentHandle StatusHandle;
+    FixedString DifficultyStatus;
+    Guid Transform;
+    uint64_t ExcludePropertyFlags{ 0 };
+};
+
+struct DestroyedEventRequest
+{
+    FixedString StatusId;
+    ComponentHandle StatusHandle;
+    EntityHandle Target;
+    EntityHandle Status;
+    EntityHandle Source;
+    EntityHandle field_28;
+    Guid CauseGuid;
+    Guid field_40;
+    Guid CastSource;
+    Guid SpellCastGuid;
+    int StoryActionId;
+    StatusType Type;
+    bool IsFromItem;
+    bool IsUnique;
+    bool HasTriedEntering;
+    bool IsDeleting;
+    EntityHandle field_80;
+};
+
+struct OnStatusEventRequest
+{
+    EntityHandle Subject;
+    uint32_t Event{ 0 };
+    HitDesc Hit;
+    AttackDesc Attack;
+    EntityHandle field_1E0;
+};
+
+struct OnStatusTurnStartRequest
+{
+    EntityHandle SyncEntity;
+    EntityHandle Owner;
+};
+
+struct CreatedEventRequest
+{
+    ComponentHandle Status;
+    FixedString StatusId;
+    EntityHandle Owner;
+    bool field_18{ false };
+    bool SavegameLoading{ false };
+    std::optional<SpellId> Spell;
+};
+
+struct AttemptedEventRequest
+{
+    ComponentHandle Status;
+    StatusType Type{ 0 };
+    int32_t StoryActionId{ 0 };
+    EntityHandle Owner;
+    EntityHandle Source;
+    FixedString StatusId;
+    Guid Cause;
+};
+
+struct AppliedEventRequest
+{
+    ComponentHandle Status;
+    EntityHandle Owner;
+    FixedString StatusID;
+    StatusType Type{ 0 };
+};
+
+struct RefreshRequest
+{
+    EntityHandle StatusOH;
+    EntityHandle RefreshedStatusOH;
+    Guid Cause;
+    int32_t StoryActionId{ 0 };
+};
+
+struct StatusRequestsComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerStatusRequests, "esv::status::StatusRequestsComponent")
+
+    Array<CreateStatusRequest> Create;
+    HashSet<ComponentHandle> Add;
+    Array<DestroyStatusRequest> Destroy;
+    HashSet<EntityHandle> Deactivate;
+    HashSet<EntityHandle> Activate;
+    HashSet<EntityHandle> UnregisterMachineUpdate;
+    HashSet<EntityHandle> RegisterMachineUpdate;
+    HashSet<EntityHandle> UpdateLifetime;
+    Array<OnStatusEventRequest> OnEvent;
+    Array<OnStatusTurnStartRequest> OnTurnStart;
+    Array<CreatedEventRequest> CreatedEvent;
+    Array<AttemptedEventRequest> AttemptedEvent;
+    Array<AppliedEventRequest> AppliedEvent;
+    Array<RefreshRequest> Refresh;
+    Array<DestroyedEventRequest> DestroyedEvent;
+    bool ActivateStatusVisuals;
+    bool DeactivateStatusVisuals;
+};
+
 struct AddedStatusAuraEffectEventOneFrameComponent : public BaseComponent
 {
     DEFINE_ONEFRAME_COMPONENT(ServerAddedStatusAuraEffectEvent, "esv::status::aura::AddedStatusAuraEffectEventOneFrameComponent")
 
-    FixedString field_0;
-    int field_4;
-    EntityHandle field_8;
-    EntityHandle field_10;
+    FixedString StatusId;
+    int StoryActionId;
+    EntityHandle Source;
+    EntityHandle Subject;
 };
 
 struct RemovedStatusAuraEffectEventOneFrameComponent : public BaseComponent
 {
     DEFINE_COMPONENT(ServerRemovedStatusAuraEffectEvent, "esv::status::aura::RemovedStatusAuraEffectEventOneFrameComponent")
 
-    FixedString field_0;
-    int field_4;
-    EntityHandle field_8;
-    EntityHandle field_10;
+    FixedString StatusId;
+    int StoryActionId;
+    EntityHandle Source;
+    EntityHandle Subject;
 };
 
 struct AddEventOneFrameComponent : public BaseComponent
@@ -219,32 +352,11 @@ struct RemoveEventOneFrameComponent : public BaseComponent
     EntityHandle Status;
     EntityHandle Source;
     int StoryActionId;
-    uint8_t field_2C;
-    uint8_t field_2D;
+    bool IsFromItem;
+    bool IsDeleting;
     Guid field_30;
-    Guid field_40;
-    Guid field_50;
-};
-
-struct DestroyedEventRequest
-{
-    FixedString StatusId;
-    ComponentHandle StatusHandle;
-    EntityHandle Target;
-    EntityHandle Status;
-    EntityHandle Source;
-    EntityHandle field_28;
-    Guid SourceUuid;
-    Guid field_40;
-    Guid field_50;
-    Guid field_60;
-    int field_70;
-    StatusType Type;
-    uint8_t field_78;
-    uint8_t field_79;
-    uint8_t field_7A;
-    uint8_t field_7B;
-    EntityHandle field_80;
+    Guid CastSource;
+    Guid SpellCastGuid;
 };
 
 struct ScheduledForDeletionOneFrameComponent : public BaseComponent
@@ -281,5 +393,40 @@ DEFINE_ONEFRAME_TAG_COMPONENT(esv::status, DownedChangedEventOneFrameComponent, 
 DEFINE_TAG_COMPONENT(esv::status, ActiveComponent, ServerStatusActive)
 DEFINE_TAG_COMPONENT(esv::status, AddedFromSaveLoadComponent, ServerStatusAddedFromSaveLoad)
 DEFINE_TAG_COMPONENT(esv::status, AuraComponent, ServerStatusAura)
+
+
+struct RequestSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerStatusRequest, "esv::status::RequestSystem")
+
+    [[bg3::hidden]] UnknownFunction field_10;
+    [[bg3::hidden]] void* EntityManager;
+    [[bg3::hidden]] void* Stats;
+    [[bg3::hidden]] void* StatusPrototypeManager;
+    [[bg3::hidden]] void* EncumbranceTypesManager;
+    Array<CreateStatusRequest> Create;
+    HashSet<ComponentHandle> Add;
+    Array<DestroyStatusRequest> Destroy;
+    Array<DestroyStatusRequest> Destroy2;
+    Array<DestroyStatusRequest> Destroy3;
+    HashMap<EntityHandle, uint8_t> Activate;
+    HashMap<EntityHandle, uint8_t> Deactivate;
+    HashMap<EntityHandle, uint8_t> RegisterMachineUpdate;
+    HashMap<EntityHandle, uint8_t> UnregisterMachineUpdate;
+    Array<OnStatusEventRequest> OnEvent;
+    HashSet<EntityHandle> UpdateLifetime;
+    Array<OnStatusTurnStartRequest> OnTurnStart;
+    HashSet<EntityHandle> ApplyDefault;
+    Array<CreatedEventRequest> CreatedEvent;
+    Array<AttemptedEventRequest> AttemptedEvent;
+    Array<AppliedEventRequest> AppliedEvent;
+    Array<RefreshRequest> Refresh;
+    Array<DestroyedEventRequest> DestroyedEvent;
+    HashMap<EntityHandle, uint32_t> StatusEvents;
+    HashMap<EntityHandle, FixedString> field_2F0;
+    bool ActivateStatusVisuals;
+    bool DeactivateStatusVisuals;
+};
+
 
 END_NS()

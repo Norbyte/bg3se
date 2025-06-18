@@ -36,7 +36,7 @@ struct SoundPostEventRequest
 {
     std::variant<EntityHandle, uint64_t> Subject;
     SoundEventType Type{ SoundEventType::Sound };
-    int field_14{ 0 };
+    SoundEventFlags Flags{ 0 };
     float Seek{ -1.0f };
     std::variant<FixedString, SoundEvent*, STDString> Event;
     std::variant<FixedString, SoundExternalPath> Path;
