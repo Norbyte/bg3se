@@ -879,6 +879,25 @@ END_NS()
 
 BEGIN_NS(esv)
 
+struct TeleportPartyRequest
+{
+    std::variant<EntityHandle, FixedString> LevelOrEntity;
+    STDString Event;
+    FixedString Movie;
+};
+
+struct PartyTeleportSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerPartyTeleport, "esv::PartyTeleportSystem")
+
+    [[bg3::hidden]] void* GameEventListenerVMT;
+    [[bg3::hidden]] void* EocServer;
+    [[bg3::hidden]] void* LevelManager;
+    [[bg3::hidden]] void* GameControl;
+    bool DelayedTeleport;
+    TeleportPartyRequest Teleport;
+};
+
 struct PingRequestData
 {
     EntityHandle Source;
