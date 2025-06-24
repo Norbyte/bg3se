@@ -560,17 +560,17 @@ struct ApprovalRatingsComponent : public BaseComponent
 
 struct AttitudeIdentifier
 {
-    EntityHandle field_0;
-    uint8_t field_8;
-    Guid field_10;
-    uint8_t field_20;
+    [[bg3::legacy(field_0)]] EntityHandle Character;
+    [[bg3::legacy(field_8)]] IdentityType Identity;
+    [[bg3::legacy(field_10)]] Guid Race;
+    [[bg3::legacy(field_20)]] uint8_t BodyType;
 
     inline bool operator == (AttitudeIdentifier const& o) const
     {
-        return field_0 == o.field_0
-            && field_8 == o.field_8
-            && field_10 == o.field_10
-            && field_20 == o.field_20;
+        return Character == o.Character
+            && Identity == o.Identity
+            && Race == o.Race
+            && BodyType == o.BodyType;
     }
 };
 
@@ -584,7 +584,7 @@ struct AttitudesToPlayersComponent : public BaseComponent
 template <>
 inline uint64_t HashMapHash<AttitudeIdentifier>(AttitudeIdentifier const& v)
 {
-    return HashMulti(v.field_0, v.field_8, v.field_10, v.field_20);
+    return HashMulti(v.Character, v.Identity, v.Race, v.BodyType);
 }
 
 END_SE()
@@ -849,5 +849,71 @@ END_NS()
 BEGIN_NS(heal)
 
 DEFINE_TAG_COMPONENT(eoc::heal, BlockComponent, HealBlock)
+
+END_NS()
+BEGIN_NS(esv::approval)
+
+struct RatingsChangedOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(ServerRatingsChanged, "esv::approval::RatingsChangedOneFrameComponent")
+
+    EntityHandle Subject;
+    EntityHandle Avatar;
+    int FinalRating;
+    int Adjustment;
+    int RealAdjustment;
+    ApprovalReactionScope ReactionScope;
+    Guid field_20;
+};
+
+struct RatingChangeRequest
+{
+    EntityHandle Subject;
+    EntityHandle Avatar;
+    int Adjustment{ 0 };
+    ApprovalReactionScope ReactionScope{ ApprovalReactionScope::Global };
+    Guid field_18;
+    Guid field_28;
+};
+
+struct RatingRemoveRequest
+{
+    EntityHandle Subject;
+    EntityHandle Avatar;
+};
+
+struct RatingSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerRating, "esv::approval::RatingSystem")
+
+    [[bg3::hidden]] void* EntityManager;
+    [[bg3::hidden]] void* GlobalTemplateManager;
+    [[bg3::hidden]] void* CacheTemplateManager;
+    [[bg3::hidden]] void* LevelManager;
+    [[bg3::hidden]] UnknownFunction qword30;
+    [[bg3::hidden]] void* RatingSystemHelper;
+    Array<RatingChangeRequest> ChangeRating;
+    Array<RatingRemoveRequest> RemoveRating;
+    HashSet<EntityHandle> CreateRatingsComponent;
+};
+
+END_NS()
+
+BEGIN_NS(esv::attitude)
+
+struct UpdateRequest
+{
+    EntityHandle Avatar;
+    int Attitude;
+};
+
+struct UpdateSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerAttitude, "esv::attitude::UpdateSystem")
+
+    Array<EntityHandle> CreateAttitudesComponent;
+    HashMap<EntityHandle, Array<UpdateRequest>> OsirisAddAttitude;
+    HashMap<EntityHandle, Array<UpdateRequest>> ReConAddAttitude;
+};
 
 END_NS()

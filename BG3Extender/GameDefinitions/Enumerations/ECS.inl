@@ -42,6 +42,8 @@ BEGIN_ENUM(ExtSystemType, uint32_t)
     E(ServerInventoryStack)
     E(ServerTradeBuyback)
     E(ServerTreasureGeneration)
+    E(ServerRating)
+    E(ServerAttitude)
     E(ServerParty)
 
     E(ClientEquipmentVisuals)
@@ -875,8 +877,6 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
     E(ActiveSkeletonSlots)
     E(Net)
     E(Physics)
-    E(ApprovalRatings)
-    E(AttitudesToPlayers)
     E(CharacterCreationAppearance)
     E(Active)
     E(Repose)
@@ -897,6 +897,13 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 
     E(CalendarDaysPassed)
     E(CalendarStartingDate)
+
+    // Approval
+    E(ApprovalRatings)
+    E(ServerRatingsChanged)
+
+    // Attitude
+    E(AttitudesToPlayers)
 
     // Equipment
     E(DisabledEquipment)
@@ -1927,6 +1934,17 @@ END_ENUM()
 BEGIN_ENUM(ContainerInteractionType, uint8_t)
     EV(Sort, 0)
     EV(Scatter, 1)
+END_ENUM()
+
+BEGIN_ENUM(ApprovalReactionScope, uint8_t)
+    EV(Global, 0)
+    EV(Local, 1)
+    EV(Dialog, 2)
+END_ENUM()
+
+BEGIN_ENUM(IdentityType, uint8_t)
+    EV(Male, 0)
+    EV(Female, 1)
 END_ENUM()
 
 BEGIN_BITMASK(SpellCastPhase, uint8_t)
