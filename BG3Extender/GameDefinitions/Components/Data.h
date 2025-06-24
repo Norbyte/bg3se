@@ -879,6 +879,57 @@ END_NS()
 
 BEGIN_NS(esv)
 
+struct GodSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerGod, "esv::god::GodSystem")
+
+    [[bg3::hidden]] void* GodManager;
+    HashMap<EntityHandle, std::optional<Guid>> GodOverrides;
+};
+
+struct RestoreRequest
+{
+    EntityHandle Entity;
+    bool field_8{ true };
+};
+
+struct RestoreSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerRestore, "esv::restore::RestoreSystem")
+
+    Array<RestoreRequest> PartyRestore;
+};
+
+struct BodyTypeSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerBodyType, "esv::BodyTypeSystem")
+
+    [[bg3::hidden]] UnknownFunction qword10;
+    [[bg3::hidden]] void* EntityManager;
+    [[bg3::hidden]] void* ShapeshiftSystem;
+    Array<EntityHandle> Create;
+    Array<EntityHandle> Update;
+    Array<EntityHandle> CharacterCreationUpdate;
+};
+
+struct EvaluateDualWieldingRequest
+{
+    DualWieldingRequestType Type{ DualWieldingRequestType::ToggleDualWielding };
+    EntityHandle Entity;
+    StatsItemSlot Slot{ StatsItemSlot::Sentinel };
+};
+
+struct DualWieldingSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerDualWielding, "esv::DualWieldingSystem")
+
+    [[bg3::hidden]] void* ActionResourceSystem;
+    [[bg3::hidden]] void* BoostSystem;
+    [[bg3::hidden]] void* ThothMachine;
+    [[bg3::hidden]] UnknownFunction qword28;
+    Array<EvaluateDualWieldingRequest> Requests;
+};
+
 struct SetTeleportFlagRequest
 {
     bool SnapToGrid{ true };
@@ -940,6 +991,14 @@ struct GravitySystem : public BaseSystem
     HashMap<EntityHandle, GravityType> SetGravityType;
     Array<EntityHandle> InstigatorTagChange;
     Array<EntityHandle> InstigatorTagChange2;
+};
+
+struct LeaderSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerLeader, "esv::LeaderSystem")
+
+    HashMap<EntityHandle, HashSet<EntityHandle>> AddFollower;
+    HashMap<EntityHandle, HashSet<EntityHandle>> RemoveFollower;
 };
 
 struct TeleportPartyRequest
