@@ -879,6 +879,45 @@ END_NS()
 
 BEGIN_NS(esv)
 
+struct SetTeleportFlagRequest
+{
+    bool SnapToGrid{ true };
+    glm::vec3 OriginTeleportPos;
+};
+
+struct FallingSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerFalling, "esv::FallingSystem")
+
+    [[bg3::hidden]] void* LevelManager;
+    [[bg3::hidden]] void* ClassDescriptions;
+    [[bg3::hidden]] void* FallingUnitTestHelper;
+    HashSet<EntityHandle> ResetFallHeight;
+    HashSet<EntityHandle> StartFalling;
+    HashSet<EntityHandle> StopFalling;
+    HashMap<EntityHandle, float> SetLifetime;
+    HashMap<EntityHandle, SetTeleportFlagRequest> SetTeleportFlag;
+    HashMap<EntityHandle, bool> DeferredStopFalling;
+};
+
+struct SetGravityActiveRequest
+{
+    bool Active{ true };
+    EntityHandle Instigator;
+};
+
+struct GravitySystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerGravity, "esv::GravitySystem")
+
+    [[bg3::hidden]] UnknownFunction qword10;
+    [[bg3::hidden]] void* GravitySystemHelper;
+    HashMap<EntityHandle, SetGravityActiveRequest> SetGravityActive;
+    HashMap<EntityHandle, GravityType> SetGravityType;
+    Array<EntityHandle> InstigatorTagChange;
+    Array<EntityHandle> InstigatorTagChange2;
+};
+
 struct TeleportPartyRequest
 {
     std::variant<EntityHandle, FixedString> LevelOrEntity;
