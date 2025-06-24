@@ -304,68 +304,6 @@ struct ShapeshiftStateComponent : public BaseComponent
 END_SE()
 
 
-BEGIN_NS(death)
-
-struct DeadByDefaultComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(DeadByDefault, "eoc::death::DeadByDefaultComponent")
-
-    uint8_t DeadByDefault;
-};
-
-struct DeathComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(Death, "eoc::death::DeathComponent")
-
-    EntityHandle Target;
-    EntityHandle field_8;
-    Guid field_10;
-    uint8_t DeathType;
-    uint8_t field_21;
-    uint8_t field_22;
-    uint8_t field_23;
-    uint8_t field_24;
-    int field_28;
-    uint8_t field_2C;
-    glm::vec3 field_30;
-    glm::vec3 field_3C;
-    uint8_t field_48;
-    int field_4C;
-    Guid Combat;
-    uint8_t field_60;
-    uint8_t field_61;
-    uint8_t field_62;
-    bool LeaveTrace;
-    std::optional<glm::vec3> field_64;
-};
-
-struct DeathStateComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(DeathState, "eoc::death::StateComponent")
-
-    uint32_t State;
-};
-
-struct DeathTypeComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(DeathType, "eoc::death::DeathTypeComponent")
-
-    uint8_t DeathType;
-};
-
-struct DownedComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(Downed, "eoc::death::DownedComponent")
-
-    FixedString DownedStatus;
-    Guid Entity;
-};
-
-DEFINE_ONEFRAME_TAG_COMPONENT(esv::death, DownedEventOneFrameComponent, DownedEvent)
-
-END_NS()
-
-
 BEGIN_NS(multiplayer)
 
 struct UserComponent : public BaseComponent
