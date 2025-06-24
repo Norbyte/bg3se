@@ -42,6 +42,7 @@ BEGIN_ENUM(ExtSystemType, uint32_t)
     E(ServerInventoryStack)
     E(ServerTradeBuyback)
     E(ServerTreasureGeneration)
+    E(ServerPingRequest)
     E(ServerPlatform)
     E(ServerRating)
     E(ServerAttitude)
@@ -783,6 +784,11 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
     E(ServerTriggerCachedLeaveEvents)
     E(ServerTriggerLoadedHandled)
     E(ServerTriggerWorldAutoTriggered)
+
+    // Server ping
+    E(ServerOsirisPingRequestSingleton)
+    E(ServerPingCooldownSingleton)
+    E(ServerPingRequestSingleton)
 
     // Experimental components
     E(Background)

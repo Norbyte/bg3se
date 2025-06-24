@@ -879,6 +879,53 @@ END_NS()
 
 BEGIN_NS(esv)
 
+struct PingRequestData
+{
+    EntityHandle Source;
+    EntityHandle Target;
+    glm::vec3 Position;
+    bool field_1C{ false };
+};
+
+struct UIPingRequestData
+{
+    int16_t PingId;
+    EntityHandle Source;
+    EntityHandle Target;
+    glm::vec3 Position;
+    bool field_24{ false };
+};
+
+struct OsirisPingRequestSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerOsirisPingRequestSingleton, "esv::OsirisPingRequestSingletonComponent")
+
+    Array<PingRequestData> Pings;
+};
+
+struct PingCooldownSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerPingCooldownSingleton, "esv::PingCooldownSingletonComponent")
+
+    HashMap<int16_t, float> Cooldowns;
+};
+
+struct PingRequestSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerPingRequestSingleton, "esv::PingRequestSingletonComponent")
+
+    Array<PingRequestData> Pings;
+};
+
+struct PingRequestSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerPingRequest, "esv::PingRequestSystem")
+
+    [[bg3::hidden]] void* RPGStats;
+    Array<UIPingRequestData> UIPings;
+    Array<PingRequestData> Pings;
+};
+
 struct PlatformSetAuthorityTransformRequest
 {
     bool FireEvents{ true };
