@@ -140,6 +140,47 @@ struct UserSnapshotComponent : public BaseComponent
     [[bg3::legacy(Snapshot)]] HashMap<Guid, Array<Array<EntityHandle>>> PerUserCharacters;
 };
 
+struct EntityTransferData
+{
+    EntityHandle Party;
+    Guid Group;
+    int Position{ 0 };
+};
+
+struct PartyFollowerRequestData
+{
+    EntityHandle Follower;
+    EntityHandle Leader;
+    bool ToAdd{ true };
+};
+
+struct MemberParticipationUpdateRequest
+{
+    bool ToAdd{ true };
+    EntityHandle Member;
+};
+
+struct PartySystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerParty, "esv::party::PartySystem")
+
+    [[bg3::hidden]] void* GameEventListenerVMT;
+    [[bg3::hidden]] void* GameStateEventListenerVMT;
+    [[bg3::hidden]] void* EocServer;
+    [[bg3::hidden]] void* PartyUnitTestHelper;
+    bool Unload;
+    bool UnloadEntities;
+    [[bg3::hidden]] UnknownFunction qword40;
+    HashSet<EntityHandle> SummonsToRemove;
+    Array<MemberParticipationUpdateRequest> MemberParticipationUpdate;
+    HashMap<UserId, EntityHandle> TransferUser;
+    HashSet<EntityHandle> ReevaluateParty;
+    Array<Array<EntityHandle>> CreateGroupFromMembers;
+    HashMap<EntityHandle, glm::vec3> PostReloadStorySetup;
+    HashMap<EntityHandle, EntityTransferData> TransferMember;
+    Array<PartyFollowerRequestData> FollowerRequest;
+};
+
 END_NS()
 
 

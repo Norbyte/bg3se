@@ -38,6 +38,7 @@ T(esv::inventory::NewInventoryMemberSystem)
 T(esv::inventory::StackSystem)
 T(esv::inventory::TradeBuybackSystem)
 T(esv::inventory::TreasureGenerationSystem)
+T(esv::party::PartySystem)
 
 T(ecl::EquipmentVisualsSystem)
 T(ecl::VisualSystem)
