@@ -900,6 +900,30 @@ struct FallingSystem : public BaseSystem
     HashMap<EntityHandle, bool> DeferredStopFalling;
 };
 
+struct DisplayNameRequest
+{
+    EntityHandle Entity;
+    TranslatedString DisplayName;
+    DisplayNameType Type{ DisplayNameType::Unknown };
+};
+
+struct DisplayTitleRequest
+{
+    EntityHandle Entity;
+    TranslatedString DisplayName;
+    DisplayTitleType Type{ DisplayTitleType::Transform };
+};
+
+struct DisplayNameSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerDisplayName, "esv::DisplayNameSystem")
+
+    Array<DisplayNameRequest> SetDisplayName;
+    Array<DisplayTitleRequest> SetDisplayTitle;
+    HashSet<EntityHandle> DirtyName;
+    HashSet<EntityHandle> DirtyTitle;
+};
+
 struct SetGravityActiveRequest
 {
     bool Active{ true };
