@@ -587,6 +587,31 @@ inline uint64_t HashMapHash<AttitudeIdentifier>(AttitudeIdentifier const& v)
     return HashMulti(v.Character, v.Identity, v.Race, v.BodyType);
 }
 
+struct PlatformTransformData
+{
+    Transform Transform;
+    bool FireEvents{ true };
+};
+
+struct PlatformTransformChangeRequest
+{
+    Transform Transform;
+    bool FireEvents{ true };
+    EntityHandle Platform;
+};
+
+struct PlatformSystem : public BaseSystem
+{
+    static constexpr nullptr_t SystemName = nullptr;
+
+    [[bg3::hidden]] UnknownSignal qword10;
+    LegacyRefMap<FixedString, EntityHandle> PlatformEntities;
+    [[bg3::hidden]] UnknownFunction field_38;
+    [[bg3::hidden]] void* TransformSystem;
+    Array<PlatformTransformChangeRequest> TransformChanged;
+    Array<EntityHandle> UpdateSubgrids;
+};
+
 END_SE()
 
 BEGIN_NS(eoc::background)
@@ -851,6 +876,34 @@ BEGIN_NS(heal)
 DEFINE_TAG_COMPONENT(eoc::heal, BlockComponent, HealBlock)
 
 END_NS()
+
+BEGIN_NS(esv)
+
+struct PlatformSetAuthorityTransformRequest
+{
+    bool FireEvents{ true };
+    Transform Transform;
+    EntityHandle Platform;
+};
+
+struct PlatformSystem : public bg3se::PlatformSystem
+{
+    DEFINE_SYSTEM(ServerPlatform, "esv::PlatformSystem")
+
+    [[bg3::hidden]] void* GameEventListener;
+    [[bg3::hidden]] void* field_B0;
+    [[bg3::hidden]] void* NetEventListener;
+    HashMap<EntityHandle, bg3se::death::DeathData> DestroyRequests;
+    Array<PlatformSetAuthorityTransformRequest> SetAuthorityTransform;
+    [[bg3::hidden]] void* AnubisConfigSystem;
+    [[bg3::hidden]] void* LevelInstanceAttachRequestSystem;
+    [[bg3::hidden]] void* LevelInstanceLoadRequestSystem;
+    [[bg3::hidden]] void* LevelManager;
+    bool Activated;
+};
+
+END_NS()
+
 BEGIN_NS(esv::approval)
 
 struct RatingsChangedOneFrameComponent : public BaseComponent
