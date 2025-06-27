@@ -1667,7 +1667,7 @@ bool IMGUIObjectManager::DestroyRenderable(HandleType handle)
 
 void IMGUIObjectManager::Render(DrawingContext& context)
 {
-    ERR("IMGUIObjectManager::Render - Beginning UI render with %d windows", windows_.size());
+    //ERR("IMGUIObjectManager::Render - Beginning UI render with %d windows", windows_.size());
     if (renderDemo_) {
         ImGui::ShowDemoWindow();
     }
@@ -1680,7 +1680,7 @@ void IMGUIObjectManager::Render(DrawingContext& context)
             ERR("IMGUIObjectManager::Render - Window handle %llu is null", windowHandle);
         }
     }
-    ERR("IMGUIObjectManager::Render - Completed UI rendering");
+    //ERR("IMGUIObjectManager::Render - Completed UI rendering");
 }
 
 void IMGUIObjectManager::EnableDemo(bool enable)
@@ -2071,8 +2071,8 @@ void IMGUIManager::Update()
         frameNo_++;
         return;
     }
-    ERR("IMGUIManager::Update() - Frame %d - State: UI=%d Init=%d Objects=%d Backend=%d", 
-        frameNo_, enableUI_ ? 1 : 0, initialized_ ? 1 : 0, objects_ ? 1 : 0, renderer_->IsInitialized() ? 1 : 0);
+    //ERR("IMGUIManager::Update() - Frame %d - State: UI=%d Init=%d Objects=%d Backend=%d", 
+    //    frameNo_, enableUI_ ? 1 : 0, initialized_ ? 1 : 0, objects_ ? 1 : 0, renderer_->IsInitialized() ? 1 : 0);
 
     if (scale_ != requestedScale_ 
         || uiScaleMultiplier_ != requestedUiScaleMultiplier_
@@ -2098,17 +2098,17 @@ void IMGUIManager::Update()
 
     textureLoader_.Update();
     renderer_->NewFrame();
-    ERR("IMGUIManager::Update() - Frame %d - Starting new ImGui frame", frameNo_);
+    //ERR("IMGUIManager::Update() - Frame %d - Starting new ImGui frame", frameNo_);
     ImGui::NewFrame();
 
     DrawingContext dc{
         .UIScale = scale_
     };
-    ERR("IMGUIManager::Update() - Frame %d - Rendering UI objects", frameNo_);
+    //ERR("IMGUIManager::Update() - Frame %d - Rendering UI objects", frameNo_);
     objects_->Render(dc);
     se_assert(dc.ScalingStack.empty());
 
-    ERR("IMGUIManager::Update() - Frame %d - Finishing frame", frameNo_);
+    //ERR("IMGUIManager::Update() - Frame %d - Finishing frame", frameNo_);
     ImGui::Render();
     renderer_->FinishFrame();
 

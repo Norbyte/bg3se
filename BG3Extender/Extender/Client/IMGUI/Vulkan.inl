@@ -9,6 +9,9 @@
 #include <backends/imgui_impl_vulkan.h>
 #include <imgui_internal.h>
 #include <cstring>
+#include "nvsdk_ngx_defs.h"
+#include "nvsdk_ngx_params.h"
+#include "nvsdk_ngx_vk.h"
 
 
 BEGIN_SE()
@@ -25,6 +28,21 @@ VK_HOOK(CreateSwapchainKHR)
 VK_HOOK(DestroySwapchainKHR)
 VK_HOOK(QueuePresentKHR)
 
+// NGX DLSS FrameGeneration hook definitions
+typedef NVSDK_NGX_Result (NVSDK_CONV *PFN_NGX_EVAL)(
+        VkCommandBuffer           InCmdList,
+        NVSDK_NGX_Handle          InFeature,
+        NVSDK_NGX_Parameter*       InParameters,
+        PFN_NVSDK_NGX_ProgressCallback        InCallback);
+
+static PFN_NGX_EVAL ngxEvalReal = nullptr;
+
+static NVSDK_NGX_Result NVSDK_CONV
+ngxEvalHook(VkCommandBuffer InCmdList,
+            NVSDK_NGX_Handle  InFeature,
+            NVSDK_NGX_Parameter*     InParameters,
+            PFN_NVSDK_NGX_ProgressCallback      InCallback);
+
 END_SE()
 
 
@@ -39,6 +57,19 @@ END_SE()
 
 BEGIN_NS(extui)
 
+namespace {
+    // Global variables for NGX overlay rendering
+    bool isUpscalerLoaded = false;
+    VkRenderPass ngxOverlayRenderPass = VK_NULL_HANDLE;
+    VkFramebuffer ngxOverlayFramebuffer = VK_NULL_HANDLE;
+    VkImageView ngxOverlayImageView = VK_NULL_HANDLE;
+    VkDevice g_Device = VK_NULL_HANDLE;
+    
+    // Function declarations
+    void BeginOverlayRenderPass(VkCommandBuffer cmdBuffer, VkImage outputImage);
+    void EndOverlayRenderPass(VkCommandBuffer cmdBuffer);
+}
+
 class VulkanBackend : public RenderingBackend
 {
 public:
@@ -50,6 +81,18 @@ public:
         releaseSwapChain(swapchain_);
         DestroyUI();
         DisableHooks();
+    }
+
+    void InstallNgxHooks()
+    {
+        ERR("Installing NGX hooks");
+        HMODULE hGame = GetModuleHandleW(nullptr);
+        ngxEvalReal = reinterpret_cast<PFN_NGX_EVAL>(GetProcAddress(hGame, "NVSDK_NGX_VULKAN_EvaluateFeature_C"));   
+        DetourTransactionBegin();
+        DetourUpdateThread(GetCurrentThread());
+        DetourAttach(&(PVOID&)ngxEvalReal, (PVOID)ngxEvalHook);
+        DetourTransactionCommit();
+        ERR("[NGX_HOOK] Successfully hooked NVSDK_NGX_VULKAN_EvaluateFeature_C");
     }
 
     void EnableHooks() override
@@ -72,17 +115,26 @@ public:
         DestroySwapchainKHRHook_.SetPreHook(&VulkanBackend::vkDestroySwapchainKHRHooked, this);
         QueuePresentKHRHook_.SetPreHook(&VulkanBackend::vkQueuePresentKHRHooked, this);
 
-        HMODULE hUpscaler = LoadLibraryW(L"upscaler.dll");
-        if (hUpscaler)
+        HMODULE hUpscaler = GetModuleHandleW(L"upscaler.dll");
+        if(!hUpscaler) {
+            hUpscaler = LoadLibraryW(L"upscaler.dll");
+        }
+        if (hUpscaler) {
             ERR("[EXTUI_HOOK_SETUP] upscaler.dll loaded");
-        else
+            isUpscalerLoaded = true;
+            // Defer g_Device assignment until we have a valid VkDevice (see vkCreateDeviceHooked)
+            InstallNgxHooks();
+        } else {
             ERR("[EXTUI_HOOK_SETUP] WARNING: upscaler.dll not found!");
+            isUpscalerLoaded = false;
+        }
         HMODULE sl = GetModuleHandleW(L"sl.interposer.dll");
         if (!sl) sl = LoadLibraryW(L"sl.interposer.dll");
         if (!sl) {
             ERR("[EXTUI_HOOK_SETUP] sl.interposer.dll not found — DLSS-FG hook skipped");
         }
         else {
+            ERR("[EXTUI_HOOK_SETUP] sl.interposer.dll loaded");
             auto slQueuePresent = reinterpret_cast<PFN_vkQueuePresentKHR>(
                 GetProcAddress(sl, "vkQueuePresentKHR")
             );
@@ -109,10 +161,35 @@ public:
     {
         if (!CreateInstanceHook_.IsWrapped()) return;
 
-        ERR("VulkanBackend::DisableHooks()");
-
         DetourTransactionBegin();
         DetourUpdateThread(GetCurrentThread());
+
+        ERR("VulkanBackend::DisableHooks()");
+
+        // Clean up NGX resources if created
+        if (isUpscalerLoaded) {
+            if (ngxOverlayFramebuffer != VK_NULL_HANDLE) {
+                vkDestroyFramebuffer(g_Device, ngxOverlayFramebuffer, nullptr);
+                ngxOverlayFramebuffer = VK_NULL_HANDLE;
+            }
+            
+            if (ngxOverlayImageView != VK_NULL_HANDLE) {
+                vkDestroyImageView(g_Device, ngxOverlayImageView, nullptr);
+                ngxOverlayImageView = VK_NULL_HANDLE;
+            }
+            
+            if (ngxOverlayRenderPass != VK_NULL_HANDLE) {
+                vkDestroyRenderPass(g_Device, ngxOverlayRenderPass, nullptr);
+                ngxOverlayRenderPass = VK_NULL_HANDLE;
+            }
+            
+            // Detach NGX hook
+            if (ngxEvalReal != nullptr) {
+                DetourDetach(&(PVOID&)ngxEvalReal, (PVOID)ngxEvalHook);
+                ngxEvalReal = nullptr;
+            }
+        }
+
         CreateInstanceHook_.Unwrap();
         CreateDeviceHook_.Unwrap();
         DestroyDeviceHook_.Unwrap();
@@ -120,6 +197,7 @@ public:
         CreateSwapchainKHRHook_.Unwrap();
         DestroySwapchainKHRHook_.Unwrap();
         QueuePresentKHRHook_.Unwrap();
+
         DetourTransactionCommit();
     }
 
@@ -234,7 +312,7 @@ public:
         }
 
         ImGui_ImplVulkan_NewFrame();
-        ERR("VK: NewFrame");
+        //ERR("VK: NewFrame");
     }
 
     void FinishFrame() override
@@ -253,7 +331,7 @@ public:
             return;
         }
         
-        ERR("VK: FinishFrame - initializing with curViewport: %d, drawViewport_ before: %d", curViewport_, drawViewport_);
+        //ERR("VK: FinishFrame - initializing with curViewport: %d, drawViewport_ before: %d", curViewport_, drawViewport_);
 
         auto& vp = viewports_[curViewport_].Viewport;
         auto& drawLists = viewports_[curViewport_].ClonedDrawLists;
@@ -273,8 +351,8 @@ public:
         }
 
         drawViewport_ = curViewport_;
-        ERR("VK: FinishFrame - set drawViewport_ to %d, have %d draw lists", 
-            drawViewport_, vp.DrawDataP.CmdLists.Size);
+        //ERR("VK: FinishFrame - set drawViewport_ to %d, have %d draw lists", 
+        //    drawViewport_, vp.DrawDataP.CmdLists.Size);
     }
 
     void ClearFrame() override
@@ -433,6 +511,8 @@ if (result != VK_SUCCESS)
 
     physicalDevice_ = physicalDevice;
     device_         = *pDevice;
+    // Now that the logical device is created, it is safe to expose it to the NGX overlay helpers
+    g_Device        = device_;
 
     uint32_t numFamilies = 0;
     vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice_, &numFamilies, nullptr);
@@ -738,17 +818,17 @@ auto  gamePresent           = reinterpret_cast<PFN_vkQueuePresentKHR>(
 
     void presentPreHook(VkPresentInfoKHR* pPresentInfo)
     {
-        ERR("presentPreHook: Called for viewport %d", drawViewport_);
+        //ERR("presentPreHook: Called for viewport %d", drawViewport_);
         auto& vp = viewports_[drawViewport_].Viewport;
         
         if (!vp.DrawDataP.Valid || vp.DrawDataP.CmdListsCount == 0) {
-            ERR("presentPreHook: DrawData valid=%d, CmdListsCount=%d", vp.DrawDataP.Valid, vp.DrawDataP.CmdListsCount);
+            //ERR("presentPreHook: DrawData valid=%d, CmdListsCount=%d", vp.DrawDataP.Valid, vp.DrawDataP.CmdListsCount);
             return;
         }
         
-        ERR("presentPreHook: DrawData valid, CmdListsCount=%d", vp.DrawDataP.CmdListsCount);
+        //ERR("presentPreHook: DrawData valid, CmdListsCount=%d", vp.DrawDataP.CmdListsCount);
         
-        ERR("presentPreHook: DLSS-FG active: %s", isDlssgActive() ? "YES" : "NO");
+        //ERR("presentPreHook: DLSS-FG active: %s", isDlssgActive() ? "YES" : "NO");
         
         if (!swapchain_.images_.size()) {
             ERR("presentPreHook: No swapchain images available!");
@@ -763,9 +843,9 @@ auto  gamePresent           = reinterpret_cast<PFN_vkQueuePresentKHR>(
         
         auto& image = swapchain_.images_[imageIdx];
         
-        ERR("presentPreHook: Processing swapchain image #%d (%p)", imageIdx, image.image);
-        ERR("presentPreHook: Our swapchain=%p, pSwapchains[0]=%p", swapChain_, pPresentInfo->pSwapchains[0]);
-        ERR("presentPreHook: Image dimensions: %dx%d", swapchain_.width_, swapchain_.height_);
+        //ERR("presentPreHook: Processing swapchain image# #%d (%p)", imageIdx, image.image);
+        //ERR("presentPreHook: Our swapchain=%p, pSwapchains[0]=%p", swapChain_, pPresentInfo->pSwapchains[0]);
+        //ERR("presentPreHook: Image dimensions: %dx%d", swapchain_.width_, swapchain_.height_);
         
         // wait for this command buffer to be free
         // If this ring has never been used the fence is signalled on creation.
@@ -889,7 +969,7 @@ auto  gamePresent           = reinterpret_cast<PFN_vkQueuePresentKHR>(
 
         std::lock_guard _(globalResourceLock_);
         if (!initialized_) {
-            ERR("vkQueuePresentKHR: Render backend not initialized yet - drawViewport_=%d", drawViewport_);
+            //ERR("vkQueuePresentKHR: Render backend not initialized yet - drawViewport_=%d", drawViewport_);
             frameNo_ = 0;
 
             if (!uiFrameworkStarted_) {
@@ -910,12 +990,12 @@ auto  gamePresent           = reinterpret_cast<PFN_vkQueuePresentKHR>(
 
         if (initialized_ && drawViewport_ != -1) {
             if (pPresentInfo->swapchainCount > 0) {
-                ERR("vkQueuePresentKHR: Presenting swapchain %p (our tracked swapchain: %p)",
-                    pPresentInfo->pSwapchains[0], swapChain_);
+                //ERR("vkQueuePresentKHR: Presenting swapchain %p (our tracked swapchain: %p)",
+                    //pPresentInfo->pSwapchains[0], swapChain_);
             }
-            ERR("vkQueuePresentKHR: Calling presentPreHook - initialized %d, drawViewport %d",
-                initialized_ ? 1 : 0, drawViewport_);
-            ERR("vkQueuePresentKHR: present queue = %p graphics queue = %p", queue, renderQueue_);
+            //ERR("vkQueuePresentKHR: Calling presentPreHook - initialized %d, drawViewport %d",
+                //initialized_ ? 1 : 0, drawViewport_);
+            //ERR("vkQueuePresentKHR: present queue = %p graphics queue = %p", queue, renderQueue_);
             
             presentPreHook(const_cast<VkPresentInfoKHR*>(pPresentInfo));
         } else {
@@ -966,7 +1046,151 @@ auto  gamePresent           = reinterpret_cast<PFN_vkQueuePresentKHR>(
     //PFN_vkQueuePresentKHR originalGamePresentFunction_{ nullptr };
     
     // Helper functions to route Vulkan calls through DLSS-FG when active
-    inline bool isDlssgActive() const { return dlssgPresentFunction_ != nullptr; }
+    bool isDlssgActive() const { return dlssgPresentFunction_ != nullptr; }
 };
 
+void BeginNgxOverlayRenderPass(VkCommandBuffer cmdBuffer, VkImage outputImage)
+{
+    // Abort if the device is not yet available (NVSDK_NGX_VULKAN_EvaluateFeature_C can fire early in some titles)
+    if (g_Device == VK_NULL_HANDLE) {
+        ERR("[NGX_OVERLAY] VkDevice not ready – skipping overlay render pass");
+        return;
+    }
+    VkDevice device = g_Device; // Use the stored device
+    
+    // Create an image view if we need one
+    if (ngxOverlayImageView == VK_NULL_HANDLE) {
+        VkImageViewCreateInfo viewInfo = {};
+        viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        viewInfo.image = outputImage;
+        viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+        viewInfo.format = VK_FORMAT_R8G8B8A8_UNORM; // Using standard format - the actual format should be determined from the SwapChain
+        viewInfo.components.r = VK_COMPONENT_SWIZZLE_R;
+        viewInfo.components.g = VK_COMPONENT_SWIZZLE_G;
+        viewInfo.components.b = VK_COMPONENT_SWIZZLE_B;
+        viewInfo.components.a = VK_COMPONENT_SWIZZLE_A;
+        viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        viewInfo.subresourceRange.baseMipLevel = 0;
+        viewInfo.subresourceRange.levelCount = 1;
+        viewInfo.subresourceRange.baseArrayLayer = 0;
+        viewInfo.subresourceRange.layerCount = 1;
+        VK_CHECK(vkCreateImageView(device, &viewInfo, nullptr, &ngxOverlayImageView));
+    }
+    
+    // Create render pass if we need one
+    if (ngxOverlayRenderPass == VK_NULL_HANDLE) {
+        VkAttachmentDescription attachment = {};
+        attachment.format = VK_FORMAT_R8G8B8A8_UNORM; // May need adjustment
+        attachment.samples = VK_SAMPLE_COUNT_1_BIT;
+        attachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD; // Load existing image content
+        attachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+        attachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+        attachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+        attachment.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        attachment.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+        VkAttachmentReference color_attachment = {};
+        color_attachment.attachment = 0;
+        color_attachment.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+        VkSubpassDescription subpass = {};
+        subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+        subpass.colorAttachmentCount = 1;
+        subpass.pColorAttachments = &color_attachment;
+
+        VkRenderPassCreateInfo info = {};
+        info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+        info.attachmentCount = 1;
+        info.pAttachments = &attachment;
+        info.subpassCount = 1;
+        info.pSubpasses = &subpass;
+
+        VK_CHECK(vkCreateRenderPass(device, &info, nullptr, &ngxOverlayRenderPass));
+    }
+    
+    // Create or update framebuffer
+    if (ngxOverlayFramebuffer != VK_NULL_HANDLE) {
+        vkDestroyFramebuffer(device, ngxOverlayFramebuffer, nullptr);
+        ngxOverlayFramebuffer = VK_NULL_HANDLE;
+    }
+    
+    // Create new framebuffer for this image
+    VkFramebufferCreateInfo fbInfo = {};
+    fbInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+    fbInfo.renderPass = ngxOverlayRenderPass;
+    fbInfo.attachmentCount = 1;
+    fbInfo.pAttachments = &ngxOverlayImageView;
+    // Default to 1920x1080 if we can't determine actual size
+    uint32_t width = 1920;
+    uint32_t height = 1080;
+    
+    fbInfo.width = width;
+    fbInfo.height = height;
+    fbInfo.layers = 1;
+    VK_CHECK(vkCreateFramebuffer(device, &fbInfo, nullptr, &ngxOverlayFramebuffer));
+    
+    // Begin render pass
+    VkRenderPassBeginInfo rpInfo = {};
+    rpInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    rpInfo.renderPass = ngxOverlayRenderPass;
+    rpInfo.framebuffer = ngxOverlayFramebuffer;
+    // Use the same dimensions as the framebuffer
+    rpInfo.renderArea.extent.width = fbInfo.width;
+    rpInfo.renderArea.extent.height = fbInfo.height;
+    
+    vkCmdBeginRenderPass(cmdBuffer, &rpInfo, VK_SUBPASS_CONTENTS_INLINE);
+}
+
+void EndNgxOverlayRenderPass(VkCommandBuffer cmdBuffer)
+{
+    vkCmdEndRenderPass(cmdBuffer);
+}
+
+// NGX EvaluateFeature hook implementation
+NVSDK_NGX_Result NVSDK_CONV
+ngxEvalHook(VkCommandBuffer InCmdList,
+            NVSDK_NGX_Handle  InFeature,
+            NVSDK_NGX_Parameter*     InParameters,
+            PFN_NVSDK_NGX_ProgressCallback      InCallback)
+{
+    // Run stock NGX first
+    auto res = ngxEvalReal(InCmdList, InFeature, InParameters, InCallback);
+
+    // Skip if overlay disabled or upscaler not present
+    if (!isUpscalerLoaded || !ImGui::GetDrawData() || !ImGui::GetDrawData()->Valid)
+        return res;
+
+    // Acquire the final upscaled image
+    // In NVSDK, the output resource contains our target VkImage
+    // We need to cast to the appropriate resource type based on the NGX header definitions
+    void* outputRes = nullptr;
+    InParameters->Get(NVSDK_NGX_Parameter_Output, &outputRes);
+    if (!outputRes) return res;
+    
+    // The resource contains a VkImage handle - access it based on your NGX header structure
+    // This might need to be adjusted based on your exact NGX header version
+    VkImage outputImage = *(reinterpret_cast<VkImage*>(outputRes));
+    // Use our renamed NGX overlay functions to avoid ambiguity
+    ::bg3se::extui::BeginNgxOverlayRenderPass(InCmdList, outputImage);
+    ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), InCmdList);
+    ::bg3se::extui::EndNgxOverlayRenderPass(InCmdList);
+
+    return res;
+}
+
 END_NS()
+
+// Wrapper at bg3se namespace level to satisfy earlier forward declaration
+namespace bg3se {
+static NVSDK_NGX_Result NVSDK_CONV ngxEvalHook(
+    VkCommandBuffer InCmdList,
+    NVSDK_NGX_Handle InFeature,
+    NVSDK_NGX_Parameter* InParameters,
+    PFN_NVSDK_NGX_ProgressCallback InCallback)
+{
+    ERR("NGX: ====================================================================");
+    ERR("NGX: ngxEvalHook called!");
+    // Forward to extui implementation
+    return extui::ngxEvalHook(InCmdList, InFeature, InParameters, InCallback);
+}
+} // namespace bg3se
