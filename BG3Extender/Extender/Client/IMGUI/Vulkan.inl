@@ -1233,7 +1233,9 @@ ngxEvalHook(VkCommandBuffer InCmdList,
 
     NVSDK_NGX_Result res = NVSDK_NGX_Result_FAIL_PlatformError;
     __try {
-        auto realFunc = reinterpret_cast<PFN_NGX_EVAL_REAL>(ngxEvalReal);
+        // Cast ngxEvalReal to the correct function signature and call it
+        auto realFunc = reinterpret_cast<NVSDK_NGX_Result (NVSDK_CONV *)(
+            VkCommandBuffer, const NVSDK_NGX_Handle*, const NVSDK_NGX_Parameter*, PFN_NVSDK_NGX_ProgressCallback_C)>(ngxEvalReal);
         auto callbackC = reinterpret_cast<PFN_NVSDK_NGX_ProgressCallback_C>(InCallback);
         res = realFunc(InCmdList, &InFeature, InParameters, callbackC);
     }
