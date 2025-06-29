@@ -31,11 +31,19 @@ VK_HOOK(DestroySwapchainKHR)
 VK_HOOK(QueuePresentKHR)
 
 // NGX DLSS FrameGeneration hook definitions
+// Our hook receives value types to match the game's calling convention
 typedef NVSDK_NGX_Result (NVSDK_CONV *PFN_NGX_EVAL)(
         VkCommandBuffer           InCmdList,
         NVSDK_NGX_Handle          InFeature,
         NVSDK_NGX_Parameter*       InParameters,
         PFN_NVSDK_NGX_ProgressCallback        InCallback);
+
+// The real NVIDIA SDK function expects pointer types
+typedef NVSDK_NGX_Result (NVSDK_CONV *PFN_NGX_EVAL_REAL)(
+        VkCommandBuffer                      InCmdList,
+        const NVSDK_NGX_Handle*              InFeature,
+        const NVSDK_NGX_Parameter*           InParameters,
+        PFN_NVSDK_NGX_ProgressCallback_C     InCallback);
 
 static PFN_NGX_EVAL ngxEvalReal = nullptr;
 
@@ -673,10 +681,13 @@ auto  gamePresent           = reinterpret_cast<PFN_vkQueuePresentKHR>(
 
         // Install NGX hooks
         HMODULE hGame = GetModuleHandleW(nullptr);
+        ERR("[NGX_HOOK] Looking for NVSDK_NGX_VULKAN_EvaluateFeature_C in main module: %p", hGame);
         ngxEvalReal = reinterpret_cast<PFN_NGX_EVAL>(GetProcAddress(hGame, "NVSDK_NGX_VULKAN_EvaluateFeature_C"));
+        ERR("[NGX_HOOK] GetProcAddress returned: %p", ngxEvalReal);
 
         if (ngxEvalReal) {
-            ERR("Hooking NVSDK_NGX_VULKAN_EvaluateFeature_C");
+            ERR("[NGX_HOOK] Hooking NVSDK_NGX_VULKAN_EvaluateFeature_C at address: %p", ngxEvalReal);
+            ERR("[NGX_HOOK] Hook function address: %p", bg3se::ngxEvalHook);
             DetourAttach(&(PVOID&)ngxEvalReal, (PVOID)bg3se::ngxEvalHook);
         } else {
             ERR("[NGX_HOOK] FAILED to find NVSDK_NGX_VULKAN_EvaluateFeature_C in main module. Hook will not be installed.");
@@ -1162,18 +1173,96 @@ ngxEvalHook(VkCommandBuffer InCmdList,
             NVSDK_NGX_Parameter*     InParameters,
             PFN_NVSDK_NGX_ProgressCallback      InCallback)
 {
+    // Log all parameters for debugging
+    ERR("NGX: ngxEvalHook called with:");
+    ERR("  InCmdList: %p", InCmdList);
+    ERR("  InFeature: %p", InFeature);
+    ERR("  InParameters: %p", InParameters);
+    ERR("  InCallback: %p", InCallback);
+    
+    // Validate parameters
+    if (!InCmdList) {
+        ERR("NGX: ERROR - InCmdList is NULL!");
+        return NVSDK_NGX_Result_FAIL_InvalidParameter;
+    }
+    
+    if (!InParameters) {
+        ERR("NGX: ERROR - InParameters is NULL!");
+        return NVSDK_NGX_Result_FAIL_InvalidParameter;
+    }
+    
+    // Try to read some common parameters to see if they're valid
+    void* pOutResource = nullptr;
+    if (InParameters->Get(NVSDK_NGX_Parameter_Output, &pOutResource) == NVSDK_NGX_Result_Success) {
+        ERR("  Output resource: %p", pOutResource);
+    }
+    
+    unsigned int outWidth = 0, outHeight = 0;
+    if (InParameters->Get(NVSDK_NGX_Parameter_OutWidth, &outWidth) == NVSDK_NGX_Result_Success) {
+        ERR("  Output width: %u", outWidth);
+    }
+    if (InParameters->Get(NVSDK_NGX_Parameter_OutHeight, &outHeight) == NVSDK_NGX_Result_Success) {
+        ERR("  Output height: %u", outHeight);
+    }
+    
     // Run stock NGX first
-    ERR("NGX: Running stock NGX");
-    auto res = ngxEvalReal(InCmdList, InFeature, InParameters, InCallback);
-    ERR("NGX: Stock NGX returned %d", res);
+    ERR("NGX: ngxEvalReal function pointer: %p", ngxEvalReal);
+    if (!ngxEvalReal) {
+        ERR("NGX: ERROR - ngxEvalReal is NULL! Cannot call original function.");
+        return NVSDK_NGX_Result_FAIL_NotInitialized;
+    }
+    // Check which module the function pointer belongs to
+    MEMORY_BASIC_INFORMATION mbi;
+    if (VirtualQuery(ngxEvalReal, &mbi, sizeof(mbi))) {
+        HMODULE hModule = (HMODULE)mbi.AllocationBase;
+        char moduleName[MAX_PATH] = {0};
+        if (GetModuleFileNameA(hModule, moduleName, sizeof(moduleName))) {
+            ERR("NGX: Function pointer is in module: %s", moduleName);
+        }
+        ERR("NGX: Memory info - BaseAddress: %p, RegionSize: %llu, Protect: 0x%X",
+            mbi.BaseAddress, (unsigned long long)mbi.RegionSize, mbi.Protect);
+    }
+
+    ERR("NGX: About to call with parameters:");
+    ERR("  InCmdList: %p", InCmdList);
+    ERR("  InFeature: 0x%llX (address passed = %p)", InFeature, &InFeature);
+    ERR("  InParameters: %p", InParameters);
+    ERR("  InCallback: %p", InCallback);
+
+    ERR("NGX: Calling ngxEvalReal...");
+
+    NVSDK_NGX_Result res = NVSDK_NGX_Result_FAIL_PlatformError;
+    __try {
+        auto realFunc = reinterpret_cast<PFN_NGX_EVAL_REAL>(ngxEvalReal);
+        auto callbackC = reinterpret_cast<PFN_NVSDK_NGX_ProgressCallback_C>(InCallback);
+        res = realFunc(InCmdList, &InFeature, InParameters, callbackC);
+    }
+    __except(EXCEPTION_EXECUTE_HANDLER) {
+        ERR("NGX: EXCEPTION caught when calling ngxEvalReal! Exception code: 0x%X", GetExceptionCode());
+        return NVSDK_NGX_Result_FAIL_PlatformError;
+    }
+    ERR("NGX: Stock NGX returned %d (0x%08X)", res, (unsigned int)res);
+    
+    // Debug dump of selected parameters after NGX call (may help spot invalid states)
+    void* pInColor    = nullptr;
+    void* pInMotion   = nullptr;
+    void* pInDepth    = nullptr;
+    if (InParameters->Get("Color", &pInColor) == NVSDK_NGX_Result_Success)
+        ERR("  Param Color  : %p", pInColor);
+    if (InParameters->Get("MotionVectors", &pInMotion) == NVSDK_NGX_Result_Success)
+        ERR("  Param Motion : %p", pInMotion);
+    if (InParameters->Get("Depth", &pInDepth) == NVSDK_NGX_Result_Success)
+        ERR("  Param Depth  : %p", pInDepth);
+
     
     // Skip if overlay disabled or upscaler not present
     if (!isUpscalerLoaded) {
         return res;
     }
 
+    ERR("NGX: Overlay enabled, proceeding with overlay rendering.");
     // Get the VulkanBackend instance
-    extui::VulkanBackend* backend = extui::GetVulkanBackendInstance();
+    VulkanBackend* backend = GetVulkanBackendInstance();
     if (!backend || !backend->IsInitialized()) {
         ERR("NGX: Backend not initialized, skipping overlay.");
         return res;
@@ -1185,16 +1274,15 @@ ngxEvalHook(VkCommandBuffer InCmdList,
         return res;
     }
 
-    // Get output resource
-    void* pOutResource = nullptr;
+    // Re-get output resource for overlay rendering
+    pOutResource = nullptr;
     InParameters->Get(NVSDK_NGX_Parameter_Output, &pOutResource);
     if (!pOutResource) {
         ERR("NGX: Failed to get output resource, skipping overlay.");
         return res;
     }
 
-    // Get output dimensions
-    unsigned int outWidth = 0, outHeight = 0;
+    // Re-get output dimensions for validation
     InParameters->Get(NVSDK_NGX_Parameter_OutWidth, &outWidth);
     InParameters->Get(NVSDK_NGX_Parameter_OutHeight, &outHeight);
 
@@ -1232,6 +1320,7 @@ ngxEvalHook(VkCommandBuffer InCmdList,
     );
 
     // Render using the backend's cached draw data
+    ERR("NGX: Rendering cached draw data to NGX...");
     backend->RenderCachedDrawDataToNGX(InCmdList, outputImage, outWidth, outHeight);
 
     // Transition back to shader read
