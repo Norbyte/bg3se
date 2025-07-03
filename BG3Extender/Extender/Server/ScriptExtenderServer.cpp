@@ -153,9 +153,11 @@ void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
         break;
 
     case GameState::LoadLevel:
-        LuaServerPin lua(*extensionState_);
-        if (lua) {
-            lua->OnLevelLoading();
+        if (extensionState_) {
+            LuaServerPin lua(*extensionState_);
+            if (lua) {
+                lua->OnLevelLoading();
+            }
         }
         break;
     }
