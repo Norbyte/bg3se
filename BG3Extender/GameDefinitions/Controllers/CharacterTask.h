@@ -375,7 +375,8 @@ struct CharacterTask_MoveTo : public CharacterMoveTask
 	int16_t AiFloodId;
 	navigation::TargetInfo NextTarget;
 	bool TargetSearchFinished;
-	[[bg3::hidden]] glm::aligned_vec3 HoverPosition;
+	[[bg3::hidden]] uint32_t _PAD;
+	glm::vec3 HoverPosition;
 	bool TargetReady;
 	bool Started;
 	EntityHandle HoverTarget;

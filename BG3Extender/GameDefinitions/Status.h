@@ -558,7 +558,7 @@ struct StatusFear : public StatusBoost
     static constexpr auto Type = StatusType::FEAR;
 };
 
-struct StatusInSurface : public StatusBoost
+struct StatusInSurface : public Status
 {
     static constexpr auto Type = StatusType::INSURFACE;
 };
