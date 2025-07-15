@@ -453,8 +453,9 @@ struct [[bg3::component]] SoundVolumeTrigger : public bg3se::SoundVolumeTrigger
 {
     DEFINE_PROXY_COMPONENT(ServerSoundVolumeTrigger, "esv::SoundVolumeTrigger")
 
+    [[bg3::hidden]] __int64 field_A8;
     EntityHandle Entity;
-    Guid AreaLevelOverrideGuid;
+    [[bg3::hidden]] void* _PAD;
 };
 
 struct [[bg3::component]] AIHintAreaTrigger : public AreaTriggerBase

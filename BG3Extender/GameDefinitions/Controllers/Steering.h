@@ -4,7 +4,7 @@ BEGIN_NS(esv)
 
 struct SteeringMachine : public ProtectedGameObject<SteeringMachine>
 {
-    [[bg3::hidden]] std::array<SteeringState*, 5> CachedStates;
+    std::array<SteeringState*, 5> CachedStates;
     bool Active;
     std::array<SteeringState*, 2> Layers;
     ecs::EntityRef Entity;

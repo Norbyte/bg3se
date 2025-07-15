@@ -389,7 +389,7 @@ struct MagicPocketsTrackingSystem : public BaseSystem
 {
     DEFINE_SYSTEM(ServerMagicPocketsTracking, "esv::inventory::MagicPocketsTrackingSystem")
 
-    HashSet<EntityHandle> RequestTrack;
+    Array<EntityHandle> RequestTrack;
 };
 
 struct CreateRequestData

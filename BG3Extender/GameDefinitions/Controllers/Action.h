@@ -52,7 +52,7 @@ struct ActionMachine : public ProtectedGameObject<ActionMachine>
     std::array<ActionLayer, 3> Layers;
     std::array<bool, 3> Entering;
     std::array<bool, 3> ExitRequested;
-    [[bg3::hidden]] std::array<ActionState*, 11> CachedActions;
+    std::array<ActionState*, 7> CachedActions;
 };
 
 struct ASAnimation : public ActionState
@@ -75,9 +75,9 @@ struct ASAnimation : public ActionState
 
 struct ASMoveBase : public ActionState
 {
-    uint8_t field_38;
+    int8_t MoveState;
     float OsirisRequestTimer;
-    uint8_t field_40;
+    bool MoveDataDirty;
     int StoryRequestId;
 };
 
@@ -133,8 +133,8 @@ struct ASCombineItem : public ASMoveBase
     FixedString Recipe;
     float field_5C;
     float TimeRemaining;
-    uint8_t field_64;
-    uint8_t field_65;
+    uint8_t Amount;
+    bool CombineFinished;
 };
 
 struct ASTeleportFalling : public ActionState

@@ -27,7 +27,7 @@ struct MovementState : public ProtectedGameObject<MovementState>
 
 struct MovementMachine : public ProtectedGameObject<MovementMachine>
 {
-    [[bg3::hidden]] std::array<MovementState*, 6> CachedStates;
+    std::array<MovementState*, 6> CachedStates;
     bool Active;
     std::array<MovementState*, 2> Layers;
     EntityHandle Entity;
