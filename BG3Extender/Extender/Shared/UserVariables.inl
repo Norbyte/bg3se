@@ -11,11 +11,14 @@ void ExtenderProtocolBase::SyncUserVars(MsgUserVars const& msg)
 {
     USER_VAR_DBG("Received sync message from peer");
     auto state = gExtender->GetCurrentExtensionState();
-    for (auto const& var : msg.vars()) {
-        if (var.type() == UserVarType::MODULE_VAR) {
-            state->GetModVariables().NetworkSync(var);
-        } else {
-            state->GetUserVariables().NetworkSync(var);
+    LuaVirtualPin lua(state);
+    if (lua) {
+        for (auto const& var : msg.vars()) {
+            if (var.type() == UserVarType::MODULE_VAR) {
+                state->GetModVariables().NetworkSync(var);
+            } else {
+                state->GetUserVariables().NetworkSync(var);
+            }
         }
     }
 }
