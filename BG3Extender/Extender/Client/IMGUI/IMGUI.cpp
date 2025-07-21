@@ -29,8 +29,8 @@ void DrawingContext::PopScaling()
 
 ImageReference::~ImageReference()
 {
-    if (TextureId) {
-        gExtender->IMGUI().UnregisterTexture(TextureId, TextureResource);
+    if (TextureHandle) {
+        gExtender->IMGUI().UnregisterTexture(TextureHandle, TextureResource);
     }
 }
 
@@ -49,7 +49,7 @@ bool ImageReference::BindTexture(FixedString const& textureUuid)
     TextureResource = textureUuid;
     auto result = gExtender->IMGUI().RegisterTexture(textureUuid);
     if (result) {
-        TextureId = result->Id;
+        TextureHandle = result->OpaqueHandle;
         Size = glm::vec2((float)result->Width, (float)result->Height);
         return true;
     } else {
@@ -86,10 +86,26 @@ bool ImageReference::BindIcon(FixedString const& iconName)
 
     TextureResource = atlas->TextureUuid;
     Icon = iconName;
-    TextureId = texture->Id;
+    TextureHandle = texture->OpaqueHandle;
     return true;
 }
 
+ImTextureID ImageReference::PrepareRender()
+{
+    if (TextureId) return TextureId;
+    if (!IsValid()) return ImTextureID();
+
+    auto tex = gExtender->IMGUI().BindTexture(TextureHandle);
+    if (tex) {
+        TextureId = *tex;
+    } else {
+        // Failed to create render texture, remove binding
+        gExtender->IMGUI().UnregisterTexture(TextureHandle, TextureResource);
+        TextureHandle = 0;
+    }
+
+    return TextureId;
+}
 
 template <class T>
 T* TreeParent::AddChild()
@@ -1287,9 +1303,10 @@ void ChildWindow::EndRender(DrawingContext& context)
 
 void Image::StyledRender(DrawingContext& context)
 {
-    if (ImageData.IsValid()) {
+    auto texture = ImageData.PrepareRender();
+    if (texture) {
         ImGui::ImageWithBg(
-            ImageData.TextureId,
+            texture,
             context.Scale(ImageData.Size),
             ToImVec(ImageData.UV0),
             ToImVec(ImageData.UV1),
@@ -1393,10 +1410,11 @@ bool Button::OverridesClickEvent() const
 
 void ImageButton::StyledRender(DrawingContext& context)
 {
-    if (!Image.IsValid()) return;
+    auto texture = Image.PrepareRender();
+    if (!texture) return;
 
     auto id = ImGui::GetCurrentWindow()->GetID(Label.c_str());
-    if (ImGui::ImageButtonEx(id, Image.TextureId, context.Scale(ToImVec(Image.Size)), ToImVec(Image.UV0), ToImVec(Image.UV1), ToImVec(Background), ToImVec(Tint), (ImGuiButtonFlags)Flags)) {
+    if (ImGui::ImageButtonEx(id, texture, context.Scale(ToImVec(Image.Size)), ToImVec(Image.UV0), ToImVec(Image.UV1), ToImVec(Background), ToImVec(Tint), (ImGuiButtonFlags)Flags)) {
         if (OnClick) {
             Manager->GetEventQueue().Call(OnClick, lua::ImguiHandle(Handle));
         }
@@ -2209,7 +2227,7 @@ std::optional<TextureLoadResult> IMGUITextureLoader::IncTextureRef(FixedString c
 }
 
 
-bool IMGUITextureLoader::DecTextureRef(ImTextureID id, FixedString const& textureGuid)
+bool IMGUITextureLoader::DecTextureRef(TextureOpaqueHandle id, FixedString const& textureGuid)
 {
     if (!renderer_) {
         ERR("Unloading texture with no rendering backend?");
@@ -2235,9 +2253,14 @@ std::optional<TextureLoadResult> IMGUIManager::RegisterTexture(FixedString const
     return textureLoader_.IncTextureRef(textureGuid);
 }
 
-void IMGUIManager::UnregisterTexture(ImTextureID id, FixedString const& textureGuid)
+void IMGUIManager::UnregisterTexture(TextureOpaqueHandle id, FixedString const& textureGuid)
 {
     textureLoader_.DecTextureRef(id, textureGuid);
+}
+
+std::optional<ImTextureID> IMGUIManager::BindTexture(TextureOpaqueHandle opaqueHandle)
+{
+    return renderer_->BindTexture(opaqueHandle);
 }
 
 END_NS()

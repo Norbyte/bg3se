@@ -212,11 +212,16 @@ public:
         }
 
         auto view = descriptor->DX11.Views[0].View;
-        return TextureLoadResult{ reinterpret_cast<ImTextureID>(view), descriptor->DX11.Width, descriptor->DX11.Height };
+        return TextureLoadResult{ reinterpret_cast<TextureOpaqueHandle>(view), descriptor->DX11.Width, descriptor->DX11.Height };
     }
 
-    void UnregisterTexture(ImTextureID id) override
+    void UnregisterTexture(TextureOpaqueHandle opaqueHandle) override
     {
+    }
+
+    std::optional<ImTextureID> BindTexture(TextureOpaqueHandle opaqueHandle) override
+    {
+        return (ImTextureID)opaqueHandle;
     }
 
 private:

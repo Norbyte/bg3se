@@ -110,22 +110,27 @@ struct DrawingContext
 
 struct ImageReference : Noncopyable<ImageReference>
 {
+public:
     ~ImageReference();
+
     bool Bind(FixedString const& iconOrTexture);
     bool BindTexture(FixedString const& textureUuid);
     bool BindIcon(FixedString const& iconName);
+    ImTextureID PrepareRender();
 
     inline bool IsValid() const
     {
-        return TextureId != 0;
+        return TextureHandle != 0;
     }
 
     glm::vec2 Size{ 0.0f, 0.0f };
     glm::vec2 UV0{ 0.0f, 0.0f };
     glm::vec2 UV1{ 1.0f, 1.0f };
-
     FixedString TextureResource;
     FixedString Icon;
+
+private:
+    TextureOpaqueHandle TextureHandle{ 0 };
     ImTextureID TextureId{ 0 };
 };
 

@@ -4,9 +4,11 @@
 
 BEGIN_NS(extui)
 
+using TextureOpaqueHandle = void*;
+
 struct TextureLoadResult
 {
-    ImTextureID Id;
+    TextureOpaqueHandle OpaqueHandle;
     uint32_t Width;
     uint32_t Height;
 };
@@ -23,7 +25,8 @@ public:
     virtual void FinishFrame() = 0;
     virtual void ClearFrame() = 0;
     virtual std::optional<TextureLoadResult> RegisterTexture(TextureDescriptor* descriptor) = 0;
-    virtual void UnregisterTexture(ImTextureID id) = 0;
+    virtual void UnregisterTexture(TextureOpaqueHandle opaqueHandle) = 0;
+    virtual std::optional<ImTextureID> BindTexture(TextureOpaqueHandle opaqueHandle) = 0;
     virtual bool IsInitialized() = 0;
     virtual void ReloadFonts() = 0;
     virtual glm::ivec2 GetViewportSize() = 0;
