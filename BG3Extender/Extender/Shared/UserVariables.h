@@ -147,6 +147,11 @@ public:
         return entityHelpers_;
     }
 
+    inline bool HasCache() const
+    {
+        return cache_ != nullptr;
+    }
+
     Guid EntityToGuid(EntityHandle const& entity) const;
     EntityHandle GuidToEntity(Guid const& guid) const;
     UserVariable* Get(Guid const& entity, FixedString const& key) override;
