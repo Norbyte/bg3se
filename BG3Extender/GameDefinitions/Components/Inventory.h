@@ -364,7 +364,7 @@ struct InteractionSystem : public BaseSystem
 
     [[bg3::hidden]] UnknownFunction qword10;
     HashMap<EntityHandle, Array<EntityHandle>> DestroyedEntities;
-    HashMap<EntityHandle, Array<EntityHandle>> field_90;
+    HashMap<EntityHandle, EntityHandle> field_90;
     HashMap<EntityHandle, MemberData> DestroyedMembers;
     Array<EntityHandle> field_110;
     HashMap<EntityHandle, FixedString> LevelOverride;
