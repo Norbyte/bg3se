@@ -48,7 +48,8 @@ std::optional<STDString> Object::GetString(FixedString const& attributeName) con
 
     auto index = IndexedProperties[attributeIndex];
     if (typeInfo->Name == GFS.strFixedString
-        || typeInfo->Name == GFS.strStatusIDs) {
+        || typeInfo->Name == GFS.strStatusIDs
+        || typeInfo->Name == GFS.strAIFlags) {
         auto val = GetStaticSymbols().GetStats()->GetFixedString(index);
         if (val) {
             return (*val)->GetString();
@@ -87,7 +88,9 @@ std::optional<FixedString> Object::GetFixedString(FixedString const& attributeNa
     }
 
     auto index = IndexedProperties[attributeIndex];
-    if (typeInfo->Name == GFS.strFixedString
+    if (typeInfo->Name == GFS.strAIFlags) {
+        return AIFlags;
+    } else if (typeInfo->Name == GFS.strFixedString
         || typeInfo->Name == GFS.strStatusIDs) {
         auto val = GetStaticSymbols().GetStats()->GetFixedString(index);
         if (val) {
@@ -298,7 +301,9 @@ bool Object::SetString(FixedString const& attributeName, const char * value)
     }
 
     auto stats = GetStaticSymbols().GetStats();
-    if (typeInfo->Name == GFS.strFixedString
+    if (typeInfo->Name == GFS.strAIFlags) {
+        AIFlags = FixedString{ value };
+    } else if (typeInfo->Name == GFS.strFixedString
         || typeInfo->Name == GFS.strStatusIDs) {
         int poolIdx{ -1 };
         auto fs = stats->GetOrCreateFixedString(poolIdx);
