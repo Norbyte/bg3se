@@ -891,7 +891,7 @@ BEGIN_ENUM(HitType, uint32_t)
 END_ENUM()
 
 
-BEGIN_ENUM(AttackFlags, uint8_t)
+BEGIN_BITMASK(AttackFlags, uint8_t)
     EV(InstantKill, 0x01)
     EV(FirstAttack, 0x02)
     EV(FromSneak, 0x04)
