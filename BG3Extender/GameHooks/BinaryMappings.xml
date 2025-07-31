@@ -469,9 +469,13 @@
       75 f7 // jnz     short loc_140ED8DF0
       4c 8d 4c 24 48 // lea     r9, [rsp+211D0h+var_21188]
       48 8d 8d 84 1f 00 00 // lea     rcx, [rbp+210D0h+var_1F14C]
-      @ref2 e8 ?? ?? ?? ?? // call    stats__Object__SetFixedString
+      e8 ?? ?? ?? ?? // call    stats__Object__SetFixedString
+      eb 12 // jmp     short loc_140ED8E1E
+      4c 8d 85 84 1f 00 00 // lea     r8, [rbp+210D0h+var_1F14C]
+      48 8d 54 24 34 // lea     rdx, [rsp+211D0h+var_2119C]
+      @ref3 e8 ?? ?? ?? ?? // call    stats__Object__SetPropertyString
       <Condition Type="FixedString" Offset="@str1" Value="ComboCategory" />
-      <Target Type="Indirect" Offset="@ref2" Symbol="stats__Object__SetPropertyString" />
+      <Target Type="Indirect" Offset="@ref3" Symbol="stats__Object__SetPropertyString" />
     </Mapping>
 
     <!-- NOTE: Adjust LibraryManager::BindECSContext after changing this -->
