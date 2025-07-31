@@ -4,6 +4,8 @@
 
 BEGIN_SE()
 
+struct MoveableObject;
+
 struct AABound
 {
     glm::vec3 Min;
@@ -21,7 +23,7 @@ struct MeshBinding : ProtectedGameObject<MeshBinding>
 {
     [[bg3::hidden]] void* VMT;
     [[bg3::hidden]] Pose Pose;
-    [[bg3::hidden]] void* field_20;
+    MoveableObject* Object;
     glm::mat4 Transform;
     AABound Bound1;
     AABound Bound2;
@@ -459,7 +461,7 @@ struct Visual : public MoveableObject
         MiniCompactSet<Remap> Remaps;
     };
 
-    [[bg3::hidden]] void* field_80;
+    [[bg3::hidden]] void* RenderPrecisionHack;
     MiniCompactSet<SkeletonSlot*> SkeletonSlots;
     Array<ObjectDesc> ObjectDescs;
     Array<float> LODDistances;
