@@ -179,6 +179,40 @@ local function ValidateVisuals()
     end
 end
 
+local function ValidateEffectComponent(comp)
+    Ext.Types.Validate(comp)
+    if Ext.Types.IsA(comp, "aspk::FxBaseComponent") then
+        for i,prop in pairs(comp.Properties) do
+            Ext.Types.Validate(prop)
+        end
+
+        for i,module in pairs(comp.Modules) do
+            Ext.Types.Validate(module)
+        end
+    end
+end
+
+local function ValidateEffect(effect)
+    if Ext.Types.Validate(effect) then
+        for i,input in pairs(effect.Inputs) do
+            Ext.Types.Validate(input)
+        end
+
+        for i,comp in pairs(effect.Components) do
+            ValidateEffectComponent(comp)
+        end
+    end
+end
+
+local function ValidateEffects()
+    local counters = {}
+    for i,entity in ipairs(Ext.Entity.GetAllEntitiesWithComponent("Effect")) do
+        if entity.Effect.Timeline ~= nil then
+            ValidateEffect(entity.Effect.Timeline)
+        end
+    end
+end
+
 local function TryToReserializeObject(obj)
     local serializer = function ()
         local serialized = Ext.Types.Serialize(obj)
@@ -520,6 +554,11 @@ Ext.RegisterConsoleCommand("se_visualtest", function ()
     ValidateVisuals()
 end)
 
+Ext.RegisterConsoleCommand("se_effecttest", function ()
+    Ext.Debug.SetEntityRuntimeCheckLevel(0)
+    ValidateEffects()
+end)
+
 Ext.RegisterConsoleCommand("se_deepfry", function ()
     Ext.Debug.SetEntityRuntimeCheckLevel(0)
     ValidateGlobals()
@@ -529,6 +568,7 @@ Ext.RegisterConsoleCommand("se_deepfry", function ()
     ValidateStats()
     ValidateEntities()
     ValidateVisuals()
+    ValidateEffects()
     --ReserializeTemplates()
     --ReserializeStaticData()
     --ReserializeResources()
