@@ -54,17 +54,17 @@
     </Mapping>
 
     <Mapping Name="ls::FixedString::CreateFromString" Critical="true">
-      @str1 48 8d 05 ?? ?? ?? ?? // lea     rax, aH8e3f9e82g8fda; "h8e3f9e82g8fdag437cg99c1g4988a6aeccff"
-      48 89 44 24 28 // mov     [rsp+58h+a3.Str], rax
-      c7 44 24 30 25 00 00 00 // mov     [rsp+58h+a3.Length], 25h ; '%'
-      c7 44 24 78 ff ff ff ff // mov     [rsp+58h+arg_18], 0FFFFFFFFh
-      c7 44 24 20 02 00 00 00 // mov     [rsp+58h+var_38], 2
+      @str1 48 8d 05 ?? ?? ?? ?? // lea     rax, aH14884b44gc0bc; "h14884b44gc0bcg4fe7gbd6eg40ccb7063607"
+      48 89 44 24 28 // mov     [rsp+48h+var_20], rax
+      c7 44 24 30 25 00 00 00 // mov     [rsp+48h+var_18], 25h ; '%'
+      c7 44 24 60 ff ff ff ff // mov     [rsp+48h+arg_10], 0FFFFFFFFh
+      c7 44 24 20 02 00 00 00 // mov     [rsp+48h+var_28], 2
       48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:ls__gGlobalStringTable
-      48 81 c1 00 c6 00 00 // add     rcx, 0C600h; a1
-      4c 8d 44 24 28 // lea     r8, [rsp+58h+a3]; a3
-      48 8d 54 24 70 // lea     rdx, [rsp+58h+a1]; a2
+      48 81 c1 00 c6 00 00 // add     rcx, 0C600h
+      4c 8d 44 24 28 // lea     r8, [rsp+48h+var_20]
+      48 8d 54 24 58 // lea     rdx, [rsp+48h+arg_8]
       @ref2 e8 ?? ?? ?? ?? // call    ls__GlobalStringTable__MainTable__FromString
-      <Condition Type="String" Offset="@str1" Value="h8e3f9e82g8fdag437cg99c1g4988a6aeccff" />
+      <Condition Type="String" Offset="@str1" Value="h14884b44gc0bcg4fe7gbd6eg40ccb7063607" />
       <Target Type="Indirect" Offset="@ref2" Symbol="ls__GlobalStringTable__MainTable__CreateFromString" />
       <Target Type="Indirect" Offset="@ref2" NextSymbol="ls::ThreadRegistry::RequestThreadIndex" NextSymbolSeekSize="512" />
     </Mapping>
@@ -81,17 +81,17 @@
     </Mapping>
 
     <Mapping Name="ls::FileReader::ctor" Critical="true">
-      48 03 d3 // add     rdx, rbx
-      @str1 4c 8d 05 ?? ?? ?? ?? // lea     r8, aItemcombosTxt; "ItemCombos.txt"
-      48 8d 8d b0 01 00 00 // lea     rcx, [rbp+1B0h]
-      e8 ?? ?? ?? ?? // call    sub_140E37FE0
+      8d 53 0b // lea     edx, [rbx+0Bh]
+      @str1 4c 8d 05 ?? ?? ?? ?? // lea     r8, aCreditsCredits; "Credits/credits.txt"
+      48 8d 8c 24 b8 00 00 00 // lea     rcx, [rsp+0E8h+var_30]
+      e8 ?? ?? ?? ?? // call    sub_1405B51F0
       90 // nop
-      45 8b ce // mov     r9d, r14d
-      45 8b c7 // mov     r8d, r15d
-      48 8d 95 b0 01 00 00 // lea     rdx, [rbp+1B0h]
-      48 8d 8d 80 00 00 00 // lea     rcx, [rbp+80h]
+      44 8b cb // mov     r9d, ebx
+      45 33 c0 // xor     r8d, r8d
+      48 8d 94 24 b8 00 00 00 // lea     rdx, [rsp+0E8h+var_30]
+      48 8d 4c 24 28 // lea     rcx, [rsp+0E8h+var_C0]
       @ref1 e8 ?? ?? ?? ?? // call    ls__FileReader__ctor
-      <Condition Type="String" Offset="@str1" Value="ItemCombos.txt" />
+      <Condition Type="String" Offset="@str1" Value="Credits/credits.txt" />
       <Target Type="Indirect" Offset="@ref1" Symbol="ls__FileReader__ctor" />
     </Mapping>
 
@@ -205,13 +205,13 @@
 
     <Mapping Name="ecl::EoCClient::HandleError">
       41 b0 01 // mov     r8b, 1
-      48 8d 55 07 // lea     rdx, [rbp+7]
+      48 8d 55 ff // lea     rdx, [rbp+57h+var_58]
       48 8b cf // mov     rcx, rdi
       @ref1 e8 ?? ?? ?? ?? // call    ecl__EocClient__HandleError
       90 // nop
-      48 8d 4d c7 // lea     rcx, [rbp-39h]
-      e9 1e 01 00 00 // jmp     loc_141865D9A
-      48 c7 45 d7 05 00 00 00 // mov     qword ptr [rbp-29h], 5
+      48 8d 4d d7 // lea     rcx, [rbp+57h+var_80]
+      e9 1e 01 00 00 // jmp     loc_141859EC8
+      48 c7 45 c7 05 00 00 00 // mov     [rbp+57h+var_90], 5
       44 8b c8 // mov     r9d, eax
       @str1 4c 8d 05 ?? ?? ?? ?? // lea     r8, a4x; "%.4x"
       <Condition Type="String" Offset="@str1" Value="%.4x" />
@@ -458,15 +458,18 @@
     </Mapping>
 
     <Mapping Name="stats::Object::SetPropertyString">
-      49 8b 4f 20 // mov     rcx, [r15+20h]
-      @str1 3b 05 ?? ?? ?? ?? // cmp     eax, cs:fs_ComboCategory.ID
-      75 0a // jnz     short loc_140ECB384
-      48 8b d1 // mov     rdx, rcx
-      e8 ?? ?? ?? ?? // call    sub_140ECB770
-      eb 0b // jmp     short loc_140ECB38F
-      48 8d 54 24 34 // lea     rdx, [rsp+211D0h+var_2119C]
-      @ref2 e8 ?? ?? ?? ?? // call    stats__Object__SetPropertyString
-      90 // nop
+      @str1 3b 05 ?? ?? ?? ?? // cmp     eax, cs:fs_ComboCategory
+      75 32 // jnz     short loc_140ED8E0C
+      48 89 4c 24 48 // mov     [rsp+211D0h+var_21188], rcx
+      48 8d 85 84 1f 00 00 // lea     rax, [rbp+210D0h+var_1F14C]
+      48 c7 c2 ff ff ff ff // mov     rdx, 0FFFFFFFFFFFFFFFFh
+      0f 1f 00 // nop     dword ptr [rax]
+      48 ff c2 // inc     rdx
+      80 3c 10 00 // cmp     byte ptr [rax+rdx], 0
+      75 f7 // jnz     short loc_140ED8DF0
+      4c 8d 4c 24 48 // lea     r9, [rsp+211D0h+var_21188]
+      48 8d 8d 84 1f 00 00 // lea     rcx, [rbp+210D0h+var_1F14C]
+      @ref2 e8 ?? ?? ?? ?? // call    stats__Object__SetFixedString
       <Condition Type="FixedString" Offset="@str1" Value="ComboCategory" />
       <Target Type="Indirect" Offset="@ref2" Symbol="stats__Object__SetPropertyString" />
     </Mapping>
