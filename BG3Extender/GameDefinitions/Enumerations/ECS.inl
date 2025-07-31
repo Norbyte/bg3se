@@ -292,6 +292,7 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 
     // Effects
     E(Effect)
+    E(Decal)
 
     // Passives
     E(PassiveContainer)

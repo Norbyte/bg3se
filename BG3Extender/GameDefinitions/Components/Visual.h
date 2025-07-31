@@ -233,6 +233,14 @@ struct EffectComponent : public BaseProxyComponent
     [[bg3::hidden]] uint64_t _Pad;
 };
 
+struct DecalComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(Decal, "ls::DecalComponent")
+
+    DecalObject* Decal;
+    __int64 field_8;
+};
+
 struct CullComponent : public BaseComponent
 {
     DEFINE_COMPONENT(Cull, "ls::CullComponent")

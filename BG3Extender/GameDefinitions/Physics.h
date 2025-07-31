@@ -20,16 +20,25 @@ struct PhysicsTemplate : public ProtectedGameObject<PhysicsTemplate>
     FixedString ID;
 };
 
-struct PhysicsShape : public ProtectedGameObject<PhysicsShape>
+struct PhysicsBaseShape : public ProtectedGameObject<PhysicsBaseShape>
 {
     [[bg3::hidden]] void* VMT;
     FixedString Name;
     glm::quat Rotation;
     glm::vec3 Translate;
     glm::vec3 Scale;
+};
+
+struct PhysicsShape : public PhysicsBaseShape
+{
     int field_34;
     PhysicsObject* PhysicsObject;
 };
+
+struct PhysicsSoftShape : public PhysicsBaseShape
+{
+};
+
 
 struct PhysicsObject : public ProtectedGameObject<PhysicsObject>
 {
