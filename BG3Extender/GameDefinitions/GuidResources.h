@@ -106,7 +106,20 @@ BEGIN_NS(resource)
     FOR_RESOURCE_TYPE(RulesetModifierOption) \
     FOR_RESOURCE_TYPE(Ruleset) \
     FOR_RESOURCE_TYPE(RulesetValue) \
-    FOR_RESOURCE_TYPE(RulesetSelectionPreset)
+    FOR_RESOURCE_TYPE(RulesetSelectionPreset) \
+    FOR_RESOURCE_TYPE(OneTimeReward) \
+    FOR_RESOURCE_TYPE(AnimationShortNameCategory) \
+    FOR_RESOURCE_TYPE(AnimationShortName) \
+    FOR_RESOURCE_TYPE(PhotoModeBlueprintOverride) \
+    FOR_RESOURCE_TYPE(PhotoModeColourGrading) \
+    FOR_RESOURCE_TYPE(PhotoModeDecorFrame) \
+    FOR_RESOURCE_TYPE(PhotoModeEmoteAnimation) \
+    FOR_RESOURCE_TYPE(PhotoModeEmoteCollection) \
+    FOR_RESOURCE_TYPE(PhotoModeEmotePose) \
+    FOR_RESOURCE_TYPE(PhotoModeFaceExpressionCollection) \
+    FOR_RESOURCE_TYPE(PhotoModeFaceExpression) \
+    FOR_RESOURCE_TYPE(PhotoModeSticker) \
+    FOR_RESOURCE_TYPE(PhotoModeVignette)
 
 
 using TStaticDataTypeIndex = int32_t;
@@ -1752,6 +1765,150 @@ struct RulesetSelectionPreset : public resource::GuidResource
     TranslatedString Description;
     STDString Asset;
     bool IsCustom;
+};
+
+
+struct OneTimeReward : public resource::GuidResource
+{
+    static constexpr auto ResourceManagerType = ExtResourceManagerType::OneTimeReward;
+    static constexpr auto EngineClass = "eoc::one_time_reward::RewardManager";
+
+    int ItemTemplateId;
+    int Amount;
+};
+
+
+struct AnimationShortNameCategory : public resource::GuidResource
+{
+    static constexpr auto ResourceManagerType = ExtResourceManagerType::AnimationShortNameCategory;
+    static constexpr auto EngineClass = "eoc::ShortNameCategoryManager";
+
+    FixedString Name;
+    Guid CategoryGuid;
+};
+
+
+struct AnimationShortName : public resource::GuidResource
+{
+    static constexpr auto ResourceManagerType = ExtResourceManagerType::AnimationShortName;
+    static constexpr auto EngineClass = "ls::ShortNameManager";
+
+    FixedString Name;
+};
+
+
+struct PhotoModeBlueprintOverride : public resource::GuidResource
+{
+    static constexpr auto ResourceManagerType = ExtResourceManagerType::PhotoModeBlueprintOverride;
+    static constexpr auto EngineClass = "eoc::photo_mode::BlueprintOverrideManager";
+
+    FixedString SourceBlueprintUUID;
+    FixedString DummyBlueprintUUID;
+};
+
+
+struct PhotoModeColourGrading : public resource::GuidResource
+{
+    static constexpr auto ResourceManagerType = ExtResourceManagerType::PhotoModeColourGrading;
+    static constexpr auto EngineClass = "eoc::photo_mode::ColourGradings";
+
+    TranslatedString DisplayName;
+    FixedString Resource;
+};
+
+
+struct PhotoModeDecorFrame : public resource::GuidResource
+{
+    static constexpr auto ResourceManagerType = ExtResourceManagerType::PhotoModeDecorFrame;
+    static constexpr auto EngineClass = "eoc::photo_mode::DecorFrames";
+
+    TranslatedString DisplayName;
+    STDString Asset;
+    float LeftSliceSize;
+    float TopSliceSize;
+    float RightSliceSize;
+    float BottomSliceSize;
+    float IconWidth;
+};
+
+
+struct PhotoModeEmoteAnimation : public resource::GuidResource
+{
+    static constexpr auto ResourceManagerType = ExtResourceManagerType::PhotoModeEmoteAnimation;
+    static constexpr auto EngineClass = "eoc::photo_mode::EmoteAnimations";
+
+    STDString Name;
+    TranslatedString DisplayName;
+    FixedString ShortName;
+    Array<Guid> TagsFilter;
+};
+
+
+struct PhotoModeEmoteCollection : public resource::GuidResource
+{
+    static constexpr auto ResourceManagerType = ExtResourceManagerType::PhotoModeEmoteCollection;
+    static constexpr auto EngineClass = "eoc::photo_mode::EmoteCollections";
+
+    TranslatedString DisplayName;
+    Array<Guid> PosesList;
+    Array<Guid> AnimationsList;
+    STDString Name;
+};
+
+
+struct PhotoModeEmotePose : public resource::GuidResource
+{
+    static constexpr auto ResourceManagerType = ExtResourceManagerType::PhotoModeEmotePose;
+    static constexpr auto EngineClass = "eoc::photo_mode::EmotePoses";
+
+    STDString Name;
+    TranslatedString DisplayName;
+    FixedString ShortName;
+    uint32_t Timing;
+    Array<Guid> TagsFilter;
+};
+
+
+struct PhotoModeFaceExpressionCollection : public resource::GuidResource
+{
+    static constexpr auto ResourceManagerType = ExtResourceManagerType::PhotoModeFaceExpressionCollection;
+    static constexpr auto EngineClass = "eoc::photo_mode::FaceExpressionCollections";
+
+    TranslatedString DisplayName;
+    Array<Guid> FaceExpressionsList;
+    STDString Name;
+};
+
+
+struct PhotoModeFaceExpression : public resource::GuidResource
+{
+    static constexpr auto ResourceManagerType = ExtResourceManagerType::PhotoModeFaceExpression;
+    static constexpr auto EngineClass = "eoc::photo_mode::FaceExpressions";
+
+    STDString Name;
+    TranslatedString DisplayName;
+    FixedString ShortName;
+    Array<Guid> TagsFilter;
+};
+
+
+struct PhotoModeSticker : public resource::GuidResource
+{
+    static constexpr auto ResourceManagerType = ExtResourceManagerType::PhotoModeSticker;
+    static constexpr auto EngineClass = "eoc::photo_mode::Stickers";
+
+    TranslatedString DisplayName;
+    STDString Asset;
+};
+
+
+struct PhotoModeVignette : public resource::GuidResource
+{
+    static constexpr auto ResourceManagerType = ExtResourceManagerType::PhotoModeVignette;
+    static constexpr auto EngineClass = "eoc::photo_mode::Vignettes";
+
+    TranslatedString DisplayName;
+    glm::vec4 Color;
 };
 
 
