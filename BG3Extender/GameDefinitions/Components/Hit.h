@@ -158,7 +158,7 @@ struct HitRequest
     HitDesc Desc;
     HitWith HitWith{ HitWith::None };
     uint8_t field_1C1{ 0 };
-    int StoryActionId{ -1 };
+    int StoryActionId{ 0 };
     ActionOriginator Originator;
     AbilityId Ability{ AbilityId::None };
     EntityHandle Weapon;

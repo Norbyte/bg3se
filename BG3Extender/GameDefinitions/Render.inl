@@ -26,8 +26,8 @@ BEGIN_NS(lua)
 
 void LuaPolymorphic<MoveableObject>::MakeRef(lua_State* L, MoveableObject* value, LifetimeHandle lifetime)
 {
-#define V(type) if ((rtti & type::StaticRTTI) == type::StaticRTTI) \
-            MakeDirectObjectRef(L, static_cast<type*>(value), lifetime); return;
+#define V(type) if ((rtti & type::StaticRTTI) == type::StaticRTTI) { \
+            MakeDirectObjectRef(L, static_cast<type*>(value), lifetime); return; }
 
     auto rtti = value->GetRTTI();
 

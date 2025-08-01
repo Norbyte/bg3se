@@ -92,7 +92,7 @@ struct CastHitEvent
     [[bg3::legacy(Cause)]] FixedString CauseSpell;
     Guid SpellCastGuid;
     DamageFlags DamageEffectFlags;
-    uint8_t SpellAttackType;
+    SpellAttackType SpellAttackType;
     [[bg3::legacy(field_20)]] int32_t DamageDone;
     Array<DamagePair> DamageRolls;
     [[bg3::legacy(field_38)]] EntityHandle ThrownObject;

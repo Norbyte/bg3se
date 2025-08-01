@@ -169,16 +169,15 @@ struct HitDesc
     float ImpactForce{ 0.0f };
     int ArmorAbsorption{ 0 };
     int LifeSteal{ 0 };
-    // TODO - need to remap DamageFlags
-    uint32_t EffectFlags{ 0 };
+    DamageFlags EffectFlags{ 0 };
     EntityHandle Inflicter;
     EntityHandle InflicterOwner;
     EntityHandle Throwing;
-    int StoryActionId{ -1 };
+    int StoryActionId{ 0 };
     HitWith HitWith{ HitWith::None };
     AbilityId AttackRollAbility{ AbilityId::None };
     AbilityId SaveAbility{ AbilityId::None };
-    [[bg3::legacy(field_4F)]] uint8_t SpellAttackType{ 0 };
+    [[bg3::legacy(field_4F)]] SpellAttackType SpellAttackType{ 0 };
     Array<ConditionRoll> ConditionRolls;
     [[bg3::legacy(Results)]] StatsDamage Damage;
     Guid SpellCastGuid;

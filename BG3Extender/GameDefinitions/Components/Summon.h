@@ -94,7 +94,7 @@ struct SummonInInventoryDesc
     SpellIdWithPrototype Spell;
     ActionOriginator Originator;
     FixedString SpellContainer;
-    int StoryActionId{ -1 };
+    int StoryActionId{ 0 };
     HitDesc Hit;
     AttackDesc Attack;
 };
@@ -116,7 +116,7 @@ struct SummonDesc
     ActionOriginator Originator;
     FixedString Container;
     EntityHandle AttachToProjectile;
-    int StoryActionId{ -1 };
+    int StoryActionId{ 0 };
     HitDesc Hit;
     AttackDesc Attack;
 };
@@ -135,7 +135,7 @@ struct SpawnInInventoryDesc
     SpellId SpellId;
     Guid SpellCastSourceGuid;
     ActionOriginator Originator;
-    int StoryActionId{ -1 };
+    int StoryActionId{ 0 };
     HitDesc Hit;
     AttackDesc Attack;
 };
@@ -150,7 +150,7 @@ struct SpawnDesc
     Guid SpellCastSourceGuid;
     ActionOriginator Originator;
     glm::vec3 Position{ .0f, .0f, .0f };
-    int StoryActionId{ -1 };
+    int StoryActionId{ 0 };
     HitDesc Hit;
     AttackDesc Attack;
     bool ApplyLateJoinPenalty{ false };
