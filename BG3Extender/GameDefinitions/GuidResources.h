@@ -292,8 +292,7 @@ struct Origin : public resource::GuidResource
     Guid GlobalTemplate;
     Guid DefaultsTemplate;
     STDString Passives;
-    [[bg3::hidden]]
-    Array<void*> field_C8;
+    Array<stats::PassivePrototype*> PassivePrototypes;
     Array<Guid> AppearanceTags;
     Array<Guid> ReallyTags;
     uint32_t Flags;
@@ -317,8 +316,7 @@ struct Background : public resource::GuidResource
     TranslatedString DisplayName;
     TranslatedString Description;
     STDString Passives;
-    __int64 field_40;
-    __int64 field_48;
+    Array<stats::PassivePrototype*> PassivePrototypes;
     Array<Guid> Tags;
     bool Hidden;
 };
@@ -1784,7 +1782,6 @@ struct AnimationShortNameCategory : public resource::GuidResource
     static constexpr auto EngineClass = "eoc::ShortNameCategoryManager";
 
     FixedString Name;
-    Guid CategoryGuid;
 };
 
 
@@ -1794,6 +1791,7 @@ struct AnimationShortName : public resource::GuidResource
     static constexpr auto EngineClass = "ls::ShortNameManager";
 
     FixedString Name;
+    Guid CategoryGuid;
 };
 
 

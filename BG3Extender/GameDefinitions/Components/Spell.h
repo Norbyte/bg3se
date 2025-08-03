@@ -184,7 +184,7 @@ struct LearnedSpellsComponent : public BaseComponent
 {
     DEFINE_COMPONENT(LearnedSpells, "eoc::spell::LearnedSpellsComponent")
 
-    HashMap<Guid, HashSet<FixedString>> field_18;
+    [[bg3::legacy(field_18)]] HashMap<Guid, HashSet<FixedString>> ClassSpells;
     HashSet<SpellSchoolId> SpellSchools;
 };
 
