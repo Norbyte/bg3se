@@ -160,6 +160,12 @@ bool VirtualTextureHelpers::Stitch()
         }
     }
 
+    // We need at least one loaded tileset to proceed with stitching
+    if (stitched.TileSets.empty()) {
+        ERR("Unable to merge tileset, no source tilesets loaded");
+        return false;
+    }
+
     vt::MergedTileSetGeometryCalculator geom;
     geom.TileSets = stitched.TileSets;
     if (!geom.DoAutoPlacement()) {

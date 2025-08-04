@@ -896,6 +896,21 @@ void* EntitySystemHelpersBase::GetRawComponent(EntityHandle entityHandle, ExtCom
     }
 }
 
+SystemTypeEntry* EntitySystemHelpersBase::GetSystemEntry(ExtSystemType type)
+{
+    auto world = GetEntityWorld();
+    if (!world) {
+        return nullptr;
+    }
+
+    auto index = systemIndices_[(unsigned)type];
+    if (index != UndefinedSystem) {
+        return &world->Systems.Systems[(unsigned)index];
+    } else {
+        return nullptr;
+    }
+}
+
 void* EntitySystemHelpersBase::GetRawSystem(ExtSystemType type)
 {
     auto world = GetEntityWorld();
@@ -970,6 +985,16 @@ void EntitySystemHelpersBase::PostUpdate()
     if (logging_) {
         DebugLogReplicationChanges();
     }
+}
+
+void EntitySystemHelpersBase::OnInit()
+{
+    InitSystemUpdateHooks();
+}
+
+void EntitySystemHelpersBase::OnDestroy()
+{
+    ClearSystemUpdateHooks();
 }
 
 void EntitySystemHelpersBase::DebugLogReplicationChanges()
@@ -1316,6 +1341,73 @@ QueryDescription* EntitySystemHelpersBase::GetQuery(ExtQueryType type)
 
     return &world->Queries.Queries[(unsigned)index];
 }
+
+bool EntitySystemHelpersBase::SetSystemUpdateHook(SystemTypeIndex systemType, std::function<SystemHookProc> preUpdate, std::function<SystemHookProc> postUpdate)
+{
+    assert((unsigned)systemType < systemTypeIdToName_.size());
+
+    if ((unsigned)systemType >= systemHooks_.size()) return false;
+
+    auto& hook = systemHooks_[(unsigned)systemType];
+    if (hook.OriginalUpdateProc == nullptr) {
+        auto& system = GetEntityWorld()->Systems.Systems[(unsigned)systemType];
+        if (system.System == nullptr) {
+            return false;
+        }
+
+        systemToId_.insert(std::make_pair(system.System, systemType));
+        hook.OriginalUpdateProc = system.UpdateProc;
+        system.UpdateProc = &StaticSystemUpdateHook;
+    }
+
+    hook.PreUpdate = preUpdate;
+    hook.PostUpdate = postUpdate;
+    return true;
+}
+
+void EntitySystemHelpersBase::SystemUpdateHook(BaseSystem* system, EntityWorld& world, GameTime const& time)
+{
+    auto systemId = systemToId_.find(system);
+    assert(systemId != systemToId_.end());
+    auto& hooks = systemHooks_[(unsigned)systemId->second];
+    if (hooks.PreUpdate) {
+        hooks.PreUpdate(this, system, time, systemId->second);
+    }
+
+    hooks.OriginalUpdateProc(system, world, time);
+
+    if (hooks.PostUpdate) {
+        hooks.PostUpdate(this, system, time, systemId->second);
+    }
+}
+
+void EntitySystemHelpersBase::StaticSystemUpdateHook(BaseSystem* system, EntityWorld& world, GameTime const& time)
+{
+    auto helpers = (&world == gExtender->GetClient().GetEntityHelpers().GetEntityWorld())
+        ? (EntitySystemHelpersBase*)&gExtender->GetClient().GetEntityHelpers()
+        : (EntitySystemHelpersBase*)&gExtender->GetServer().GetEntityHelpers();
+
+    helpers->SystemUpdateHook(system, world, time);
+}
+
+void EntitySystemHelpersBase::InitSystemUpdateHooks()
+{
+    systemHooks_.resize(systemTypeIdToName_.size());
+}
+
+void EntitySystemHelpersBase::ClearSystemUpdateHooks()
+{
+    for (unsigned i = 0; i < systemHooks_.size(); i++) {
+        if (systemHooks_[i].OriginalUpdateProc != nullptr) {
+            auto& system = GetEntityWorld()->Systems.Systems[i];
+            system.UpdateProc = systemHooks_[i].OriginalUpdateProc;
+        }
+    }
+
+    systemToId_.clear();
+    systemHooks_.clear();
+}
+
 
 void ServerEntitySystemHelpers::Setup()
 {

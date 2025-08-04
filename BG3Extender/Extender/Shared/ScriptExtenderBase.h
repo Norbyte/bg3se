@@ -7,13 +7,6 @@
 
 BEGIN_SE()
 
-enum class ContextType
-{
-    None,
-    Server,
-    Client
-};
-
 ContextType GetCurrentContextType();
 
 class ContextGuard

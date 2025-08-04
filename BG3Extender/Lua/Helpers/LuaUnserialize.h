@@ -2,8 +2,8 @@
 
 BEGIN_NS(lua)
 
-template <class TK>
-PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, Array<TK>* obj)
+template <class TK, class T>
+PropertyOperationResult UnserializeArrayFromTableGeneric(lua_State* L, int index, T* obj)
 {
     if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
         return PropertyOperationResult::UnsupportedType;
@@ -22,6 +22,12 @@ PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, Array
 
         return PropertyOperationResult::Success;
     }
+}
+
+template <class TK>
+PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, Array<TK>* obj)
+{
+    return UnserializeArrayFromTableGeneric<TK>(L, index, obj);
 }
 
 template <class TK>
@@ -76,23 +82,7 @@ PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, St
 template <class TK, class TAllocator>
 PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, std::vector<TK, TAllocator>* obj)
 {
-    if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
-        return PropertyOperationResult::UnsupportedType;
-    } else {
-        StackCheck _(L);
-        luaL_checktype(L, index, LUA_TTABLE);
-
-        // FIXME - in-place resize object by using raw size from the Lua table meta
-        // (this will also require the table to be array-like)
-        obj->clear();
-        for (auto idx : iterate(L, index)) {
-            TK value;
-            Unserialize(L, idx, &value);
-            obj->push_back(std::move(value));
-        }
-
-        return PropertyOperationResult::Success;
-    }
+    return UnserializeArrayFromTableGeneric<TK>(L, index, obj);
 }
 
 template <class TK, class TAllocator>
@@ -111,23 +101,7 @@ PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, st
 template <class TK>
 PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, ObjectSet<TK>* obj)
 {
-    if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
-        return PropertyOperationResult::UnsupportedType;
-    } else {
-        StackCheck _(L);
-        luaL_checktype(L, index, LUA_TTABLE);
-
-        // FIXME - in-place resize object by using raw size from the Lua table meta
-        // (this will also require the table to be array-like)
-        obj->clear();
-        for (auto idx : iterate(L, index)) {
-            TK value;
-            Unserialize(L, idx, &value);
-            obj->push_back(std::move(value));
-        }
-
-        return PropertyOperationResult::Success;
-    }
+    return UnserializeArrayFromTableGeneric<TK>(L, index, obj);
 }
 
 template <class TK>
@@ -146,23 +120,7 @@ PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, Ob
 template <class TK>
 PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, TrackedCompactSet<TK>* obj)
 {
-    if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
-        return PropertyOperationResult::UnsupportedType;
-    } else {
-        StackCheck _(L);
-        luaL_checktype(L, index, LUA_TTABLE);
-
-        // FIXME - in-place resize object by using raw size from the Lua table meta
-        // (this will also require the table to be array-like)
-        obj->clear();
-        for (auto idx : iterate(L, index)) {
-            TK value;
-            Unserialize(L, idx, &value);
-            obj->push_back(std::move(value));
-        }
-
-        return PropertyOperationResult::Success;
-    }
+    return UnserializeArrayFromTableGeneric<TK>(L, index, obj);
 }
 
 template <class TK>
@@ -173,6 +131,25 @@ PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, Tr
     } else {
         StackCheck _(L);
         auto arr = ArrayProxyMetatable::Get<DynamicArrayProxyImpl<TrackedCompactSet<TK>, TK, 8>>(L, index);
+        *obj = *arr;
+        return PropertyOperationResult::Success;
+    }
+}
+
+template <class TK>
+PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, MiniCompactSet<TK>* obj)
+{
+    return UnserializeArrayFromTableGeneric<TK>(L, index, obj);
+}
+
+template <class TK>
+PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, MiniCompactSet<TK>* obj)
+{
+    if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
+        return PropertyOperationResult::UnsupportedType;
+    } else {
+        StackCheck _(L);
+        auto arr = ArrayProxyMetatable::Get<DynamicArrayProxyImpl<MiniCompactSet<TK>, TK, 8>>(L, index);
         *obj = *arr;
         return PropertyOperationResult::Success;
     }
@@ -482,13 +459,32 @@ void UnserializeSetFromUserdata(lua_State* L, int index, HashSet<TK>* obj)
     *obj = *set;
 }
 
-template <class... Args>
-PropertyOperationResult UnserializeVariantFromTable(lua_State* L, int index, std::variant<Args...>* obj)
+template <class TV, unsigned N>
+PropertyOperationResult TryUnserializeVariantOpt(lua_State* L, int index, TV* obj)
+{
+    if constexpr (N < std::variant_size_v<TV>) {
+        using T = std::variant_alternative_t<N, TV>;
+        if (typecheck<T>(L, index)) {
+            T alternative;
+            auto ret = Unserialize(L, index, &alternative);
+            if (ret == PropertyOperationResult::Success) {
+                *obj = std::move(alternative);
+            }
+            return ret;
+        } else {
+            return TryUnserializeVariantOpt<TV, N+1>(L, index, obj);
+        }
+    } else {
+        luaL_error(L, "Value type does not match any alternative in the variant");
+        return PropertyOperationResult::Unknown;
+    }
+}
+
+template <class T>
+PropertyOperationResult UnserializeVariant(lua_State* L, int index, T* obj)
 {
     StackCheck _(L);
-    // FIXME - not supported until we figure out how to serialize type selection
-    return PropertyOperationResult::UnsupportedType;
-    // return std::visit([=](auto& var) { return Unserialize(L, index, &var); }, *obj);
+    return TryUnserializeVariantOpt<T, 0>(L, index, obj);
 }
 
 void UnserializeRawObjectFromTable(lua_State* L, int index, void* obj, GenericPropertyMap const& pm);
@@ -535,12 +531,7 @@ inline PropertyOperationResult Unserialize(lua_State* L, int index, T* obj)
                 UnserializeSetFromUserdata(L, index, obj);
             }
         } else if constexpr (IsVariantLike<T>::Value) {
-            if (isTable) {
-                return UnserializeVariantFromTable(L, index, obj);
-            } else {
-                // References to variants are not kept in userspace
-                return PropertyOperationResult::UnsupportedType;
-            }
+            return UnserializeVariant(L, index, obj);
         } else if constexpr (IsOptional<T>::Value) {
             if constexpr (std::is_default_constructible_v<typename IsOptional<T>::ValueType>) {
                 if (lua_type(L, index) == LUA_TNIL) {

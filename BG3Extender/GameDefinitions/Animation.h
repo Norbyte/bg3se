@@ -363,12 +363,10 @@ struct [[bg3::hidden]] AnimationBlueprintSystem : public BaseSystem
     HashMap<EntityHandle, void*> AnimationUpdates;
     Queue<AnimationReceivedGameplayEvent> GameplayEventsToGenome;
     CRITICAL_SECTION GameplayEventsToGenomeLock;
-    Queue<AnimationReceivedTextKeyEvent> TextKeyEventsToGenome;
-    CRITICAL_SECTION TextKeyEventsToGenomeLock;
-    __int64 field_158;
-    __int64 field_160;
-    Array<void*> field_168;
-    Array<void*> field_178;
+    // Editor only 
+    // Queue<AnimationReceivedTextKeyEvent> TextKeyEventsToGenome;
+    // CRITICAL_SECTION TextKeyEventsToGenomeLock;
+    HashSet<EntityHandle> field_158;
     GameTime Time;
     bool IsInterestedInVisuals;
     void* Batch1;
@@ -380,14 +378,17 @@ struct [[bg3::hidden]] AnimationBlueprintSystem : public BaseSystem
     CRITICAL_SECTION GenomeGameplayEventsLock;
     Queue<AnimationReceivedTextKeyEvent> GenomeTextKeyEvents;
     CRITICAL_SECTION GenomeTextKeyEventsLock;
+    Queue<Visual*> VisualUpdates;
+    CRITICAL_SECTION VisualUpdatesLock;
     Pool Pool1;
     void* ThreadDispatcher;
     gn::GenomeManager* GenomeManager;
     int32_t NextInstanceId;
     HashMap<EntityHandle, Array<uint8_t>> AnimationInstanceChanges;
-    __int64 field_2E8;
-    __int64 field_2F0;
-    void* AnimationDebugWorker;
+    Array<EntityHandle> field_2E8;
+    // Editor only 
+    // void* AnimationDebugWorker;
+    // void* AnimationDebugThread;
 };
 
 

@@ -4,7 +4,7 @@ BEGIN_NS(esv)
 
 struct BehaviourMachine : public ProtectedGameObject<BehaviourMachine>
 {
-    [[bg3::hidden]] std::array<BehaviourState*, 10> CachedStates;
+    std::array<BehaviourState*, 10> CachedStates;
     std::array<BehaviourState*, 2> Layers;
     EntityHandle Entity;
 };
@@ -128,7 +128,9 @@ struct BSWander : public BehaviourState
     float TimeRemaining;
     float Range;
     EntityHandle Target;
-    std::variant<EntityHandle, glm::vec3> Anchor;
+    // std::variant<EntityHandle, glm::vec3> Anchor;
+    // std::variant alignment differs from larian variant, so we can't use it here :(
+    [[bg3::hidden]] uint64_t _PAD[2];
     glm::vec3 TargetPosition;
     PathSettings WanderPathSettings;
     bool Failed;

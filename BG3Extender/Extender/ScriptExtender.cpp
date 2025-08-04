@@ -291,6 +291,7 @@ void ScriptExtender::OnECSUpdateGuarded(ecs::EntityWorld::UpdateProc* wrapped, e
                 esv::LuaServerPin lua(GetServer().GetExtensionState());
                 if (lua) {
                     lua->GetComponentEventHooks().FireDeferredEvents();
+                    lua->GetSystemEventHooks().FireDeferredEvents();
                     lua->GetServerReplicationEventHooks().OnEntityReplication(*entityWorld, entityWorld->Replication);
                 }
             }
@@ -299,6 +300,7 @@ void ScriptExtender::OnECSUpdateGuarded(ecs::EntityWorld::UpdateProc* wrapped, e
                 ecl::LuaClientPin lua(GetClient().GetExtensionState());
                 if (lua) {
                     lua->GetComponentEventHooks().FireDeferredEvents();
+                    lua->GetSystemEventHooks().FireDeferredEvents();
                 }
             }
         }

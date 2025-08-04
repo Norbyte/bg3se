@@ -508,6 +508,14 @@
     <ClInclude Include="GameDefinitions\Components\Stats.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaSystemMap.h" />
     <ClInclude Include="GameDefinitions\Components\Summon.h" />
+    <ClInclude Include="GameDefinitions\Components\Sound.h" />
+    <ClInclude Include="Lua\Shared\SystemEvents.h" />
+    <ClInclude Include="GameDefinitions\Components\SpellCast.h" />
+    <ClInclude Include="GameDefinitions\Components\SpellCastShared.h" />
+    <ClInclude Include="Lua\Helpers\LuaTypeCheck.h" />
+    <ClInclude Include="Lua\Helpers\LuaTypeCheckObject.h" />
+    <ClInclude Include="GameDefinitions\Components\Trigger.h" />
+    <ClInclude Include="GameDefinitions\Components\Death.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -762,6 +770,7 @@
     <None Include="GameDefinitions\Components\Spell.inl" />
     <None Include="Lua\Shared\Proxies\LuaSystemMap.inl" />
     <None Include="GameDefinitions\Components\ExposedSystemTypes.inl" />
+    <None Include="Lua\Shared\SystemEvents.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

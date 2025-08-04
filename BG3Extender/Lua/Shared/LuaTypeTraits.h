@@ -30,6 +30,9 @@ template <class T>
 struct IsArrayLike<TrackedCompactSet<T>> { static constexpr bool Value = true; using TElement = T; };
 
 template <class T>
+struct IsArrayLike<MiniCompactSet<T>> { static constexpr bool Value = true; using TElement = T; };
+
+template <class T>
 struct IsArrayLike<Queue<T>> { static constexpr bool Value = true; using TElement = T; };
 
 template <class T, unsigned N>

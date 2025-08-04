@@ -42,6 +42,9 @@ void RegisterObjectProxyTypeInformation()
     if constexpr (std::is_base_of_v<BaseComponent, TClass> && !std::is_same_v<BaseComponent, TClass> && !std::is_same_v<BaseProxyComponent, TClass>) { \
         ty.ComponentName = FixedString(TClass::ComponentName); \
     } \
+    if constexpr (std::is_base_of_v<BaseSystem, TClass> && !std::is_same_v<BaseSystem, TClass>) { \
+        ty.SystemName = FixedString(TClass::SystemName); \
+    } \
     ty.PropertyMap->TypeInfo = &ty; \
     se_assert(FixedString(#typeName) == ty.PropertyMap->Name);
 

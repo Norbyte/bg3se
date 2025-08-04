@@ -48,6 +48,20 @@ inline LSStringView do_get(lua_State* L, int index, Overload<LSStringView>)
     return {};
 }
 
+inline ScratchBuffer do_get(lua_State* L, int index, Overload<ScratchBuffer>)
+{
+    size_t len;
+    auto str = luaL_checklstring(L, index, &len);
+    return ScratchBuffer(std::span<char const>(str, str + len));
+}
+
+inline ScratchString do_get(lua_State* L, int index, Overload<ScratchString>)
+{
+    size_t len;
+    auto str = luaL_checklstring(L, index, &len);
+    return ScratchString(std::span<char const>(str, str + len));
+}
+
 inline Noesis::String do_get(lua_State* L, int index, Overload<Noesis::String>)
 {
     size_t len;
@@ -130,6 +144,10 @@ PersistentRegistryEntry do_get(lua_State* L, int index, Overload<PersistentRegis
 template <class T>
 LuaDelegate<T> do_get(lua_State* L, int index, Overload<LuaDelegate<T>>)
 {
+    if (lua_type(L, index) == LUA_TNIL) {
+        return LuaDelegate<T>();
+    }
+
     return LuaDelegate<T>(L, index);
 }
 
@@ -256,26 +274,6 @@ inline typename std::optional<T> do_get(lua_State* L, int index, Overload<std::o
     } else {
         return do_get(L, index, Overload<T>{});
     }
-}
-
-template <class T>
-inline T checked_get_flags(lua_State* L, int index)
-{
-    static_assert(IsBitfieldV<T>, "Can only fetch bitfield fields!");
-
-    luaL_checktype(L, index, LUA_TTABLE);
-    T flags = (T)0;
-    for (auto idx : iterate(L, index)) {
-        auto label = do_get(L, idx, Overload<FixedString>{});
-        auto val = BitfieldInfo<T>::Find(label);
-        if (val) {
-            flags |= *val;
-        } else {
-            luaL_error(L, "Label '%s' is not valid for enumeration '%s'", label.GetString(), BitfieldInfo<T>::GetStore().LuaName);
-        }
-    }
-
-    return flags;
 }
 
 template <class T>

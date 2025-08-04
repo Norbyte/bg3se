@@ -13,13 +13,13 @@ struct PagedHashSet : protected TAllocator
         keyLayout_(bitsPerPage)
     {}
 
-    int32_t** hash_;
-    int32_t** nextIds_;
-    TKey** keys_;
+    int32_t** hash_{ nullptr };
+    int32_t** nextIds_{ nullptr };
+    TKey** keys_{ nullptr };
     PageLayout hashLayout_;
     PageLayout keyLayout_;
-    uint32_t hashSize_;
-    uint32_t keysSize_;
+    uint32_t hashSize_{ 0 };
+    uint32_t keysSize_{ 0 };
 
     int find_index(TKey const& key) const
     {

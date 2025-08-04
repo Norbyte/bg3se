@@ -5,8 +5,10 @@ BEGIN_SE()
 // Placeholder type for functions where we haven't mapped (or don't care about) the signature
 using UnknownFunction = Function<void ()>;
 
-// Placeholder type for functors where we haven't mapped (or don't care about) the signature
+// Placeholder type for signals where we haven't mapped (or don't care about) the signature
 using UnknownSignal = Signal<>;
+using UnknownSignalSubscriber = SignalSubscriber<>;
+
 
 struct Version
 {

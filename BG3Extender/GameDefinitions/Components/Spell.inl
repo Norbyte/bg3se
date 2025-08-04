@@ -1,7 +1,7 @@
 #pragma once
 
 #include <GameDefinitions/Components/Components.h>
-#include <GameDefinitions/Components/Spell.h>
+#include <GameDefinitions/Components/SpellCast.h>
 #include <GameDefinitions/Components/Visual.h>
 
 BEGIN_NS(spell_cast)
@@ -45,7 +45,7 @@ glm::vec3 BaseTarget::DoGetTargetPosition(ecs::EntityWorld* world, SpellType typ
         return *Position;
     }
 
-    auto p = DoGetPosition(TargetOverride ? Target : *TargetOverride, world, type);
+    auto p = DoGetPosition(TargetProxy ? *TargetProxy : Target, world, type);
     if (p) {
         return *p;
     } else if (pos) {
@@ -70,7 +70,7 @@ glm::vec3 BaseTarget::LEGACY_GetTargetPosition(ecs::EntityWorld& world) const
 
 std::optional<glm::vec3> BaseTarget::GetEntityPosition(ecs::WorldView& world) const
 {
-    auto entity = TargetOverride ? Target : *TargetOverride;
+    auto entity = TargetProxy ? *TargetProxy : Target;
     return DoGetPosition(entity, world.World, SpellType::None);
 }
 
@@ -78,7 +78,7 @@ bool BaseTarget::IsAlive(ecs::WorldView& world) const
 {
     if (!world.World->IsValid(Target)) return false;
 
-    if (TargetOverride && !world.World->IsValid(*TargetOverride)) return false;
+    if (TargetProxy && !world.World->IsValid(*TargetProxy)) return false;
 
     return true;
 }
@@ -86,7 +86,7 @@ bool BaseTarget::IsAlive(ecs::WorldView& world) const
 bool BaseTarget::IsValid() const
 {
     return Target
-        || (*TargetOverride && TargetOverride)
+        || (*TargetProxy && TargetProxy)
         || Position;
 }
 

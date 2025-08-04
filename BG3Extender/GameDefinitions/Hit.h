@@ -17,63 +17,63 @@ struct AttackDesc
 
 struct RerollCondition
 {
-    uint8_t RollValue;
-    bool KeepNew;
+    uint8_t RollValue{ 0 };
+    bool KeepNew{ false };
 };
 
 struct RerollValue
 {
-    uint8_t RollValue;
-    uint8_t RerollType;
+    uint8_t RollValue{ 0 };
+    uint8_t RerollType{ 0 };
 };
 
 struct Roll
 {
     RollDefinition Roll;
-    stats::RollType RollType;
-    bool Advantage;
-    bool Disadvantage;
+    stats::RollType RollType{ stats::RollType::None };
+    bool Advantage{ false };
+    bool Disadvantage{ false };
     Array<RerollCondition> RerollConditions;
 };
 
 struct StatsRollResult
 {
-    int Total;
-    int NaturalRoll;
-    int DiscardedDiceTotal;
-    RollCritical Critical;
+    int Total{ 0 };
+    int NaturalRoll{ 0 };
+    int DiscardedDiceTotal{ 0 };
+    RollCritical Critical{ RollCritical::None };
     std::optional<uint32_t> CriticalThreshold;
     Array<RerollValue> RollsCount;
 };
 
 struct ResolvedRollBonus
 {
-    DiceSizeId DiceSize;
-    uint8_t NumDice;
-    int ResolvedRollBonus;
+    DiceSizeId DiceSize{ DiceSizeId::Default };
+    uint8_t NumDice{ 0 };
+    [[bg3::legacy(ResolvedRollBonus)]] int Bonus{ 0 };
     [[bg3::legacy(Description)]] TranslatedString SourceName;
 };
 
 struct FixedRollBonus
 {
-    [[bg3::legacy(field_0)]] int RollBonus;
+    [[bg3::legacy(field_0)]] int RollBonus{ 0 };
     [[bg3::legacy(Description)]] TranslatedString SourceName;
 };
 
 struct StatsRollMetadata
 {
-    int ProficiencyBonus;
-    int RollBonus;
-    int HighGroundBonus;
-    int LowGroundPenalty;
-    [[bg3::legacy(field_10)]] int BaseUnarmedDamage;
+    int ProficiencyBonus{ 0 };
+    int RollBonus{ 0 };
+    int HighGroundBonus{ 0 };
+    int LowGroundPenalty{ 0 };
+    [[bg3::legacy(field_10)]] int BaseUnarmedDamage{ 0 };
     HashMap<AbilityId, int32_t> AbilityBoosts;
     HashMap<SkillId, int32_t> SkillBonuses;
-    bool AutoSkillCheckFail;
-    bool AutoAbilityCheckFail;
-    bool AutoAbilitySavingThrowFail;
-    bool HasCustomMetadata;
-    bool IsCritical;
+    bool AutoSkillCheckFail{ false };
+    bool AutoAbilityCheckFail{ false };
+    bool AutoAbilitySavingThrowFail{ false };
+    bool HasCustomMetadata{ false };
+    bool IsCritical{ false };
     Array<ResolvedRollBonus> ResolvedRollBonuses;
     [[bg3::legacy(ResolvedUnknowns)]] Array<FixedRollBonus> FixedRollBonuses;
 };
@@ -87,28 +87,27 @@ struct StatsRoll
 
 struct StatsExpressionResolved
 {
-    [[bg3::hidden]]
-    StatsExpressionParamEx* CachedStatExpression;
+    [[bg3::hidden]] StatsExpressionParamEx* CachedStatExpression{ nullptr };
     STDString StatExpression;
     Array<int32_t> IntParams;
     Array<StatsRoll> RollParams;
     Array<DamageType> DamageTypeParams;
-    int IntIndex;
-    int RollIndex;
-    int DamageTypeIndex;
+    int IntIndex{ 0 };
+    int RollIndex{ 0 };
+    int DamageTypeIndex{ 0 };
 };
 
 struct ConditionRoll
 {
-    uint8_t DataType;
+    uint8_t DataType{ 0 };
     //# P_BITMASK(RollType)
-    ConditionRollType RollType;
+    ConditionRollType RollType{ ConditionRollType::AbilityCheckRoll };
     std::variant<StatsRoll, StatsExpressionResolved> Roll;
-    int Difficulty;
+    int Difficulty{ 0 };
     Guid RollUuid;
-    bool SwappedSourceAndTarget;
-    AbilityId Ability;
-    SkillId Skill;
+    bool SwappedSourceAndTarget{ false };
+    AbilityId Ability{ AbilityId::None };
+    SkillId Skill{ SkillId::Sentinel };
 };
 
 
@@ -119,10 +118,10 @@ struct ConditionRolls
 
 struct DamageModifierMetadata
 {
-    uint8_t MetadataType;
-    int Value;
-    DamageType DamageType;
-    uint8_t SourceType;
+    uint8_t MetadataType{ 0 };
+    int Value{ 0 };
+    DamageType DamageType{ DamageType::None };
+    uint8_t SourceType{ 0 };
     [[bg3::legacy(Argument)]] std::variant<int32_t, RollDefinition, StatsExpressionResolved> Source;
     [[bg3::legacy(Description)]] TranslatedString SourceName;
     [[bg3::legacy(Description2)]] FixedString SourceId;
@@ -130,7 +129,7 @@ struct DamageModifierMetadata
 
 struct DamageResistance
 {
-    [[bg3::legacy(Flags)]] uint8_t Type;
+    [[bg3::legacy(Flags)]] uint8_t Type{ 0 };
     DamageModifierMetadata Meta;
 };
 
@@ -154,9 +153,9 @@ struct StatsDamage
 
 struct HitDamageOverride
 {
-    uint8_t DamageType;
-    int OriginalValue;
-    int OverriddenValue;
+    DamageType DamageType{ DamageType::None };
+    int OriginalValue{ 0 };
+    int OverriddenValue{ 0 };
 };
 
 struct HitDesc
@@ -165,13 +164,12 @@ struct HitDesc
     stats::DeathType DeathType{ stats::DeathType::None };
     DamageType DamageType{ DamageType::None };
     CauseType CauseType{ CauseType::None };
-    glm::vec3 ImpactPosition;
-    glm::vec3 ImpactDirection;
+    glm::vec3 ImpactPosition{ .0f };
+    glm::vec3 ImpactDirection{ .0f };
     float ImpactForce{ 0.0f };
     int ArmorAbsorption{ 0 };
     int LifeSteal{ 0 };
-    // TODO - need to remap DamageFlags
-    uint32_t EffectFlags{ 0 };
+    DamageFlags EffectFlags{ 0 };
     EntityHandle Inflicter;
     EntityHandle InflicterOwner;
     EntityHandle Throwing;
@@ -179,7 +177,7 @@ struct HitDesc
     HitWith HitWith{ HitWith::None };
     AbilityId AttackRollAbility{ AbilityId::None };
     AbilityId SaveAbility{ AbilityId::None };
-    [[bg3::legacy(field_4F)]] uint8_t SpellAttackType{ 0 };
+    [[bg3::legacy(field_4F)]] SpellAttackType SpellAttackType{ 0 };
     Array<ConditionRoll> ConditionRolls;
     [[bg3::legacy(Results)]] StatsDamage Damage;
     Guid SpellCastGuid;
@@ -216,7 +214,7 @@ struct SpellFunctorResult
 {
     HitDesc Hit;
     AttackDesc Attack;
-    uint8_t field_1D0;
+    uint8_t field_1D0{ 0 };
 };
 
 struct HitResult
@@ -224,7 +222,7 @@ struct HitResult
     HitDesc Hit;
     AttackDesc Attack;
     HitResultData Results;
-    uint32_t NumConditionRolls;
+    uint32_t NumConditionRolls{ 0 };
 };
 
 END_SE()

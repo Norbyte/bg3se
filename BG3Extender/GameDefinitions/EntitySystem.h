@@ -18,12 +18,12 @@ struct BaseProxyComponent : public BaseComponent
 struct BaseSystem : ProtectedGameObject<BaseSystem>
 {
     virtual ~BaseSystem() = 0;
-    virtual bool VMT01() = 0;
+    virtual bool Initialize() = 0;
     virtual void SystemLoad() = 0;
     virtual void SystemUnload() = 0;
     virtual void OnActivated() = 0;
     virtual void OnDeactivated() = 0;
-    virtual void VMT06() = 0;
+    virtual void EnsureBeforeSave() = 0;
 
     [[bg3::hidden]] ecs::EntityWorld* EntityWorld;
 };
@@ -347,12 +347,14 @@ struct ComponentRegistry : public ProtectedGameObject<ComponentRegistry>
 
 struct SystemTypeEntry : public ProtectedGameObject<SystemTypeEntry>
 {
-    void* System;
+    using UpdateProcType = void (BaseSystem*, EntityWorld&, GameTime const&);
+
+    BaseSystem* System;
     SystemTypeIndex SystemIndex0;
     SystemTypeIndex SystemIndex1;
     __int16 field_10;
     bool Activated;
-    void* UpdateProc;
+    UpdateProcType* UpdateProc;
     void* SomeProc2;
     void* SomeProc3;
     void* ECBFlushJob;

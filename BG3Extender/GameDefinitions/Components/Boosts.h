@@ -596,6 +596,34 @@ struct ChangedEventOneFrameComponent : public BaseComponent
     Array<BoostChangedEvent> Events;
 };
 
+struct ChangedEventsSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(BoostChangedEventsSingleton, "esv::boost::ChangedEventsSingletonComponent")
+
+    HashMap<EntityHandle, Array<BoostChangedEvent>> Events;
+};
+
+struct ConditionalState
+{
+    EntityHandle Boost;
+    bool ConditionResult;
+};
+
+struct ConditionalStateComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(BoostConditionalState, "esv::boost::ConditionalStateComponent")
+
+    Array<ConditionalState> States;
+};
+
+struct ProviderComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(BoostProvider, "esv::boost::ProviderComponent")
+
+    Array<EntityHandle> field_0;
+    Array<EntityHandle> field_10;
+};
+
 
 struct StatusBoostsRefreshedOneFrameComponent : public BaseComponent
 {
@@ -620,12 +648,12 @@ struct RemoveBoostRequest
     Array<BoostDescription> BoostDescriptions;
     BoostSource Source;
     BoostParameters Params;
-    uint8_t field_48;
+    uint8_t field_48{ 0 };
 };
 
 struct EquipmentBoostAddRemoveRequest
 {
-    int Action;
+    int Action{ 0 };
     EntityHandle Boost;
 };
 

@@ -59,8 +59,8 @@ struct SpellIdWithPrototype : public SpellId
 
 struct DamagePair
 {
-    int32_t Amount;
-    DamageType DamageType;
+    int32_t Amount{ 0 };
+    DamageType DamageType{ DamageType::None };
 };
 
 struct RollDefinition
@@ -74,12 +74,12 @@ struct RollDefinition
 struct BoostParameters
 {
     Guid Owner;
-    uint8_t field_10;
+    uint8_t field_10{ 0 };
 };
 
 struct BoostSource
 {
-    BoostSourceType Type;
+    BoostSourceType Type{ BoostSourceType::Undefined };
     FixedString Cause;
     EntityHandle Entity;
     ComponentHandle Status;
@@ -121,6 +121,69 @@ struct TemplateInfo
 
 END_SE()
 
+BEGIN_NS(path)
+
+struct Bezier3Trajectory
+{
+    float DistanceMin;
+    float DistanceMax;
+    float OffsetMin[2];
+    float OffsetMax[2];
+    float ShiftMin;
+    float ShiftMax;
+};
+
+struct Bezier4Trajectory
+{
+    float DistanceMin;
+    float DistanceMax;
+    float OffsetAMin[2];
+    float OffsetAMax[2];
+    float OffsetBMin[2];
+    float OffsetBMax[2];
+    float ShiftAMin;
+    float ShiftAMax;
+    float ShiftBMin;
+    float ShiftBMax;
+};
+
+struct ConstantVelocity
+{
+    float ConstantVelocity;
+};
+
+struct LinearVelocity
+{
+    float Acceleration;
+    float InitialSpeed;
+};
+
+struct MappedVelocity
+{
+    FixedString Mapping;
+};
+
+struct Settings
+{
+    std::variant<Bezier3Trajectory, Bezier4Trajectory> Trajectory;
+    [[bg3::hidden]] uint32_t _Pad;
+    uint8_t RotateMode{ 0 };
+    std::variant<ConstantVelocity, LinearVelocity, MappedVelocity> Velocity;
+};
+
+struct PathMover : public Settings
+{
+    glm::vec3 SourcePosition;
+    glm::quat SourceRotation;
+    glm::vec3 TargetPosition;
+    glm::quat TargetRotation;
+    float InterpolateValue;
+    std::array<float, 32> ComputedTrajectoryValues;
+    Array<glm::vec3> ComputedVelocityValues;
+    bool Initialized;
+};
+
+END_NS()
 
 BEGIN_NS(navigation)
 

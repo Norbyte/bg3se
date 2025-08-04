@@ -14,6 +14,7 @@
 #include <Lua/Shared/Proxies/LuaUserVariableHolder.h>
 #include <Lua/Shared/Proxies/LuaImguiProxy.h>
 #include <Lua/Shared/EntityComponentEvents.h>
+#include <Lua/Shared/SystemEvents.h>
 #include <Lua/Shared/EntityEventHelpers.h>
 #include <Extender/Shared/UserVariables.h>
 #include <Lua/Libs/Timer.h>
@@ -201,6 +202,11 @@ namespace bg3se::lua
             return entityHooks_;
         }
 
+        SystemEventHooks& GetSystemEventHooks()
+        {
+            return systemHooks_;
+        }
+
         void FinishStartup();
         void LoadBootstrap(STDString const& path, STDString const& modTable);
         virtual void OnGameSessionLoading();
@@ -272,6 +278,7 @@ namespace bg3se::lua
         CachedUserVariableManager variableManager_;
         CachedModVariableManager modVariableManager_;
         EntityComponentEventHooks entityHooks_;
+        SystemEventHooks systemHooks_;
         timer::TimerSystem timers_;
         level::PathfindingSystem pathfinding_;
         net::NetworkRequestSystem networkRequests_;

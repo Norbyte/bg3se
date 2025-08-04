@@ -219,9 +219,6 @@ struct Object : public Noncopyable<Object>
     bool SetRollConditions(FixedString const& attributeName, std::optional<Array<RollCondition>> const& value);
 
     bool CopyFrom(Object* source);
-    void ToProtobuf(class MsgS2CSyncStat* msg) const;
-    void FromProtobuf(MsgS2CSyncStat const& msg);
-    void BroadcastSyncMessage(bool syncDuringLoading) const;
 };
 
 struct ObjectInstance : public Object

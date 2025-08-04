@@ -33,6 +33,40 @@ struct ExperienceGaveOutComponent : public BaseComponent
     int Experience;
 };
 
+struct ExperienceSystemBase : public BaseSystem
+{
+    static constexpr nullptr_t SystemName = nullptr;
+
+    [[bg3::hidden]] UnknownSignal field_10;
+};
+
+struct EqualizeExperienceData
+{
+    int Experience;
+    EntityHandle Entity;
+};
+
+struct ExperienceSystem : public ExperienceSystemBase
+{
+    DEFINE_SYSTEM(ServerExperience, "esv::exp::ExperienceSystem")
+
+    [[bg3::hidden]] UnknownSignal field_28;
+    [[bg3::hidden]] void* RPGStats;
+    [[bg3::hidden]] void* BackgroundGoals;
+    [[bg3::hidden]] void* ExperienceRewards;
+    [[bg3::hidden]] void* FactionContainer;
+    [[bg3::hidden]] void* GlobalSwitches;
+    [[bg3::hidden]] void* TagManager;
+    [[bg3::hidden]] void* ExperienceSystemEnvironment;
+    HashSet<EntityHandle> ReevaluateCanGainXP;
+    HashMap<EntityHandle, int> IncreaseExperience;
+    HashMap<EntityHandle, int> OverrideLevel;
+    HashSet<EntityHandle> AvailableLevelChanged;
+    HashMap<EntityHandle, EqualizeExperienceData> EqualizeExperience;
+    HashMap<EntityHandle, HashSet<EntityHandle>> ExperienceOnDestroy;
+};
+
+
 struct ActivationGroupData
 {
     FixedString field_0;
@@ -112,61 +146,6 @@ struct BreadcrumbComponent : public BaseComponent
     glm::vec3 field_118;
 };
 
-
-struct DelayDeathCauseComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(ServerDelayDeathCause, "esv::death::DelayDeathCauseComponent")
-
-    int DelayCount;
-    int Blocked_M;
-    Guid field_8;
-};
-
-struct KillerComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(ServerKiller, "esv::death::KillerComponent")
-
-    HashSet<EntityHandle> Killers;
-};
-
-struct StateComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(ServerDeathState, "esv::death::StateComponent")
-
-    uint32_t Flags;
-};
-
-DEFINE_TAG_COMPONENT(esv::death, DeathContinueComponent, ServerDeathContinue)
-
-
-
-struct DeathApplyKnockedOutOneFrameComponent : public BaseComponent
-{
-    DEFINE_ONEFRAME_COMPONENT(DeathApplyKnockedOut, "esv::death::ApplyKnockedOutOneFrameComponent")
-
-    EntityHandle field_0;
-    uint8_t field_8;
-    int field_C;
-    char field_10;
-};
-
-struct DeathAssignEntityToUserRequestOneFrameComponent : public BaseComponent
-{
-    DEFINE_ONEFRAME_COMPONENT(DeathAssignEntityToUserRequest, "esv::death::AssignEntityToUserRequestOneFrameComponent")
-
-    int UserID;
-};
-
-struct DeathDeadByDefaultRequestOneFrameComponent : public BaseComponent
-{
-    DEFINE_ONEFRAME_COMPONENT(DeathDeadByDefaultRequest, "esv::death::DeadByDefaultRequestOneFrameComponent")
-
-    EntityHandle field_0;
-    uint8_t field_8;
-    uint8_t field_9;
-};
-
-DEFINE_ONEFRAME_TAG_COMPONENT(esv::death, DiedEventOneFrameComponent, DiedEvent)
 
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::falling, FallToProneOneFrameComponent, FallToProne)
 

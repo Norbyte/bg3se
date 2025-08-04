@@ -91,7 +91,8 @@ struct Status : public ProtectedGameObject<Status>
 struct EntityAuraStatus
 {
     EntityHandle Entity;
-    EntityHandle AuraStatus;
+    uint32_t Time;
+    FixedString StatusId;
 };
 
 struct Aura : public ProtectedGameObject<Aura>
@@ -100,7 +101,7 @@ struct Aura : public ProtectedGameObject<Aura>
     float Radius;
     stats::Functors* Functors;
     uint8_t Flags;
-    Array<EntityAuraStatus> EntityAuraStatuses;
+    Array<Array<EntityAuraStatus>> EntityAuraStatuses;
     ecs::EntityRef Source;
     int32_t StoryActionId;
     Guid SpellCastSourceUuid;
@@ -160,10 +161,10 @@ struct StatusDowned : public StatusIncapacitated
     int NumStableSuccess;
     int NumStableFailed;
     int StableRollDC;
-    [[bg3::hidden]] void* StableRoll_LuaExpression;
-    [[bg3::hidden]] void* OnRollsFailed;
-    [[bg3::hidden]] void* OnSuccess;
-    [[bg3::hidden]] void* Roll_M;
+    StatsExpressionParam* StableRoll;
+    stats::Functors* OnRollsFailed;
+    stats::Functors* OnSuccess;
+    [[bg3::hidden]] UnknownFunction RollSignals;
     bool IsStable;
     bool IsHealed;
     int RollSuccesses;
@@ -225,9 +226,6 @@ struct StatusInvisible : public StatusBoost
 struct StatusKnockedDown : public Status
 {
     static constexpr auto Type = StatusType::KNOCKED_DOWN;
-
-    uint8_t KnockedDownState;
-    bool IsInstant;
 };
 
 struct StatusMaterial : public Status
@@ -258,7 +256,7 @@ struct StatusReaction : public Status
     glm::vec3 TargetPosition;
     ComponentHandle PartnerStatus;
     SpellId Spell;
-    bool field_1D8;
+    uint8_t UpdatesSinceSpellCastRequest;
     bool IgnoreHasSpell;
     bool IgnoreChecks;
     bool FromInterrupt;
@@ -560,7 +558,7 @@ struct StatusFear : public StatusBoost
     static constexpr auto Type = StatusType::FEAR;
 };
 
-struct StatusInSurface : public StatusBoost
+struct StatusInSurface : public Status
 {
     static constexpr auto Type = StatusType::INSURFACE;
 };

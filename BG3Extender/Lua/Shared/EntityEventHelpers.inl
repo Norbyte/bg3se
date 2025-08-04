@@ -43,6 +43,24 @@ LuaEntitySubscriptionId EntityEventHelpers::Subscribe(lua_State* L, EntityHandle
 	return LuaEntitySubscriptionId((ComponentEventHandleType << 32) | index);
 }
 
+LuaEntitySubscriptionId EntityEventHelpers::SubscribeSystemUpdate(lua_State* L, ExtSystemType systemType, RegistryEntry&& hook, bool postUpdate, bool once)
+{
+	auto state = State::FromLua(L);
+	auto system = state->GetEntitySystemHelpers()->GetSystemEntry(systemType);
+	if (!system || !system->System) {
+		luaL_error(L, "System %s not registered", EnumInfo<ExtSystemType>::GetStore().Find((EnumUnderlyingType)systemType).GetString());
+		return {};
+	}
+
+	auto& hooks = state->GetSystemEventHooks();
+	auto index = hooks.Subscribe(system->SystemIndex0, std::move(hook), postUpdate, once);
+	if (!index) {
+		return {};
+	}
+
+	return LuaEntitySubscriptionId((SystemEventHandleType << 32) | *index);
+}
+
 bool EntityEventHelpers::Unsubscribe(lua_State* L, LuaEntitySubscriptionId handle)
 {
 	switch ((uint64_t)handle >> 32) {
@@ -54,6 +72,11 @@ bool EntityEventHelpers::Unsubscribe(lua_State* L, LuaEntitySubscriptionId handl
 	case ComponentEventHandleType:
 	{
 		return State::FromLua(L)->GetComponentEventHooks().Unsubscribe((uint32_t)handle);
+	}
+
+	case SystemEventHandleType:
+	{
+		return State::FromLua(L)->GetSystemEventHooks().Unsubscribe((uint32_t)handle);
 	}
 
 	default:

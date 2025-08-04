@@ -60,7 +60,7 @@ struct TLPreviewDummy : public BaseProxyComponent
     [[bg3::hidden]] void* VertexColorMaskTexture;
     uint8_t LightChannel;
     uint8_t TimelineType;
-    std::optional<uint8_t> ArmorSetState;
+    std::optional<ArmorSetState> ArmorSetState;
     uint32_t ComponentLayoutFlags;
     bool ActiveDummy;
     bool ArmorVisibilityControlled;

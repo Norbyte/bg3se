@@ -3,9 +3,17 @@
 #include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/EntitySystem.h>
 
-BEGIN_NS(combat)
+BEGIN_NS(eoc::combat)
 
 DEFINE_TAG_COMPONENT(eoc::combat, IsInCombatComponent, IsInCombat)
+DEFINE_TAG_COMPONENT(eoc::combat, DelayedFanfareComponent, CombatDelayedFanfare)
+
+struct IsThreatenedComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(CombatIsThreatened, "eoc::combat::IsThreatenedComponent")
+
+    Array<EntityHandle> ThreatenedBy;
+};
 
 struct ParticipantComponent : public BaseComponent
 {
@@ -16,6 +24,14 @@ struct ParticipantComponent : public BaseComponent
     [[bg3::legacy(field_C)]] int InitiativeRoll;
     CombatParticipantFlags Flags;
     Guid AiHint;
+};
+
+struct CombatPosition
+{
+    EntityHandle Entity;
+    glm::vec3 field_8;
+    float field_14;
+    double field_18;
 };
 
 struct StateComponent : public BaseComponent
@@ -31,7 +47,7 @@ struct StateComponent : public BaseComponent
     uint8_t field_AC;
     bool IsInNarrativeCombat;
     float field_B0;
-    Array<EntityHandle> field_B8;
+    Array<CombatPosition> field_B8;
     uint8_t field_D0;
 };
 
@@ -55,16 +71,16 @@ struct TurnBasedComponent : public BaseComponent
 struct TurnBasedEntityInfo
 {
     EntityHandle Entity;
-    int32_t Initiative;
+    int32_t Initiative{ 0 };
 };
 
 struct TurnBasedGroup
 {
-    Array<TurnBasedEntityInfo> Handles;
-    Guid Participant;
-    uint32_t field_28;
-    int32_t Initiative;
-    uint8_t field_30;
+    [[bg3::legacy(Handles)]] Array<TurnBasedEntityInfo> Members;
+    [[bg3::legacy(Participant)]] Guid Team;
+    [[bg3::legacy(field_28)]] uint32_t Round{ 0 };
+    int32_t Initiative{ 0 };
+    [[bg3::legacy(field_30)]] bool IsPlayer{ false };
 };
 
 struct TurnOrderComponent : public BaseComponent
@@ -97,7 +113,6 @@ struct ThreatRangeComponent : public BaseComponent
     float field_8;
 };
 
-
 END_NS()
 
 BEGIN_NS(esv::combat)
@@ -110,6 +125,61 @@ struct CombatGroupMappingComponent : public BaseComponent
     HashMap<FixedString, HashSet<EntityHandle>> CombatGroups;
 };
 
+struct CombatSwitchedComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(CombatSwitched, "esv::combat::CombatSwitchedComponent")
+
+    EntityHandle field_0;
+    Guid field_8;
+    Guid field_18;
+    EntityHandle field_28;
+};
+
+struct FleeRequestComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(CombatFleeRequest, "esv::combat::FleeRequestComponent")
+
+    Guid RequestGuid;
+    UserId UserID;
+};
+
+struct GlobalCombatRequest
+{
+    EntityHandle Source;
+    EntityHandle Target;
+    uint32_t Action{ 0 }; // 0 = OnHitJoinCombat, 1 = RequestCombat
+    EntityHandle Combat;
+};
+
+struct GlobalCombatRequests : public BaseComponent
+{
+    DEFINE_COMPONENT(GlobalCombatRequests, "esv::combat::GlobalCombatRequests")
+
+    Array<GlobalCombatRequest> Requests;
+};
+
+struct JoiningComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(CombatJoining, "esv::combat::JoiningComponent")
+
+    float field_0;
+};
+
+struct LateJoinPenaltyComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(CombatLateJoinPenalty, "esv::combat::LateJoinPenaltyComponent")
+
+    float field_0;
+};
+
+struct MergeComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(CombatMerge, "esv::combat::MergeComponent")
+
+    EntityHandle Combat1;
+    EntityHandle Combat2;
+};
+
 struct EnterRequestComponent : public BaseComponent
 {
     DEFINE_COMPONENT(ServerEnterRequest, "esv::combat::EnterRequestComponent")
@@ -117,6 +187,16 @@ struct EnterRequestComponent : public BaseComponent
     HashSet<EntityHandle> EnterRequests;
 };
 
+struct SurfaceTeamSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(CombatSurfaceTeamSingleton, "esv::combat::SurfaceTeamSingletonComponent")
+
+    HashSet<EntityHandle> field_0;
+    HashMap<EntityHandle, Array<Guid>> field_30;
+};
+
+
+DEFINE_TAG_COMPONENT(esv::combat, LeaveRequestComponent, ServerCombatLeaveRequest)
 DEFINE_TAG_COMPONENT(esv::combat, CanStartCombatComponent, ServerCanStartCombat)
 DEFINE_TAG_COMPONENT(esv::combat, ImmediateJoinComponent, ServerImmediateJoin)
 DEFINE_TAG_COMPONENT(esv::combat, FleeBlockedComponent, ServerFleeBlocked)
@@ -134,6 +214,16 @@ struct CombatantKilledEventOneFrameComponent : public BaseComponent
     uint8_t field_12;
 };
 
+struct JoinEventOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(CombatantJoinEvent, "esv::combat::JoinEventOneFrameComponent")
+
+    EntityHandle Combat;
+    int32_t Initiative;
+    bool ImmediateJoin;
+};
+
+
 struct LeftEventOneFrameComponent : public BaseComponent
 {
     DEFINE_ONEFRAME_COMPONENT(CombatLeftEvent, "esv::combat::LeftEventOneFrameComponent")
@@ -145,6 +235,7 @@ struct LeftEventOneFrameComponent : public BaseComponent
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, CombatScheduledForDeleteOneFrameComponent, CombatScheduledForDelete)
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, CombatStartedEventOneFrameComponent, CombatStartedEvent)
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, DelayedFanfareRemovedDuringCombatEventOneFrameComponent, DelayedFanfareRemovedDuringCombatEvent)
+DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, FleeSuccessOneFrameComponent, CombatFleeSuccess)
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, JoinInCurrentRoundFailedEventOneFrameComponent, CombatJoinInCurrentRoundFailedEvent)
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, JoinInCurrentRoundOneFrameComponent, CombatJoinInCurrentRound)
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, RequestCompletedEventOneFrameComponent, CombatRequestCompletedEvent)
@@ -156,20 +247,12 @@ struct CombatGroupUpdate
 {
     EntityHandle Combat;
     FixedString CombatGroup;
-    bool field_C;
-};
-
-struct GlobalCombatRequest
-{
-    EntityHandle field_0;
-    EntityHandle field_8;
-    uint32_t Action; // 1 = RequestCombat
-    EntityHandle Combat;
+    bool field_C{ false };
 };
 
 struct NarrativeCombatRequest
 {
-    NarrativeCombatRequestType Action;
+    NarrativeCombatRequestType Action{ NarrativeCombatRequestType::Create };
     EntityHandle Entity;
     Guid CombatGuid;
 };
@@ -294,7 +377,97 @@ struct AiModifiersComponent : public BaseComponent
 END_NS()
 
 
+BEGIN_NS(eoc::ftb)
+
+struct ParticipantComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(FTBParticipant, "eoc::ftb::ParticipantComponent")
+
+    EntityHandle field_18;
+};
+
+struct ZoneBlockReasonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(FTBZoneBlockReason, "eoc::ftb::ZoneBlockReasonComponent")
+
+    uint8_t Reason;
+};
+
+DEFINE_TAG_COMPONENT(eoc::ftb, IsFtbPausedComponent, FTBPaused)
+DEFINE_TAG_COMPONENT(eoc::ftb, IsInFtbComponent, IsInFTB)
+
+END_NS()
+
+
 BEGIN_NS(esv::ftb)
+
+struct SurfaceTeamSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(FTBSurfaceTeamSingleton, "esv::ftb::SurfaceTeamSingletonComponent")
+
+    HashSet<EntityHandle> field_0;
+    HashMap<EntityHandle, Array<Guid>> field_30;
+};
+
+struct TimeFactorRequestsSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(FTBTimeFactorRequests, "esv::ftb::TimeFactorRequestsSingletonComponent")
+
+    HashMap<EntityHandle, float> Requests;
+};
+
+struct TimeFactorResetRequestsSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(FTBTimeFactorResetRequests, "esv::ftb::TimeFactorResetRequestsSingletonComponent")
+
+    HashSet<EntityHandle> Requests;
+};
+
+struct TurnBasedChangesRequest
+{
+    std::optional<bool> IsActiveCombatTurn;
+    std::optional<bool> Removed;
+    std::optional<bool> RequestedEndTurn;
+    std::optional<bool> TurnActionsCompleted;
+    std::optional<bool> ActedThisRoundInCombat;
+    std::optional<bool> HadTurnInCombat;
+    std::optional<bool> CanActInCombat;
+    std::optional<std::optional<float>> Timeout;
+    std::optional<std::optional<float>> PauseTimer;
+    std::optional<std::optional<float>> EndTurnHoldTimer;
+    std::optional<Guid> CombatTeam;
+};
+
+struct TurnBasedChangesRequestSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(FTBTurnBasedChangesRequest, "esv::ftb::TurnBasedChangesRequestSingletonComponent")
+
+    HashMap<EntityHandle, TurnBasedChangesRequest> Requests;
+};
+
+struct ZoneComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(FTBZone, "esv::ftb::ZoneComponent")
+
+    EntityHandle Entity;
+    uint8_t field_8;
+    EntityHandle field_10;
+    uint8_t field_18;
+    float field_1C;
+    FixedString field_20;
+    Guid ZoneGuid;
+    EntityHandle Creator;
+    bool ByPlayer;
+    bool Shared;
+};
+
+struct ZoneInstigatorComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(FTBZoneInstigator, "esv::ftb::ZoneInstigatorComponent")
+
+    EntityHandle Instigator;
+    bool Shared;
+};
 
 struct ModeChangedEventOneFrameComponent : public BaseComponent
 {
@@ -308,5 +481,33 @@ struct ModeChangedEventOneFrameComponent : public BaseComponent
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::ftb, PlayersTurnEndedEventOneFrameComponent, FTBPlayersTurnEndedEvent)
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::ftb, PlayersTurnStartedEventOneFrameComponent, FTBPlayersTurnStartedEvent)
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::ftb, RoundEndedEventOneFrameComponent, FTBRoundEndedEvent)
+
+struct ToggleFTBParameters
+{
+    bool ByPlayer;
+    bool Shared;
+    bool Enter;
+};
+
+struct ZoneSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerFTBZone, "esv::ftb::ZoneSystem")
+
+    [[bg3::hidden]] UnknownSignal field_10;
+    [[bg3::hidden]] UnknownSignal field_28;
+    Array<esv::combat::TurnActionCompletedRequest> SetTurnActionsCompleted;
+    HashMap<EntityHandle, ToggleFTBParameters> ToggleForCharacter;
+    HashSet<EntityHandle> EndTurn;
+    HashSet<EntityHandle> LeaveExistingSharedFTB;
+    HashMap<EntityHandle, EntityHandle> EnterExistingSharedFTB;
+    HashMap<EntityHandle, Array<EntityHandle>> CancelEndTurn;
+    HashMap<EntityHandle, Array<EntityHandle>> BeginCancelEndTurn;
+    HashMap<EntityHandle, Array<EntityHandle>> EndCancelEndTurn;
+    [[bg3::hidden]] UnknownFunction qword1F0;
+    [[bg3::hidden]] void* ZoneSystemHelper;
+    [[bg3::hidden]] void* ActivationManager;
+    [[bg3::hidden]] void* GameControl;
+    [[bg3::hidden]] void* LevelManager;
+};
 
 END_NS()

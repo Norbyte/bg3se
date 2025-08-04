@@ -110,22 +110,27 @@ struct DrawingContext
 
 struct ImageReference : Noncopyable<ImageReference>
 {
+public:
     ~ImageReference();
+
     bool Bind(FixedString const& iconOrTexture);
     bool BindTexture(FixedString const& textureUuid);
     bool BindIcon(FixedString const& iconName);
+    ImTextureID PrepareRender();
 
     inline bool IsValid() const
     {
-        return TextureId != 0;
+        return TextureHandle != 0;
     }
 
     glm::vec2 Size{ 0.0f, 0.0f };
     glm::vec2 UV0{ 0.0f, 0.0f };
     glm::vec2 UV1{ 1.0f, 1.0f };
-
     FixedString TextureResource;
     FixedString Icon;
+
+private:
+    TextureOpaqueHandle TextureHandle{ 0 };
     ImTextureID TextureId{ 0 };
 };
 
@@ -166,6 +171,7 @@ struct StyledRenderable : public Renderable
 {
 public:
     virtual void StyledRender(DrawingContext& context) = 0;
+    virtual bool OverridesClickEvent() const;
 
     lua::ImguiHandle GetDragPreview() const;
     FixedString GetDragDropType() const;
@@ -201,6 +207,8 @@ public:
     GuiDragFlags DragFlags{ 0 };
     GuiDropFlags DropFlags{ 0 };
 
+    lua::LuaDelegate<void(lua::ImguiHandle)> OnClick;
+    lua::LuaDelegate<void(lua::ImguiHandle)> OnRightClick;
     lua::LuaDelegate<void(lua::ImguiHandle)> OnActivate;
     lua::LuaDelegate<void(lua::ImguiHandle)> OnDeactivate;
     lua::LuaDelegate<void(lua::ImguiHandle)> OnHoverEnter;
@@ -407,10 +415,10 @@ public:
     DECL_UI_TYPE(MenuItem)
 
     void StyledRender(DrawingContext& context) override;
+    bool OverridesClickEvent() const override;
 
     bool Enabled{ true };
     std::optional<STDString> Shortcut;
-    lua::LuaDelegate<void(lua::ImguiHandle)> OnClick;
 };
 
 
@@ -479,7 +487,6 @@ public:
 
     GuiTreeNodeFlags Flags{ 0 };
 
-    lua::LuaDelegate<void(lua::ImguiHandle)> OnClick;
     lua::LuaDelegate<void(lua::ImguiHandle)> OnExpand;
     lua::LuaDelegate<void(lua::ImguiHandle)> OnCollapse;
 
@@ -634,8 +641,7 @@ public:
     DECL_UI_TYPE(TextLink)
 
     void StyledRender(DrawingContext& context) override;
-
-    lua::LuaDelegate<void(lua::ImguiHandle)> OnClick;
+    bool OverridesClickEvent() const override;
 };
 
 
@@ -702,12 +708,11 @@ public:
     DECL_UI_TYPE(Selectable)
 
     void StyledRender(DrawingContext& context) override;
+    bool OverridesClickEvent() const override;
 
     std::optional<glm::vec2> Size;
     GuiSelectableFlags Flags;
     bool Selected{ false };
-
-    lua::LuaDelegate<void (lua::ImguiHandle)> OnClick;
 };
 
 
@@ -717,11 +722,10 @@ public:
     DECL_UI_TYPE(Button)
 
     void StyledRender(DrawingContext& context) override;
+    bool OverridesClickEvent() const override;
 
     std::optional<glm::vec2> Size;
     GuiButtonFlags Flags;
-
-    lua::LuaDelegate<void (lua::ImguiHandle)> OnClick;
 };
 
 
@@ -731,13 +735,12 @@ public:
     DECL_UI_TYPE(ImageButton)
 
     void StyledRender(DrawingContext& context) override;
+    bool OverridesClickEvent() const override;
 
     ImageReference Image;
     glm::vec4 Background{ 0.0f };
     glm::vec4 Tint{ 1.0f };
     GuiButtonFlags Flags;
-
-    lua::LuaDelegate<void(lua::ImguiHandle)> OnClick;
 };
 
 

@@ -22,4 +22,10 @@ typename std::enable_if_t<!IsByVal<T> && std::is_pointer_v<T>, T> do_get(lua_Sta
     }
 }
 
+template <class T>
+inline bool typecheck(lua_State* L, int index)
+{
+    return do_typecheck(L, index, Overload<T>{});
+}
+
 END_NS()

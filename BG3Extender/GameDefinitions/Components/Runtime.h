@@ -27,6 +27,14 @@ struct PathingComponent : public BaseComponent
     uint8_t ServerControl;
 };
 
+struct PathingDistanceChangedOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(PathingDistanceChanged, "eoc::PathingDistanceChangedOneFrameComponent")
+
+    float DistanceXZ;
+    float field_4;
+};
+
 struct SteeringComponent : public BaseComponent
 {
     DEFINE_COMPONENT(Steering, "eoc::SteeringComponent")

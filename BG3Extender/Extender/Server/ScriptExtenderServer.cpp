@@ -134,6 +134,7 @@ void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
 
     case GameState::UnloadSession:
         INFO("esv::ScriptExtender::OnGameStateChanged(): Unloading session");
+        entityHelpers_.OnDestroy();
         ResetExtensionState();
         break;
 
@@ -143,6 +144,7 @@ void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
 
     case GameState::LoadSession:
         INFO("esv::ScriptExtender::OnGameStateChanged(): Loading game session");
+        entityHelpers_.OnInit();
         LoadExtensionState(ExtensionStateContext::Game);
         network_.ExtendNetworking();
         if (extensionState_) {
@@ -151,9 +153,11 @@ void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
         break;
 
     case GameState::LoadLevel:
-        LuaServerPin lua(*extensionState_);
-        if (lua) {
-            lua->OnLevelLoading();
+        if (extensionState_) {
+            LuaServerPin lua(*extensionState_);
+            if (lua) {
+                lua->OnLevelLoading();
+            }
         }
         break;
     }

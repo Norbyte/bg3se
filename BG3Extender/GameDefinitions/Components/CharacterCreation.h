@@ -187,8 +187,7 @@ struct LevelUpDefinitionExtra
 {
     int field_0;
     Guid field_8;
-    [[bg3::hidden]]
-    ScratchBuffer Scratch;
+    ScratchBuffer Icon;
     Array<character_creation::AppearanceMaterialSetting> AppearanceElements;
     LevelUpData LevelUpData;
 };
@@ -363,6 +362,13 @@ END_NS()
 
 
 BEGIN_NS(esv::character_creation)
+
+struct CustomIconComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerCCCustomIcon, "esv::CharacterCreationCustomIconComponent")
+
+    ScratchBuffer Icon;
+};
 
 struct AppearanceVisualTagComponent : public BaseComponent
 {

@@ -222,6 +222,7 @@ namespace phx
     struct PhysicsObject;
     struct PhysicsSkinnedObject;
     struct PhysicsShape;
+    struct PhysicsSoftShape;
     struct PhysicsRagdoll;
     struct PhysicsSceneBase;
     struct PhysXScene;

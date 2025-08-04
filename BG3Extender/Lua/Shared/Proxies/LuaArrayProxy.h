@@ -23,6 +23,8 @@ BY_VAL(WStringView);
 BY_VAL(LSStringView);
 BY_VAL(Noesis::String);
 BY_VAL(Noesis::Symbol);
+BY_VAL(ScratchBuffer);
+BY_VAL(ScratchString);
 BY_VAL(Guid);
 BY_VAL(Path);
 BY_VAL(NetId);
@@ -659,6 +661,18 @@ public:
     inline static void Make(lua_State* L, TrackedCompactSet<T> const* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, object, lifetime, GetImplementation<DynamicArrayProxyImpl<TrackedCompactSet<T>, T, 8>>());
+    }
+
+    template <class T>
+    inline static void Make(lua_State* L, MiniCompactSet<T>* object, LifetimeHandle lifetime)
+    {
+        MakeImpl(L, object, lifetime, GetImplementation<DynamicArrayProxyImpl<MiniCompactSet<T>, T, 9>>());
+    }
+
+    template <class T>
+    inline static void Make(lua_State* L, MiniCompactSet<T> const* object, LifetimeHandle lifetime)
+    {
+        MakeImpl(L, object, lifetime, GetImplementation<DynamicArrayProxyImpl<MiniCompactSet<T>, T, 9>>());
     }
 
     template <class T>

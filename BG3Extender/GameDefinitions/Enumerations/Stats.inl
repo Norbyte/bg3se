@@ -443,6 +443,7 @@ BEGIN_BITMASK(AttributeFlags, uint32_t)
 END_ENUM()
 
 BEGIN_ENUM(AdvantageBoostType, uint8_t)
+    EV(None, 0)
     EV(Advantage, 1)
     EV(Disadvantage, 2)
 END_ENUM()
@@ -499,6 +500,7 @@ BEGIN_ENUM(SpellModificationValueType, uint8_t)
 END_ENUM()
 
 BEGIN_ENUM(SourceAdvantageType, uint8_t)
+    EV(None, 0)
     EV(SourceAdvantageOnAttack, 1)
     EV(SourceAllyAdvantageOnAttack, 2)
 END_ENUM()
@@ -729,6 +731,7 @@ BEGIN_ENUM(CauseType, uint8_t)
     EV(AURA, 8)
     EV(InventoryItem, 9)
     EV(WorldItemThrow, 10)
+    EV(Unknown11, 11)
 END_ENUM()
 
 
@@ -888,7 +891,7 @@ BEGIN_ENUM(HitType, uint32_t)
 END_ENUM()
 
 
-BEGIN_ENUM(AttackFlags, uint8_t)
+BEGIN_BITMASK(AttackFlags, uint8_t)
     EV(InstantKill, 0x01)
     EV(FirstAttack, 0x02)
     EV(FromSneak, 0x04)
@@ -918,6 +921,15 @@ BEGIN_ENUM(ObscurityState, uint8_t)
     EV(Clear, 0)
     EV(LightlyObscured, 1)
     EV(HeavilyObscured, 2)
+END_ENUM()
+
+
+BEGIN_ENUM(EEquipmentType, uint8_t)
+    EV(Weapon, 0)
+    EV(Unknown1, 1)
+    EV(Shield, 2)
+    EV(Armor, 3)
+    EV(Sentinel, 4)
 END_ENUM()
 
 

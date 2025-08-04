@@ -32,6 +32,16 @@ namespace bg3se
     using FindNextFileWProc = WINBASEAPI BOOL WINAPI(_In_ HANDLE hFindFile, _Out_ LPWIN32_FIND_DATAW lpFindFileData);
     using FindCloseProc = WINBASEAPI BOOL WINAPI(_Inout_ HANDLE hFindFile);
 
+    struct CoreGlobals
+    {
+        glm::vec2 MousePos;
+        GameTime RealTime;
+        GameTime Time;
+        GameTime field_38;
+        void* GlobalWorkerPool;
+        uint8_t InputType;
+    };
+
 
     struct GlobalSwitches
     {

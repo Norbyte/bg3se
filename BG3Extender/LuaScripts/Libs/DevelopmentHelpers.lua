@@ -29,6 +29,77 @@ local function DebugValidate(obj, entity, counters)
     end
 end
 
+local function ValidateServerCharacter(component, entity, counters)
+    DebugValidate(component.Template, entity, counters)
+
+    DebugValidate(component.AiActionMachine, entity, counters)
+    for i,layer in pairs(component.AiActionMachine.CachedActions) do
+        DebugValidate(layer, entity, counters)
+    end
+    for i,layer in pairs(component.AiActionMachine.Layers) do
+        DebugValidate(layer.State, entity, counters)
+        DebugValidate(layer.SyncState, entity, counters)
+    end
+
+    DebugValidate(component.AiBehaviourMachine, entity, counters)
+    for i,layer in pairs(component.AiBehaviourMachine.CachedStates) do
+        DebugValidate(layer, entity, counters)
+    end
+    for i,layer in pairs(component.AiBehaviourMachine.Layers) do
+        DebugValidate(layer, entity, counters)
+    end
+
+    DebugValidate(component.AiMovementMachine, entity, counters)
+    for i,layer in pairs(component.AiMovementMachine.CachedStates) do
+        DebugValidate(layer, entity, counters)
+    end
+    for i,layer in pairs(component.AiMovementMachine.Layers) do
+        DebugValidate(layer, entity, counters)
+    end
+
+    DebugValidate(component.AiSteeringMachine, entity, counters)
+    for i,layer in pairs(component.AiSteeringMachine.CachedStates) do
+        DebugValidate(layer, entity, counters)
+    end
+    for i,layer in pairs(component.AiSteeringMachine.Layers) do
+        DebugValidate(layer, entity, counters)
+    end
+
+    DebugValidate(component.OsirisController, entity, counters)
+    for i,task in pairs(component.OsirisController.Tasks) do
+        DebugValidate(task, entity, counters)
+    end
+                    
+    DebugValidate(component.PlayerData, entity, counters)
+    DebugValidate(component.StatusManager, entity, counters)
+    for i,status in pairs(component.StatusManager.Statuses) do
+        DebugValidate(status, entity, counters)
+    end
+end
+
+local function ValidateClientCharacter(component, entity, counters)
+    DebugValidate(component.Template, entity, counters)
+
+    DebugValidate(component.InputController, entity, counters)
+    for i,task in pairs(component.InputController.Tasks) do
+        DebugValidate(task, entity, counters)
+    end
+                    
+    DebugValidate(component.PlayerData, entity, counters)
+    DebugValidate(component.StatusManager, entity, counters)
+    for i,status in pairs(component.StatusManager.Statuses) do
+        DebugValidate(status, entity, counters)
+    end
+end
+
+local function ValidateServerItem(component, entity, counters)
+    DebugValidate(component.Template, entity, counters)
+    DebugValidate(component.StatusManager, entity, counters)
+    for i,status in pairs(component.StatusManager.Statuses) do
+        DebugValidate(status, entity, counters)
+    end
+end
+
 -- Iterate through every entity class and consistency check all components
 local function ValidateEntities()
     _P("Validating all entity components ...")
@@ -39,25 +110,13 @@ local function ValidateEntities()
             local ok = DebugValidate(component, entity, counters)
             if ok then
                 if name == "ServerCharacter" then
-                    DebugValidate(component.Template, entity, counters)
-                    DebugValidate(component.StatusManager, entity, counters)
-                    for i,status in pairs(component.StatusManager.Statuses) do
-                        DebugValidate(status, entity, counters)
-                    end
+                    ValidateServerCharacter(component, entity, counters)
                 end
                 if name == "ClientCharacter" then
-                    DebugValidate(component.Template, entity, counters)
-                    DebugValidate(component.StatusManager, entity, counters)
-                    for i,status in pairs(component.StatusManager.Statuses) do
-                        DebugValidate(status, entity, counters)
-                    end
+                    ValidateClientCharacter(component, entity, counters)
                 end
                 if name == "ServerItem" then
-                    DebugValidate(component.Template, entity, counters)
-                    DebugValidate(component.StatusManager, entity, counters)
-                    for i,status in pairs(component.StatusManager.Statuses) do
-                        DebugValidate(status, entity, counters)
-                    end
+                    ValidateServerItem(component, entity, counters)
                 end
             end
         end
@@ -92,9 +151,17 @@ end
 
 local function ValidateVisual(visual)
     if Ext.Types.Validate(visual) then
+        for i,slot in pairs(visual.SkeletonSlots) do
+            Ext.Types.Validate(slot)
+            Ext.Types.Validate(slot.Skeleton)
+            Ext.Types.Validate(slot.Skeleton.Physics)
+            Ext.Types.Validate(slot.Skeleton.SkeletonContent)
+        end
+
         for i,obj in pairs(visual.ObjectDescs) do
             ValidateRenderable(obj.Renderable)
         end
+
         for i,obj in pairs(visual.Attachments) do
             if obj.Visual ~= nil then
                 ValidateVisual(obj.Visual)
@@ -108,6 +175,40 @@ local function ValidateVisuals()
     for i,entity in ipairs(Ext.Entity.GetAllEntitiesWithComponent("Visual")) do
         if entity.Visual ~= nil and entity.Visual.Visual ~= nil then
             ValidateVisual(entity.Visual.Visual)
+        end
+    end
+end
+
+local function ValidateEffectComponent(comp)
+    Ext.Types.Validate(comp)
+    if Ext.Types.IsA(comp, "aspk::FxBaseComponent") then
+        for i,prop in pairs(comp.Properties) do
+            Ext.Types.Validate(prop)
+        end
+
+        for i,module in pairs(comp.Modules) do
+            Ext.Types.Validate(module)
+        end
+    end
+end
+
+local function ValidateEffect(effect)
+    if Ext.Types.Validate(effect) then
+        for i,input in pairs(effect.Inputs) do
+            Ext.Types.Validate(input)
+        end
+
+        for i,comp in pairs(effect.Components) do
+            ValidateEffectComponent(comp)
+        end
+    end
+end
+
+local function ValidateEffects()
+    local counters = {}
+    for i,entity in ipairs(Ext.Entity.GetAllEntitiesWithComponent("Effect")) do
+        if entity.Effect.Timeline ~= nil then
+            ValidateEffect(entity.Effect.Timeline)
         end
     end
 end
@@ -367,6 +468,10 @@ local function ValidateGlobals()
     Ext.Types.Validate(Ext.Mod.GetBaseMod())
 
     if Ext.UI then
+        Ext.Types.Validate(Ext.Input.GetInputManager())
+        Ext.Types.Validate(Ext.UI.GetCursorControl())
+        Ext.Types.Validate(Ext.UI.GetDragDrop(1))
+    
         local helpers = Ext.UI.GetPickingHelper(1)
         if helpers ~= nil then
             Ext.Types.Validate(helpers)
@@ -378,6 +483,35 @@ local function ValidateGlobals()
         ValidateDialogManager(dialogMgr)
     end
 end
+
+local WatchEntities = {}
+
+function WatchSingletons()
+    WatchEntities = {}
+    for _,comp in pairs(Ext.Enums.ExtComponentType) do
+        if type(comp) ~= "number" then
+            local comps = Ext.Entity.GetAllEntitiesWithComponent(comp)
+            if #comps == 1 then
+                WatchEntities[#WatchEntities+1] = {comps[1], comp}
+            end
+        end
+    end
+
+    print("Set up watcher for " .. #WatchEntities .. " singletons")
+
+    Ext.Events.Tick:Subscribe(function () 
+        for _,defn in pairs(WatchEntities) do
+            local comp = defn[1][defn[2]]
+            if comp ~= nil then
+                Ext.Types.Validate(comp)
+            end
+        end
+    end)
+end
+
+Ext.RegisterConsoleCommand("se_watchsingletons", function ()
+    WatchSingletons()
+end)
 
 Ext.RegisterConsoleCommand("se_entitytest", function ()
     ValidateEntities()
@@ -420,6 +554,11 @@ Ext.RegisterConsoleCommand("se_visualtest", function ()
     ValidateVisuals()
 end)
 
+Ext.RegisterConsoleCommand("se_effecttest", function ()
+    Ext.Debug.SetEntityRuntimeCheckLevel(0)
+    ValidateEffects()
+end)
+
 Ext.RegisterConsoleCommand("se_deepfry", function ()
     Ext.Debug.SetEntityRuntimeCheckLevel(0)
     ValidateGlobals()
@@ -429,10 +568,11 @@ Ext.RegisterConsoleCommand("se_deepfry", function ()
     ValidateStats()
     ValidateEntities()
     ValidateVisuals()
-    ReserializeTemplates()
-    ReserializeStaticData()
-    ReserializeResources()
-    ReserializeEntities()
+    ValidateEffects()
+    --ReserializeTemplates()
+    --ReserializeStaticData()
+    --ReserializeResources()
+    --ReserializeEntities()
 end)
 
 local GlobalComponentCounters = {}

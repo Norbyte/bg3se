@@ -35,6 +35,14 @@ using DXGISwapChainPresentProc = HRESULT STDMETHODCALLTYPE(
     /* [in] */ UINT SyncInterval,
     /* [in] */ UINT Flags);
 
+using DXGISwapChainResizeBuffersProc = HRESULT STDMETHODCALLTYPE(
+    IDXGISwapChain* pSwapChain,
+    /* [in] */ UINT BufferCount,
+    /* [in] */ UINT Width,
+    /* [in] */ UINT Height,
+    /* [in] */ DXGI_FORMAT NewFormat,
+    /* [in] */ UINT SwapChainFlags);
+
 enum class D3D11CreateDeviceHookTag{};
 using D3D11CreateDeviceHookType = WrappableFunction<D3D11CreateDeviceHookTag, D3D11CreateDeviceProc>;
 D3D11CreateDeviceHookType* D3D11CreateDeviceHookType::gHook;
@@ -50,6 +58,10 @@ DXGICreateSwapChainForHwndHookType* DXGICreateSwapChainForHwndHookType::gHook;
 enum class DXGISwapChainPresentHookTag{};
 using DXGISwapChainPresentHookType = WrappableFunction<DXGISwapChainPresentHookTag, DXGISwapChainPresentProc>;
 DXGISwapChainPresentHookType* DXGISwapChainPresentHookType::gHook;
+
+enum class DXGISwapChainResizeBuffersHookTag{};
+using DXGISwapChainResizeBuffersHookType = WrappableFunction<DXGISwapChainResizeBuffersHookTag, DXGISwapChainResizeBuffersProc>;
+DXGISwapChainResizeBuffersHookType* DXGISwapChainResizeBuffersHookType::gHook;
 
 END_SE()
 
@@ -89,6 +101,7 @@ public:
         CreateDxgiFactoryHook_.SetPostHook(&DX11Backend::CreateDXGIFactory1Hooked, this);
         DXGICreateSwapChainForHwndHook_.SetPostHook(&DX11Backend::DXGICreateSwapChainForHwndHooked, this);
         DXGISwapChainPresentHook_.SetPreHook(&DX11Backend::DXGISwapChainPresentHooked, this);
+        DXGISwapChainResizeBuffersHook_.SetPostHook(&DX11Backend::DXGISwapChainResizeBuffersHooked, this);
     }
 
     void DisableHooks() override
@@ -199,11 +212,16 @@ public:
         }
 
         auto view = descriptor->DX11.Views[0].View;
-        return TextureLoadResult{ reinterpret_cast<ImTextureID>(view), descriptor->DX11.Width, descriptor->DX11.Height };
+        return TextureLoadResult{ reinterpret_cast<TextureOpaqueHandle>(view), descriptor->DX11.Width, descriptor->DX11.Height };
     }
 
-    void UnregisterTexture(ImTextureID id) override
+    void UnregisterTexture(TextureOpaqueHandle opaqueHandle) override
     {
+    }
+
+    std::optional<ImTextureID> BindTexture(TextureOpaqueHandle opaqueHandle) override
+    {
+        return (ImTextureID)opaqueHandle;
     }
 
 private:
@@ -281,11 +299,13 @@ private:
         if (DXGISwapChainPresentHook_.IsWrapped()) return;
 
         auto createSwapChain = (*(void***)swapChain_)[8];
+        auto resizeBuffers = (*(void***)swapChain_)[13];
 
         IMGUI_DEBUG("Hooking DXGISwapChainPresent");
         DetourTransactionBegin();
         DetourUpdateThread(GetCurrentThread());
         DXGISwapChainPresentHook_.Wrap(ResolveFunctionTrampoline(createSwapChain));
+        DXGISwapChainResizeBuffersHook_.Wrap(ResolveFunctionTrampoline(resizeBuffers));
         DetourTransactionCommit();
 
         if (swapChain_ != nullptr && device_ != nullptr) {
@@ -304,6 +324,23 @@ private:
         if (!vp.DrawDataP.Valid || initializationFailed_) return;
 
         ImGui_ImplDX11_RenderDrawData(&vp.DrawDataP);
+    }
+
+    void STDMETHODCALLTYPE DXGISwapChainResizeBuffersHooked(
+        IDXGISwapChain* pSwapChain,
+        /* [in] */ UINT BufferCount,
+        /* [in] */ UINT Width,
+        /* [in] */ UINT Height,
+        /* [in] */ DXGI_FORMAT NewFormat,
+        /* [in] */ UINT SwapChainFlags,
+        HRESULT result)
+    {
+        if (!SUCCEEDED(result)) return;
+        if (pSwapChain != swapChain_) return;
+
+        IMGUI_DEBUG("DXGISwapChainResizeBuffers -> (%d, %d)", Width, Height);
+        width_ = Width;
+        height_ = Height;
     }
 
 
@@ -328,6 +365,7 @@ private:
     CreateDXGIFactory1HookType CreateDxgiFactoryHook_;
     DXGICreateSwapChainForHwndHookType DXGICreateSwapChainForHwndHook_;
     DXGISwapChainPresentHookType DXGISwapChainPresentHook_;
+    DXGISwapChainResizeBuffersHookType DXGISwapChainResizeBuffersHook_;
 };
 
 END_NS()

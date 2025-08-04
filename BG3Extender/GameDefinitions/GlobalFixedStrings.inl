@@ -95,12 +95,6 @@ FS(LuaVariables);
 FS(Mod);
 FS(ModId);
 
-FS(DynamicStats);
-FS(StatObject);
-FS(StatId);
-FS(StatType);
-FS(Blob);
-
 // IO context types
 FS(user);
 FS(data);
@@ -145,6 +139,7 @@ FS(decal);
 FS(prefab);
 FS(light);
 FS(CombinedLight);
+FS(TileConstruction);
 
 // Default IMGUI fonts
 FS(Tiny);

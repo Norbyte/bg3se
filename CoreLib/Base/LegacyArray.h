@@ -4,7 +4,7 @@
 
 BEGIN_SE()
 
-template <class T, class Allocator = GameMemoryAllocator, bool StoreSize = false>
+template <class T, class Allocator = GameMemoryAllocator, bool StoreSize = false, class TSize = uint32_t>
 struct CompactSet
 {
     using value_type = T;
@@ -16,8 +16,8 @@ struct CompactSet
     using size_type = uint32_t;
 
     T* Buf{ nullptr };
-    uint32_t Capacity{ 0 };
-    uint32_t Size{ 0 };
+    TSize Capacity{ 0 };
+    TSize Size{ 0 };
 
     inline CompactSet() {}
 
@@ -79,7 +79,7 @@ struct CompactSet
         }
     }
 
-    void RawReallocate(uint32_t newCapacity)
+    void RawReallocate(TSize newCapacity)
     {
         if (newCapacity > 0) {
             if (StoreSize) {
@@ -97,7 +97,7 @@ struct CompactSet
         Capacity = newCapacity;
     }
 
-    void Reallocate(uint32_t newCapacity)
+    void Reallocate(TSize newCapacity)
     {
         auto oldBuf = Buf;
         auto oldCapacity = Capacity;
@@ -122,7 +122,7 @@ struct CompactSet
     {
         se_assert(index < Size);
 
-        for (auto i = index; i < Size - 1; i++) {
+        for (unsigned i = index; i < (unsigned)Size - 1; i++) {
             Buf[i] = Buf[i + 1];
         }
 
@@ -145,7 +145,7 @@ struct CompactSet
         Size = 0;
     }
 
-    uint32_t CapacityIncrement() const
+    TSize CapacityIncrement() const
     {
         if (this->Capacity > 0) {
             return 2 * this->Capacity;
@@ -186,6 +186,9 @@ struct CompactSet
 
 template <class T>
 using TrackedCompactSet = CompactSet<T, GameMemoryAllocator, true>;
+
+template <class T>
+using MiniCompactSet = CompactSet<T, GameMemoryAllocator, true, uint8_t>;
 
 template <class T, class Allocator = GameMemoryAllocator, bool StoreSize = false>
 struct Set : public CompactSet<T, Allocator, StoreSize>

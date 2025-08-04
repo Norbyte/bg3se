@@ -6,6 +6,7 @@ local Logger = {
     EnabledLogLevels = {},
     EnabledMods = {},
     EnabledTopics = {},
+    DispatchingLogEvent = false
 }
 
 local LogLevels = {"Debug", "Info", "Warning", "Error"}
@@ -15,7 +16,31 @@ function Logger:Log(moduleUuid, level, topic, ...)
     if self.EnabledMods[moduleUuid] == false then return end
     if self.EnabledTopics[topic] == false then return end
 
-    Ext.Log.Print(...)
+    local prevented = false
+    if not self.DispatchingLogEvent then
+        self.DispatchingLogEvent = true
+        local evt = {
+            Stopped = false,
+            ActionPrevented = false,
+            Module = moduleUuid,
+            Topic = topic,
+            Level = level,
+            Message = {...}
+        }
+        Ext.Events.Log:Throw(evt)
+        prevented = evt.ActionPrevented
+        self.DispatchingLogEvent = false
+    end
+
+    if not prevented then
+        if level == "Error" then
+            Ext.Log.PrintError(...)
+        elseif level == "Warning" then
+            Ext.Log.PrintWarning(...)
+        else
+            Ext.Log.Print(...)
+        end
+    end
 end
 
 function Logger:CreateLogModule(moduleUuid)
@@ -71,10 +96,10 @@ function Logger:SetLogLevel(level)
     end
 end
 
-function Logger:CreateUtilsCompatModule(ext)
+function Logger:CreateUtilsCompatModule(ext, baseExt)
     local utils = {}
     setmetatable(utils, {
-        __index = ext.Utils,
+        __index = baseExt.Utils,
     })
     utils.Print = function (...)
         ext.Log.Print(...)

@@ -26,6 +26,7 @@
 #include <mutex>
 #include <shared_mutex>
 #include <variant>
+#include <span>
 
 #include <Extender/Shared/Utils.h>
 #include <GameDefinitions/Base/Base.h>

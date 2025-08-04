@@ -86,33 +86,30 @@ BEGIN_NS(esv::interrupt)
 
 struct StartRequestData
 {
-    __int64 field_0;
-    __int64 field_8;
+    Guid SpellCastGuid;
     bg3se::interrupt::InterruptEvent Event;
-    HashMap<EntityHandle, HashSet<EntityHandle>> MHM_EH_MHS_EH;
-    __int64 field_158;
+    HashMap<EntityHandle, HashSet<EntityHandle>> Interruptors;
+    uint8_t field_158{ 0 };
 };
 
 struct StopRequestData
 {
-    __int64 field_0;
-    __int64 field_8;
+    Guid SpellCastGuid;
     bg3se::interrupt::InterruptEvent Event;
-    __int64 field_118;
-};
-
-struct CombatLogRequestData
-{
-    __int64 field_0;
-    __int64 field_8;
-    HashMap<EntityHandle, HashSet<EntityHandle>> MHM_EH_MHS_EH;
+    uint8_t field_118{ 0 };
 };
 
 struct UpdateInterruptorsRequestData
 {
-    __int64 field_0;
+    Guid SpellCastGuid;
+    HashMap<EntityHandle, HashSet<EntityHandle>> Interruptors;
+};
+
+struct CombatLogRequestData
+{
+    EntityHandle field_0;
     Array<stats::ActionResourceCost> UseCosts;
-    HashMap<EntityHandle, HashMap<bg3se::interrupt::InterruptEvent, ConditionRoll>> field_18;
+    HashMap<EntityHandle, HashMap<bg3se::interrupt::InterruptEvent, bg3se::interrupt::InterruptUsageEntry>> field_18;
 };
 
 struct InterruptDataComponent : public BaseComponent
@@ -121,10 +118,10 @@ struct InterruptDataComponent : public BaseComponent
 
     Guid SpellCastGuid;
     std::optional<bg3se::interrupt::UndecidedEvent> Event;
-    int32_t field_250;
+    int32_t NextInterruptIndex;
     Array<bg3se::interrupt::PausedAnimationEvent> PausedAnimationEvents;
     Array<bg3se::interrupt::AnimationInterruptData> AnimationInterrupts;
-    int32_t field_278;
+    int32_t AnimationIndex;
 };
 
 END_NS()
@@ -141,19 +138,12 @@ struct InterruptRequestsComponent : public BaseComponent
     Array<interrupt::UpdateInterruptorsRequestData> UpdateInterruptorsRequests;
 };
 
-struct InterruptRollData
-{
-    __int64 field_0;
-    [[bg3::legacy(field_8)]] Array<FixedRollBonus> FixedRollBonuses;
-};
-
 struct FunctorConditional
 {
-    glm::vec3 field_0;
-    float field_C;
-    EntityHandle field_10;
-    int field_18;
-    uint8_t field_1C;
+    Guid FunctorUuid;
+    EntityHandle Target;
+    stats::ConditionId Conditions;
+    bool WasAdjusted{ false };
     ConditionRoll Roll;
 };
 
@@ -162,7 +152,7 @@ struct InterruptResultsComponent : public BaseComponent
     DEFINE_COMPONENT(ServerSpellInterruptResults, "esv::spell_cast::InterruptResultsComponent")
 
     HashMap<bg3se::interrupt::DamageFunctorKey, bg3se::interrupt::DamageRollAdjustments> Results;
-    Array<FunctorConditional> Results2;
+    [[bg3::legacy(Results2)]] Array<FunctorConditional> Conditionals;
 };
 
 struct InterruptsUsedOneFrameComponent : public BaseComponent
@@ -246,9 +236,9 @@ struct DecisionSystem : public BaseSystem
 
 struct InterruptRequest
 {
-    bool IsRemoval;
+    bool IsRemoval{ false };
     FixedString Interrupt;
-    InterruptRequestSource Source;
+    InterruptRequestSource Source{ InterruptRequestSource::Debug };
     EntityHandle Boost;
     FixedString Spell;
 };
@@ -267,11 +257,8 @@ struct ManagementSystem : public BaseSystem
 
     [[bg3::hidden]] void* InterruptPrototypeManager;
     [[bg3::hidden]] UnknownFunction field_18;
+    HashSet<EntityHandle> RemoveContainers;
     HashMap<EntityHandle, bool> IsAsk;
-    [[bg3::hidden]] void* field_98;
-    [[bg3::hidden]] void* qwordA0;
-    Array<EntityHandle> PrototypeInteractionRequests;
-    Array<bool> field_B8;
     HashMap<EntityHandle, bool> IsEnabled;
 };
 

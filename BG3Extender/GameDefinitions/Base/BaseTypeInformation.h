@@ -96,6 +96,7 @@ struct TypeInformation
     FixedString ModuleRole;
     lua::GenericPropertyMap* PropertyMap{ nullptr };
     FixedString ComponentName;
+    FixedString SystemName;
 
     void DeferredInitialize();
     void Validate();
@@ -172,6 +173,12 @@ inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overl
 
 template <class T>
 inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<TrackedCompactSet<T>>)
+{
+    return &MakeDeferredArrayType<T>;
+}
+
+template <class T>
+inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<MiniCompactSet<T>>)
 {
     return &MakeDeferredArrayType<T>;
 }
@@ -284,6 +291,12 @@ StaticTypeInformation& GetStaticTypeInfoInternal(Overload<ObjectSet<T, Allocator
 
 template <class T>
 StaticTypeInformation& GetStaticTypeInfoInternal(Overload<TrackedCompactSet<T>>)
+{
+    return GetStaticTypeInfoInternal(Overload<Set<T, GameMemoryAllocator, true>>{});
+}
+
+template <class T>
+StaticTypeInformation& GetStaticTypeInfoInternal(Overload<MiniCompactSet<T>>)
 {
     return GetStaticTypeInfoInternal(Overload<Set<T, GameMemoryAllocator, true>>{});
 }

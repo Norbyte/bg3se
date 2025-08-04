@@ -1054,6 +1054,39 @@ local _restrictedKeys = {
     ["end"] = true,
 }
 
+function Generator:GenerateEnum(enumName)
+    self:EmitEmptyLine()
+    self:EmitComment("@enum " .. enumName)
+    self:EmitLine("Ext_Enums." .. enumName .. " = {")
+
+    local enum = Ext.Enums[enumName]
+    local bitfield = Ext.Types.GetTypeInfo(enumName).IsBitfield
+
+    local sortedKeys = {}
+    for label,key in pairs(enum) do
+        if type(label) ~= "number" then
+            table.insert(sortedKeys, {key = bitfield and key.__Value or key.Value, label = label})
+        end
+    end
+    table.sort(sortedKeys, function (a, b) 
+        return a.key < b.key
+    end)
+        
+    for _,val in ipairs(sortedKeys) do
+        if string.find(val.label, "%s") then
+            self:EmitLine(string.format("\t[\"%s\"] = %s,", val.label, val.key))
+        else
+            self:EmitLine(string.format("\t%s = %s,", val.label, val.key))
+        end
+    end
+        
+    for _,val in ipairs(sortedKeys) do
+        self:EmitLine(string.format("\t[%s] = \"%s\",", val.key, val.label))
+    end
+
+    self:EmitLine("}")
+end
+
 function Generator:GenerateEnums()
     self:EmitLine("--#region Generated Enums")
     self:EmitEmptyLine()
@@ -1067,53 +1100,32 @@ function Generator:GenerateEnums()
     table.sort(enumNames)
 
     for _,enumName in ipairs(enumNames) do
-        self:EmitEmptyLine()
-        self:EmitComment("@enum " .. enumName)
-        self:EmitLine("Ext_Enums." .. enumName .. " = {")
-
-        local enum = Ext.Enums[enumName]
-
-        local sortedKeys = {}
-        for i,label in pairs(enum) do
-            if type(i) == "number" then
-                table.insert(sortedKeys, i)
-            end
-        end
-        table.sort(sortedKeys)
-        
-        local valueToName = {}
-        for _,i in ipairs(sortedKeys) do
-            local label = enum[i]
-            if Ext.Types.GetTypeInfo(Ext.Types.GetObjectType(label)).IsBitfield then
-                label = label.__Labels[1]
-            else
-                label = tostring(label)
-            end
-
-            valueToName[i] = label
-            
-            if string.find(label, "%s") or _restrictedKeys[label] then
-                self:EmitLine(string.format("\t[\"%s\"] = %s,", label, i))
-            else
-                self:EmitLine(string.format("\t%s = %s,", label, i))
-            end
-        end
-        
-        for _,i in ipairs(sortedKeys) do
-            local label = valueToName[i]
-            self:EmitLine(string.format("\t[%s] = \"%s\",", i, label))
-        end
-
-        self:EmitLine("}")
+        self:GenerateEnum(enumName)
     end
     self:EmitEmptyLine()
     self:EmitLine("--#endregion")
     self:EmitEmptyLine()
 end
 
+function Generator:GenerateSystems()
+    self:EmitEmptyLine()
+    self:EmitComment("@class Ext_System")
+    
+    local types = Ext.Types.GetAllTypes()
+    for _,name in pairs(types) do
+        local type = Ext.Types.GetTypeInfo(name)
+        if type.SystemName ~= "" then
+            self:EmitFieldComment(type.SystemName .. " " .. self:MakeTypeName(type.TypeName))
+        end
+    end
+    
+    self:EmitEmptyLine()
+end
+
 function Generator:EmitExt(role, declareGlobal)
     if declareGlobal then
         self:GenerateEnums()
+        self:GenerateSystems()
     end
 
     self:EmitComment("@class Ext" .. (role or ""))
@@ -1146,6 +1158,8 @@ function Generator:EmitExt(role, declareGlobal)
 
     if declareGlobal then
         self:EmitFieldComment("Enums Ext_Enums")
+        self:EmitFieldComment("System Ext_System")
+
         self:EmitLine("Ext = {Events = {}}")
         self:EmitEmptyLine()
         self:EmitEmptyLine()

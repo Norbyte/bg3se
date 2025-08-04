@@ -17,6 +17,7 @@ void StructRegistry::Register(GenericPropertyMap* pm, StructTypeId id)
         StructsById.resize(id + 1);
     }
 
+    se_assert(StructsById[id] == nullptr);
     StructsById[id] = pm;
 }
 

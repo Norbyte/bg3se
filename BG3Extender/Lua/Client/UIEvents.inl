@@ -8,10 +8,12 @@ struct DummyDelegate
     void Handler(Noesis::BaseComponent* o, const RoutedEventArgs& args)
     {
         ContextGuardAnyThread ctx(ContextType::Client);
-        LuaClientPin lua(gExtender->GetClient().GetExtensionState());
-        if (lua) {
-            auto index = (UIEventHooks::SubscriptionIndex)(uintptr_t)this;
-            lua->GetUIEvents().EventFired(index, o, args);
+        if (gExtender->GetClient().HasExtensionState()) {
+            LuaClientPin lua(gExtender->GetClient().GetExtensionState());
+            if (lua) {
+                auto index = (UIEventHooks::SubscriptionIndex)(uintptr_t)this;
+                lua->GetUIEvents().EventFired(index, o, args);
+            }
         }
     }
 };

@@ -93,3 +93,14 @@ END_SE()
     static constexpr auto SystemType = ExtSystemType::systemType; \
     static constexpr auto SystemName = #systemType; \
     static constexpr auto EngineClass = cls;
+
+BEGIN_SE()
+
+enum class ContextType
+{
+    None,
+    Server,
+    Client
+};
+
+END_SE()

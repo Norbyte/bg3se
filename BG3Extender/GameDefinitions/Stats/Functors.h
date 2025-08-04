@@ -26,7 +26,7 @@ struct Functor
     Array<ExportedConditionalRoll> RollConditions;
     stats::ConditionId StatsConditions;
     PropertyContext PropertyContext{ 0 };
-    uint32_t StoryActionId{ 0 };
+    int32_t StoryActionId{ 0 };
     ObserverType ObserverType{ ObserverType::None };
     FunctorId TypeId{ FunctorId::CustomDescription };
     FunctorFlags Flags{ 0 };
@@ -135,7 +135,6 @@ struct TargetContextData : public ContextData
     AttackDesc Attack;
     uint32_t StatusEvent{ 0 };
     FixedString StatusId;
-    bool IsFromItem{ false };
 };
 
 struct NearbyAttackedContextData : public ContextData

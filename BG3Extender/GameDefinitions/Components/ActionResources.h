@@ -8,20 +8,20 @@ BEGIN_SE()
 struct ActionResourceSetValueRequest
 {
     Guid ResourceId;
-    double Amount;
-    double OldAmount;
+    double Amount{ .0f };
+    double OldAmount{ .0f };
 };
 
 struct ActionResourceRefillRequest
 {
     EntityHandle Entity;
-    uint64_t Flags;
+    uint64_t Flags{ 0 };
 };
 
 struct InspirationPointGainedRequest
 {
     EntityHandle Entity;
-    float Amount;
+    float Amount{ .0f };
     TranslatedString field_C;
     TranslatedString field_1C;
     EntityHandle Entity2;
@@ -32,32 +32,32 @@ struct PartyResourceUpdateRequest
     EntityHandle Entity;
     EntityHandle Party;
     Guid Resource;
-    int Level;
-    float Amount;
-    bool AddNewResourceType;
+    int Level{ 0 };
+    float Amount{ .0f };
+    bool AddNewResourceType{ false };
 };
 
 struct ActionResourceQuery
 {
     Guid ResourceId;
-    int BoostAmount;
+    int BoostAmount{ 0 };
 };
 
 struct ActionResourceDiceValue
 {
-    double Amount;
-    double MaxAmount;
+    double Amount{ .0f };
+    double MaxAmount{ .0f };
 };
 
 struct ActionResourceEntry
 {
     Guid ResourceUUID;
-    [[bg3::legacy(ResourceId)]] int Level;
-    double Amount;
-    double MaxAmount;
-    [[bg3::legacy(field_28)]] ResourceReplenishType ReplenishType;
+    [[bg3::legacy(ResourceId)]] int Level{ 0 };
+    double Amount{ .0f };
+    double MaxAmount{ .0f };
+    [[bg3::legacy(field_28)]] ResourceReplenishType ReplenishType{ ResourceReplenishType::Default };
     [[bg3::legacy(SubAmounts)]] std::optional<std::array<ActionResourceDiceValue, 7>> DiceValues;
-    uint8_t field_A8;
+    uint8_t field_A8{ 0 };
 };
 
 struct ActionResourcesComponent : public BaseComponent
@@ -77,7 +77,7 @@ struct ActionResourceEventsOneFrameComponent : public BaseComponent
 struct ActionResourceSpendResult
 {
     Guid Resource;
-    bool Succeeded;
+    bool Succeeded{ true };
 };
 
 struct ActionResourceSpendEventOneFrameComponent : public BaseComponent
@@ -90,6 +90,13 @@ struct ActionResourceSpendEventOneFrameComponent : public BaseComponent
 END_SE()
 
 BEGIN_NS(esv)
+
+struct ActionResourceChangeResultsSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ActionResourceChangeResults, "esv::action_resource::ResourceChangeResultsSingletonComponent")
+
+    Array<EntityHandle> Results;
+};
 
 struct ActionResourceSystem : public BaseSystem
 {

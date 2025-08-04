@@ -5,25 +5,25 @@ BEGIN_NS(hit)
 struct TargetInfo
 {
     FixedString SpellId;
-    FixedString field_4;
-    uint8_t field_8;
-    glm::vec3 ImpactPosition;
-    glm::vec3 ImpactDirection;
-    int TotalDamageDone;
-    int ArmorAbsorption;
-    uint32_t EffectFlags;
-    DamageType MainDamageType;
-    CauseType CauseType;
-    HitWith HitWith;
+    FixedString StatusId;
+    uint8_t field_8{ 0 };
+    glm::vec3 ImpactPosition{ .0f };
+    glm::vec3 ImpactDirection{ .0f };
+    int TotalDamageDone{ 0 };
+    int ArmorAbsorption{ 0 };
+    uint32_t EffectFlags{ 0 };
+    DamageType MainDamageType{ DamageType::None };
+    CauseType CauseType{ CauseType::None };
+    HitWith HitWith{ HitWith::None };
     Array<DamagePair> Damage;
-    uint8_t AttackFlags;
+    uint8_t AttackFlags{ 0 };
     Array<bool> ConditionRollResults;
     HashSet<uint8_t> ResistanceTypes;
     Guid SpellCastGuid;
-    uint8_t field_A0;
-    uint8_t field_A1;
-    uint8_t field_A2;
-    uint8_t field_A3;
+    uint8_t field_A0{ 0 };
+    uint8_t field_A1{ 0 };
+    uint8_t field_A2{ 0 };
+    uint8_t field_A3{ 0 };
 };
 
 
@@ -34,6 +34,23 @@ struct TargetComponent : public BaseComponent
     EntityHandle field_0;
     EntityHandle field_8;
     TargetInfo Target;
+};
+
+
+struct MetaComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(HitMeta, "eoc::hit::MetaComponent")
+
+    Guid HitGuid;
+};
+
+
+struct LifetimeComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(HitLifetime, "eoc::hit::LifetimeComponent")
+
+    float Lifetime;
+    uint8_t field_4;
 };
 
 
@@ -139,14 +156,15 @@ struct HitRequest
     EntityHandle Target;
     EntityHandle TargetProxy;
     HitDesc Desc;
-    HitWith HitWith;
-    int StoryActionId;
+    HitWith HitWith{ HitWith::None };
+    uint8_t field_1C1{ 0 };
+    int StoryActionId{ 0 };
     ActionOriginator Originator;
-    AbilityId Ability;
+    AbilityId Ability{ AbilityId::None };
     EntityHandle Weapon;
-    bool FromFunctor;
-    bool field_1F9;
-    uint8_t field_1FA;
+    bool DecreaseDelayDeathCount{ false };
+    bool SkipNotifications{ false };
+    bool field_1FA{ false };
 };
 
 struct ReactionRequest
@@ -181,9 +199,9 @@ struct HitEventData
     Guid Inflicter;
     Guid InflicterOwner;
     Guid TargetProxy;
-    char DamageType;
-    int Damage;
-    BYTE CauseType;
+    DamageType DamageType;
+    int32_t Damage;
+    CauseType CauseType;
     int StoryActionId;
 };
 

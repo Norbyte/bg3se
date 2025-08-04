@@ -61,8 +61,8 @@ SoundObjectId GetSoundObjectId(lua_State* L, int idx)
     {
         auto entity = get<EntityHandle>(L, idx);
         auto sound = State::FromLua(L)->GetEntitySystemHelpers()->GetComponent<SoundComponent>(entity);
-        if (sound && sound->SoundObjectId != 0xffffffffffffffffull) {
-            return SoundObjectId(sound->SoundObjectId);
+        if (sound && sound->ActiveData && sound->ActiveData->SoundObjectId != 0xffffffffffffffffull) {
+            return SoundObjectId(sound->ActiveData->SoundObjectId);
         } else {
             return InvalidSoundObjectId;
         }

@@ -93,6 +93,8 @@ struct ECSChangeLog
 class EntitySystemHelpersBase : public Noncopyable<EntitySystemHelpersBase>
 {
 public:
+    using SystemHookProc = void(EntitySystemHelpersBase*, BaseSystem*, GameTime const&, SystemTypeIndex system);
+
     static RuntimeCheckLevel CheckLevel;
 
     struct PerComponentData
@@ -261,6 +263,7 @@ public:
     void NotifyReplicationFlagsDirtied();
 
     void* GetRawComponent(EntityHandle entityHandle, ExtComponentType type);
+    ecs::SystemTypeEntry* GetSystemEntry(ExtSystemType type);
     void* GetRawSystem(ExtSystemType type);
     EntityHandle GetEntityHandle(FixedString const& guidString);
     EntityHandle GetEntityHandle(Guid const& uuid);
@@ -269,6 +272,10 @@ public:
     void Update();
     void PostUpdate();
     void OnFlushECBs();
+    void OnInit();
+    void OnDestroy();
+
+    bool SetSystemUpdateHook(SystemTypeIndex system, std::function<SystemHookProc> preUpdate, std::function<SystemHookProc> postUpdate);
 
 protected:
     void MapComponentIndices(char const* componentName, ExtComponentType type, std::size_t size, bool isProxy);
@@ -291,6 +298,13 @@ private:
         ComponentTypeIndex ComponentIndex{ UndefinedComponent };
         ReplicationTypeIndex ReplicationIndex{ UndefinedReplicationComponent };
     };
+    
+    struct SystemHook
+    {
+        SystemTypeEntry::UpdateProcType* OriginalUpdateProc{ nullptr };
+        std::function<SystemHookProc> PreUpdate;
+        std::function<SystemHookProc> PostUpdate;
+    };
 
     std::unordered_map<STDString, IndexMappings> componentNameToIndexMappings_;
     ECSComponentDataMap ecsComponentData_;
@@ -311,6 +325,9 @@ private:
     std::array<resource::StaticDataTypeIndex, (size_t)ExtResourceManagerType::Max> staticDataIndices_;
     std::array<SystemTypeIndex, (size_t)ExtSystemType::Max> systemIndices_;
 
+    std::unordered_map<BaseSystem*, SystemTypeIndex> systemToId_;
+    std::vector<SystemHook> systemHooks_;
+
     ECSChangeLog log_;
 
     void BindSystem(std::string_view name, SystemTypeIndex id);
@@ -325,6 +342,12 @@ private:
     void DebugLogReplicationChanges();
     void DebugLogECBFlushChanges();
     void ThrowECBFlushEvents();
+
+    void InitSystemUpdateHooks();
+    void ClearSystemUpdateHooks();
+
+    void SystemUpdateHook(BaseSystem*, EntityWorld&, GameTime const&);
+    static void StaticSystemUpdateHook(BaseSystem*, EntityWorld&, GameTime const&);
 };
 
 class ServerEntitySystemHelpers : public EntitySystemHelpersBase

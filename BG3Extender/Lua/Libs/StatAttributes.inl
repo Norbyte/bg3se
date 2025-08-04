@@ -46,27 +46,16 @@ FixedString ObjectHelpers::GetUsing(Object const* obj)
 void ObjectHelpers::Sync(Object* object, std::optional<bool> persist)
 {
     auto stats = GetStaticSymbols().GetStats();
-
     stats->SyncWithPrototypeManager(object);
 
-    if (gExtender->GetServer().IsInContext()) {
-        object->BroadcastSyncMessage(false);
-
-        gExtender->GetServer().GetExtensionState().MarkDynamicStat(object->Name);
-        if (persist) {
-            gExtender->GetServer().GetExtensionState().MarkPersistentStat(object->Name);
-        }
+    if (persist) {
+        WARN_ONCE("The 'persist' argument to Ext.Stats.Sync() is deprecated");
     }
 }
 
-
-void ObjectHelpers::SetPersistence(Object* object, bool persist)
+void ObjectHelpers::SetPersistence(Object* obj, bool persist)
 {
-    if (persist) {
-        gExtender->GetServer().GetExtensionState().MarkPersistentStat(object->Name);
-    } else {
-        gExtender->GetServer().GetExtensionState().UnmarkPersistentStat(object->Name);
-    }
+    WARN_ONCE("Ext.Stats.SetPersistence() is deprecated");
 }
 
 void ClearStatsFunctors(Object* object, FixedString key, char const* value)

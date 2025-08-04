@@ -201,10 +201,11 @@ void TypeInformationRepository::Initialize()
     RegisterStaticType<LSStringView>("LSStringView", LuaTypeId::String);
     RegisterStaticType<Noesis::Symbol>("Noesis::Symbol", LuaTypeId::String);
     RegisterStaticType<Noesis::String>("Noesis::String", LuaTypeId::String);
+    RegisterStaticType<ScratchBuffer>("ScratchBuffer", LuaTypeId::String);
+    RegisterStaticType<ScratchString>("ScratchString", LuaTypeId::String);
     RegisterStaticType<Path>("Path", LuaTypeId::String);
     RegisterStaticType<NetId>("NetId", LuaTypeId::Integer);
     RegisterStaticType<UserId>("UserId", LuaTypeId::Integer);
-    // FIXME - revisit typing for handles later!
     RegisterStaticType<ComponentHandle>("ComponentHandle", LuaTypeId::Integer);
     RegisterStaticType<EntityHandle>("EntityHandle", LuaTypeId::Integer);
     RegisterStaticType<ecs::EntityRef>("EntityRef", LuaTypeId::Integer);

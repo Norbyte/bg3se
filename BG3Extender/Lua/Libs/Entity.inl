@@ -204,6 +204,16 @@ LuaEntitySubscriptionId OnDestroyOnce(lua_State* L, ExtComponentType type, Funct
         EntityComponentEventFlags::Once, func.MakePersistent(L));
 }
 
+LuaEntitySubscriptionId OnSystemUpdate(lua_State* L, ExtSystemType type, FunctionRef func, std::optional<bool> once)
+{
+    return EntityEventHelpers::SubscribeSystemUpdate(L, type, func.MakePersistent(L), false, once ? *once : false);
+}
+
+LuaEntitySubscriptionId OnSystemPostUpdate(lua_State* L, ExtSystemType type, FunctionRef func, std::optional<bool> once)
+{
+    return EntityEventHelpers::SubscribeSystemUpdate(L, type, func.MakePersistent(L), true, once ? *once : false);
+}
+
 LuaEntitySubscriptionId OnDestroyDeferredOnce(lua_State* L, ExtComponentType type, FunctionRef func, std::optional<EntityHandle> entity)
 {
     return EntityEventHelpers::Subscribe(L, entity ? *entity : EntityHandle{}, type, EntityComponentEvent::Destroy, 
@@ -242,9 +252,9 @@ void ClearTrace(lua_State* L)
     State::FromLua(L)->GetEntitySystemHelpers()->GetLog().Clear();
 }
 
-Array<STDString> GetRegisteredComponentTypes(lua_State* L, bool oneFrame)
+Array<StringView> GetRegisteredComponentTypes(lua_State* L, std::optional<bool> oneFrame, std::optional<bool> mapped)
 {
-    Array<STDString> types;
+    Array<StringView> types;
     
     auto helpers = State::FromLua(L)->GetEntitySystemHelpers();
     auto const& registry = helpers->GetEntityWorld()->ComponentRegistry_;
@@ -252,7 +262,9 @@ Array<STDString> GetRegisteredComponentTypes(lua_State* L, bool oneFrame)
         if (registry.Bitmask[i]) {
             auto const& component = registry.Types[i];
             auto name = helpers->GetComponentName(component.TypeId);
-            if (name && IsOneFrame(component.TypeId) == oneFrame) {
+            if (name 
+                && (!oneFrame || IsOneFrame(component.TypeId) == *oneFrame)
+                && (!mapped || (bool)helpers->GetComponentType(component.TypeId) == *mapped)) {
                 types.push_back(*name);
             }
         }
@@ -286,6 +298,8 @@ void RegisterEntityLib()
     MODULE_FUNCTION(OnDestroyDeferred)
     MODULE_FUNCTION(OnDestroyOnce)
     MODULE_FUNCTION(OnDestroyDeferredOnce)
+    MODULE_FUNCTION(OnSystemUpdate)
+    MODULE_FUNCTION(OnSystemPostUpdate)
     MODULE_FUNCTION(Unsubscribe)
 
     MODULE_FUNCTION(EnableTracing)

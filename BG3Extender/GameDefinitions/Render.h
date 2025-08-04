@@ -4,6 +4,8 @@
 
 BEGIN_SE()
 
+struct MoveableObject;
+
 struct AABound
 {
     glm::vec3 Min;
@@ -21,7 +23,7 @@ struct MeshBinding : ProtectedGameObject<MeshBinding>
 {
     [[bg3::hidden]] void* VMT;
     [[bg3::hidden]] Pose Pose;
-    [[bg3::hidden]] void* field_20;
+    MoveableObject* Object;
     glm::mat4 Transform;
     AABound Bound1;
     AABound Bound2;
@@ -36,6 +38,8 @@ struct LocalTransform
 
 struct MoveableObject : ProtectedGameObject<MoveableObject>
 {
+    static constexpr uint32_t StaticRTTI = 0x1;
+
     virtual uint32_t GetRTTI() = 0;
     virtual ~MoveableObject() = 0;
 
@@ -417,6 +421,8 @@ struct AppliedMaterial : public ActiveMaterial
 
 struct Visual : public MoveableObject
 {
+    static constexpr uint32_t StaticRTTI = 0x1001;
+
     virtual bool AddObject(RenderableObject*, uint8_t flags) = 0;
     virtual void SetLODDistances(RenderableObject*) const = 0;
     virtual void Pick(void const* ray, void* result) = 0;
@@ -445,7 +451,7 @@ struct Visual : public MoveableObject
     };
 
 
-    struct [[bg3::hidden]] SkeletonSlot
+    struct SkeletonSlot
     {
         struct Remap
         {
@@ -456,15 +462,11 @@ struct Visual : public MoveableObject
         FixedString RemapperSlot;
         int field_4;
         Skeleton* Skeleton;
-        Remap* Remaps;
-        uint8_t RemapsCapacity;
-        uint8_t RemapsSize;
+        MiniCompactSet<Remap> Remaps;
     };
 
-    [[bg3::hidden]] void* field_80;
-    [[bg3::hidden]] SkeletonSlot** SkeletonSlots;
-    [[bg3::hidden]] uint8_t SkeletonSlotsCapacity;
-    [[bg3::hidden]] uint8_t SkeletonSlotsSize;
+    [[bg3::hidden]] void* RenderPrecisionHack;
+    MiniCompactSet<SkeletonSlot*> SkeletonSlots;
     Array<ObjectDesc> ObjectDescs;
     Array<float> LODDistances;
     Array<Attachment> Attachments;
@@ -488,8 +490,19 @@ struct Visual : public MoveableObject
 };
 
 
+struct Effect : public Visual
+{
+    static constexpr uint32_t StaticRTTI = 0x3001;
+
+    [[bg3::hidden]] Array<void*> PostProcess;
+    float CullingDistance;
+};
+
+
 struct RenderableObject : public MoveableObject
 {
+    static constexpr uint32_t StaticRTTI = 0x3;
+
     virtual void Render(void const* RenderObjectData, void const* RenderContext, void const* InstancingDrawData) const = 0;
     virtual void NotifyTextureIDAdded(void const* Texture, bool) = 0;
     virtual void NotifyTextureIDRemoved(void const* Texture, bool) = 0;
@@ -517,9 +530,95 @@ struct RenderableObject : public MoveableObject
     uint8_t LOD;
 };
 
+struct AnimatableObject : public RenderableObject
+{
+    static constexpr uint32_t StaticRTTI = 0x7;
+
+    MeshBinding* Mesh;
+    bool IsRigid;
+    bool HasStaticBounds;
+    uint64_t OverrideTransformCount;
+    glm::mat3x4* OverrideTransforms_Mat3x4;
+    uint64_t SavedOverrideTransformCount;
+    glm::mat3x4* SavedOverrideTransforms_Mat3x4;
+    std::array<int, 2> TransformedVerticesOffset;
+    std::array<int, 2> TransformedVerticesOffset2;
+    std::array<int, 2> TransformedFrameCount;
+};
+
+struct Shape : public RenderableObject
+{
+    static constexpr uint32_t StaticRTTI = 0x103;
+
+    Skeleton* SkeletonActor;
+    float Lifetime;
+    uint8_t field_F4;
+    bool UseShapeRender;
+    uint32_t Preset;
+    bool TriangulationFailed;
+};
+
+struct DecalObject : public RenderableObject
+{
+    static constexpr uint32_t StaticRTTI = 0xB;
+
+    FixedString Decal;
+    FixedString Visual;
+    glm::vec2 TilingUV;
+    glm::vec2 OffsetUV;
+    float NormalBlendingFactor;
+    float AngleCutoff;
+    int32_t Layer;
+    float Opacity;
+    bool IsGameDecal;
+    glm::vec3 Dimensions;
+    uint16_t CullFlags;
+};
+
+struct PhysicsClothInfo
+{
+    phx::PhysicsSoftShape* PhysicsShape;
+    bool IsSimulated;
+    bool IsCopyCloth;
+    bool IsHiResProxy;
+    [[bg3::hidden]] void* VertexModel; // rf::TransformingVertexModel*
+};
+
+struct RenderableObjectPhysicsInfo
+{
+    RenderableObjectPhysicsInfo* Parent;
+    PhysicsClothInfo* ClothInfo;
+};
+
+struct AnimatablePhysicsObject : public AnimatableObject
+{
+    RenderableObjectPhysicsInfo Physics;
+};
+
+struct CullableInstance : public MoveableObject
+{
+    static constexpr uint32_t StaticRTTI = 0x40001;
+
+    struct InstancingObject* Parent;
+    uint32_t InstanceIndex;
+};
+
+struct InstancingRenderableObject : public RenderableObject
+{
+    static constexpr uint32_t StaticRTTI = 0x203;
+};
+
+struct InstancingObject : public RenderableObject
+{
+    static constexpr uint32_t StaticRTTI = 0x403;
+
+    Array<CullableInstance*> Instances;
+};
 
 struct [[bg3::component]] LightComponent : public MoveableObject
 {
+    static constexpr uint32_t StaticRTTI = 0x10001;
+
     DEFINE_PROXY_COMPONENT(Light, "ls::LightComponent")
 
     EntityHandle field_80;
@@ -553,3 +652,12 @@ struct [[bg3::component]] LightComponent : public MoveableObject
 
 
 END_SE()
+
+BEGIN_NS(lua)
+
+LUA_POLYMORPHIC(MoveableObject);
+LUA_POLYMORPHIC(RenderableObject);
+LUA_POLYMORPHIC(AnimatableObject);
+LUA_POLYMORPHIC(Visual);
+
+END_NS()

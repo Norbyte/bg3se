@@ -593,13 +593,11 @@ Object* Create(lua_State * L, FixedString const& statName, FixedString const& mo
 }
 
 /// <summary>
-/// Synchronizes the changes made to the specified stats entry to each client.
-/// `Sync` must be called each time a stats entry is modified dynamically (after `ModuleLoadStarted`/`StatsLoaded`) to ensure that the hostand all clients see the same properties.
+/// Synchronizes the changes made to the specified stats entry with the cached prototype manager.
+/// `Sync` must be called each time a stats entry is modified dynamically.
 /// </summary>
 /// <lua_export>Sync</lua_export>
-/// <lua_legacy>Ext.SyncStat</lua_legacy>
 /// <param name="statName">Name of stats entry to sync</param>
-/// <param name="persist">Is the stats entry persistent, i.e. if it will be written to savegames. (default `true`)</param>
 void Sync(FixedString const& statName, std::optional<bool> persist)
 {
     auto stats = GetStaticSymbols().GetStats();
@@ -611,44 +609,14 @@ void Sync(FixedString const& statName, std::optional<bool> persist)
 
     stats->SyncWithPrototypeManager(object);
 
-    if (gExtender->GetServer().IsInContext()) {
-        object->BroadcastSyncMessage(false);
-
-        gExtender->GetServer().GetExtensionState().MarkDynamicStat(statName);
-        if (persist && *persist) {
-            gExtender->GetServer().GetExtensionState().MarkPersistentStat(statName);
-        }
+    if (persist) {
+        WARN_ONCE("The 'persist' argument to Ext.Stats.Sync() is deprecated");
     }
 }
 
-/// <summary>
-/// Toggles whether the specified stats entry should be persisted to savegames.
-/// Changes made to non - persistent stats will be lost the next time a game is reloaded.
-/// If a dynamically created stats entry is marked as non - persistent, the entry will be deleted completely after the next reload.Make sure that you don't delete entries that are still in use as it could break the game in various ways.
-/// </summary>
-/// <lua_export>SetPersistence</lua_export>
-/// <lua_legacy>Ext.StatSetPersistence</lua_legacy>
-/// <param name="statName">Name of stats entry to update</param>
-/// <param name="persist">Is the stats entry persistent, i.e. if it will be written to savegames</param>
 void SetPersistence(FixedString const& statName, bool persist)
 {
-    if (!gExtender->GetServer().IsInContext()) {
-        OsiError("Can only set persistence in server context");
-        return;
-    }
-
-    auto stats = GetStaticSymbols().GetStats();
-    auto object = stats->Objects.GetByName(statName);
-    if (!object) {
-        OsiError("Cannot set persistence for nonexistent stat: " << statName);
-        return;
-    }
-
-    if (persist) {
-        gExtender->GetServer().GetExtensionState().MarkPersistentStat(statName);
-    } else {
-        gExtender->GetServer().GetExtensionState().UnmarkPersistentStat(statName);
-    }
+    WARN_ONCE("Ext.Stats.SetPersistence() is deprecated");
 }
 
 std::optional<FixedString> EnumIndexToLabel(FixedString const& enumName, int index)

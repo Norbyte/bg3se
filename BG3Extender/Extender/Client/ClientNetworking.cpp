@@ -40,14 +40,6 @@ void ExtenderProtocol::ProcessExtenderMessage(net::MessageContext& context, net:
         break;
     }
 
-    case net::MessageWrapper::kS2CSyncStat:
-    {
-        // FIXME - not supported for now
-        // auto stats = GetStaticSymbols().GetStats();
-        // stats->SyncObjectFromServer(msg.s2c_sync_stat());
-        break;
-    }
-
     case net::MessageWrapper::kS2CKick:
     {
         gExtender->GetLibraryManager().ShowStartupError(msg.s2c_kick().message().c_str(), true);

@@ -10,11 +10,17 @@ local ModLoader = {
 }
 
 function ModLoader:CreateModExtensionTable(moduleUuid)
-    local ext = {
-        Log = logger:CreateLogModule(moduleUuid)
-    }
-    ext.Utils = logger:CreateUtilsCompatModule(Ext)
+    local ext = {}
+    -- Allow mutating Ext during mod load phase
+    setmetatable(ext, {
+        __index = Ext
+    })
+    
+    ext.Log = logger:CreateLogModule(moduleUuid)
+    ext.Utils = logger:CreateUtilsCompatModule(ext, Ext)
     ext.Net = net:CreateNetModule(Ext)
+
+    -- Prevent mutating Ext after we're finished
     setmetatable(ext, {
         __index = Ext,
         

@@ -139,8 +139,14 @@ DEFINE_TAG_COMPONENT(eoc, OffStageComponent, OffStage)
 DEFINE_TAG_COMPONENT(eoc, PickingStateComponent, PickingState)
 DEFINE_TAG_COMPONENT(eoc, PlayerComponent, Player)
 DEFINE_TAG_COMPONENT(eoc, SimpleCharacterComponent, SimpleCharacter)
-DEFINE_TAG_COMPONENT(eoc, WeaponSetComponent, WeaponSet)
 DEFINE_TAG_COMPONENT(eoc::character, CharacterComponent, IsCharacter)
+
+struct WeaponSetComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(WeaponSet, "eoc::WeaponSetComponent")
+
+    WeaponSetType WeaponSet;
+};
 
 struct SpeakerComponent : public BaseComponent
 {
@@ -156,50 +162,6 @@ struct CanEnterChasmComponent : public BaseComponent
 
     bool CanEnter;
 };
-
-
-struct DeadByDefaultComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(DeadByDefault, "eoc::death::DeadByDefaultComponent")
-
-    uint8_t DeadByDefault;
-};
-
-
-struct DeathComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(Death, "eoc::death::DeathComponent")
-
-    EntityHandle Target;
-    EntityHandle field_8;
-    Guid field_10;
-    uint8_t DeathType;
-    uint8_t field_21;
-    uint8_t field_22;
-    uint8_t field_23;
-    uint8_t field_24;
-    int field_28;
-    uint8_t field_2C;
-    glm::vec3 field_30;
-    glm::vec3 field_3C;
-    uint8_t field_48;
-    int field_4C;
-    Guid Combat;
-    uint8_t field_60;
-    uint8_t field_61;
-    uint8_t field_62;
-    bool LeaveTrace;
-    std::optional<glm::vec3> field_64;
-};
-
-
-struct DeathStateComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(DeathState, "eoc::death::StateComponent")
-
-    uint32_t State;
-};
-
 
 struct DialogStateComponent : public BaseComponent
 {
@@ -330,35 +292,31 @@ struct UserReservedForComponent : public BaseComponent
     int UserID;
 };
 
-struct ShapeshiftStateInner
-{
-    FixedString field_0;
-    uint32_t field_4;
-};
-
 struct ShapeshiftStateComponent : public BaseComponent
 {
     DEFINE_COMPONENT(ShapeshiftState, "eoc::shapeshift::StateComponent")
 
     std::optional<uint8_t> BloodSurfaceType;
     std::optional<FixedString> BloodType;
-    std::optional<ShapeshiftStateInner> field_C;
+    [[bg3::legacy(field_C)]] std::optional<TemplateInfo> Template;
 };
-
-struct SoundComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(Sound, "ls::SoundComponent")
-
-    EntityHandle Entity;
-    uint64_t SoundObjectId;
-    uint32_t Flags;
-    float field_14;
-    FixedString field_18;
-    int field_1C;
-};
-
 
 END_SE()
+
+
+BEGIN_NS(multiplayer)
+
+struct UserComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(MultiplayerUser, "eoc::multiplayer::UserComponent")
+
+    UserId UserID;
+};
+
+DEFINE_TAG_COMPONENT(eoc::multiplayer, HostComponent, MultiplayerHost)
+
+END_NS()
+
 
 BEGIN_SE()
 
@@ -400,6 +358,37 @@ struct TimeFactorComponent : public BaseComponent
 
 END_SE()
 
+
+BEGIN_NS(translate)
+
+struct ChangeData
+{
+    EntityHandle Entity;
+    glm::vec3 OldPosition;
+    glm::vec3 NewPosition;
+    int Override{ 0 };
+    bool field_24{ false };
+    bool field_25{ false };
+    bool field_26{ false };
+};
+
+struct ChangedComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(TranslateChanged, "eoc::translate::ChangedComponent")
+
+    HashMap<EntityHandle, Array<ChangeData>> Changes;
+};
+
+struct ChangedEventOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(TranslateChangedEvent, "eoc::translate::ChangedEventOneFrameComponent")
+
+    Array<ChangeData> Changes;
+};
+
+END_NS()
+
+
 BEGIN_NS(sight)
 
 struct SightBaseComponent : public BaseComponent
@@ -434,5 +423,19 @@ struct EntityViewshedComponent : public BaseComponent
     HashSet<Guid> field_0;
 };
 
+struct IgnoreSurfacesComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(IgnoreSurfaces, "eoc::sight::IgnoreSurfacesComponent")
+
+    HashSet<SurfaceType> SurfaceTypes;
+};
+
+
+END_NS()
+
+BEGIN_NS(game)
+
+DEFINE_TAG_COMPONENT(ls::game, PauseExcludedComponent, PauseExcluded)
+DEFINE_TAG_COMPONENT(ls::game, PauseComponent, Pause)
 
 END_NS()

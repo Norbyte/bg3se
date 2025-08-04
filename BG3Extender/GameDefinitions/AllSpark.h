@@ -476,14 +476,22 @@ BEGIN_BARE_NS(keys)
 
     struct SoundEventKey : public KeyBase
     {
-        struct Type1
+        struct Type0
         {
             bg3se::Guid SoundEventID;
             uint8_t SoundObjectIndex;
             bool KeepAlive;
             float LoopLifetime;
         };
+        struct Type1
+        {
+            bg3se::Guid SoundEventID;
+        };
         struct Type2
+        {
+            bg3se::Guid SoundEventID;
+        };
+        struct Type3
         {
             bg3se::Guid SoundEventID;
         };
@@ -498,7 +506,7 @@ BEGIN_BARE_NS(keys)
             uint8_t VocalType;
             uint8_t SoundObjectIndex;
         };
-        std::variant<Type1, Type2, Type2, Type2, Type4, Type5> data;
+        std::variant<Type0, Type1, Type2, Type3, Type4, Type5> data;
     };
 
     struct SplatterChannelKey : public KeyBase

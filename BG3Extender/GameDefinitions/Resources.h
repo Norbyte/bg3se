@@ -5,6 +5,7 @@
 #include <GameDefinitions/Animation.h>
 #include <GameDefinitions/AllSparkShared.h>
 #include <GameDefinitions/Lighting.h>
+#include <GameDefinitions/Components/Camera.h>
 #include <Lua/LuaHelpers.h>
 #include <d3d11.h>
 #include <synchapi.h>
@@ -283,38 +284,39 @@ struct [[bg3::hidden]] ResourceBank
 struct [[bg3::hidden]] ResourcePackage
 {
     void* VMT;
+    ResourceContainer Container;
     ResourceBank* Bank;
     FixedString PackageName;
     STDString Path;
-    LegacyRefMap<FixedString, void*> field_38;
+    bool field_38;
 };
 
 struct [[bg3::hidden]] ResourceManager
 {
-    __int64 field_0;
-    LegacyMap<FixedString, resource::Resource*> Resources;
+    void* VMT;
+    LegacyMap<FixedString, resource::Resource*> PreviewResources;
     std::array<ResourceBank*, 2> ResourceBanks;
-    void* MeshProxyFactory;
     void* VisualFactory;
-    Array<FixedString> AnimationPreloadList;
-    __int64 EffectManager;
-    __int64 EffectFactory;
-    __int64 field_60; // Unknown pointer; size 0x50
-    __int64 field_68; // Unknown pointer; size 0x50
-    __int64 field_70; // Unknown pointer; size 0x50
+    void* EffectDependenciesVMT;
+    Array<FixedString> EffectDependencies;
+    void* EffectManager;
+    void* VisualTemplateManager;
+    void* ModelManager;
+    void* ModelProxyManager;
+    void* ModelProxyTemplateManager;
     TextureManager* TextureManager;
-    __int64 field_80; // Unknown pointer; size 0x23e0
+    void* ShaderManager;
     WwiseManager* SoundManager;
-    __int64 VideoManager;
-    __int64 VideoManager2;
-    __int64 GameAnalytics;
+    void* VideoManager;
+    void* VideoManager2;
+    void* GameAnalytics;
     VirtualTextureManager* VirtualTextureManager;
     CRITICAL_SECTION CriticalSection;
     LegacyRefMap<STDString, void*> ResourceDependencies;
     LegacyMap<FixedString, Path*> Sources;
     Array<void*> VisualLoaders;
     LegacyMap<FixedString, void*> GenomeAnimationManagers;
-    void* BlueprintManager;
+    void* GenomeTypeManager;
     ui::UIManager* UIManager;
     ui::UIManager* UIManagerSwap;
 };
@@ -511,166 +513,61 @@ struct AnimationBlueprintResource : public TwoStepLoadableResource
     // Guid PreviewVisualResourceID;
 };
 
+struct AnimationDesc
+{
+    FixedString ID;
+    AnimationSetAnimationFlags flags;
+};
+
+struct AnimationSubSet
+{
+    LegacyRefMap<FixedString, AnimationDesc> Animation;
+    FixedString FallBackSubSet;
+};
+
+struct AnimationSet
+{
+    LegacyRefMap<FixedString, AnimationSubSet> AnimationSubSets;
+};
+
 struct AnimationSetResource : public LoadableResource
 {
-    struct Subset
-    {
-        struct Animations
-        {
-            FixedString ID;
-            AnimationSetAnimationFlags flags;
-            [[bg3::hidden]] __int8 field_5;
-            [[bg3::hidden]] __int16 field_6;
-            [[bg3::hidden]] __int32 field_8;
-        };
+    AnimationSet* AnimationBank;
+};
 
-        LegacyRefMap<FixedString, Animations> Animation;
-        FixedString FallBackSubSet;
-        [[bg3::hidden]] __int32 field_14;
-    };
-
-    struct Bank
-    {
-        LegacyRefMap<FixedString, Subset> AnimationSubSets;
-    };
-
-    Bank* AnimationBank;
+struct Atmosphere
+{
+    [[bg3::hidden]] void* VMT;
+    FixedString GUID;
+    uint32_t InheritanceFlags;
+    PostProcessSetting PostProcess;
+    float WindDirection;
+    float WindSpeed;
+    float ClothWindSpeed;
+    float ClothWindVariance;
+    float ClothMainWindSpeed;
+    float ClothMainWindFrequency;
+    float ClothWindDirectionOffsetFrequency;
+    float ClothMaxWindDirectionOffset;
+    float NearPlane;
+    float FarPlane;
+    bool EnvironmentEffectGlobalEnabled;
+    std::array<bool, 4> EnvironmentEffectEnabled;
+    std::array<bool, 4> EnvironmentEffectEnabledForTimeline;
+    std::array<FixedString, 4> EnvironmentEffect;
+    std::array<float, 4> EnvironmentEffectOffset;
+    bool LocalLightSourceEnabled;
+    bool LocalLightSourceOverrideSettings;
+    glm::fvec3 LocalLightSourceColor;
+    float LocalLightSourceIntensity;
+    Guid TimelineAutomaticLightingDefaultSetup;
+    bool TimelineAutomaticLightingDisableFlip;
+    Guid Atmosphere;
 };
 
 struct AtmosphereResource : public LoadableResource
 {
-    struct AtmosphereData
-    {
-        struct Range
-        {
-            glm::fvec2 XYOffset;
-            float Saturation;
-            float ExposureShift;
-        };
-        struct ExposureSetting
-        {
-            float ExposureMin;
-            float ExposureMax;
-            float ExposureCompensation;
-            float ExposureMinPercentile;
-            float ExposureMaxPercentile;
-            int32_t ExposureMeteringMode;
-            bool Exposure;
-            __int8 field_19;
-            __int16 field_1a;
-            __int32 field_1c;
-            __int32 field_20;
-            __int32 field_24;
-            __int32 field_28;
-        };
-        [[bg3::hidden]] void* VMT;
-        FixedString GUID;
-        uint32_t InheritanceFlags;
-        glm::fmat4x4 field_10;
-        Range GlobalRange;
-        Range DarkRange;
-        Range ShadowRange;
-        Range MidtonesRange;
-        Range HighlightRange;
-        Range SpecularRange;
-        glm::fvec2 LutBlendFactors;
-        int32_t LutApplyMode;
-        float Hue;
-        float Saturation;
-        float Contrast;
-        float Pivot;
-        float Shadows;
-        float Highlights;
-        __int32 field_d4;
-        // void* GradingLutTextureData_butagain?; std::array<__int64, 18> field_e0;
-        std::array<__int64, 19> field_d8;
-        __int32 field_170;
-        float WhiteBalanceTemperature;
-        float WhiteBalanceTint;
-        bool GradingLutEnabled;
-        [[bg3::hidden]] __int8 field_17d;
-        [[bg3::hidden]] __int16 field_17e;
-        FixedString GradingLut;
-        __int32 field_184;
-        // void* GradingLutTextureData?
-        __int64 field_188;
-        __int32 field_190;
-        bool DOF;
-        bool DOFNearOnly;
-        bool DOFFarOnly;
-        [[bg3::hidden]] __int8 field_197;
-        float DOFFocalDistance;
-        float DOFNearSharpDistance;
-        float DOFFarSharpDistance;
-        float DOFAperature;
-        __int64 field_1a8;
-        __int64 field_1b0;
-        __int32 field_1b8;
-        std::array<ExposureSetting, 2> ExposureSettings;
-        float LensFlareTreshold; // Yes, the game misspells it
-        float LensFlareIntensity;
-        float LensFlareGhostDispersal;
-        float LensFlareHaloWidth;
-        float LensFlareChromaticDistortion;
-        bool LensFlareEnabled;
-        [[bg3::hidden]] __int8 field_229;
-        [[bg3::hidden]] __int16 field_22a;
-        float Threshold;
-        float Amount;
-        float GodRaysIntensity;
-        float GodRaysPower;
-        float GodRaysThreshold;
-        float ToneMapHighlightsFixAmount;
-        __int32 field_224;
-        glm::fvec3 VignetteColor;
-        float VignetteIntensity;
-        float VignettePower;
-        bool Bloom;
-        bool GodRays;
-        bool Vignette;
-        [[bg3::hidden]] __int8 field_25f;
-        float WindDirection;
-        float WindSpeed;
-        float ClothWindSpeed;
-        float ClothWindVariance;
-        float ClothMainWindSpeed;
-        float ClothMainWindFrequency;
-        float ClothWindDirectionOffsetFrequency;
-        float ClothMaxWindDirectionOffset;
-        float NearPlane;
-        float FarPlane;
-        bool EnvironmentEffectGlobalEnabled;
-        bool EnvironmentEffectEnabled;
-        bool EnvironmentEffectEnabled1;
-        bool EnvironmentEffectEnabled2;
-        bool EnvironmentEffectEnabled3;
-        bool EnvironmentEffectEnabledForTimeline;
-        bool EnvironmentEffectEnabledForTimeline1;
-        bool EnvironmentEffectEnabledForTimeline2;
-        bool EnvironmentEffectEnabledForTimeline3;
-        [[bg3::hidden]] __int8 field_291;
-        [[bg3::hidden]] __int16 field_292;
-        FixedString EnvironmentEffect;
-        FixedString EnvironmentEffect1;
-        FixedString EnvironmentEffect2;
-        FixedString EnvironmentEffect3;
-        float EnvironmentEffectOffset;
-        float EnvironmentEffectOffset1;
-        float EnvironmentEffectOffset2;
-        float EnvironmentEffectOffset3;
-        bool LocalLightSourceEnabled;
-        bool LocalLightSourceOverrideSettings;
-        [[bg3::hidden]] __int16 field_2b6;
-        glm::fvec3 LocalLightSourceColor;
-        float LocalLightSourceIntensity;
-        bg3se::Guid TimelineAutomaticLightingDefaultSetup;
-        bool TimelineAutomaticLightingDisableFlip;
-        [[bg3::hidden]] __int8 field_2d9;
-        [[bg3::hidden]] __int16 field_2da;
-        [[bg3::hidden]] __int32 field_2dc;
-        bg3se::Guid CharacterLightSetup;
-    };
-    AtmosphereData* Atmosphere;
+    Atmosphere* Atmosphere;
     Array<FixedString> Labels;
 };
 

@@ -18,7 +18,9 @@ _I._PublishedSharedEvents = {
     "StatsStructureLoaded",
     "FindPath",
     "NetMessage",
-    "NetModMessage"
+    "NetModMessage",
+    -- Thrown by Log module
+    "Log"
 }
 
 _I._DoStartup = function ()

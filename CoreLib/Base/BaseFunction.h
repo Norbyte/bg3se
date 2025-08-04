@@ -477,6 +477,15 @@ struct Signal
 };
 
 
+template <class... Args>
+struct SignalSubscriber
+{
+    Signal<Args...>* Sig;
+    uint64_t RegistrantId;
+    Signal<Args...>::Function Handler;
+};
+
+
 template <class T>
 Function<T> MakeFunction();
 

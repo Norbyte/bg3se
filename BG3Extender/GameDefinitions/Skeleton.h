@@ -37,12 +37,12 @@ struct Skeleton : public ProtectedGameObject<Skeleton>
     FixedString field_28;
     phx::PhysicsSkinnedObject* Physics;
     bool IsVisible;
-    SkeletonBone** Bones;
+    [[bg3::hidden]] SkeletonBone* Bones;
     HashMap<FixedString, Array<FixedString>> BoneGroups;
     Array<SkeletonSocket> Sockets;
     uint16_t BoneCount;
     std::array<uint16_t, 6> SoundBoneIndices;
-    std::array<uint16_t, 10> SoundActivationRanges;
+    std::array<float, 10> SoundActivationRanges;
     SkeletonContent* SkeletonContent;
 };
 

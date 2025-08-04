@@ -2,6 +2,7 @@
 
 #include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Stats/Common.h>
+#include <GameDefinitions/Components/SpellCast.h>
 
 BEGIN_NS(ecl)
 
@@ -114,6 +115,8 @@ struct CharacterTask_ControllerSelection : public CharacterTask
 struct CharacterTask_MoveController : public CharacterTask
 {
 	static constexpr auto Type = CharacterTaskType::MoveController;
+
+	bool IgnoreMovementUntilStickIsReleased;
 };
 
 
@@ -371,10 +374,11 @@ struct CharacterTask_MoveTo : public CharacterMoveTask
 	int MovementType;
 	int16_t AiFloodId;
 	navigation::TargetInfo NextTarget;
-	bool NeedsTargetUpdate;
-	[[bg3::hidden]] glm::aligned_vec3 HoverPosition;
-	bool HasEntered;
-	uint8_t field_33D;
+	bool TargetSearchFinished;
+	[[bg3::hidden]] uint32_t _PAD;
+	glm::vec3 HoverPosition;
+	bool TargetReady;
+	bool Started;
 	EntityHandle HoverTarget;
 	EntityHandle TargetEffect;
 	[[bg3::hidden]] void* EffectCallback;

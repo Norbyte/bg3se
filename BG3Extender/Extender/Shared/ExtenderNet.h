@@ -64,6 +64,7 @@ public:
 
 protected:
     virtual void ProcessExtenderMessage(net::MessageContext& context, MessageWrapper & msg) = 0;
+    void DoSyncUserVars(MsgUserVars const& msg);
 };
 
 struct LocalMessage

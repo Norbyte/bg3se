@@ -92,6 +92,24 @@ inline void push(lua_State* L, WStringView const& v)
     push(L, ToUTF8(v));
 }
 
+inline void push(lua_State* L, ScratchBuffer const& v)
+{
+    if (v.Buffer.Buffer && v.Buffer.Meta.Origin != MemoryOrigin::None) {
+        lua_pushlstring(L, (char*)v.Buffer.Buffer, v.Buffer.Size);
+    } else {
+        push(L, nullptr);
+    }
+}
+
+inline void push(lua_State* L, ScratchString const& v)
+{
+    if (v.Buffer) {
+        lua_pushlstring(L, (char*)v.Buffer, v.Size);
+    } else {
+        push(L, nullptr);
+    }
+}
+
 void push(lua_State* L, EntityHandle const& h);
 void push(lua_State* L, ComponentHandle const& h);
 void push(lua_State* L, ecs::EntityRef const& h);

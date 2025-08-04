@@ -93,6 +93,9 @@ namespace {
 class VulkanBackend : public RenderingBackend
 {
 public:
+    static constexpr unsigned TextureSoftCap = 2000;
+    static constexpr unsigned TextureHardCap = 2048;
+
     VulkanBackend(IMGUIManager& ui) : ui_(ui) {}
 
     ~VulkanBackend() override
@@ -197,7 +200,7 @@ public:
         VkDescriptorPoolSize poolSize
         {
             .type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-            .descriptorCount = 2048,
+            .descriptorCount = TextureHardCap,
         };
 
         VkDescriptorPoolCreateInfo createInfo
@@ -205,7 +208,7 @@ public:
             .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
             .pNext = nullptr,
             .flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
-            .maxSets = 2048,
+            .maxSets = TextureHardCap,
             .poolSizeCount = 1,
             .pPoolSizes = &poolSize
         };
@@ -626,7 +629,7 @@ public:
         auto view = descriptor->Vulkan.Views[0]->View;
         if (!view) return {};
 
-        if (textures_ > 2000) {
+        if (textures_ > TextureSoftCap) {
             if (!textureLimitWarningShown_) {
                 ERR("UI texture limit reached. Newly loaded textures may not load or render correctly");
                 textureLimitWarningShown_ = true;
@@ -635,17 +638,39 @@ public:
         }
 
         textures_++;
-        auto desc = ImGui_ImplVulkan_AddTexture(sampler_, VkImageView(view), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-        return TextureLoadResult{ reinterpret_cast<ImTextureID>(desc), descriptor->Vulkan.ImageData.Width, descriptor->Vulkan.ImageData.Height };
+        return TextureLoadResult{ 
+            TextureOpaqueHandle(view),
+            descriptor->Vulkan.ImageData.Width, 
+            descriptor->Vulkan.ImageData.Height
+        };
     }
 
-    void UnregisterTexture(ImTextureID id) override
+    void UnregisterTexture(TextureOpaqueHandle opaqueHandle) override
     {
         if (!initialized_) return;
 
-        auto desc = reinterpret_cast<VkDescriptorSet>(id);
-        ImGui_ImplVulkan_RemoveTexture(desc);
+        auto imageView = reinterpret_cast<VkImageView>(opaqueHandle);
+        auto desc = textureDescriptors_.get_or_default(imageView, 0);
+        if (desc) {
+            ImGui_ImplVulkan_RemoveTexture(desc);
+            textureDescriptors_.remove(imageView);
+        }
+
         textures_--;
+    }
+
+    std::optional<ImTextureID> BindTexture(TextureOpaqueHandle opaqueHandle) override
+    {
+        auto imageView = reinterpret_cast<VkImageView>(opaqueHandle);
+        auto desc = textureDescriptors_.get_or_default(imageView, 0);
+        if (!desc) {
+            desc = ImGui_ImplVulkan_AddTexture(sampler_, imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            if (desc) {
+                textureDescriptors_.set(imageView, desc);
+            }
+        }
+        
+        return (ImTextureID)desc;
     }
 
     bool IsInitialized() override
@@ -841,6 +866,7 @@ auto  gamePresent           = reinterpret_cast<PFN_vkQueuePresentKHR>(
         if (descriptorPool_ != VK_NULL_HANDLE) {
             vkDestroyDescriptorPool(device_, descriptorPool_, nullptr);
             descriptorPool_ = VK_NULL_HANDLE;
+            textureDescriptors_.clear();
         }
 
         if (sampler_ != VK_NULL_HANDLE) {
@@ -1390,6 +1416,8 @@ void presentPreHook(VkPresentInfoKHR* pPresentInfo)
     bool uiFrameworkStarted_{ false };
     bool requestReloadFonts_{ false };
     std::mutex globalResourceLock_;
+
+    HashMap<VkImageView, VkDescriptorSet> textureDescriptors_;
 
     VkCreateInstanceHookType CreateInstanceHook_;
     VkCreateDeviceHookType CreateDeviceHook_;

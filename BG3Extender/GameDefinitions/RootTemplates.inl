@@ -5,6 +5,12 @@
 
 BEGIN_SE()
 
+ConstructionFillingTemplate::~ConstructionFillingTemplate()
+{}
+
+ConstructionTileTemplate::~ConstructionTileTemplate()
+{}
+
 FixedString GameObjectTemplate::GetTemplateType() const
 {
     return *GetType();
