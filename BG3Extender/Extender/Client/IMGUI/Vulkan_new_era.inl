@@ -1,5 +1,5 @@
 #pragma once
-#define SL_ENABLE_DEPRECATED_API 1
+
 #include <GameDefinitions/Base/Base.h>
 #include <Extender/Client/IMGUI/Backends.h>
 #include <Extender/ScriptExtender.h>
@@ -13,8 +13,6 @@
 #include <Extender/Client/IMGUI/sl/sl_dlss_g.h>
 #include <Extender/Client/IMGUI/sl/sl_core_types.h>
 #include <Extender/Client/IMGUI/sl/sl_helpers.h>
-#include <Extender/Client/IMGUI/sl/sl_core_api.h>
-
 
 BEGIN_SE()
 
@@ -67,9 +65,6 @@ VK_HOOK(CreatePipelineCache)
 VK_HOOK(CreateSwapchainKHR)
 VK_HOOK(DestroySwapchainKHR)
 VK_HOOK(QueuePresentKHR)
-enum class SlDLSSGSetOptionsHookTag {};
-using SlDLSSGSetOptionsHookType = WrappableFunction<SlDLSSGSetOptionsHookTag, sl::Result(sl::ViewportHandle, const sl::DLSSGOptions&)>;
-template<> SlDLSSGSetOptionsHookType* SlDLSSGSetOptionsHookType::gHook = nullptr;
 
 END_SE()
 
@@ -84,11 +79,6 @@ END_SE()
 #define VK_CHECK(expr) { auto _rval = (expr); if (_rval != VK_SUCCESS) { ERR(#expr " failed: %d", _rval); } }
 
 BEGIN_NS(extui)
-
-namespace {
-    thread_local bool makingOwnDLSSGCall_ = false;
-}
-
 
 class VulkanBackend : public RenderingBackend
 {
@@ -107,7 +97,7 @@ public:
     {
         if (CreateInstanceHook_.IsWrapped()) return;
 
-        ERR("VulkanBackend::EnableHooks() CACA");
+        ERR("VulkanBackend::EnableHooks() BUKAKA");
 
         DetourTransactionBegin();
         DetourUpdateThread(GetCurrentThread());
@@ -124,8 +114,39 @@ public:
         QueuePresentKHRHook_.SetPreHook(&VulkanBackend::vkQueuePresentKHRHooked, this);
 
 
-        ///HERE
-
+         // Load sl.interposer.dll directly from game files
+        wchar_t gamePath[MAX_PATH];
+        GetModuleFileNameW(nullptr, gamePath, MAX_PATH);
+        std::wstring gameDir(gamePath);
+        gameDir = gameDir.substr(0, gameDir.find_last_of(L"\\"));
+        ERR("[STREAMLINE] Game directory: %ls", gameDir.c_str());
+        std::wstring slPath = gameDir + L"\\sl.interposer.dll";
+        ERR("[STREAMLINE] Loading sl.interposer.dll from: %ls", slPath.c_str());
+        
+        sl_ = LoadLibraryW(slPath.c_str());
+        if (sl_) {
+        ERR("[STREAMLINE] Successfully loaded sl.interposer.dll: %p", sl_);
+        
+        // Get DLSS-G functions
+        linkStreamline();
+        
+        // Get Vulkan functions for hooking
+        auto slQueuePresent = reinterpret_cast<PFN_vkQueuePresentKHR>(
+            GetProcAddress(sl_, "vkQueuePresentKHR")
+        );
+        // Store DLSSG's present function for later use
+        dlssgPresentFunction_ = slQueuePresent;
+        ERR("[EXTUI_HOOK_SETUP] Stored DLSSG vkQueuePresentKHR @ %p", dlssgPresentFunction_);
+        // DO NOT re-hook! We keep our original hook on the game's vkQueuePresentKHR
+        
+        // Get all other DLSS-FG Vulkan functions we need
+        dlssgCreateSwapchainKHR_ = reinterpret_cast<PFN_vkCreateSwapchainKHR>(
+            GetProcAddress(sl_, "vkCreateSwapchainKHR"));
+            
+        ERR("[EXTUI_HOOK_SETUP] Retrieved DLSS-FG Vulkan functions:");
+        ERR("vkCreateSwapchainKHR: %p", dlssgCreateSwapchainKHR_);
+        
+        /*
         hSL_  = LoadLibraryW(L"upscaler.dll");
         if (hSL_) {
             ERR("[EXTUI_HOOK_SETUP] upscaler.dll loaded");
@@ -165,6 +186,73 @@ public:
                 ERR("vkCreateSwapchainKHR: %p", dlssgCreateSwapchainKHR_);
             }
         }
+        */
+    }
+
+    HMODULE linkStreamline() {
+        ERR("[STREAMLINE] Getting DLSS-G functions from loaded sl.interposer.dll...");
+        
+        if (!sl_) {
+            ERR("[STREAMLINE] sl.interposer.dll not loaded");
+            return nullptr;
+        }
+        
+        auto slInit = GetProcAddress(sl_, "slInit");
+        auto slShutdown = GetProcAddress(sl_, "slShutdown");
+        if (slInit) {
+            sl::Preferences pref{};
+            pref.featuresToLoad = {sl::kFeatureDLSS_G};
+            pref.logLevel = sl::eLogLevelDefault;
+            pref.pathsToPlugins = {}; // plugins next to executable
+            
+            auto slInitFunc = reinterpret_cast<PFN_slInit>(slInit);
+            sl::Result result = slInitFunc(pref);
+            ERR("[STREAMLINE] slInit result: %s", sl::getResultAsStr(result));
+        }
+        slGetFeatureFunction_ = reinterpret_cast<PFun_slGetFeatureFunction*>(
+            GetProcAddress(sl_, "slGetFeatureFunction"));
+        
+        if (slGetFeatureFunction_) {
+            ERR("[STREAMLINE] Got slGetFeatureFunction: %p", slGetFeatureFunction_);
+            
+            void* funcPtr = nullptr;
+            sl::Result result = slGetFeatureFunction_(sl::kFeatureDLSS_G, "slDLSSGSetOptions", funcPtr);
+            
+            if (result == sl::Result::eOk && funcPtr) {
+                slDLSSGSetOptions_ = reinterpret_cast<PFun_slDLSSGSetOptions*>(funcPtr);
+                okayToModifyFG_ = true;
+                ERR("[STREAMLINE] ✓ Got slDLSSGSetOptions: %p", slDLSSGSetOptions_);
+            } else {
+                ERR("[STREAMLINE] ✗ Failed to get slDLSSGSetOptions, result: %d", static_cast<int>(result));
+            }
+            
+            void* pFn = nullptr;
+            if (slGetFeatureFunction_(sl::kFeatureDLSS_G, "slDLSSGGetState", pFn) == sl::Result::eOk && pFn)
+            {
+                slDLSSGGetState_ = reinterpret_cast<PFun_slDLSSGGetState*>(pFn);
+                ERR("[STREAMLINE] ✓ Got slDLSSGGetState: %p", slDLSSGGetState_);
+            }
+            else
+            {
+                ERR("[STREAMLINE] ✗ Could not get slDLSSGGetState");
+            }
+            
+            ERR("[STREAMLINE] Testing exports - slGetFeatureFunction: %p, slInit: %p, slShutdown: %p", 
+                slGetFeatureFunction_, slInit, slShutdown);
+            
+            if (slGetFeatureFunction_ && slInit && slShutdown) {
+                ERR("[STREAMLINE] ✓ Found valid Streamline interposer: %p", sl_);
+                // Call slInit immediately
+                return sl_;
+            } else {
+                ERR("[STREAMLINE] ✗ Missing required Streamline functions");
+            }
+        } else {
+            ERR("[STREAMLINE] ✗ Could not get slGetFeatureFunction");
+        }
+        
+        ERR("[STREAMLINE] Failed to get DLSS-G functions");
+        return nullptr;
     }
 
     void DisableHooks() override
@@ -182,9 +270,6 @@ public:
         CreateSwapchainKHRHook_.Unwrap();
         DestroySwapchainKHRHook_.Unwrap();
         QueuePresentKHRHook_.Unwrap();
-        if (slDLSSGSetOptionsHook_.IsWrapped()) {
-            slDLSSGSetOptionsHook_.Unwrap();
-        }
         DetourTransactionCommit();
     }
 
@@ -279,259 +364,6 @@ public:
         initialized_ = false;
     }
 
-    void slDLSSGSetOptionsHooked(
-        sl::ViewportHandle viewport,
-        const sl::DLSSGOptions& options,
-        sl::Result result)
-    {
-        dlssgViewport_ = viewport;  // Store the viewport DLSS-G is using
-        //ERR("[DLSSG HOOK] DLSS-G using viewport: %u", viewport);
-        //ERR("[DLSSG HOOK] === POST-HOOK ENTRY ===");
-        //ERR("[DLSSG HOOK] viewport: %u, mode: %d, flags: %d, result: %s", 
-            //viewport, static_cast<int>(options.mode), static_cast<int>(options.flags), sl::getResultAsStr(result));
-        
-        // Skip our own calls to avoid infinite recursion
-        if (makingOwnDLSSGCall_) {
-            //ERR("[DLSSG HOOK] Skipping our own call to slDLSSGSetOptions");
-            return;
-        }
-        
-        //ERR("[DLSSG HOOK] External slDLSSGSetOptions intercepted - viewport: %u, mode: %d, result: %s", 
-            //viewport, static_cast<int>(options.mode), sl::getResultAsStr(result));
-        
-        // Only proceed if the original call was successful
-        if (result != sl::Result::eOk) {
-            //ERR("[DLSSG HOOK] Original slDLSSGSetOptions failed, skipping override");
-            return;
-        }
-        
-        //ERR("[DLSSG HOOK] Checking conditions: isDlssgActive=%s, okayToModifyFG=%s", 
-            //isDlssgActive() ? "true" : "false", okayToModifyFG_ ? "true" : "false");
-        
-        // Now apply our override logic - we want to override external calls with our menu state
-        if (isDlssgActive() && okayToModifyFG_)
-        {
-            //ERR("[DLSSG HOOK] Conditions met, proceeding with override logic");
-            
-            bool wantPause = menuVisible_;
-            //ERR("[DLSSG HOOK] menuVisible_: %s, wantPause: %s", menuVisible_ ? "true" : "false", wantPause ? "true" : "false");
-            
-            // Always override external calls with our desired state
-            sl::DLSSGOptions overrideOptions = {};
-            overrideOptions.flags = sl::DLSSGFlags::eRequestVRAMEstimate;   // ask plugin to fill VRAM
-            overrideOptions.mode = wantPause ? sl::DLSSGMode::eOn : sl::DLSSGMode::eOn;
-            
-            //ERR("[DLSSG HOOK] Created override options: mode=%d, flags=%d", 
-            //    static_cast<int>(overrideOptions.mode), static_cast<int>(overrideOptions.flags));
-            
-            // Only override if our desired state is different from what was requested
-            if (static_cast<int>(options.mode) != static_cast<int>(overrideOptions.mode))
-            {
-                //ERR("[DLSSG HOOK] Overriding external DLSS-G mode from %d to %d (menu visible: %s)", 
-                    //static_cast<int>(options.mode), static_cast<int>(overrideOptions.mode), 
-                    //wantPause ? "true" : "false");
-                
-                //ERR("[DLSSG HOOK] Checking originalSlDLSSGSetOptions_: %p", originalSlDLSSGSetOptions_);
-                if (originalSlDLSSGSetOptions_) 
-                {
-                    //ERR("[DLSSG HOOK] Setting makingOwnDLSSGCall_ = true");
-                    // Set flag to indicate we're making our own call
-                    makingOwnDLSSGCall_ = true;
-                    
-                    //ERR("[DLSSG HOOK] About to call originalSlDLSSGSetOptions_ with viewport: %u, mode: %d", 
-                        //viewport, static_cast<int>(overrideOptions.mode));
-                    
-                    sl::Result overrideResult = originalSlDLSSGSetOptions_(viewport, overrideOptions);
-                    sl::DLSSGState st{};
-                    sl::Result r = slDLSSGGetState_(0, st, nullptr);
-                    auto text= sl::getResultAsStr(r);
-                    if (r == sl::Result::eOk)
-                    {
-                        //HERE GOOD
-                        //DumpDLSSGState(st);
-                    }
-                    
-                    //ERR("[DLSSG HOOK] originalSlDLSSGSetOptions_ returned, setting makingOwnDLSSGCall_ = false");
-                    makingOwnDLSSGCall_ = false;
-                    
-                    auto text2 = sl::getResultAsStr(overrideResult);
-                    //ERR("[DLSSG HOOK] Override slDLSSGSetOptions result: %s", text2);
-                    if (overrideResult == sl::Result::eOk) {
-                        fgPaused_ = wantPause;
-                        //ERR("[DLSSG HOOK] Frame-Generation %s (overrode external call)", fgPaused_ ? "PAUSED" : "RESUMED");
-                    }
-                    else
-                    {
-                        //ERR("[DLSSG HOOK] Failed to override DLSS-G mode: %s", text2);
-                    }
-                }
-                else
-                {
-                    //ERR("[DLSSG HOOK] originalSlDLSSGSetOptions_ is null!");
-                }
-            }
-            else
-            {
-                //ERR("[DLSSG HOOK] External call matches our desired state, no override needed");
-                fgPaused_ = wantPause; // Update our state to match
-            }
-        }
-        else
-        {
-            //ERR("[DLSSG HOOK] Conditions not met for override");
-        }
-        
-        //ERR("[DLSSG HOOK] === POST-HOOK EXIT ===");
-    }
-
-    HMODULE linkStreamline() {
-        
-
-
-        wchar_t exePath[MAX_PATH] = {};
-        GetModuleFileNameW(nullptr, exePath, MAX_PATH);
-
-        // Trim filename → leave just the folder
-        wchar_t* lastBS = wcsrchr(exePath, L'\\');
-        if (lastBS) *lastBS = L'\0';
-
-        std::wstring imguiPath = std::wstring(exePath) +
-            L"\\mods\\UpscalerBasePlugin\\Streamline\\sl.imgui.dll";
-
-        slImGui_ = LoadLibraryExW(
-            imguiPath.c_str(), nullptr, LOAD_WITH_ALTERED_SEARCH_PATH);
-
-        if (slImGui_)
-            ERR("[STREAMLINE] sl.imgui.dll loaded from \"%ls\" (%p)",
-                imguiPath.c_str(), slImGui_);
-        else
-            ERR("[STREAMLINE] sl.imgui.dll NOT found at \"%ls\" (GLE=%lu)",
-                imguiPath.c_str(), GetLastError());
-
-
-
-
-        ERR("[STREAMLINE] Searching for real Streamline interposer...");
-        
-        // Get PEB (Process Environment Block) to walk loaded modules
-        PPEB peb = reinterpret_cast<PPEB>(__readgsqword(0x60)); // x64 only
-        PPEB_LDR_DATA ldr = peb->Ldr;
-        
-        PLIST_ENTRY head = &ldr->InLoadOrderModuleList;
-        PLIST_ENTRY entry = head->Flink;
-        
-        int count = 0;
-        while (entry != head && count < 1000) { // Safety limit
-            PLDR_DATA_TABLE_ENTRY dataEntry = CONTAINING_RECORD(entry, LDR_DATA_TABLE_ENTRY, InLoadOrderLinks);
-            
-            if (dataEntry->FullDllName.Buffer && dataEntry->DllBase) {
-                wchar_t* dllName = dataEntry->FullDllName.Buffer;
-                HMODULE baseAddress = reinterpret_cast<HMODULE>(dataEntry->DllBase);
-                
-                if(wcsstr(dllName, L"sl.imgui.dll"))
-                {
-                    ERR("[STREAMLINE] Found sl.imgui.dll candidate: %ls (%p)", dllName, baseAddress);
-                }
-                // Check if this looks like a Streamline interposer
-                if (wcsstr(dllName, L"sl.interposer.dll")) {
-                    ERR("[STREAMLINE] Found sl.interposer.dll candidate: %ls (%p)", dllName, baseAddress);
-                    
-                    // Test if it has the Streamline functions we need
-                    slGetFeatureFunction_ = reinterpret_cast<PFun_slGetFeatureFunction*>(
-                        GetProcAddress(baseAddress, "slGetFeatureFunction"));
-                        if (slGetFeatureFunction_) {
-                            ERR("[STREAMLINE] Got slGetFeatureFunction: %p", slGetFeatureFunction_);
-                            
-                            void* funcPtr = nullptr;
-                            sl::Result result = slGetFeatureFunction_(sl::kFeatureDLSS_G, "slDLSSGSetOptions", funcPtr);
-                            if (result == sl::Result::eOk && funcPtr) {
-                                slDLSSGSetOptions_ = reinterpret_cast<PFun_slDLSSGSetOptions*>(funcPtr);
-                                originalSlDLSSGSetOptions_ = slDLSSGSetOptions_; // Store original
-                                okayToModifyFG_ = true;
-                                ERR("[STREAMLINE] ✓ Got slDLSSGSetOptions: %p", slDLSSGSetOptions_);
-
-                                slSetTag_ = reinterpret_cast<PFun_slSetTag*>(GetProcAddress(baseAddress, "slSetTag"));
-                                slSetTagForFrame_ = reinterpret_cast<PFun_slSetTagForFrame*>(GetProcAddress(baseAddress, "slSetTagForFrame"));
-                                slGetNewFrameToken_ = reinterpret_cast<PFun_slGetNewFrameToken*>(GetProcAddress(baseAddress, "slGetNewFrameToken"));
-                                void* pFn = nullptr;
-                                if (slGetFeatureFunction_(sl::kFeatureDLSS_G, "slDLSSGGetState", pFn) == sl::Result::eOk && pFn)
-                                {
-                                    slDLSSGGetState_ = reinterpret_cast<PFun_slDLSSGGetState*>(pFn);
-                                    ERR("[STREAMLINE] ✓ Got slDLSSGGetState: %p", slDLSSGGetState_);
-                                }
-                                else
-                                {
-                                    ERR("[STREAMLINE] ✗ Could not get slDLSSGGetState");
-                                }
-                                
-                                if (slSetTag_) {
-                                    ERR("[STREAMLINE] ✓ Got slSetTag: %p", slSetTag_);
-                                } else {
-                                    ERR("[STREAMLINE] ✗ Failed to get slSetTag");
-                                }
-                                
-                                if (slSetTagForFrame_) {
-                                    ERR("[STREAMLINE] ✓ Got slSetTagForFrame: %p", slSetTagForFrame_);
-                                } else {
-                                    ERR("[STREAMLINE] ✗ Failed to get slSetTagForFrame");
-                                }
-                                
-                                if (slGetNewFrameToken_) {
-                                    ERR("[STREAMLINE] ✓ Got slGetNewFrameToken: %p", slGetNewFrameToken_);
-                                } else {
-                                    ERR("[STREAMLINE] ✗ Failed to get slGetNewFrameToken");
-                                }
-                                sl::Result result = slGetFeatureFunction_(sl::kFeatureCommon, "slSetConstants", funcPtr);
-                                if (result == sl::Result::eOk && funcPtr) {
-                                    slSetConstants_ = reinterpret_cast<PFun_slSetConstants*>(funcPtr);
-                                    ERR("[STREAMLINE] ✓ Got slSetConstants: %p", slSetConstants_);
-                                } else {
-                                    ERR("[STREAMLINE] ✗ Failed to get slSetConstants: %s", sl::getResultAsStr(result));
-                                }
-
-                                result = slGetFeatureFunction_(sl::kFeatureCommon, "slEvaluateFeature", funcPtr);
-                                if (result == sl::Result::eOk && funcPtr) {
-                                    slEvaluateFeature_ = reinterpret_cast<PFun_slEvaluateFeature*>(funcPtr);
-                                    ERR("[STREAMLINE] ✓ Got slEvaluateFeature: %p", slEvaluateFeature_);
-                                } else {
-                                    ERR("[STREAMLINE] ✗ Failed to get slEvaluateFeature: %s", sl::getResultAsStr(result));
-                                }
-                                
-                                // Hook slDLSSGSetOptions
-                                DetourTransactionBegin();
-                                DetourUpdateThread(GetCurrentThread());
-                                slDLSSGSetOptionsHook_.Wrap(ResolveFunctionTrampoline(slDLSSGSetOptions_));
-                                DetourTransactionCommit();
-                                
-                                slDLSSGSetOptionsHook_.SetPostHook(&VulkanBackend::slDLSSGSetOptionsHooked, this);
-                                ERR("[STREAMLINE] ✓ Hooked slDLSSGSetOptions");
-                                
-                            } else {
-                                ERR("[STREAMLINE] ✗ Failed to get slDLSSGSetOptions, result: %d", static_cast<int>(result));
-                            }
-                    }
-                    auto slInit = GetProcAddress(baseAddress, "slInit");
-                    slShutdown_ = reinterpret_cast<PFun_slShutdown*>(GetProcAddress(baseAddress, "slShutdown"));
-                    ERR("[STREAMLINE] Testing exports - slGetFeatureFunction: %p, slInit: %p, slShutdown: %p", 
-                        slGetFeatureFunction_, slInit, slShutdown_);
-                    
-                    if (slGetFeatureFunction_ && slInit && slShutdown_) {
-                        ERR("[STREAMLINE] ✓ Found REAL Streamline interposer: %ls (%p)", dllName, baseAddress);
-                        return baseAddress;
-                    } else {
-                        ERR("[STREAMLINE] ✗ This is a DXGI proxy, not real Streamline: %ls", dllName);
-                    }
-                }
-            }
-            
-            entry = entry->Flink;
-            count++;
-        }
-        
-        ERR("[STREAMLINE] No real Streamline interposer found after checking %d modules", count);
-        return nullptr;
-    }
-
     void NewFrame() override
     {
         // Speculative check to avoid unnecessary locking
@@ -549,14 +381,6 @@ public:
             ERR("Rebuilding font atlas");
             ImGui_ImplVulkan_DestroyFontsTexture();
             requestReloadFonts_ = false;
-            if(!okayToModifyFG_)
-            {
-                HMODULE hDLSSG = GetModuleHandleW(L"sl.dlss_g.dll");
-                if (hDLSSG && reinterpret_cast<uintptr_t>(hDLSSG) != 0) 
-                {
-                    sl_=linkStreamline();
-                }
-            }
         }
         ImGui_ImplVulkan_NewFrame();
         //ERR("VK: NewFrame");
@@ -599,8 +423,8 @@ public:
 
         drawViewport_ = curViewport_;
         menuVisible_ = (vp.DrawDataP.CmdLists.Size > 0);   // simple heuristic
-        //ERR("[MENU DEBUG] FinishFrame: CmdLists.Size=%d, menuVisible_=%s, drawViewport_=%d", 
-            //vp.DrawDataP.CmdLists.Size, menuVisible_ ? "true" : "false", drawViewport_);
+        //ERR("VK: FinishFrame - set drawViewport_ to %d, have %d draw lists", 
+        //    drawViewport_, vp.DrawDataP.CmdLists.Size);
     }
 
     void ClearFrame() override
@@ -928,15 +752,7 @@ auto  gamePresent           = reinterpret_cast<PFN_vkQueuePresentKHR>(
 
         swapInfo.width_ = pCreateInfo->imageExtent.width;
         swapInfo.height_ = pCreateInfo->imageExtent.height;
-        
-        ERR("=== SWAPCHAIN ANALYSIS ===");
         ERR("Swap chain size: %d x %d", swapInfo.width_, swapInfo.height_);
-        ERR("Format: %d, ColorSpace: %d", pCreateInfo->imageFormat, pCreateInfo->imageColorSpace);
-        ERR("Usage: 0x%x, Transform: %d", pCreateInfo->imageUsage, pCreateInfo->preTransform);
-        ERR("Present mode: %d, Clipped: %d", pCreateInfo->presentMode, pCreateInfo->clipped);
-        ERR("Min images: %d, Array layers: %d", pCreateInfo->minImageCount, pCreateInfo->imageArrayLayers);
-        ERR("Old swapchain: %p", pCreateInfo->oldSwapchain);
-        ERR("DLSS-G active: %s", isDlssgActive() ? "YES" : "NO");
 
         {
             VkAttachmentDescription attDesc = {
@@ -1070,240 +886,151 @@ auto  gamePresent           = reinterpret_cast<PFN_vkQueuePresentKHR>(
         }
     }
 
-    bool createSLResource(SwapchainImageInfo& image, sl::Resource& outResource)
-{
-    try {
-        outResource.type = sl::ResourceType::eTex2d;
-        outResource.native = image.image;
-        outResource.view = image.view;  // Try this field name first
-        outResource.memory = nullptr;
-        outResource.state = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    void presentPreHook(VkPresentInfoKHR* pPresentInfo)
+    {
+        //ERR("presentPreHook: Called for viewport %d", drawViewport_);
+        auto& vp = viewports_[drawViewport_].Viewport;
         
-        // Try to set dimensions if they exist
-        outResource.width = swapchain_.width_;
-        outResource.height = swapchain_.height_;
-        outResource.mipLevels = 1;
-        outResource.arrayLayers = 1;
-        
-        return true;
-    } catch (...) {
-        ERR("Failed to create sl::Resource - trying fallback field names");
-        
-        // Fallback: try different field names
-        try {
-            outResource.type = sl::ResourceType::eTex2d;
-            outResource.native = image.image;
-            // Skip view field if it doesn't exist
-            outResource.memory = nullptr;
-            outResource.state = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-            return true;
-        } catch (...) {
-            ERR("Failed to create sl::Resource - struct layout incompatible");
-            return false;
+        if (!vp.DrawDataP.Valid || vp.DrawDataP.CmdListsCount == 0) {
+            //ERR("presentPreHook: DrawData valid=%d, CmdListsCount=%d", vp.DrawDataP.Valid, vp.DrawDataP.CmdListsCount);
+            return;
         }
-    }
-}
-
-// Helper function to create sl::Extent with error checking
-bool createSLExtent(sl::Extent& outExtent)
-{
-    try {
-        outExtent.width = swapchain_.width_;
-        outExtent.height = swapchain_.height_;
-        // Remove depth field - it doesn't exist in your version
-        return true;
-    } catch (...) {
-        ERR("Failed to create sl::Extent - struct layout incompatible");
-        return false;
-    }
-}
-
-// APPROACH 1: Using slSetTag (simpler, older API)
-void tagUIWithSlSetTag(SwapchainImageInfo& image)
-{
-    if (!slSetTag_ || !isDlssgActive()) return;
-    
-    ERR("[UI TAG] Attempting slSetTag approach");
-    
-    sl::Resource uiResource;
-    if (!createSLResource(image, uiResource)) {
-        ERR("[UI TAG] Failed to create sl::Resource for slSetTag");
-        return;
-    }
-    
-    sl::Extent uiExtent;
-    if (!createSLExtent(uiExtent)) {
-        ERR("[UI TAG] Failed to create sl::Extent for slSetTag");
-        return;
-    }
-    
-    sl::ResourceTag uiTag;
-    uiTag.resource = &uiResource;
-    uiTag.type = sl::kBufferTypeHUDLessColor;  // Changed to HUD-less for DLSS-G UI handling
-    uiTag.lifecycle = sl::ResourceLifecycle::eOnlyValidNow;  // Copy now, as buffer will be modified by ImGui render
-    uiTag.extent = uiExtent;
-    sl::ViewportHandle vp = 0;  // DLSS-G requires viewport 0 (docs specify no multi-viewport support)
-    sl::Result result = slSetTag_(vp, &uiTag, 1, reinterpret_cast<sl::CommandBuffer*>(image.commandBuffer));
-
-    sl::ViewportHandle vp1 = dlssgViewport_;  // DLSS-G requires viewport 0 (docs specify no multi-viewport support)
-    sl::Result result1 = slSetTag_(vp, &uiTag, 1, reinterpret_cast<sl::CommandBuffer*>(image.commandBuffer));
-
-    ERR("[UI TAG] vp=%d slSetTag result: %s", vp, sl::getResultAsStr(result));
-    ERR("[UI TAG] vp=%d slSetTag result: %s", vp, sl::getResultAsStr(result1));
-}
-
-void tagUIColorBuffer(SwapchainImageInfo& image)
-{
-    // Try approach 1: slSetTag
-    if (slSetTag_) {
-        tagUIWithSlSetTag(image);
-        return;
-    }
-}
-void presentPreHook(VkPresentInfoKHR* pPresentInfo)
-{
-    //ERR("presentPreHook: Called for viewport %d, swapchainCount=%d", drawViewport_, pPresentInfo->swapchainCount);
-
-    if (pPresentInfo->swapchainCount > 0) {
-        //ERR("presentPreHook: pSwapchains[0]=%p, our swapChain_=%p",
-        //    pPresentInfo->pSwapchains[0], swapChain_);
-    }
-
-    auto& vp = viewports_[drawViewport_].Viewport;
-
-    //ERR("presentPreHook: DrawData valid=%d, CmdListsCount=%d", vp.DrawDataP.Valid, vp.DrawDataP.CmdListsCount);
-
-    if (!vp.DrawDataP.Valid || vp.DrawDataP.CmdListsCount == 0) {
-        //ERR("presentPreHook: DrawData valid=%d, CmdListsCount=%d", vp.DrawDataP.Valid, vp.DrawDataP.CmdListsCount);
-        return;
-    }
-
-    //ERR("presentPreHook: DLSS-FG active: %s", isDlssgActive() ? "YES" : "NO");
-
-    if (!swapchain_.images_.size()) {
-        //ERR("presentPreHook: No swapchain images available!");
-        return;
-    }
-
-    uint32_t imageIdx = pPresentInfo->pImageIndices[0];
-    if (imageIdx >= swapchain_.images_.size()) {
-        //ERR("presentPreHook: Invalid image index %d (max %d)", imageIdx, (uint32_t)swapchain_.images_.size());
-        return;
-    }
-
-    auto& image = swapchain_.images_[imageIdx];
-
-    // wait for this command buffer to be free
-    VK_CHECK(vkWaitForFences(device_, 1, &image.fence, VK_TRUE, UINT64_MAX));
-    VK_CHECK(vkResetFences(device_, 1, &image.fence));
-    VK_CHECK(vkResetCommandBuffer(image.commandBuffer, 0));
-
-    VkCommandBufferBeginInfo beginInfo{ VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO };
-    beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-    VK_CHECK(vkBeginCommandBuffer(image.commandBuffer, &beginInfo));
-
-    VkImageMemoryBarrier bbBarrier = {
-        VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-        nullptr,
-        0,
-        0,
-        VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-        VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-        queueFamily_,
-        queueFamily_,
-        image.image,
-        { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 }
-    };
-    bbBarrier.srcAccessMask = VK_ACCESS_ALL_READ_BITS;
-    bbBarrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-
-    vkCmdPipelineBarrier(image.commandBuffer,
-                         VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-                         VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-                         0, 0, nullptr, 0, nullptr, 1, &bbBarrier);
-
-    //------------------------------------------------------------------
-    // **FIXED SECTION** — get frame token correctly
-    //------------------------------------------------------------------
-    sl::FrameToken* frameToken = nullptr;
-    if (isDlssgActive() && slGetNewFrameToken_ && slSetConstants_) {
-        // PASS THE POINTER BY REFERENCE (no extra &)
-        sl::Result tokenRes = slGetNewFrameToken_(frameToken, nullptr);
-        ERR("[FG] slGetNewFrameToken: %s", sl::getResultAsStr(tokenRes));
-
-        if (tokenRes == sl::Result::eOk && frameToken) {
-            sl::Constants consts{};
-            consts.reset = sl::Boolean::eFalse;
-            sl::Result constsRes = slSetConstants_(consts, *frameToken, dlssgViewport_);
-            ERR("[FG] slSetConstants: %s", sl::getResultAsStr(constsRes));
+        
+        //ERR("presentPreHook: DrawData valid, CmdListsCount=%d", vp.DrawDataP.CmdListsCount);
+        
+        //ERR("presentPreHook: DLSS-FG active: %s", isDlssgActive() ? "YES" : "NO");
+        
+        if (!swapchain_.images_.size()) {
+            ERR("presentPreHook: No swapchain images available!");
+            return;
         }
+        
+        uint32_t imageIdx = pPresentInfo->pImageIndices[0];
+        if (imageIdx >= swapchain_.images_.size()) {
+            ERR("presentPreHook: Invalid image index %d (max %d)", imageIdx, (uint32_t)swapchain_.images_.size());
+            return;
+        }
+        
+        auto& image = swapchain_.images_[imageIdx];
+        
+        //ERR("presentPreHook: Processing swapchain image #%d (%p)", imageIdx, image.image);
+        //ERR("presentPreHook: Our swapchain=%p, pSwapchains[0]=%p", swapChain_, pPresentInfo->pSwapchains[0]);
+        //ERR("presentPreHook: Image dimensions: %dx%d", swapchain_.width_, swapchain_.height_);
+        
+        // wait for this command buffer to be free
+        // If this ring has never been used the fence is signalled on creation.
+        // this should generally be a no-op because we only get here when we've acquired the image
+        VK_CHECK(vkWaitForFences(device_, 1, &image.fence, VK_TRUE, UINT64_MAX));
+        VK_CHECK(vkResetFences(device_, 1, &image.fence));
+        VK_CHECK(vkResetCommandBuffer(image.commandBuffer, 0));
+
+        VkCommandBufferBeginInfo beginInfo = { VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO, NULL,
+                                              VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT };
+
+        VK_CHECK(vkBeginCommandBuffer(image.commandBuffer, &beginInfo));
+
+        VkImageMemoryBarrier bbBarrier = {
+            VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+            NULL,
+            0,
+            0,
+            VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+            VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+            queueFamily_,
+            queueFamily_,
+            image.image,
+            {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1},
+        };
+
+        bbBarrier.srcAccessMask = VK_ACCESS_ALL_READ_BITS;
+        bbBarrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+        vkCmdPipelineBarrier(image.commandBuffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0,
+            NULL,
+            0, NULL,
+            1, &bbBarrier);
+
+        uint32_t ringIdx = 0;
+
+        VkSubmitInfo submitInfo = { VK_STRUCTURE_TYPE_SUBMIT_INFO };
+
+        VkPipelineStageFlags waitStages[3] = { VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT };
+
+        // wait on the present's semaphores
+        submitInfo.pWaitDstStageMask = waitStages;
+        submitInfo.pWaitSemaphores = pPresentInfo->pWaitSemaphores;
+        submitInfo.waitSemaphoreCount = pPresentInfo->waitSemaphoreCount;
+
+        // and signal overlaydone
+        submitInfo.pSignalSemaphores = &image.uiDoneSemaphore;
+        submitInfo.signalSemaphoreCount = 1;
+
+        {
+            VkClearValue clearval = {};
+            VkRenderPassBeginInfo rpbegin = {
+                VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+                NULL,
+                swapchain_.renderPass_,
+                image.framebuffer,
+                {{
+                     0,
+                     0,
+                 },
+                 {swapchain_.width_, swapchain_.height_}},
+                1,
+                &clearval,
+            };
+            vkCmdBeginRenderPass(image.commandBuffer, &rpbegin, VK_SUBPASS_CONTENTS_INLINE);
+        }
+
+        ImGui_ImplVulkan_RenderDrawData(&vp.DrawDataP, image.commandBuffer);
+
+        vkCmdEndRenderPass(image.commandBuffer);
+
+        VkImageMemoryBarrier bbBarrier2 = {
+            VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+            NULL,
+            0,
+            0,
+            VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+            VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+            queueFamily_,
+            queueFamily_,
+            image.image,
+            {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1},
+        };
+
+        bbBarrier2.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        bbBarrier2.dstAccessMask = VK_ACCESS_ALL_READ_BITS;
+
+        vkCmdPipelineBarrier(image.commandBuffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0,
+            NULL,
+            0, NULL,
+            1, &bbBarrier2);
+
+        VK_CHECK(vkEndCommandBuffer(image.commandBuffer));
+
+        {
+            submitInfo.commandBufferCount = 1;
+            submitInfo.pCommandBuffers = &image.commandBuffer;
+
+            VK_CHECK(vkQueueSubmit(renderQueue_, 1, &submitInfo, image.fence));
+        }
+
+        // the next thing waits on our new semaphore - whether a subsequent overlay render or the
+        // present
+        //const_cast<VkSemaphore*>(pPresentInfo->pWaitSemaphores)[0] = submitInfo.pSignalSemaphores[0];
+        //pPresentInfo->waitSemaphoreCount = 1;
+        // append uiDone instead of overwriting the game's list (works even if list is empty)
+        static thread_local VkSemaphore semBuffer[8];
+        uint32_t orig = pPresentInfo->waitSemaphoreCount;
+        std::memcpy(semBuffer, pPresentInfo->pWaitSemaphores, orig * sizeof(VkSemaphore));
+        semBuffer[orig]           = image.uiDoneSemaphore;
+        pPresentInfo->pWaitSemaphores  = semBuffer;
+        pPresentInfo->waitSemaphoreCount = orig + 1;
     }
-    //------------------------------------------------------------------
-
-    VkSubmitInfo submitInfo{ VK_STRUCTURE_TYPE_SUBMIT_INFO };
-    VkPipelineStageFlags waitStages[3] = {
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT
-    };
-
-    submitInfo.pWaitDstStageMask = waitStages;
-    submitInfo.pWaitSemaphores   = pPresentInfo->pWaitSemaphores;
-    submitInfo.waitSemaphoreCount = pPresentInfo->waitSemaphoreCount;
-    submitInfo.pSignalSemaphores  = &image.uiDoneSemaphore;
-    submitInfo.signalSemaphoreCount = 1;
-
-    VkClearValue clearval{};
-    VkRenderPassBeginInfo rpbegin = {
-        VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-        nullptr,
-        swapchain_.renderPass_,
-        image.framebuffer,
-        { { 0, 0 }, { swapchain_.width_, swapchain_.height_ } },
-        1,
-        &clearval
-    };
-    vkCmdBeginRenderPass(image.commandBuffer, &rpbegin, VK_SUBPASS_CONTENTS_INLINE);
-    ImGui_ImplVulkan_RenderDrawData(&vp.DrawDataP, image.commandBuffer);
-    vkCmdEndRenderPass(image.commandBuffer);
-
-    // Evaluate DLSS-FG after UI draw so HUD is included
-    if (isDlssgActive() && slEvaluateFeature_ && frameToken) {
-        const sl::BaseStructure* inputs = nullptr;
-        uint32_t numInputs = 0;
-        sl::Result evalRes = slEvaluateFeature_(sl::kFeatureDLSS_G,
-                                                *frameToken,
-                                                &inputs,
-                                                numInputs,
-                                                reinterpret_cast<sl::CommandBuffer*>(image.commandBuffer));
-        ERR("[FG] slEvaluateFeature for DLSS-G: %s", sl::getResultAsStr(evalRes));
-    }
-
-    VkImageMemoryBarrier bbBarrier2 = bbBarrier;
-    bbBarrier2.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-    bbBarrier2.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-    bbBarrier2.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-    bbBarrier2.dstAccessMask = VK_ACCESS_ALL_READ_BITS;
-
-    vkCmdPipelineBarrier(image.commandBuffer,
-                         VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-                         VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-                         0, 0, nullptr, 0, nullptr, 1, &bbBarrier2);
-
-    VK_CHECK(vkEndCommandBuffer(image.commandBuffer));
-
-    submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers    = &image.commandBuffer;
-    VK_CHECK(vkQueueSubmit(renderQueue_, 1, &submitInfo, image.fence));
-
-    // Append our semaphore to the present-wait list
-    static thread_local VkSemaphore semBuffer[8];
-    uint32_t orig = pPresentInfo->waitSemaphoreCount;
-    std::memcpy(semBuffer, pPresentInfo->pWaitSemaphores, orig * sizeof(VkSemaphore));
-    semBuffer[orig] = image.uiDoneSemaphore;
-    pPresentInfo->pWaitSemaphores  = semBuffer;
-    pPresentInfo->waitSemaphoreCount = orig + 1;
-}
 
     static void DumpDLSSGState(const sl::DLSSGState& s)
     {
@@ -1327,12 +1054,40 @@ void presentPreHook(VkPresentInfoKHR* pPresentInfo)
         VkQueue queue,
         const VkPresentInfoKHR* pPresentInfo)
     {
-        //ERR("[PRESENT] vkQueuePresentKHR called - queue=%p, isDlssgActive=%s", 
-        //    queue, isDlssgActive() ? "YES" : "NO");
-        //ERR("[PRESENT] dlssgPresentFunction_=%p, this call from=%p", 
-        //    dlssgPresentFunction_, _ReturnAddress());
 
         std::lock_guard _(globalResourceLock_);
+        if (isDlssgActive() && okayToModifyFG_)
+        {
+            bool wantPause = menuVisible_;
+            if (wantPause != fgPaused_)
+            {
+                sl::DLSSGOptions options = {};
+                options.flags = sl::DLSSGFlags::eRequestVRAMEstimate;   // ask plugin to fill VRAM
+                options.mode = wantPause ? sl::DLSSGMode::eOff : sl::DLSSGMode::eOn;
+                if (slDLSSGSetOptions_) 
+                {
+                    sl::DLSSGState st{};
+                    sl::Result r = slDLSSGGetState_(0, st, nullptr);
+                    auto text= sl::getResultAsStr(r);
+                    ERR("[DLSSG] vkQueuePresentKHRHooked - slDLSSGGetState result %s", text);
+                    if (r == sl::Result::eOk)
+                    {
+                        DumpDLSSGState(st);
+                    }
+                    sl::Result result = slDLSSGSetOptions_(0, options);
+                    auto text2 = sl::getResultAsStr(result);
+                    ERR("[DLSSG] vkQueuePresentKHRHooked - slDLSSGSetOptions result %s", text2);
+                    if (result == sl::Result::eOk) {
+                        fgPaused_ = wantPause;
+                        ERR("[DLSSG] Frame-Generation %s", fgPaused_ ? "PAUSED" : "RESUMED");
+                    }
+                    else
+                    {
+                        ERR("[DLSSG] Failed to set mode %s", result);
+                    }
+                }
+            }
+        }
         if (!initialized_) {
             //ERR("vkQueuePresentKHR: Render backend not initialized yet - drawViewport_=%d", drawViewport_);
             frameNo_ = 0;
@@ -1361,10 +1116,11 @@ void presentPreHook(VkPresentInfoKHR* pPresentInfo)
             //ERR("vkQueuePresentKHR: Calling presentPreHook - initialized %d, drawViewport %d",
             //    initialized_ ? 1 : 0, drawViewport_);
             //ERR("vkQueuePresentKHR: present queue = %p graphics queue = %p", queue, renderQueue_);
+            
             presentPreHook(const_cast<VkPresentInfoKHR*>(pPresentInfo));
         } else {
             //ERR("vkQueuePresentKHR: Cannot append command buffer - initialized %d, drawViewport %d",
-                //    initialized_ ? 1 : 0, drawViewport_);
+            //    initialized_ ? 1 : 0, drawViewport_);
         }
 
         frameNo_++;
@@ -1408,7 +1164,6 @@ void presentPreHook(VkPresentInfoKHR* pPresentInfo)
     bool okayToModifyFG_{ false };
     HMODULE hSL_{ nullptr };
     HMODULE sl_{ nullptr };
-    HMODULE slImGui_{ nullptr };
     bool                  fgPaused_          { true };   // our FG state
     bool                  menuVisible_       { true };   // set each frame1
     //auto slInit{nullptr};
@@ -1416,17 +1171,6 @@ void presentPreHook(VkPresentInfoKHR* pPresentInfo)
     PFun_slGetFeatureFunction* slGetFeatureFunction_{ nullptr };
     PFun_slDLSSGSetOptions* slDLSSGSetOptions_{ nullptr };
     PFun_slDLSSGGetState* slDLSSGGetState_{ nullptr };
-    PFun_slShutdown* slShutdown_{ nullptr };
-    SlDLSSGSetOptionsHookType slDLSSGSetOptionsHook_;
-    PFun_slDLSSGSetOptions* originalSlDLSSGSetOptions_{ nullptr };
-    PFun_slSetTag* slSetTag_{ nullptr };
-    PFun_slSetTagForFrame* slSetTagForFrame_{ nullptr };
-    PFun_slGetNewFrameToken* slGetNewFrameToken_{ nullptr };
-    PFun_slSetConstants* slSetConstants_{ nullptr };
-    PFun_slEvaluateFeature* slEvaluateFeature_{ nullptr };
-    sl::ViewportHandle dlssgViewport_{ 0 };
-
-
 
     
     // Store the original game's present function

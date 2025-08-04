@@ -1165,46 +1165,58 @@ void presentPreHook(VkPresentInfoKHR* pPresentInfo)
     //ERR("presentPreHook: Called for viewport %d, swapchainCount=%d", drawViewport_, pPresentInfo->swapchainCount);
 
     if (pPresentInfo->swapchainCount > 0) {
-        //ERR("presentPreHook: pSwapchains[0]=%p, our swapChain_=%p",
+        //ERR("presentPreHook: pSwapchains[0]=%p, our swapChain_=%p", 
         //    pPresentInfo->pSwapchains[0], swapChain_);
     }
-
+    
     auto& vp = viewports_[drawViewport_].Viewport;
-
+    
     //ERR("presentPreHook: DrawData valid=%d, CmdListsCount=%d", vp.DrawDataP.Valid, vp.DrawDataP.CmdListsCount);
 
+    
     if (!vp.DrawDataP.Valid || vp.DrawDataP.CmdListsCount == 0) {
         //ERR("presentPreHook: DrawData valid=%d, CmdListsCount=%d", vp.DrawDataP.Valid, vp.DrawDataP.CmdListsCount);
         return;
     }
-
+    
+    //ERR("presentPreHook: DrawData valid, CmdListsCount=%d", vp.DrawDataP.CmdListsCount);
+    
     //ERR("presentPreHook: DLSS-FG active: %s", isDlssgActive() ? "YES" : "NO");
-
+    
     if (!swapchain_.images_.size()) {
         //ERR("presentPreHook: No swapchain images available!");
         return;
     }
-
+    
     uint32_t imageIdx = pPresentInfo->pImageIndices[0];
     if (imageIdx >= swapchain_.images_.size()) {
         //ERR("presentPreHook: Invalid image index %d (max %d)", imageIdx, (uint32_t)swapchain_.images_.size());
         return;
     }
-
+    
     auto& image = swapchain_.images_[imageIdx];
-
+    //ERR("[RENDER DEBUG] Before UI render - image %p, FB %p, renderPass %p", 
+    //   image.image, image.framebuffer, swapchain_.renderPass_);
+    //ERR("[RENDER DEBUG] Command buffer: %p", image.commandBuffer);
+    //ERR("presentPreHook: Processing swapchain image #%d (%p)", imageIdx, image.image);
+    //ERR("presentPreHook: Our swapchain=%p, pSwapchains[0]=%p", swapChain_, pPresentInfo->pSwapchains[0]);
+    //ERR("presentPreHook: Image dimensions: %dx%d", swapchain_.width_, swapchain_.height_);
+    
     // wait for this command buffer to be free
+    // If this ring has never been used the fence is signalled on creation.
+    // this should generally be a no-op because we only get here when we've acquired the image
     VK_CHECK(vkWaitForFences(device_, 1, &image.fence, VK_TRUE, UINT64_MAX));
     VK_CHECK(vkResetFences(device_, 1, &image.fence));
     VK_CHECK(vkResetCommandBuffer(image.commandBuffer, 0));
 
-    VkCommandBufferBeginInfo beginInfo{ VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO };
-    beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+    VkCommandBufferBeginInfo beginInfo = { VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO, NULL,
+                                          VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT };
+
     VK_CHECK(vkBeginCommandBuffer(image.commandBuffer, &beginInfo));
 
     VkImageMemoryBarrier bbBarrier = {
         VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-        nullptr,
+        NULL,
         0,
         0,
         VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
@@ -1212,95 +1224,123 @@ void presentPreHook(VkPresentInfoKHR* pPresentInfo)
         queueFamily_,
         queueFamily_,
         image.image,
-        { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 }
+        {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1},
     };
+
     bbBarrier.srcAccessMask = VK_ACCESS_ALL_READ_BITS;
     bbBarrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
-    vkCmdPipelineBarrier(image.commandBuffer,
-                         VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-                         VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-                         0, 0, nullptr, 0, nullptr, 1, &bbBarrier);
+    vkCmdPipelineBarrier(image.commandBuffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0,
+        NULL,
+        0, NULL,
+        1, &bbBarrier);
 
-    //------------------------------------------------------------------
-    // **FIXED SECTION** — get frame token correctly
-    //------------------------------------------------------------------
+    // Get frame token and set constants for Streamline
     sl::FrameToken* frameToken = nullptr;
     if (isDlssgActive() && slGetNewFrameToken_ && slSetConstants_) {
-        // PASS THE POINTER BY REFERENCE (no extra &)
-        sl::Result tokenRes = slGetNewFrameToken_(frameToken, nullptr);
+        sl::Result tokenRes = slGetNewFrameToken_(&frameToken, nullptr);
         ERR("[FG] slGetNewFrameToken: %s", sl::getResultAsStr(tokenRes));
-
         if (tokenRes == sl::Result::eOk && frameToken) {
-            sl::Constants consts{};
-            consts.reset = sl::Boolean::eFalse;
+            sl::Constants consts = {};
+            consts.reset = sl::Boolean::eFalse;  // No reset
             sl::Result constsRes = slSetConstants_(consts, *frameToken, dlssgViewport_);
             ERR("[FG] slSetConstants: %s", sl::getResultAsStr(constsRes));
         }
     }
-    //------------------------------------------------------------------
 
-    VkSubmitInfo submitInfo{ VK_STRUCTURE_TYPE_SUBMIT_INFO };
-    VkPipelineStageFlags waitStages[3] = {
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT
-    };
+    uint32_t ringIdx = 0;
 
+    VkSubmitInfo submitInfo = { VK_STRUCTURE_TYPE_SUBMIT_INFO };
+
+    VkPipelineStageFlags waitStages[3] = { VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT };
+
+    // wait on the present's semaphores
     submitInfo.pWaitDstStageMask = waitStages;
-    submitInfo.pWaitSemaphores   = pPresentInfo->pWaitSemaphores;
+    submitInfo.pWaitSemaphores = pPresentInfo->pWaitSemaphores;
     submitInfo.waitSemaphoreCount = pPresentInfo->waitSemaphoreCount;
-    submitInfo.pSignalSemaphores  = &image.uiDoneSemaphore;
+
+    // and signal overlaydone
+    submitInfo.pSignalSemaphores = &image.uiDoneSemaphore;
     submitInfo.signalSemaphoreCount = 1;
 
-    VkClearValue clearval{};
+    VkClearValue clearval = {};
     VkRenderPassBeginInfo rpbegin = {
         VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-        nullptr,
+        NULL,
         swapchain_.renderPass_,
         image.framebuffer,
-        { { 0, 0 }, { swapchain_.width_, swapchain_.height_ } },
+        {{
+                0,
+                0,
+            },
+            {swapchain_.width_, swapchain_.height_}},
         1,
-        &clearval
+        &clearval,
     };
     vkCmdBeginRenderPass(image.commandBuffer, &rpbegin, VK_SUBPASS_CONTENTS_INLINE);
+
     ImGui_ImplVulkan_RenderDrawData(&vp.DrawDataP, image.commandBuffer);
+    //ERR("[RENDER DEBUG] After ImGui render - submitted %d draw lists", vp.DrawDataP.CmdListsCount);
+
+
     vkCmdEndRenderPass(image.commandBuffer);
 
-    // Evaluate DLSS-FG after UI draw so HUD is included
+    // Evaluate DLSS-FG to process the buffer with ImGui (forces ImGui into final image)
     if (isDlssgActive() && slEvaluateFeature_ && frameToken) {
         const sl::BaseStructure* inputs = nullptr;
         uint32_t numInputs = 0;
-        sl::Result evalRes = slEvaluateFeature_(sl::kFeatureDLSS_G,
-                                                *frameToken,
-                                                &inputs,
-                                                numInputs,
-                                                reinterpret_cast<sl::CommandBuffer*>(image.commandBuffer));
+        sl::Result evalRes = slEvaluateFeature_(sl::kFeatureDLSS_G, *frameToken, &inputs, numInputs, 
+                                               reinterpret_cast<sl::CommandBuffer*>(image.commandBuffer));
         ERR("[FG] slEvaluateFeature for DLSS-G: %s", sl::getResultAsStr(evalRes));
+        if (evalRes != sl::Result::eOk) {
+            ERR("[FG] Evaluation failed - may need additional inputs (e.g., motion vectors, tagged buffers)");
+        }
     }
 
-    VkImageMemoryBarrier bbBarrier2 = bbBarrier;
-    bbBarrier2.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-    bbBarrier2.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+    VkImageMemoryBarrier bbBarrier2 = {
+        VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+        NULL,
+        0,
+        0,
+        VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+        VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+        queueFamily_,
+        queueFamily_,
+        image.image,
+        {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1},
+    };
+
     bbBarrier2.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
     bbBarrier2.dstAccessMask = VK_ACCESS_ALL_READ_BITS;
 
-    vkCmdPipelineBarrier(image.commandBuffer,
-                         VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-                         VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-                         0, 0, nullptr, 0, nullptr, 1, &bbBarrier2);
+    vkCmdPipelineBarrier(image.commandBuffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0,
+        NULL,
+        0, NULL,
+        1, &bbBarrier2);
 
+    
+    
     VK_CHECK(vkEndCommandBuffer(image.commandBuffer));
 
-    submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers    = &image.commandBuffer;
-    VK_CHECK(vkQueueSubmit(renderQueue_, 1, &submitInfo, image.fence));
+    {
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = &image.commandBuffer;
 
-    // Append our semaphore to the present-wait list
+        VK_CHECK(vkQueueSubmit(renderQueue_, 1, &submitInfo, image.fence));
+    }
+
+    // the next thing waits on our new semaphore - whether a subsequent overlay render or the
+    // present
+    //const_cast<VkSemaphore*>(pPresentInfo->pWaitSemaphores)[0] = submitInfo.pSignalSemaphores[0];
+    //pPresentInfo->waitSemaphoreCount = 1;
+    // append uiDone instead of overwriting the game's list (works even if list is empty)
     static thread_local VkSemaphore semBuffer[8];
     uint32_t orig = pPresentInfo->waitSemaphoreCount;
     std::memcpy(semBuffer, pPresentInfo->pWaitSemaphores, orig * sizeof(VkSemaphore));
-    semBuffer[orig] = image.uiDoneSemaphore;
+    semBuffer[orig]           = image.uiDoneSemaphore;
     pPresentInfo->pWaitSemaphores  = semBuffer;
     pPresentInfo->waitSemaphoreCount = orig + 1;
 }

@@ -1,7 +1,7 @@
 param(
     [string]$WorkspaceFolder = $PSScriptRoot,
     [string]$GameBinFolder = "F:\Games\Baldurs Gate 3\bin",
-    [string]$GameLocalFolder = "C:\Users\thier\AppData\Local\BG3ScriptExtender\ScriptExtender\24.0.0.0_374d19b16cf311beb6e57fcb0ab4f3e90b0aa8e6694a80c65814a71ab07d16c2"
+    [string]$GameLocalFolder = "C:\Users\thier\AppData\Local\BG3ScriptExtender\ScriptExtender\26.0.0.0_4762de214be86ca9b2d5cc59f68afa30bb0c8a10984391340ec26033a9190f3e"
 )
 
 Write-Host "Running generate-property-maps.bat..." -ForegroundColor Cyan
@@ -20,7 +20,7 @@ if ($LASTEXITCODE -ne 0) { Write-Error "MSBuild SymbolTableGenerator.vcxproj FAI
 Write-Host "SymbolTableGenerator.vcxproj build successful." -ForegroundColor Green
 
 Write-Host "Building BG3Tools.sln..." -ForegroundColor Cyan
-& "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "${WorkspaceFolder}\BG3Tools.sln" "/p:Configuration=Release" /t:Build /m /nologo /verbosity:quiet /consoleloggerparameters:summary
+& "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "${WorkspaceFolder}\BG3Tools.sln" "/p:Configuration=Release" /t:Clean,Build /m /nologo /verbosity:quiet /consoleloggerparameters:summary
 if ($LASTEXITCODE -ne 0) { Write-Error "MSBuild BG3Tools.sln FAILED!"; exit 1 }
 Write-Host "BG3Tools.sln build successful." -ForegroundColor Green
 
