@@ -153,6 +153,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="Extender\Client\IMGUI\IMGUI.h" />
     <ClInclude Include="Extender\Version.h" />
     <ClInclude Include="GameDefinitions\Ai.h" />
+    <ClInclude Include="GameDefinitions\AiHelpers.h" />
     <ClInclude Include="GameDefinitions\AllSpark.h" />
     <ClInclude Include="GameDefinitions\AllSparkShared.h" />
     <ClInclude Include="GameDefinitions\Animation.h" />

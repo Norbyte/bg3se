@@ -33,12 +33,12 @@ struct BoostInfoComponent : public BaseComponent
     DEFINE_COMPONENT(BoostInfo, "eoc::BoostInfoComponent")
 
     [[bg3::legacy(field_10)]] Guid CauseUuid;
-    uint8_t field_20;
+    bool field_20;
     BoostSource Cause;
     EntityHandle Owner;
     BoostDescription Params;
-    uint8_t field_44;
-    Guid field_80;
+    [[bg3::legacy(field_44)]] BoostType Type;
+    [[bg3::legacy(field_80)]] Guid Prototype;
 };
 
 DEFN_BOOST(ArmorClass, AC, {

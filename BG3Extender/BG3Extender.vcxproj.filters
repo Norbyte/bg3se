@@ -516,6 +516,7 @@
     <ClInclude Include="Lua\Helpers\LuaTypeCheckObject.h" />
     <ClInclude Include="GameDefinitions\Components\Trigger.h" />
     <ClInclude Include="GameDefinitions\Components\Death.h" />
+    <ClInclude Include="GameDefinitions\AiHelpers.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

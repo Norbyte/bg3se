@@ -137,8 +137,6 @@ template <class TKey, class TValue, class TInternals, unsigned TContainerClassId
 class RefMapProxyImpl : public MapProxyImplBase
 {
 public:
-    static_assert(!std::is_pointer_v<TKey>, "RefMapProxyImpl template parameter should not be a pointer type!");
-
     using ContainerType = LegacyMapBase<TInternals>;
     static constexpr unsigned ContainerClassId = TContainerClassId;
 

@@ -108,9 +108,9 @@ struct ThreatRangeComponent : public BaseComponent
 {
     DEFINE_COMPONENT(ThreatRange, "eoc::combat::ThreatRangeComponent")
 
-    float field_0;
-    int field_4;
-    float field_8;
+    float Range;
+    float TargetCeiling;
+    float TargetFloor;
 };
 
 END_NS()

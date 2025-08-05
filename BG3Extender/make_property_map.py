@@ -673,6 +673,7 @@ sources = [
     'GameDefinitions/Skeleton.h',
     'GameDefinitions/Status.h',
     'GameDefinitions/Ai.h',
+    'GameDefinitions/AiHelpers.h',
     'GameDefinitions/Controllers/Action.h',
     'GameDefinitions/Controllers/Behaviour.h',
     'GameDefinitions/Controllers/CharacterTask.h',

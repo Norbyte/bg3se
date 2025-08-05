@@ -52,6 +52,7 @@ T(esv::PlatformSystem)
 T(esv::approval::RatingSystem)
 T(esv::attitude::UpdateSystem)
 T(esv::party::PartySystem)
+T(esv::AiHelpers)
 
 T(ecl::EquipmentVisualsSystem)
 T(ecl::VisualSystem)

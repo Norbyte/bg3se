@@ -35,3 +35,4 @@
 #include <GameDefinitions/Components/Trigger.h>
 #include <GameDefinitions/Dialog.h>
 #include <GameDefinitions/Picking.h>
+#include <GameDefinitions/AiHelpers.h>

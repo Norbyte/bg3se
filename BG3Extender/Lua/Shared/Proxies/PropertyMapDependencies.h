@@ -23,6 +23,7 @@
 #include <GameDefinitions/Components/All.h>
 #include <GameDefinitions/Stats/UseActions.h>
 #include <GameDefinitions/UI.h>
+#include <GameDefinitions/AiHelpers.h>
 
 #include <Lua/LuaBinding.h>
 #include <Lua/LuaSerializers.h>
