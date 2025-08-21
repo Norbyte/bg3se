@@ -67,9 +67,9 @@ struct Status : public ProtectedGameObject<Status>
     Guid field_E8;
     stats::ConditionId RemoveConditions;
     uint32_t RemoveEvents;
-    StatusFlags Flags;
-    StatusFlags2 Flags2;
-    StatusFlags3 Flags3;
+    [[bg3::flags]] StatusFlags Flags;
+    [[bg3::flags]] StatusFlags2 Flags2;
+    [[bg3::flags]] StatusFlags3 Flags3;
     bool FreezeDuration;
     uint8_t ExitCause;
     [[bg3::legacy(field_105)]] SurfaceType SourceSurface;

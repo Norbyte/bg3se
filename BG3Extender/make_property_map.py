@@ -575,17 +575,21 @@ def generate_member(name, member):
     if get_attr(member['attributes'], 'bg3::readonly') is not None:
         return 'P_RO(' + name + ')\n'
 
+    code = ''
+    if get_attr(member['attributes'], 'bg3::flags') is not None:
+        code += 'P_BITMASK(' + name + ')\n'
+
     if get_attr(member['attributes'], 'bg3::deprecated') is not None:
-        return 'P_NOTIFY(' + name + ', Deprecated)\n'
+        return code + 'P_NOTIFY(' + name + ', Deprecated)\n'
 
     legacy_tag = get_attr(member['attributes'], 'bg3::legacy')
     if legacy_tag is not None:
-        return 'P_RENAMED(' + name + ', ' + legacy_tag.args + ')\n'
+        return code + 'P_RENAMED(' + name + ', ' + legacy_tag.args + ')\n'
 
     if name.startswith('field_'):
-        return 'P_NOTIFY(' + name + ', TemporaryName)\n'
+        return code + 'P_NOTIFY(' + name + ', TemporaryName)\n'
     
-    return 'P(' + name + ')\n'
+    return code + 'P(' + name + ')\n'
 
 
 pm_cls_start_re = r'^BEGIN_CLS\((?P<args>[^)]+)\).*$'
