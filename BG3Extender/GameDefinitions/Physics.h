@@ -31,8 +31,8 @@ struct PhysicsBaseShape : public ProtectedGameObject<PhysicsBaseShape>
 
 struct PhysicsShape : public PhysicsBaseShape
 {
-    int field_34;
     PhysicsObject* PhysicsObject;
+    [[bg3::hidden]] void* PhysxObject;
 };
 
 struct PhysicsSoftShape : public PhysicsBaseShape

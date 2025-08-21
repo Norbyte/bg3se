@@ -1629,6 +1629,7 @@ BEGIN_ENUM(BoostType, uint8_t)
     E(NoDamageOnThrown)
     E(DamageTakenBonus)
     E(ReceivingCriticalDamageOnHit)
+    E(Sentinel)
 END_ENUM()
 
 BEGIN_BITMASK_NS(ecs, EntityChangeFlags, ECSEntityChangeFlags, uint8_t)
