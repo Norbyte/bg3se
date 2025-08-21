@@ -214,7 +214,10 @@ void ClientEntityReplicationEventHooks::PostUpdate()
         ecl::LuaClientPin lua(gExtender->GetClient().GetExtensionState());
         if (lua) {
             for (auto const& e : pendingEvents_) {
-                CallHandler(e.Entity, e.Fields, e.Type, e.Hook);
+                auto sub = subscriptions_.Find(e.Index);
+                if (sub) {
+                    CallHandler(e.Entity, e.Fields, e.Type, *sub);
+                }
             }
         }
     }
@@ -240,7 +243,7 @@ void ClientEntityReplicationEventHooks::OnEntityReplication(ecs::ReplicationType
                 .Entity = entity,
                 .Fields = fields,
                 .Type = type,
-                .Hook = *hook
+                .Index = index
             });
         }
     }
@@ -254,7 +257,7 @@ void ClientEntityReplicationEventHooks::OnEntityReplication(ecs::ReplicationType
                     .Entity = entity,
                     .Fields = fields,
                     .Type = type,
-                    .Hook = *hook
+                    .Index = index
                 });
             }
         }

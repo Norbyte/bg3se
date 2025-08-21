@@ -31,7 +31,7 @@ public:
         EntityHandle Entity;
         uint64_t Fields;
         ecs::ReplicationTypeIndex Type;
-        ReplicationHook const& Hook;
+        SubscriptionIndex Index;
     };
 };
 

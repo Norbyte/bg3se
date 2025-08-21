@@ -109,7 +109,7 @@ void ServerEntityReplicationEventHooks::OnEntityReplication(ecs::EntityWorld& wo
                 .Entity = entity,
                 .Fields = fields,
                 .Type = type,
-                .Hook = *hook
+                .Index = index
             });
         }
     }
@@ -123,7 +123,7 @@ void ServerEntityReplicationEventHooks::OnEntityReplication(ecs::EntityWorld& wo
                     .Entity = entity,
                     .Fields = fields,
                     .Type = type,
-                    .Hook = *hook
+                    .Index = index
                 });
             }
         }
@@ -133,7 +133,10 @@ void ServerEntityReplicationEventHooks::OnEntityReplication(ecs::EntityWorld& wo
         esv::LuaServerPin lua(gExtender->GetServer().GetExtensionState());
         if (lua) {
             for (auto const& e : events) {
-                CallHandler(e.Entity, e.Fields, e.Type, e.Hook);
+                auto sub = subscriptions_.Find(e.Index);
+                if (sub) {
+                    CallHandler(e.Entity, e.Fields, e.Type, *sub);
+                }
             }
         }
     }
