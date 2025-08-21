@@ -79,19 +79,19 @@ struct CompactSet
         }
     }
 
-    void RawReallocate(TSize newCapacity)
+    T* RawReallocate(TSize newCapacity)
     {
         if (newCapacity > 0) {
             if (StoreSize) {
                 auto newBuf = Allocator::Alloc(newCapacity * sizeof(T) + 8);
                 *(uint64_t*)newBuf = newCapacity;
 
-                Buf = (T*)((std::ptrdiff_t)newBuf + 8);
+                return (T*)((std::ptrdiff_t)newBuf + 8);
             } else {
-                Buf = Allocator::template New<T>(newCapacity);
+                return Allocator::template New<T>(newCapacity);
             }
         } else {
-            Buf = nullptr;
+            return nullptr;
         }
 
         Capacity = newCapacity;
@@ -101,18 +101,41 @@ struct CompactSet
     {
         auto oldBuf = Buf;
         auto oldCapacity = Capacity;
-        RawReallocate(newCapacity);
+        auto newBuf = RawReallocate(newCapacity);
 
-        for (uint32_t i = 0; i < std::min(Size, newCapacity); i++) {
-            new (Buf + i) T(oldBuf[i]);
-        }
+        auto itemsToMove = std::min(Size, newCapacity);
+        if constexpr (std::is_move_constructible_v<T>) {
+            for (uint32_t i = 0; i < itemsToMove; i++) {
+                new (newBuf + i) T(std::move(oldBuf[i]));
+            }
 
-        for (uint32_t i = std::min(Size, newCapacity); i < newCapacity; i++) {
-            new (Buf + i) T();
-        }
+            for (uint32_t i = itemsToMove; i < newCapacity; i++) {
+                new (newBuf + i) T();
+            }
 
-        for (uint32_t i = 0; i < oldCapacity; i++) {
-            oldBuf[i].~T();
+            // Late reassignment of 'Buf' should also reduce the likelihood of concurrent access
+            // to the not yet initialized array data (unfortunate, but happens).
+            // It's still possible for other threads to see the moved-from objects, but it should 
+            // not cause access to uninitialized memory and crash.
+            Buf = newBuf;
+
+            for (uint32_t i = itemsToMove; i < oldCapacity; i++) {
+                oldBuf[i].~T();
+            }
+        } else {
+            for (uint32_t i = 0; i < itemsToMove; i++) {
+                new (newBuf + i) T(oldBuf[i]);
+            }
+
+            for (uint32_t i = itemsToMove; i < newCapacity; i++) {
+                new (newBuf + i) T();
+            }
+
+            Buf = newBuf;
+
+            for (uint32_t i = 0; i < oldCapacity; i++) {
+                oldBuf[i].~T();
+            }
         }
 
         FreeBuffer(oldBuf);
