@@ -112,6 +112,11 @@ namespace ecs
     class EntitySystemHelpersBase;
 }
 
+namespace thoth::shared
+{
+    struct ConditionManager;
+}
+
 namespace input
 {
     struct InputManager;

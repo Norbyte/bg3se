@@ -517,6 +517,7 @@
     <ClInclude Include="GameDefinitions\Components\Trigger.h" />
     <ClInclude Include="GameDefinitions\Components\Death.h" />
     <ClInclude Include="GameDefinitions\AiHelpers.h" />
+    <ClInclude Include="GameDefinitions\Thoth.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

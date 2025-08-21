@@ -247,4 +247,22 @@ struct [[bg3::hidden]] InterruptPrototypeManager : public ProtectedGameObject<In
 };
 
 
+struct BoostPrototype : public ProtectedGameObject<BoostPrototype>
+{
+    STDString Description;
+    FixedString TypeName;
+    [[bg3::hidden]] void* BoostData;
+    BoostType Boost;
+    ConditionId Condition;
+};
+
+
+struct [[bg3::hidden]] BoostPrototypeManager : public ProtectedGameObject<InterruptPrototypeManager>
+{
+    bool IsLoading;
+    thoth::shared::ConditionManager* ConditionsManager;
+    HashMap<Guid, BoostPrototype*> Boosts;
+    Array<ConditionId> ConditionHandles;
+};
+
 END_NS()

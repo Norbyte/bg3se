@@ -247,6 +247,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="GameDefinitions\Status.h" />
     <ClInclude Include="GameDefinitions\Surface.h" />
     <ClInclude Include="GameDefinitions\Symbols.h" />
+    <ClInclude Include="GameDefinitions\Thoth.h" />
     <ClInclude Include="GameDefinitions\TranslatedString.h" />
     <ClInclude Include="GameDefinitions\UI.h" />
     <ClInclude Include="GameDefinitions\VirtualTextureFormat.h" />
