@@ -546,6 +546,11 @@ void ScriptExtender::PostStartup()
         lua::InitObjectProxyPropertyMaps();
         TypeInformationRepository::GetInstance().Initialize();
 
+        // Jank workaround to game bug where the reference count for FixedString 0 (the "Cast" key)
+        // gets erroneously decremented during module load.
+        FixedString cast("Cast");
+        const_cast<FixedStringBase::Header*>(cast.GetMetadata())->RefCount = 100000;
+
         engineHooks_.HookAll();
         hooks_.Startup();
         server_.PostStartup();

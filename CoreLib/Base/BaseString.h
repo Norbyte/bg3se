@@ -122,6 +122,7 @@ namespace bg3se
         uint32_t GetLength() const;
         uint32_t GetHash() const;
         bool IsValid() const;
+        Header const* GetMetadata() const;
 
         inline operator char const* () const
         {
@@ -150,7 +151,6 @@ namespace bg3se
         void DecRef();
 
         char const* GetPooledStringPtr() const;
-        Header const* GetMetadata() const;
         static Header const* FindEntry(uint32_t id);
     };
 
