@@ -112,7 +112,7 @@ struct StatusImmunitiesComponent : public BaseComponent
 {
     DEFINE_COMPONENT(StatusImmunities, "eoc::StatusImmunitiesComponent")
 
-    HashMap<FixedString, Guid> PersonalStatusImmunities;
+    HashMap<FixedString, Array<Guid>> PersonalStatusImmunities;
 };
 
 struct BackgroundComponent : public BaseComponent

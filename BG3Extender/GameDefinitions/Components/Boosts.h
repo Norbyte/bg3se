@@ -144,7 +144,7 @@ DEFN_BOOST(ActionResourceBlock, ActionResourceBlock, {
 
 DEFN_BOOST(StatusImmunity, StatusImmunity, {
     FixedString StatusID;
-    Array<Guid> UnknownUUIDs; // PersonalStatusImmunities GUIDs
+    [[bg3::legacy(UnknownUUIDs)]] Array<Guid> Tags;
 })
 
 struct UseBoostsComponent : public BaseComponent
