@@ -2010,6 +2010,11 @@ BEGIN_ENUM(IdentityType, uint8_t)
     EV(Female, 1)
 END_ENUM()
 
+BEGIN_ENUM(BodyType, uint8_t)
+    EV(Male, 0)
+    EV(Female, 1)
+END_ENUM()
+
 BEGIN_ENUM(SpellCastPhase, uint8_t)
     EV(None, 0)
     EV(ValidationStart, 1)

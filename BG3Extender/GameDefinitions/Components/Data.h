@@ -563,7 +563,7 @@ struct AttitudeIdentifier
     [[bg3::legacy(field_0)]] EntityHandle Character;
     [[bg3::legacy(field_8)]] IdentityType Identity;
     [[bg3::legacy(field_10)]] Guid Race;
-    [[bg3::legacy(field_20)]] uint8_t BodyType;
+    [[bg3::legacy(field_20)]] BodyType BodyType;
 
     inline bool operator == (AttitudeIdentifier const& o) const
     {

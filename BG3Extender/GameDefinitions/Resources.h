@@ -13,6 +13,42 @@
 
 BEGIN_SE()
 
+#define FOR_EACH_NONGUID_RESOURCE_TYPE() \
+    FOR_RESOURCE_TYPE(Visual) \
+    FOR_RESOURCE_TYPE(VisualSet) \
+    FOR_RESOURCE_TYPE(Animation) \
+    FOR_RESOURCE_TYPE(AnimationSet) \
+    FOR_RESOURCE_TYPE(Texture) \
+    FOR_RESOURCE_TYPE(Material) \
+    FOR_RESOURCE_TYPE(Physics) \
+    FOR_RESOURCE_TYPE(Effect) \
+    FOR_RESOURCE_TYPE(Script) \
+    FOR_RESOURCE_TYPE(Sound) \
+    FOR_RESOURCE_TYPE(Lighting) \
+    FOR_RESOURCE_TYPE(Atmosphere) \
+    FOR_RESOURCE_TYPE(AnimationBlueprint) \
+    FOR_RESOURCE_TYPE(MeshProxy) \
+    FOR_RESOURCE_TYPE(MaterialSet) \
+    FOR_RESOURCE_TYPE(BlendSpace) \
+    FOR_RESOURCE_TYPE(FCurve) \
+    FOR_RESOURCE_TYPE(Timeline) \
+    FOR_RESOURCE_TYPE(Dialog) \
+    FOR_RESOURCE_TYPE(VoiceBark) \
+    FOR_RESOURCE_TYPE(TileSet) \
+    FOR_RESOURCE_TYPE(IKRig) \
+    FOR_RESOURCE_TYPE(Skeleton) \
+    FOR_RESOURCE_TYPE(VirtualTexture) \
+    FOR_RESOURCE_TYPE(TerrainBrush) \
+    FOR_RESOURCE_TYPE(ColorList) \
+    FOR_RESOURCE_TYPE(CharacterVisual) \
+    FOR_RESOURCE_TYPE(MaterialPreset) \
+    FOR_RESOURCE_TYPE(SkinPreset) \
+    FOR_RESOURCE_TYPE(ClothCollider) \
+    FOR_RESOURCE_TYPE(DiffusionProfile) \
+    FOR_RESOURCE_TYPE(LightCookie) \
+    FOR_RESOURCE_TYPE(TimelineScene) \
+    FOR_RESOURCE_TYPE(SkeletonMirrorTable)
+
 struct TextureLayerConfigId
 {
     uint32_t TextureLayerConfig;

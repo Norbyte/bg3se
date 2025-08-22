@@ -126,16 +126,26 @@ using TStaticDataTypeIndex = int32_t;
 enum class StaticDataTypeIndex : TStaticDataTypeIndex {};
 static constexpr StaticDataTypeIndex UndefinedStaticDataType{ -1 };
 
-struct GuidResource : ProtectedGameObject<GuidResource>
+struct GuidResource
 {
-    [[bg3::hidden]]
-    void* VMT;
+    [[bg3::hidden]] void* VMT{ nullptr };
     Guid ResourceUUID;
 };
 
 struct [[bg3::hidden]] GuidResourceBankBase : ProtectedGameObject<GuidResourceBankBase>
 {
-    void* VMT;
+    virtual ~GuidResourceBankBase() = 0;
+    virtual bool LoadModuleObjects(ObjectSet<Module> const&) = 0;
+    virtual bool LEGACY_LoadModuleObjects(Module const&) = 0;
+    virtual void Clear() = 0;
+    virtual void PostInit() = 0;
+    virtual GuidResource const* GetObjectByKey(Guid const&) const = 0;
+    virtual GuidResource const* AddLoadedObject(GuidResource&&) = 0;
+    virtual bool Load(ObjectVisitor&, Array<Guid>&, bool) = 0;
+    virtual FixedString const& VisitorSortKey() const = 0;
+    virtual bool Unknown48() = 0;
+    virtual bool Unknown50() = 0;
+
     FixedString LSXRegionName;
     FixedString LSXResourceNodeName;
     HashMap<Guid, Array<Guid>> ResourceGuidsByMod;
@@ -165,15 +175,15 @@ struct ActionResource : public resource::GuidResource
     TranslatedString DisplayName;
     TranslatedString Description;
     TranslatedString Error;
-    uint32_t MaxLevel;
-    double MaxValue;
-    DiceSizeId DiceType;
-    ResourceReplenishType ReplenishType;
-    bool ShowOnActionResourcePanel;
-    bool UpdatesSpellPowerLevel;
-    bool PartyActionResource;
-    bool IsSpellResource;
-    bool IsHidden;
+    uint32_t MaxLevel{ 0 };
+    double MaxValue{ .0 };
+    DiceSizeId DiceType{ DiceSizeId::Default };
+    ResourceReplenishType ReplenishType{ ResourceReplenishType::Default };
+    bool ShowOnActionResourcePanel{ false };
+    bool UpdatesSpellPowerLevel{ false };
+    bool PartyActionResource{ false };
+    bool IsSpellResource{ false };
+    bool IsHidden{ false };
 };
 
 
@@ -190,25 +200,25 @@ struct ClassDescription : public resource::GuidResource
     TranslatedString Description;
     Guid ProgressionTableUUID;
     FixedString SoundClassType;
-    AbilityId PrimaryAbility;
-    AbilityId SpellCastingAbility;
-    bool MustPrepareSpells;
-    bool CanLearnSpells;
-    bool HasGod;
-    bool IsDefaultForUseSpellAction;
+    AbilityId PrimaryAbility{ AbilityId::None };
+    AbilityId SpellCastingAbility{ AbilityId::None };
+    bool MustPrepareSpells{ false };
+    bool CanLearnSpells{ false };
+    bool HasGod{ false };
+    bool IsDefaultForUseSpellAction{ false };
     HashSet<FixedString> SomaticEquipmentSet;
     Array<Guid> Tags;
     FixedString ClassEquipment;
     FixedString CharacterCreationPose;
-    SpellLearningStrategy LearningStrategy;
-    uint8_t field_71;
-    int BaseHp;
-    int HpPerLevel;
-    int CommonHotbarColumns;
-    int ClassHotbarColumns;
-    int ItemsHotbarColumns;
-    int AnimationSetPriority;
-    double MulticlassSpellcasterModifier;
+    SpellLearningStrategy LearningStrategy{ SpellLearningStrategy::Singular };
+    uint8_t field_71{ 0 };
+    int BaseHp{ 0 };
+    int HpPerLevel{ 0 };
+    int CommonHotbarColumns{ 0 };
+    int ClassHotbarColumns{ 0 };
+    int ItemsHotbarColumns{ 0 };
+    int AnimationSetPriority{ 0 };
+    double MulticlassSpellcasterModifier{ .0 };
     Guid SpellList;
 };
 
@@ -221,8 +231,8 @@ struct Tag : public resource::GuidResource
     FixedString Name;
     STDString Description;
     FixedString Icon;
-    uint32_t Categories; // FIXME - map to flags
-    uint32_t Properties; // FIXME - map to flags
+    uint32_t Categories{ 0 }; // FIXME - map to flags
+    uint32_t Properties{ 0 }; // FIXME - map to flags
     TranslatedString DisplayName;
     TranslatedString DisplayDescription;
 };
@@ -274,36 +284,36 @@ struct Origin : public resource::GuidResource
     static constexpr auto ResourceManagerType = ExtResourceManagerType::Origin;
     static constexpr auto EngineClass = "eoc::OriginManager";
 
-    uint8_t AvailableInCharacterCreation;
+    uint8_t AvailableInCharacterCreation{ 1 };
     FixedString Name;
     TranslatedString DisplayName;
     TranslatedString Description;
-    uint8_t BodyType;
-    uint8_t BodyShape;
-    bool LockBody;
+    BodyType BodyType{ BodyType::Male };
+    uint8_t BodyShape{ 0 };
+    bool LockBody{ false };
     Guid RaceUUID;
     Guid SubRaceUUID;
-    bool LockRace;
+    bool LockRace{ false };
     Guid BackgroundUUID;
     Guid GodUUID;
     Guid ClassUUID;
     Guid SubClassUUID;
-    bool LockClass;
+    bool LockClass{ false };
     Guid GlobalTemplate;
     Guid DefaultsTemplate;
     STDString Passives;
     Array<stats::PassivePrototype*> PassivePrototypes;
     Array<Guid> AppearanceTags;
     Array<Guid> ReallyTags;
-    uint32_t Flags;
+    uint32_t Flags{ 0 };
     STDString Overview;
     STDString CloseUpA;
     STDString CloseUpB;
     FixedString ClassEquipmentOverride;
     Guid VoiceTableUUID;
     Guid IntroDialogUUID;
-    bool IsHenchman;
-    uint8_t Identity;
+    bool IsHenchman{ false };
+    uint8_t Identity{ 3 };
     Guid ExcludesOriginUUID;
 };
 
@@ -318,7 +328,7 @@ struct Background : public resource::GuidResource
     STDString Passives;
     Array<stats::PassivePrototype*> PassivePrototypes;
     Array<Guid> Tags;
-    bool Hidden;
+    bool Hidden{ false };
 };
 
 
@@ -420,11 +430,11 @@ struct Progression : public resource::GuidResource
     STDString PassivesRemoved;
     Array<Guid> BoostPrototypes;
     STDString Boosts;
-    ProgressionType ProgressionType;
-    uint8_t Level;
-    bool AllowImprovement;
+    ProgressionType ProgressionType{ ProgressionType::Class };
+    uint8_t Level{ 0 };
+    bool AllowImprovement{ false };
     Array<FixedString> field_D0;
-    bool IsMulticlass;
+    bool IsMulticlass{ false };
     Array<Ability> SelectAbilities;
     Array<AbilityBonus> SelectAbilityBonus;
     Array<Skill> SelectSkills;
@@ -443,7 +453,7 @@ struct ProgressionDescription : public resource::GuidResource
 
     TranslatedString DisplayName;
     TranslatedString Description;
-    bool Hidden;
+    bool Hidden{ false };
     FixedString ExactMatch;
     FixedString Type;
     FixedString ParamMatch;
@@ -461,7 +471,7 @@ struct Gossip : public resource::GuidResource
 
     FixedString Name;
     FixedString Type;
-    int Priority;
+    int Priority{ 0 };
     Array<Guid> ConditionFlags;
     Array<Guid> ResultFlags;
     Guid DialogUUID;
@@ -521,13 +531,13 @@ struct Flag : public resource::GuidResource
 
     FixedString Name;
     STDString Description;
-    uint8_t Usage; // FIXME - map to flags
+    uint8_t Usage{ 0 }; // FIXME - map to flags
 };
 
 struct FeatRequirement
 {
     STDString Requirement;
-    uint8_t Type;
+    uint8_t Type{ 0 };
     std::optional<uint64_t> ProficiencyGroupFlags;
     std::optional<AbilityId> Ability;
     std::optional<int> AbilityValue;
@@ -548,7 +558,7 @@ struct Feat : public resource::GuidResource
     Array<stats::PassivePrototype*> PassivePrototypesRemoved;
     STDString Boosts;
     Array<Guid> BoostPrototypes;
-    bool CanBeTakenMultipleTimes;
+    bool CanBeTakenMultipleTimes{ false };
     Array<Progression::Ability> SelectAbilities;
     Array<Progression::AbilityBonus> SelectAbilityBonus;
     Array<Progression::Skill> SelectSkills;
@@ -567,7 +577,7 @@ struct FeatDescription : public resource::GuidResource
 
     TranslatedString DisplayName;
     TranslatedString Description;
-    bool Hidden;
+    bool Hidden{ false };
     FixedString ExactMatch;
     FixedString Type;
     FixedString ParamMatch;
@@ -628,8 +638,8 @@ struct CompanionPreset : public resource::GuidResource
 
     Guid RaceUuid;
     Guid SubRaceUuid;
-    uint8_t BodyType;
-    uint8_t BodyShape;
+    BodyType BodyType{ BodyType::Male };
+    uint8_t BodyShape{ 0 };
     Guid RootTemplate;
     STDString Overview;
     STDString CloseUpA;
@@ -645,13 +655,13 @@ struct AbilityDistributionPreset : public resource::GuidResource
     static constexpr auto EngineClass = "eoc::AbilityDistributionPresetManager";
 
     Guid ClassUuid;
-    int field_28;
-    int Strength;
-    int Dexterity;
-    int Constitution;
-    int Intelligence;
-    int Wisdom;
-    int Charisma;
+    int field_28{ 0 };
+    int Strength{ 0 };
+    int Dexterity{ 0 };
+    int Constitution{ 0 };
+    int Intelligence{ 0 };
+    int Wisdom{ 0 };
+    int Charisma{ 0 };
 };
 
 
@@ -660,7 +670,7 @@ struct CharacterCreationAccessorySet : public resource::GuidResource
     static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationAccessorySet;
     static constexpr auto EngineClass = "eoc::CharacterCreationAccessorySetManager";
 
-    bool CharacterCreationSet;
+    bool CharacterCreationSet{ false };
     TranslatedString DisplayName;
     Array<Guid> VisualUUID;
     FixedString SlotName;
@@ -679,7 +689,7 @@ struct CharacterCreationAppearanceMaterial : public resource::GuidResource
     Guid MaterialPresetUUID;
     FixedString MaterialType;
     FixedString MaterialType2;
-    glm::vec4 UIColor;
+    glm::vec4 UIColor{ .0f };
     Guid MaleRootTemplate;
     FixedString MaleCameraName;
     Guid FemaleRootTemplate;
@@ -696,9 +706,9 @@ struct CharacterCreationAppearanceVisual : public resource::GuidResource
 
     Guid RootTemplate;
     Guid RaceUUID;
-    uint8_t BodyType;
-    uint8_t BodyShape;
-    uint32_t field_3C;
+    BodyType BodyType{ BodyType::Male };
+    uint8_t BodyShape{ 0 };
+    uint32_t field_3C{ 0 };
     FixedString SlotName;
     Guid VisualResource;
     Guid HeadAppearanceUUID;
@@ -721,7 +731,7 @@ struct CharacterCreationEquipmentIcons : public resource::GuidResource
     Guid AnimationUUID;
     FixedString IconGenerationTrigger;
     FixedString SlotName;
-    bool MeshIsTwoSided;
+    bool MeshIsTwoSided{ false };
 };
 
 
@@ -731,7 +741,7 @@ struct CharacterCreationIconSettings : public resource::GuidResource
     static constexpr auto EngineClass = "eoc::CharacterCreationIconSettingsManager";
 
     Guid RootTemplate;
-    uint8_t BodyShape;
+    uint8_t BodyShape{ 0 };
     Guid HeadAppearanceUUID;
 };
 
@@ -741,7 +751,7 @@ struct CharacterCreationColor : public resource::GuidResource
     FixedString Name;
     TranslatedString DisplayName;
     Guid MaterialPresetUUID;
-    glm::vec4 UIColor;
+    glm::vec4 UIColor{ .0f };
     FixedString SkinType;
 };
 
@@ -772,7 +782,7 @@ struct CharacterCreationMaterialOverride : public resource::GuidResource
     static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationMaterialOverride;
     static constexpr auto EngineClass = "eoc::CharacterCreationMaterialOverrideManager";
 
-    int32_t MaterialType;
+    int32_t MaterialType{ 0 };
     Guid ActiveMaterialPresetUUID;
     Guid InactiveMaterialPresetUUID;
     FixedString SourceMaterialUUID;
@@ -800,8 +810,8 @@ struct CharacterCreationPreset : public resource::GuidResource
 
     Guid RaceUUID;
     Guid SubRaceUUID;
-    uint8_t BodyType;
-    uint8_t BodyShape;
+    BodyType BodyType{ BodyType::Male };
+    uint8_t BodyShape{ 0 };
     Guid RootTemplate;
     STDString Overview;
     STDString CloseUpA;
@@ -852,7 +862,7 @@ struct ApprovalRating : public resource::GuidResource
         int32_t value;
     };
 
-    uint8_t Scope;
+    uint8_t Scope{ 0 };
     Array<Reaction> Reactions;
     Array<Reaction> ReactionsSpeakers;
 };
@@ -864,8 +874,8 @@ struct AreaLevelOverride : public resource::GuidResource
     static constexpr auto EngineClass = "eoc::AreaLevelOverrideManager";
 
     Guid ParentUuid;
-    int32_t EntityLevel;
-    int32_t TreasureLevel;
+    int32_t EntityLevel{ 0 };
+    int32_t TreasureLevel{ 0 };
 };
 
 
@@ -886,8 +896,8 @@ struct BackgroundGoal : public resource::GuidResource
     TranslatedString Title;
     TranslatedString Description;
     Guid BackgroundUuid;
-    int32_t InspirationPoints;
-    int32_t RewardLevel;
+    int32_t InspirationPoints{ 0 };
+    int32_t RewardLevel{ 0 };
     Guid ExperienceReward;
 };
 
@@ -897,10 +907,10 @@ struct CalendarDayRange : public resource::GuidResource
     static constexpr auto ResourceManagerType = ExtResourceManagerType::CalendarDayRange;
     static constexpr auto EngineClass = "eoc::calendar::DayRanges";
 
-    int32_t Start;
-    int32_t End;
-    int32_t LeapYearStart;
-    int32_t LeapYearEnd;
+    int32_t Start{ 0 };
+    int32_t End{ 0 };
+    int32_t LeapYearStart{ 0 };
+    int32_t LeapYearEnd{ 0 };
     FixedString Name;
     TranslatedString DisplayName;
     TranslatedString DisplayCommonName;
@@ -922,7 +932,7 @@ struct DefaultValueGuidResource : public resource::GuidResource
     Guid RaceUuid;
     Guid ClassUuid;
     Guid SubclassUuid;
-    int32_t Level;
+    int32_t Level{ 0 };
     STDString SelectorId;
 };
 
@@ -1021,8 +1031,8 @@ struct CinematicArenaFrequencyGroup : public resource::GuidResource
     static constexpr auto EngineClass = "eoc::CinematicArenaFrequencyGroupManager";
 
     FixedString Name;
-    float MaxFrequency;
-    double PercentageChance;
+    float MaxFrequency{ .0f };
+    double PercentageChance{ .0 };
 };
 
 
@@ -1035,11 +1045,11 @@ struct CustomDiceTemplate : public resource::GuidResource
     STDString FontColour;
     TranslatedString DisplayNamme;
     TranslatedString Description;
-    bool IsDefault;
-    bool Flip1;
-    bool Flip20;
-    bool Icon;
-    bool Icon20;
+    bool IsDefault{ false };
+    bool Flip1{ false };
+    bool Flip20{ false };
+    bool Icon{ false };
+    bool Icon20{ false };
 };
 
 
@@ -1050,8 +1060,8 @@ struct ConditionErrorDescription : public resource::GuidResource
 
     FixedString Identifier;
     TranslatedString DisplayName;
-    uint8_t ErrorDescriptionType;
-    bool Hidden;
+    uint8_t ErrorDescriptionType{ 0 };
+    bool Hidden{ false };
 };
 
 
@@ -1074,7 +1084,7 @@ struct DifficultyClass : public resource::GuidResource
 
     STDString Name;
     Array<int32_t> Difficulties;
-    uint8_t field_40;
+    uint8_t field_40{ 0 };
 };
 
 
@@ -1093,13 +1103,13 @@ struct DLC : public resource::GuidResource
     static constexpr auto EngineClass = "eoc::DLCManager";
 
     STDString Name;
-    uint32_t SteamAPICode;
-    uint32_t GalaxyAPICode;
-    uint32_t PS5APICode;
-    uint32_t XLiveAPICode;
-    uint32_t TwitchAPICode;
+    uint32_t SteamAPICode{ 0 };
+    uint32_t GalaxyAPICode{ 0 };
+    uint32_t PS5APICode{ 0 };
+    uint32_t XLiveAPICode{ 0 };
+    uint32_t TwitchAPICode{ 0 };
     Guid CustomDice;
-    uint8_t UnlockType;
+    uint8_t UnlockType{ 0 };
 };
 
 
@@ -1128,8 +1138,8 @@ struct ExperienceRewards : public resource::GuidResource
     static constexpr auto ResourceManagerType = ExtResourceManagerType::ExperienceReward;
     static constexpr auto EngineClass = "eoc::ExperienceRewards";
 
-    uint8_t RewardType;
-    uint8_t LevelSource;
+    uint8_t RewardType{ 0 };
+    uint8_t LevelSource{ 0 };
     FixedString Name;
     Array<int32_t> PerLevelRewards;
 };
@@ -1168,7 +1178,7 @@ struct GoldRewards : public resource::GuidResource
 
     FixedString Name;
     Guid ParentUuid;
-    double ParentScale;
+    double ParentScale{ .0 };
     Array<int32_t> PerLevelRewards;
 };
 
@@ -1178,10 +1188,10 @@ struct FixedHotBarSlot : public resource::GuidResource
     static constexpr auto ResourceManagerType = ExtResourceManagerType::FixedHotBarSlot;
     static constexpr auto EngineClass = "eoc::hotbar::FixedHotBarSlots";
 
-    int32_t SlotIndex;
+    int32_t SlotIndex{ 0 };
     FixedString SpellId;
-    uint8_t HotBarController;
-    uint8_t HotBarType;
+    uint8_t HotBarController{ 0 };
+    uint8_t HotBarType{ 0 };
 };
 
 
@@ -1190,13 +1200,13 @@ struct ItemThrowParams : public resource::GuidResource
     static constexpr auto ResourceManagerType = ExtResourceManagerType::ItemThrowParams;
     static constexpr auto EngineClass = "eoc::ItemThrowParamsManager";
 
-    int32_t Priority;
+    int32_t Priority{ 0 };
     STDString Conditions;
-    int32_t MaxDistForOneRotation;
-    int32_t MaxDistForTwoRotations;
-    int32_t MaxDistForZeroRotations;
-    glm::vec3 StartAngle;
-    uint32_t RotationAxis;
+    int32_t MaxDistForOneRotation{ 0 };
+    int32_t MaxDistForTwoRotations{ 0 };
+    int32_t MaxDistForZeroRotations{ 0 };
+    glm::vec3 StartAngle{ .0f };
+    uint32_t RotationAxis{ 0 };
 };
 
 
@@ -1212,10 +1222,10 @@ struct ItemWallTemplate : public resource::GuidResource
     STDString LowLeft;
     STDString LowMiddle;
     STDString LowRight;
-    float Padding;
-    bool RandomRotation;
+    float Padding{ .0f };
+    bool RandomRotation{ .0f };
     FixedString Animation;
-    float TimeBetweenItems;
+    float TimeBetweenItems{ .0f };
 };
 
 
@@ -1226,10 +1236,10 @@ struct TrajectoryRule : public resource::GuidResource
 
     FixedString Template;
     int32_t Priority;
-    float HeightMin;
-    float HeightMax;
-    float LengthMin;
-    float LengthMax;
+    float HeightMin{ .0f };
+    float HeightMax{ .0f };
+    float LengthMin{ .0f };
+    float LengthMax{ .0f };
 };
 
 
@@ -1251,8 +1261,8 @@ struct LongRestCost : public resource::GuidResource
     static constexpr auto ResourceManagerType = ExtResourceManagerType::LongRestCost;
     static constexpr auto EngineClass = "eoc::LongRestCosts";
 
-    uint32_t CampQuality;
-    int32_t RequiredSupplies;
+    uint32_t CampQuality{ 0 };
+    int32_t RequiredSupplies{ 0 };
     FixedString CampGrowthDifficulty;
 };
 
@@ -1275,26 +1285,26 @@ struct EffectInfo
     STDString ResourceId;
     STDString StartTextKey;
     STDString EndTextKey;
-    float MinDistance;
-    float MaxDistance;
-    MultiEffectFlags Flags;
-    bool Pivot;
+    float MinDistance{ .0f };
+    float MaxDistance{ .0f };
+    MultiEffectFlags Flags{ 0 };
+    bool Pivot{ false };
     uint32_t BindSourceTo;
     uint32_t BindTargetTo;
     DamageType DamageType;
-    uint8_t VerbalIntent;
+    uint8_t VerbalIntent{ 0 };
     Array<STDString> SourceSkeletonSlot;
     Array<STDString> SourceBone;
     Array<Guid> SourceSurface;
     Array<Guid> SourceTag;
     Array<Guid> SourceIgnoreTag;
-    bool SourceCheckEquipmentTagConditions;
+    bool SourceCheckEquipmentTagConditions{ false };
     Array<STDString> TargetSkeletonSlot;
     Array<STDString> TargetBone;
     Array<Guid> TargetSurface;
     Array<Guid> TargetTag;
     Array<Guid> TargetIgnoreTag;
-    bool TargetCheckEquipmentTagConditions;
+    bool TargetCheckEquipmentTagConditions{ false };
 };
 
 
@@ -1314,7 +1324,7 @@ struct OriginIntroEntity : public resource::GuidResource
     static constexpr auto EngineClass = "eoc::OriginIntroEntityManager";
 
     FixedString Name;
-    int32_t PlayerIndex;
+    int32_t PlayerIndex{ 0 };
     Guid DummyUuid;
 };
 
@@ -1335,7 +1345,7 @@ struct ProjectileDefault : public resource::GuidResource
     static constexpr auto ResourceManagerType = ExtResourceManagerType::ProjectileDefault;
     static constexpr auto EngineClass = "eoc::ProjectileDefaultContainer";
 
-    uint8_t ProjectileDefaultType;
+    uint8_t ProjectileDefaultType{ 0 };
     Guid ProjectileTemplateId;
 };
 
@@ -1347,9 +1357,9 @@ struct RandomCastOutcome : public resource::GuidResource
 
     FixedString GroupName;
     FixedString Spell;
-    int32_t Level;
+    int32_t Level{ 0 };
     Guid ClassUuid;
-    int32_t ClassLevel;
+    int32_t ClassLevel{ 0 };
 };
 
 
@@ -1361,7 +1371,7 @@ struct SoundSpellTrajectoryRule : public resource::GuidResource
     FixedString RuleName;
     FixedString CurveUuid;
     FixedString SoundEvent;
-    float DistancePastListener;
+    float DistancePastListener{ .0f };
 };
 
 
@@ -1375,7 +1385,7 @@ struct StatusSoundState : public resource::GuidResource
     FixedString SpellOverrideSwitchGroup;
     FixedString SpellOverrideSwitchState;
     FixedString SpellOverrideSwitchClearState;
-    bool BlockVocals;
+    bool BlockVocals{ false };
 };
 
 
@@ -1386,7 +1396,7 @@ struct SurfaceCursorMessage : public resource::GuidResource
 
     FixedString Name;
     TranslatedString CursorMessage;
-    int Priority;
+    int Priority{ 0 };
 };
 
 
@@ -1397,7 +1407,7 @@ struct TadpolePower : public resource::GuidResource
 
     Array<Guid> Prerequisites;
     FixedString Name;
-    bool NeedsHalfIllithidToUnlock;
+    bool NeedsHalfIllithidToUnlock{ false };
 };
 
 
@@ -1443,9 +1453,9 @@ struct TutorialEntry : public resource::GuidResource
     TranslatedString ControllerDescription;
     STDString KeyboardVideo;
     STDString ControllerVideo;
-    uint8_t Section;
-    uint8_t InputType;
-    bool Hidden;
+    uint8_t Section{ 0 };
+    uint8_t InputType{ 0 };
+    bool Hidden{ false };
 };
 
 
@@ -1455,14 +1465,14 @@ struct TutorialModalEntry : public resource::GuidResource
     static constexpr auto EngineClass = "eoc::tutorial::ModalEntriesManager";
 
     FixedString TutorialName;
-    int32_t TutorialID;
+    int32_t TutorialID{ 0 };
     TranslatedString DisplayTitle;
     TranslatedString KeyboardDescription;
     TranslatedString ControllerDescription;
-    uint8_t Section;
-    uint8_t ModalType;
-    bool WaitForEndDialog;
-    bool WaitForEndCC;
+    uint8_t Section{ 0 };
+    uint8_t ModalType{ 0 };
+    bool WaitForEndDialog{ false };
+    bool WaitForEndCC{ false };
     FixedString ExtraData;
 };
 
@@ -1473,7 +1483,7 @@ struct TutorialUnifiedEntry : public resource::GuidResource
     static constexpr auto EngineClass = "eoc::tutorial::UnifiedEntriesManager";
 
     FixedString TutorialName;
-    uint8_t ModalType;
+    uint8_t ModalType{ 0 };
     TranslatedString DisplayTitle;
     TranslatedString KeyboardDescription;
     TranslatedString ControllerDescription;
@@ -1481,17 +1491,17 @@ struct TutorialUnifiedEntry : public resource::GuidResource
     TranslatedString ControllerJournalDescription;
     TranslatedString KeyboardInputList;
     TranslatedString ControllerInputList;
-    uint8_t Section;
-    bool WaitForEndDialog;
-    bool WaitForEndCC;
-    bool WaitForLayers;
-    bool ShowInSplitScreen;
-    uint8_t InputType;
-    uint32_t field_98;
+    uint8_t Section{ 0 };
+    bool WaitForEndDialog{ false };
+    bool WaitForEndCC{ false };
+    bool WaitForLayers{ false };
+    bool ShowInSplitScreen{ false };
+    uint8_t InputType{ 0 };
+    uint32_t field_98{ 0 };
     STDString Icon;
-    int32_t LifeTime;
-    int32_t PositionOffsetX;
-    int32_t PositionOffsetY;
+    int32_t LifeTime{ 0 };
+    int32_t PositionOffsetX{ 0 };
+    int32_t PositionOffsetY{ 0 };
 };
 
 
@@ -1501,10 +1511,10 @@ struct TutorialEvent : public resource::GuidResource
     static constexpr auto EngineClass = "eoc::tutorial::TutorialEventManager";
 
     STDString Name;
-    uint8_t EventType;
+    uint8_t EventType{ 0 };
     Guid ActionResource;
-    uint32_t HotbarSlotFlags;
-    uint8_t UserAction;
+    uint32_t HotbarSlotFlags{ 0 };
+    uint8_t UserAction{ 0 };
 };
 
 
@@ -1526,7 +1536,7 @@ struct Voice : public resource::GuidResource
     Guid TableUuid;
     TranslatedString DisplayName;
     Guid SpeakerUuid;
-    uint8_t BodyType;
+    BodyType BodyType{ BodyType::Male };
     Array<Guid> Tags;
 };
 
@@ -1547,9 +1557,9 @@ struct WeightCategories : public resource::GuidResource
     static constexpr auto ResourceManagerType = ExtResourceManagerType::WeightCategory;
     static constexpr auto EngineClass = "eoc::weight::WeightCategories";
 
-    int32_t MaxWeight;
+    int32_t MaxWeight{ 0 };
     Array<Guid> Tags;
-    uint8_t ObjectSize;
+    uint8_t ObjectSize{ 0 };
 };
 
 
@@ -1560,70 +1570,70 @@ struct ShapeshiftRule : public resource::GuidResource
 
     struct TypedInt
     {
-        uint8_t Type;
-        int32_t Value;
+        uint8_t Type{ 0 };
+        int32_t Value{ 0 };
     };
 
     struct TypedFloat
     {
-        uint8_t Type;
-        float Value;
+        uint8_t Type{ 0 };
+        float Value{ .0f };
     };
 
     STDString RuleName;
     TypedInt Hp;
     TypedInt TemporaryHp;
-    bool WildShapeHotBar;
+    bool WildShapeHotBar{ false };
     TypedFloat Weight;
-    uint8_t FootstepsType;
+    uint8_t FootstepsType{ 0 };
     Array<TypedInt> AbilityChanges;
-    bool RemoveOldTags;
-    bool ApplyTagsFromTemplate;
+    bool RemoveOldTags{ false };
+    bool ApplyTagsFromTemplate{ false };
     Array<Guid> TagsAdd;
     Array<Guid> TagsRemove;
-    uint16_t ActionCapabilities;
-    uint16_t InteractionsCapabilities;
-    uint16_t AwarenessCapabilities;
-    uint16_t SpeakingCapabilities;
-    bool ChangeRace;
-    bool ChangeBodyType;
-    bool UseShapeshiftIdentity;
-    bool ChangeAi;
+    uint16_t ActionCapabilities{ 0 };
+    uint16_t InteractionsCapabilities{ 0 };
+    uint16_t AwarenessCapabilities{ 0 };
+    uint16_t SpeakingCapabilities{ 0 };
+    bool ChangeRace{ false };
+    bool ChangeBodyType{ false };
+    bool UseShapeshiftIdentity{ false };
+    bool ChangeAi{ false };
     std::optional<STDString> ChangeScript;
-    bool ApplyVisual;
-    bool ApplyVisualInCC;
-    bool IgnoreCustomLooks;
-    bool RetainDisplayName;
-    bool ChangeIcon;
+    bool ApplyVisual{ false };
+    bool ApplyVisualInCC{ false };
+    bool IgnoreCustomLooks{ false };
+    bool RetainDisplayName{ false };
+    bool ChangeIcon{ false };
     TypedFloat Scale;
-    bool MuteEquipmentSound;
-    bool OverrideSpeaker;
-    bool RemovePrevSpells;
-    bool ApplySpellsFromTemplate;
+    bool MuteEquipmentSound{ false };
+    bool OverrideSpeaker{ false };
+    bool RemovePrevSpells{ false };
+    bool ApplySpellsFromTemplate{ false };
     Array<FixedString> SpellsAdd;
     Array<FixedString> SpellsRemove;
-    bool RetainCanSeeThrough;
-    bool RetainCanShootThrough;
-    bool RetainCanWalkThrough;
-    bool BaseACOverride;
-    bool UnarmedAbilityFromTemplate;
-    bool DisableEquipmentSlots;
-    bool UseTemplateEquipmentSet;
-    bool KillEntityAtZeroHP;
+    bool RetainCanSeeThrough{ false };
+    bool RetainCanShootThrough{ false };
+    bool RetainCanWalkThrough{ false };
+    bool BaseACOverride{ false };
+    bool UnarmedAbilityFromTemplate{ false };
+    bool DisableEquipmentSlots{ false };
+    bool UseTemplateEquipmentSet{ false };
+    bool KillEntityAtZeroHP{ false };
     STDString PathInfluence;
     std::optional<Guid> DummyClass;
-    bool BlockLevelUp;
-    uint8_t FlagsInheritanceType;
-    uint8_t DefaultBoostsInheritanceType;
-    uint8_t PersonalStatusImmunitiesInheritanceType;
-    uint8_t SpellCastingAbilityInheritanceType;
-    uint8_t PassivesInheritanceType;
-    uint8_t ResistancesInheritanceType;
-    uint8_t DifficultyStatusesInheritanceType;
-    uint8_t ProficiencyGroupsInheritanceType;
-    uint8_t BloodSurfaceTypeInheritanceType;
-    uint8_t HitBloodTypeInheritanceType;
-    uint8_t DeathActionsInheritanceType;
+    bool BlockLevelUp{ false };
+    uint8_t FlagsInheritanceType{ 0 };
+    uint8_t DefaultBoostsInheritanceType{ 0 };
+    uint8_t PersonalStatusImmunitiesInheritanceType{ 0 };
+    uint8_t SpellCastingAbilityInheritanceType{ 0 };
+    uint8_t PassivesInheritanceType{ 0 };
+    uint8_t ResistancesInheritanceType{ 0 };
+    uint8_t DifficultyStatusesInheritanceType{ 0 };
+    uint8_t ProficiencyGroupsInheritanceType{ 0 };
+    uint8_t BloodSurfaceTypeInheritanceType{ 0 };
+    uint8_t HitBloodTypeInheritanceType{ 0 };
+    uint8_t DeathActionsInheritanceType{ 0 };
 };
 
 
@@ -1633,7 +1643,7 @@ struct AnimationSetPriority : public resource::GuidResource
     static constexpr auto EngineClass = "ls::AnimationSetPriorityManager";
 
     STDString Name;
-    int32_t Priority;
+    int32_t Priority{ 0 };
     Array<Guid> AddidionalObjects;
 };
 
@@ -1646,7 +1656,7 @@ struct SpellMetaCondition : public resource::GuidResource
     SpellMetaConditionType ConditionType;
     STDString Filter;
     STDString AdditionalConditions;
-    bool OverrideOriginalCondition;
+    bool OverrideOriginalCondition{ false };
 };
 
 
@@ -1657,8 +1667,8 @@ struct ScriptMaterialParameterOverride : public resource::GuidResource
 
     FixedString ParameterName;
     FixedString ParameterType;
-    uint8_t SetMode;
-    uint8_t IsFixedString;
+    uint8_t SetMode{ 0 };
+    uint8_t IsFixedString{ 0 };
     [[bg3::hidden]] __int64 field_28;
     std::variant<float, glm::vec3, glm::vec4, FixedString> Limit;
     [[bg3::hidden]] __int64 field_48;
@@ -1685,6 +1695,9 @@ struct VisualLocatorAttachment : public resource::GuidResource
     FixedString LocatorName;
 };
 
+struct NoValue
+{
+};
 
 struct RulesetModifier : public resource::GuidResource
 {
@@ -1694,15 +1707,15 @@ struct RulesetModifier : public resource::GuidResource
     STDString Name;
     TranslatedString DisplayName;
     TranslatedString Description;
-    uint8_t RulesetModifierType;
-    int field_54;
-    float Max;
-    float Step;
+    uint8_t RulesetModifierType{ 0 };
+    int field_54{ 0 };
+    float Max{ .0f };
+    float Step{ .0f };
     STDString Default;
-    [[bg3::hidden]] __int64 field_78;
+    std::variant<NoValue, float, int, FixedString, bool> ParsedDefault;
     STDString LoadModule;
-    bool ShowInCustom;
-    bool EditableDuringGame;
+    bool ShowInCustom{ false };
+    bool EditableDuringGame{ false };
 };
 
 
@@ -1716,9 +1729,9 @@ struct RulesetModifierOption : public resource::GuidResource
     TranslatedString Description;
     Guid Modifier;
     STDString Value;
-    [[bg3::hidden]] __int64 field_78;
+    std::variant<NoValue, float, int, FixedString, bool> ParsedValue;
     STDString LoadModule;
-    bool ShowInCustom;
+    bool ShowInCustom{ false };
 };
 
 
@@ -1728,11 +1741,11 @@ struct Ruleset : public resource::GuidResource
     static constexpr auto EngineClass = "eoc::ruleset::Rulesets";
 
     STDString Name;
-    uint8_t Type;
+    uint8_t Type{ 0 };
     TranslatedString DisplayName;
     TranslatedString Description;
     Array<Guid> Parent;
-    bool ShowInCustom;
+    bool ShowInCustom{ false };
 };
 
 
@@ -1740,10 +1753,6 @@ struct RulesetValue : public resource::GuidResource
 {
     static constexpr auto ResourceManagerType = ExtResourceManagerType::RulesetValue;
     static constexpr auto EngineClass = "eoc::ruleset::RulesetValues";
-
-    struct NoValue
-    {
-    };
 
     Guid Ruleset;
     Guid Modifier;
@@ -1762,7 +1771,7 @@ struct RulesetSelectionPreset : public resource::GuidResource
     TranslatedString DisplayName;
     TranslatedString Description;
     STDString Asset;
-    bool IsCustom;
+    bool IsCustom{ false };
 };
 
 
@@ -1771,8 +1780,8 @@ struct OneTimeReward : public resource::GuidResource
     static constexpr auto ResourceManagerType = ExtResourceManagerType::OneTimeReward;
     static constexpr auto EngineClass = "eoc::one_time_reward::RewardManager";
 
-    int ItemTemplateId;
-    int Amount;
+    FixedString ItemTemplateId;
+    int Amount{ 0 };
 };
 
 
@@ -1822,11 +1831,11 @@ struct PhotoModeDecorFrame : public resource::GuidResource
 
     TranslatedString DisplayName;
     STDString Asset;
-    float LeftSliceSize;
-    float TopSliceSize;
-    float RightSliceSize;
-    float BottomSliceSize;
-    float IconWidth;
+    float LeftSliceSize{ .0f };
+    float TopSliceSize{ .0f };
+    float RightSliceSize{ .0f };
+    float BottomSliceSize{ .0f };
+    float IconWidth{ .0f };
 };
 
 
@@ -1862,7 +1871,7 @@ struct PhotoModeEmotePose : public resource::GuidResource
     STDString Name;
     TranslatedString DisplayName;
     FixedString ShortName;
-    uint32_t Timing;
+    uint32_t Timing{ 0 };
     Array<Guid> TagsFilter;
 };
 
@@ -1906,7 +1915,7 @@ struct PhotoModeVignette : public resource::GuidResource
     static constexpr auto EngineClass = "eoc::photo_mode::Vignettes";
 
     TranslatedString DisplayName;
-    glm::vec4 Color;
+    glm::vec4 Color{ .0f };
 };
 
 
