@@ -387,7 +387,7 @@ PropertyOperationResult LuaStatSetAttribute(lua_State* L, stats::Object* object,
                     stats::Object::RollCondition roll;
                     roll.Name = kv.Key();
                     roll.Conditions.Id = conditionsId;
-                    conditions.Add(roll);
+                    conditions.push_back(roll);
                 }
             }
 

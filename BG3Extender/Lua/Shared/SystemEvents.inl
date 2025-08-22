@@ -63,9 +63,9 @@ std::optional<SystemEventHooks::SubscriptionIndex> SystemEventHooks::Subscribe(e
     if (!pool) return {};
 
     if (postUpdate) {
-        pool->PostUpdateHooks.Add(index);
+        pool->PostUpdateHooks.push_back(index);
     } else {
-        pool->PreUpdateHooks.Add(index);
+        pool->PreUpdateHooks.push_back(index);
     }
 
     return index;

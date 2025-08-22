@@ -171,8 +171,8 @@ public:
         }
 
         int keyIdx = (int)Keys.size();
-        Keys.Add(key);
-        NextIds.Add(-1);
+        Keys.push_back(key);
+        NextIds.push_back(-1);
 
         auto desiredSize = Keys.size() + (Keys.size() >> 1);
         if (HashKeys.size() >= desiredSize) {

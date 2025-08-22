@@ -112,7 +112,7 @@ T* TreeParent::AddChild()
 {
     auto child = Manager->CreateRenderable<T>();
     child->Parent = Handle;
-    Children.Add(child->Handle);
+    Children.push_back(child->Handle);
     return child;
 }
 
@@ -780,7 +780,7 @@ bool TreeParent::AttachChild(lua::ImguiHandle child)
     }
 
     ele->Parent = Handle;
-    Children.Add(ele->Handle);
+    Children.push_back(ele->Handle);
     return true;
 }
 

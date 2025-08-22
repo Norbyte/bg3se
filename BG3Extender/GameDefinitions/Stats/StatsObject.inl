@@ -209,7 +209,7 @@ std::optional<Array<FixedString>> Object::GetFlags(FixedString const& attributeN
         if (flags) {
             for (auto const& kv : typeInfo->Values) {
                 if (**flags & (1ull << (kv.Value - 1))) {
-                    flagSet.Add(kv.Key);
+                    flagSet.push_back(kv.Key);
                 }
             }
         }
@@ -341,7 +341,7 @@ bool Object::SetString(FixedString const& attributeName, const char * value)
                 cond.Name = GFS.strDefault;
                 cond.Conditions.Id = index;
                 Array<RollCondition> conditions;
-                conditions.Add(cond);
+                conditions.push_back(cond);
                 SetRollConditions(attributeName, conditions);
             } else {
                 SetRollConditions(attributeName, {});

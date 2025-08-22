@@ -79,7 +79,7 @@ public:
         auto handle = GetHandleByName(name);
         if (handle == -1) {
             handle = NextHandle++;
-            Values.Add(value);
+            Values.push_back(value);
             NameToHandle.set(name, handle);
         } else {
             auto cur = Values[handle];

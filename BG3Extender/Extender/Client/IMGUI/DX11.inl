@@ -178,7 +178,7 @@ public:
             auto list = vp.DrawDataP.CmdLists[i];
             auto drawList = list->CloneOutput();
             vp.DrawDataP.CmdLists[i] = drawList;
-            drawLists.Add(drawList);
+            drawLists.push_back(drawList);
         }
 
         drawViewport_ = curViewport_;

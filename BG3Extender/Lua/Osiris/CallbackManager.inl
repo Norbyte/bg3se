@@ -21,7 +21,7 @@ Array<uint32_t>* PendingCallbackManager::Enter(std::unordered_multimap<uint64_t,
     depth_++;
 
     for (auto it = begin; it != end; it++) {
-        entry->Add(it->second);
+        entry->push_back(it->second);
     }
 
     return entry;

@@ -269,7 +269,7 @@ namespace bg3se::lua
                 StackCheck _(s.L);
                 T temp{};
                 serialize(s, temp);
-                v.Add(temp);
+                v.push_back(temp);
             }
         }
         s.EndObject();

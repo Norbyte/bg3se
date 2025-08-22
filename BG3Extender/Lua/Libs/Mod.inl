@@ -45,7 +45,7 @@ Array<FixedString> GetLoadOrder(lua_State* L)
     auto modManager = ExtensionStateBase::FromLua(L).GetModManager();
 
     for (auto const& mod : modManager->LoadOrderedModules) {
-        loadOrder.Add(mod.Info.ModuleUUIDString);
+        loadOrder.push_back(mod.Info.ModuleUUIDString);
     }
 
     return loadOrder;

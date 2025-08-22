@@ -296,7 +296,7 @@ namespace bg3se
         if (!tskRef) return;
 
         auto str = GameAlloc<STDString>(msg);
-        texts->Strings.Add(str);
+        texts->Strings.push_back(str);
 
         // Update reference to new string
         *tskRef = LSStringView(str->data(), str->size());

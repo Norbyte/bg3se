@@ -21,7 +21,6 @@ void MessageFactory::Grow(uint32_t lastMessageId)
     if (MessagePools.size() <= lastMessageId) {
         EnterCriticalSection(&CriticalSection);
         unsigned size = MessagePools.size();
-        MessagePools.Reallocate(lastMessageId + 1);
         while (MessagePools.size() <= lastMessageId) {
             MessagePools.push_back(nullptr);
             UsedPoolSlots++;

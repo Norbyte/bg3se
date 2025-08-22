@@ -84,10 +84,7 @@ struct MessagePool : Noncopyable<MessagePool>
 
 struct MessageFactory : ProtectedGameObject<MessagePool>
 {
-    void* VMT;
-    Array<MessagePool*> MessagePools;
-    uint32_t UsedPoolSlots;
-    uint32_t WriteOffset;
+    LegacyArray<MessagePool*> MessagePools;
     CRITICAL_SECTION CriticalSection;
 
     Message* GetFreeMessage(uint32_t messageId);

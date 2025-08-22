@@ -571,7 +571,7 @@ public:
 
     Array(Array const& a)
     {
-        CopyFrom(a);
+        copyFrom(a);
     }
 
     Array(Array&& a) noexcept
@@ -596,7 +596,7 @@ public:
 
     Array& operator =(Array const& a)
     {
-        CopyFrom(a);
+        copyFrom(a);
         return *this;
     }
 
@@ -611,19 +611,6 @@ public:
             a.size_ = 0;
         }
         return *this;
-    }
-
-    void CopyFrom(Array const& a)
-    {
-        clear();
-
-        if (a.size_ > 0) {
-            Reallocate(a.size_);
-            size_ = a.size_;
-            for (size_type i = 0; i < size_; i++) {
-                new (buf_ + i) T(a[i]);
-            }
-        }
     }
 
     inline constexpr T* raw_buf() const noexcept
@@ -663,15 +650,6 @@ public:
         return buf_[index];
     }
 
-    constexpr size_type CapacityIncrement() const noexcept
-    {
-        if (capacity_ > 0) {
-            return 2 * capacity_;
-        } else {
-            return 1;
-        }
-    }
-
     void clear()
     {
         for (size_type i = 0; i < size_; i++) {
@@ -681,29 +659,10 @@ public:
         size_ = 0;
     }
 
-    void Reallocate(size_type newCapacity)
-    {
-        auto newBuf = GameMemoryAllocator::NewRaw<T>(newCapacity);
-        for (size_type i = 0; i < std::min(size_, newCapacity); i++) {
-            new (newBuf + i) T(std::move(buf_[i]));
-        }
-
-        if (buf_ != nullptr) {
-            for (size_type i = 0; i < size_; i++) {
-                buf_[i].~T();
-            }
-
-            GameFree(buf_);
-        }
-
-        buf_ = newBuf;
-        capacity_ = newCapacity;
-    }
-
     void resize(size_type newSize)
     {
         if (newSize > capacity_) {
-            Reallocate(newSize);
+            reallocate(newSize);
         }
 
         if (size_ > newSize) {
@@ -719,39 +678,22 @@ public:
         size_ = newSize;
     }
 
-    void Add(T const& value)
-    {
-        if (capacity_ <= size_) {
-            Reallocate(CapacityIncrement());
-        }
-
-        new (&buf_[size_++]) T(value);
-    }
-
     T& push_back(T const& value)
     {
-        if (capacity_ <= size_) {
-            Reallocate(CapacityIncrement());
-        }
-
+        growIfNecessary();
         return *(new (&buf_[size_++]) T(value));
     }
 
     T& push_back(T&& value)
     {
-        if (capacity_ <= size_) {
-            Reallocate(CapacityIncrement());
-        }
-
+        growIfNecessary();
         return *(new (&buf_[size_++]) T(std::move(value)));
     }
 
     void ordered_insert_at(size_type index, T const& value)
     {
         se_assert(index <= size_);
-        if (capacity_ <= size_) {
-            Reallocate(CapacityIncrement());
-        }
+        growIfNecessary();
 
         new (&buf_[size_++]) T();
 
@@ -765,9 +707,7 @@ public:
     void insert_at(size_type index, T const& value)
     {
         se_assert(index <= size_);
-        if (capacity_ <= size_) {
-            Reallocate(CapacityIncrement());
-        }
+        growIfNecessary();
 
         new (&buf_[size_]) T(buf_[index]);
         buf_[index] = value;
@@ -859,6 +799,61 @@ private:
     T* buf_{ nullptr };
     size_type capacity_{ 0 };
     size_type size_{ 0 };
+
+    inline void growIfNecessary()
+    {
+        if (capacity_ <= size_) {
+            reallocate(capacityIncrement());
+        }
+    }
+
+    void reallocate(size_type newCapacity)
+    {
+        auto newBuf = GameMemoryAllocator::NewRaw<T>(newCapacity);
+        for (size_type i = 0; i < std::min(size_, newCapacity); i++) {
+            new (newBuf + i) T(std::move(buf_[i]));
+        }
+
+        // Reassign buf_ after moving the old values, but before destroying them.
+        // This reduces the time window in which a concurrent thread could see garbage data
+        // by dereferencing buf_[x].
+        auto oldBuf = buf_;
+        buf_ = newBuf;
+        capacity_ = newCapacity;
+
+        if (oldBuf != nullptr) {
+            for (size_type i = 0; i < size_; i++) {
+                oldBuf[i].~T();
+            }
+
+            GameFree(oldBuf);
+        }
+    }
+
+    constexpr size_type capacityIncrement() const noexcept
+    {
+        if (capacity_ > 0) {
+            return 2 * capacity_;
+        } else {
+            return 1;
+        }
+    }
+
+    void copyFrom(Array const& a)
+    {
+        clear();
+
+        if (a.size_ > 0) {
+            if (capacity_ < a.size_) {
+                reallocate(a.size_);
+            }
+
+            size_ = a.size_;
+            for (size_type i = 0; i < size_; i++) {
+                new (buf_ + i) T(a[i]);
+            }
+        }
+    }
 };
 
 

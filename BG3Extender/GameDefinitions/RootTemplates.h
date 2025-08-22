@@ -381,9 +381,7 @@ struct EquipmentData : public ProtectedGameObject<EquipmentData>
     HashMap<Guid, Guid> ParentRace;
     HashSet<Guid> SyncWithParent;
     resource::VisualSet* VisualSet;
-    [[bg3::hidden]] void* Slot_VMT;
-    Array<FixedString> Slot;
-    [[bg3::hidden]] void* Slot_junk;
+    LegacyArray<FixedString> Slot;
 };
 
 

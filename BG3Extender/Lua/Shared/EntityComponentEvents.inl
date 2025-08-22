@@ -93,7 +93,7 @@ EntityComponentEventHooks::SubscriptionIndex EntityComponentEventHooks::Subscrib
     auto& pool = AddComponentType(type);
     pool.Events |= events;
     if (!entity) {
-        pool.GlobalHooks.Add(index);
+        pool.GlobalHooks.push_back(index);
     } else {
         auto entityHooks = pool.EntityHooks.try_get(entity);
         if (entityHooks) {

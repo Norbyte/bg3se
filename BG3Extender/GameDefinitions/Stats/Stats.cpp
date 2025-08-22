@@ -51,7 +51,7 @@ void SpellPrototypeManager::SyncStat(Object* object)
         auto proto = GameAlloc<SpellPrototype>();
         if (SyncStat(object, proto)) {
             Spells.set(proto->SpellId, proto);
-            SpellNames.Add(proto->SpellId);
+            SpellNames.push_back(proto->SpellId);
         }
     } else {
         SyncStat(object, *pProto);
@@ -413,7 +413,7 @@ int64_t* RPGStats::GetOrCreateInt64(int& attributeId)
         attributeId = (int)Int64s.Size();
         auto val = GameAlloc<int64_t>();
         *val = (int64_t)0;
-        Int64s.Add(val);
+        Int64s.push_back(val);
     }
 
     return Int64s[attributeId];
@@ -432,7 +432,7 @@ float* RPGStats::GetOrCreateFloat(int& attributeId)
 {
     if (attributeId < 0) {
         attributeId = (int)Floats.Size();
-        Floats.Add(.0f);
+        Floats.push_back(.0f);
     }
 
     return &Floats[attributeId];
@@ -451,7 +451,7 @@ Guid* RPGStats::GetOrCreateGuid(int& attributeId)
 {
     if (attributeId < 0) {
         attributeId = (int)GUIDs.Size();
-        GUIDs.Add(Guid{});
+        GUIDs.push_back(Guid{});
     }
 
     return &GUIDs[attributeId];
@@ -470,7 +470,7 @@ TranslatedString* RPGStats::GetOrCreateTranslatedString(int& attributeId)
 {
     if (attributeId < 0) {
         attributeId = (int)TranslatedStrings.Size();
-        TranslatedStrings.Add(TranslatedString{});
+        TranslatedStrings.push_back(TranslatedString{});
     }
 
     return &TranslatedStrings[attributeId];
@@ -497,7 +497,7 @@ int RPGStats::GetOrCreateConditions(STDString const& conditions)
         }
     }
 
-    Conditions.Add(conditions);
+    Conditions.push_back(conditions);
     return (int)Conditions.Size() - 1;
 }
 

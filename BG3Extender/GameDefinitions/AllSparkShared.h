@@ -47,9 +47,7 @@ struct TimelinePhase
 struct TimelineHeader : public ProtectedGameObject<TimelineHeader>
 {
     float Duration;
-    [[bg3::hidden]] void* PhasesVMT;
-    Array<TimelinePhase> Phases;
-    [[bg3::hidden]] uint64_t PhasesExtra;
+    LegacyArray<TimelinePhase> Phases;
 };
 
 END_NS()

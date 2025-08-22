@@ -36,7 +36,7 @@ std::optional<EntityReplicationEventHooks::SubscriptionIndex> ServerEntityReplic
     auto& pool = AddComponentType(type);
     pool.Fields |= fields;
     if (!entity) {
-        pool.GlobalHooks.Add(index);
+        pool.GlobalHooks.push_back(index);
     } else {
         auto entityHooks = pool.EntityHooks.try_get(entity);
         if (entityHooks) {

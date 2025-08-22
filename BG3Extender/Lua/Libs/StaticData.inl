@@ -159,7 +159,7 @@ Array<FixedString> GetAllResources(ResourceBankType type)
 
     Array<FixedString> ids;
     for (auto const& resource : bank->Container.Banks[(unsigned)type]->Resources) {
-        ids.Add(resource.Key);
+        ids.push_back(resource.Key);
     }
 
     return ids;
