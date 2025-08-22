@@ -23,7 +23,6 @@ void MessageFactory::Grow(uint32_t lastMessageId)
         unsigned size = MessagePools.size();
         while (MessagePools.size() <= lastMessageId) {
             MessagePools.push_back(nullptr);
-            UsedPoolSlots++;
         }
         LeaveCriticalSection(&CriticalSection);
     }

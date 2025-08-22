@@ -865,6 +865,7 @@ public:
 
 private:
     uint32_t Used{ 0 };
+    uint32_t GrowSize{ 1 };
 };
 
 END_SE()
