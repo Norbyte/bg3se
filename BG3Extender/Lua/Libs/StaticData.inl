@@ -249,7 +249,7 @@ void RegisterStaticDataLib()
     MODULE_NAMED_FUNCTION("Get", GetGuidResource)
     MODULE_NAMED_FUNCTION("GetAll", GetAllGuidResources)
     MODULE_NAMED_FUNCTION("GetSources", GetGuidResourceSources)
-    MODULE_NAMED_FUNCTION("GetSources", GetGuidResourceSources)
+    MODULE_NAMED_FUNCTION("GetByModId", GetGuidResourcesByModId)
     MODULE_NAMED_FUNCTION("Create", CreateGuidResource)
     END_MODULE()
 
