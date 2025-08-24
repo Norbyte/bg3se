@@ -199,6 +199,35 @@ public:
     }
 };
 
+class CustomPropertyManager
+{
+public:
+    CustomPropertyManager();
+
+    bool RegisterProperty(lua_State* L, GenericPropertyMap const& pm, FixedStringUnhashed const& name, Ref value);
+    bool RegisterProperty(lua_State* L, GenericPropertyMap const& pm, FixedStringUnhashed const& name, Ref getter, Ref setter);
+
+    PropertyOperationResult GetProperty(lua_State* L, GenericPropertyMap const& pm, LifetimeHandle lifetime, void const* object, FixedStringId const& prop) const;
+    PropertyOperationResult SetProperty(lua_State* L, GenericPropertyMap const& pm, void* object, FixedStringId const& prop, int index) const;
+
+private:
+    struct CustomProperty
+    {
+        RegistryEntry Value;
+        RegistryEntry Getter;
+        RegistryEntry Setter;
+    };
+    
+    struct CustomPropertyMap
+    {
+        HashMap<FixedStringUnhashed, CustomProperty> Properties;
+    };
+
+    Array<std::unique_ptr<CustomPropertyMap>> PropertyMaps;
+
+    bool PropertyCheck(GenericPropertyMap const& pm, FixedStringUnhashed const& name);
+};
+
 inline PropertyOperationResult GenericSetNonWriteableProperty(lua_State* L,  void* obj, int index, RawPropertyAccessorsHotData const&)
 {
     return PropertyOperationResult::UnsupportedType;

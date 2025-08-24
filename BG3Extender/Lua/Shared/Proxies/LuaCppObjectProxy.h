@@ -18,12 +18,12 @@ public:
     static constexpr MetatableTag MetaTag = MetatableTag::ObjectRef;
     static constexpr bool HasLifetime = true;
 
-    inline static void Make(lua_State* L, GenericPropertyMap& pm, void* object, LifetimeHandle lifetime)
+    inline static void Make(lua_State* L, GenericPropertyMap const& pm, void* object, LifetimeHandle lifetime)
     {
         lua_push_lightcppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);
     }
 
-    inline static void Make(lua_State* L, GenericPropertyMap& pm, void const* object, LifetimeHandle lifetime)
+    inline static void Make(lua_State* L, GenericPropertyMap const& pm, void const* object, LifetimeHandle lifetime)
     {
         // TODO - add RO tag
         lua_push_lightcppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);

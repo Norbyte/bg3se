@@ -316,6 +316,47 @@ UserReturn GetHashSetValueAt(lua_State* L, AnyRef object, uint32_t index)
     return 1;
 }
 
+bool AddCustomFunction(lua_State* L, FixedString const& typeName, FixedString const& property, FunctionRef func)
+{
+    auto const& type = TypeInformationRepository::GetInstance().GetType(typeName);
+    if (type.Kind == LuaTypeId::Unknown) {
+        luaL_error(L, "Type not found: %s", typeName.GetString());
+        return false;
+    }
+    
+    if (type.Kind != LuaTypeId::Object 
+        || type.PropertyMap == nullptr 
+        || type.PropertyMap->RegistryIndex == -1) {
+        luaL_error(L, "Cannot extend non-object type: %s", typeName.GetString());
+        return false;
+    }
+
+    return State::FromLua(L)->GetCustomProperties().RegisterProperty(
+        L, *type.PropertyMap, FixedStringUnhashed(property), Ref{ L, func.Index });
+}
+
+bool AddCustomProperty(lua_State* L, FixedString const& typeName, FixedString const& property, FunctionRef getter, std::optional<FunctionRef> setter)
+{
+    auto const& type = TypeInformationRepository::GetInstance().GetType(typeName);
+    if (type.Kind == LuaTypeId::Unknown) {
+        luaL_error(L, "Type not found: %s", typeName.GetString());
+        return false;
+    }
+    
+    if (type.Kind != LuaTypeId::Object 
+        || type.PropertyMap == nullptr 
+        || type.PropertyMap->RegistryIndex == -1) {
+        luaL_error(L, "Cannot extend non-object type: %s", typeName.GetString());
+        return false;
+    }
+
+    return State::FromLua(L)->GetCustomProperties().RegisterProperty(
+        L, *type.PropertyMap, FixedStringUnhashed(property), 
+        Ref{ L, getter.Index },
+        setter ? Ref{ L, setter->Index } : Ref{}
+    );
+}
+
 void RegisterTypesLib()
 {
     DECLARE_MODULE(Types, Both)
@@ -331,6 +372,8 @@ void RegisterTypesLib()
     MODULE_FUNCTION(Unserialize)
     MODULE_FUNCTION(Construct)
     MODULE_FUNCTION(GetHashSetValueAt)
+    MODULE_FUNCTION(AddCustomFunction)
+    MODULE_FUNCTION(AddCustomProperty)
     END_MODULE()
 }
 

@@ -164,6 +164,11 @@ namespace bg3se::lua
             return globals_;
         }
 
+        inline CustomPropertyManager& GetCustomProperties()
+        {
+            return customProperties_;
+        }
+
         inline CachedUserVariableManager& GetVariableManager()
         {
             return variableManager_;
@@ -274,6 +279,7 @@ namespace bg3se::lua
 
         CppMetatableManager metatableManager_;
         GlobalRefManager globals_;
+        CustomPropertyManager customProperties_;
 
         CachedUserVariableManager variableManager_;
         CachedModVariableManager modVariableManager_;

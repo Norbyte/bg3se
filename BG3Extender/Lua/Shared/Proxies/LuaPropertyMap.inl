@@ -73,6 +73,10 @@ PropertyOperationResult GenericPropertyMap::GetRawProperty(lua_State* L, Lifetim
         if (FallbackGetter) {
             result = FallbackGetter(L, lifetime, object, ah);
         }
+
+        if (result == PropertyOperationResult::NoSuchProperty) {
+            result = State::FromLua(L)->GetCustomProperties().GetProperty(L, *this, lifetime, object, prop);
+        }
     }
 
     return result;
@@ -102,6 +106,10 @@ PropertyOperationResult GenericPropertyMap::SetRawProperty(lua_State* L, void* o
     if (result == PropertyOperationResult::NoSuchProperty) {
         if (FallbackSetter) {
             result = FallbackSetter(L, object, ah, index);
+        }
+
+        if (result == PropertyOperationResult::NoSuchProperty) {
+            result = State::FromLua(L)->GetCustomProperties().SetProperty(L, *this, object, prop, index);
         }
     }
 
@@ -202,6 +210,105 @@ bool GenericPropertyMap::IsA(int typeRegistryIndex) const
 
     return false;
 }
+
+CustomPropertyManager::CustomPropertyManager()
+{
+    PropertyMaps.resize(gStructRegistry.StructsById.size());
+}
+
+bool CustomPropertyManager::PropertyCheck(GenericPropertyMap const& pm, FixedStringUnhashed const& name)
+{
+    if (!PropertyMaps[pm.RegistryIndex]) {
+        PropertyMaps[pm.RegistryIndex] = std::make_unique<CustomPropertyMap>();
+    }
+
+    auto prop = pm.Properties.find(name);
+    if (prop) {
+        LuaError("Type " << pm.Name << " already has a property named '" << name << "'");
+        return false;
+    }
+
+    auto& customProps = PropertyMaps[pm.RegistryIndex];
+    auto customProp = customProps->Properties.try_get(name);
+    if (customProp) {
+        LuaError("Type " << pm.Name << " already has a custom property named '" << name << "'");
+        return false;
+    }
+
+    return true;
+}
+
+bool CustomPropertyManager::RegisterProperty(lua_State* L, GenericPropertyMap const& pm, FixedStringUnhashed const& name, Ref value)
+{
+    if (!PropertyCheck(pm, name)) {
+        return false;
+    }
+
+    auto& customProps = PropertyMaps[pm.RegistryIndex];
+    customProps->Properties.set(name, CustomProperty{
+        .Value = RegistryEntry(L, value)
+    });
+    return true;
+}
+
+bool CustomPropertyManager::RegisterProperty(lua_State* L, GenericPropertyMap const& pm, FixedStringUnhashed const& name, Ref getter, Ref setter)
+{
+    if (!PropertyCheck(pm, name)) {
+        return false;
+    }
+
+    auto& customProps = PropertyMaps[pm.RegistryIndex];
+    customProps->Properties.set(name, CustomProperty{
+        .Getter = RegistryEntry(L, getter),
+        .Setter = RegistryEntry(L, setter)
+    });
+    return true;
+}
+
+PropertyOperationResult CustomPropertyManager::GetProperty(lua_State* L, GenericPropertyMap const& pm, LifetimeHandle lifetime, void const* object, FixedStringId const& prop) const
+{
+    auto& customProps = PropertyMaps[pm.RegistryIndex];
+    auto customProp = customProps->Properties.try_get(prop);
+    if (!customProp) {
+        return PropertyOperationResult::NoSuchProperty;
+    }
+
+    if (customProp->Value) {
+        push(L, customProp->Value);
+    } else {
+        push(L, customProp->Getter);
+        LightObjectProxyMetatable::Make(L, pm, object, lifetime);
+
+        if (lua_pcall(L, 1, 1, 0) != LUA_OK) {
+            luaL_error(L, "%s", lua_tostring(L, -1));
+        }
+    }
+
+    return PropertyOperationResult::Success;
+}
+
+PropertyOperationResult CustomPropertyManager::SetProperty(lua_State* L, GenericPropertyMap const& pm, void* object, FixedStringId const& prop, int index) const
+{
+    auto& customProps = PropertyMaps[pm.RegistryIndex];
+    auto customProp = customProps->Properties.try_get(prop);
+    if (!customProp) {
+        return PropertyOperationResult::NoSuchProperty;
+    }
+
+    if (customProp->Setter) {
+        push(L, customProp->Setter);
+        LightObjectProxyMetatable::Make(L, pm, object, State::FromLua(L)->GetCurrentLifetime());
+        lua_pushvalue(L, index);
+
+        if (lua_pcall(L, 2, 0, 0) != LUA_OK) {
+            luaL_error(L, "%s", lua_tostring(L, -1));
+        }
+        return PropertyOperationResult::Success;
+    } else {
+        return PropertyOperationResult::ReadOnly;
+    }
+}
+
 
 void SerializeRawObject(lua_State* L, void const* obj, GenericPropertyMap const& pm)
 {
