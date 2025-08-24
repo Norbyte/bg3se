@@ -81,6 +81,8 @@ struct CompactSet
 
     T* RawReallocate(TSize newCapacity)
     {
+        Capacity = newCapacity;
+
         if (newCapacity > 0) {
             if (StoreSize) {
                 auto newBuf = Allocator::Alloc(newCapacity * sizeof(T) + 8);
@@ -93,8 +95,6 @@ struct CompactSet
         } else {
             return nullptr;
         }
-
-        Capacity = newCapacity;
     }
 
     void Reallocate(TSize newCapacity)
