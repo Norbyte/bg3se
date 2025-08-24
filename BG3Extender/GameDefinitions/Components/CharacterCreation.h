@@ -38,7 +38,7 @@ struct BaseCharacterDefinition
     [[bg3::legacy(field_20)]] Guid Origin;
     [[bg3::legacy(field_30)]] Guid Race;
     [[bg3::legacy(field_40)]] Guid Subrace;
-    [[bg3::legacy(field_50)]] uint8_t BodyType;
+    [[bg3::legacy(field_50)]] BodyType BodyType;
     [[bg3::legacy(field_51)]] uint8_t BodyShape;
     [[bg3::legacy(field_58)]] Guid RootTemplate;
     [[bg3::legacy(field_68)]] Guid Background;

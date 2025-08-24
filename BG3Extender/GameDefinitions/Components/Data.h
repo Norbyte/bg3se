@@ -82,8 +82,8 @@ struct BodyTypeComponent : public BaseComponent
 {
     DEFINE_COMPONENT(BodyType, "eoc::BodyTypeComponent")
 
-    uint8_t BodyType;
-    uint8_t BodyType2;
+    BodyType BodyType;
+    bg3se::BodyType BodyType2;
 };
 
 struct ObjectSizeComponent : public BaseComponent
@@ -166,7 +166,7 @@ struct CharacterCreationStatsComponent : public BaseComponent
 
     Guid Race;
     Guid SubRace;
-    uint8_t BodyType;
+    BodyType BodyType;
     uint8_t BodyShape;
     STDString Name;
     std::array<int32_t, 7> Abilities;
