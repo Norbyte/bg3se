@@ -190,6 +190,7 @@ public:
     STDString Label;
     STDString IDContext;
     bool SameLine{ false };
+    bool SamePosition{ false };
     bool Visible{ true };
     bool RequestActivate{ false };
     bool WasHovered{ false };
