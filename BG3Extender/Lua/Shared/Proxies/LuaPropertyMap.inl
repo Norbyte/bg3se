@@ -268,6 +268,10 @@ bool CustomPropertyManager::RegisterProperty(lua_State* L, GenericPropertyMap co
 PropertyOperationResult CustomPropertyManager::GetProperty(lua_State* L, GenericPropertyMap const& pm, LifetimeHandle lifetime, void const* object, FixedStringId const& prop) const
 {
     auto& customProps = PropertyMaps[pm.RegistryIndex];
+    if (!customProps) {
+        return PropertyOperationResult::NoSuchProperty;
+    }
+
     auto customProp = customProps->Properties.try_get(prop);
     if (!customProp) {
         return PropertyOperationResult::NoSuchProperty;
@@ -290,6 +294,10 @@ PropertyOperationResult CustomPropertyManager::GetProperty(lua_State* L, Generic
 PropertyOperationResult CustomPropertyManager::SetProperty(lua_State* L, GenericPropertyMap const& pm, void* object, FixedStringId const& prop, int index) const
 {
     auto& customProps = PropertyMaps[pm.RegistryIndex];
+    if (!customProps) {
+        return PropertyOperationResult::NoSuchProperty;
+    }
+
     auto customProp = customProps->Properties.try_get(prop);
     if (!customProp) {
         return PropertyOperationResult::NoSuchProperty;
