@@ -87,6 +87,7 @@ void ScriptExtender::Initialize()
     gameStateMachineUpdate_.SetPostHook(&ScriptExtender::OnUpdate, this);
 
     sdl_.EnableHooks();
+    gExtender->IMGUI().EnableHooks();
 }
 
 void ScriptExtender::Shutdown()

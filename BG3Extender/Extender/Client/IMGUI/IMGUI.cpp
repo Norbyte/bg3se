@@ -5,10 +5,8 @@
 #include <Extender/Shared/ScriptHelpers.h>
 #include <CoreLib/Wrappers.h>
 
-// #define IMGUI_DEBUG(msg, ...) DEBUG("[IMGUI] " msg, __VA_ARGS__)
+// #define ERR(msg, ...) DEBUG("[IMGUI] " msg, __VA_ARGS__)
 #define IMGUI_DEBUG(msg, ...)
-
-#define IMGUI_FRAME_DEBUG(msg, ...) if ((frameNo_ % 100) == 0) { IMGUI_DEBUG(msg, __VA_ARGS__); }
 
 #include <Extender/Client/IMGUI/Vulkan.inl>
 #include <Extender/Client/IMGUI/DX11.inl>
@@ -1726,6 +1724,7 @@ bool IMGUIObjectManager::DestroyRenderable(HandleType handle)
 
 void IMGUIObjectManager::Render(DrawingContext& context)
 {
+    //ERR("IMGUIObjectManager::Render - Beginning UI render with %d windows", windows_.size());
     if (renderDemo_) {
         ImGui::ShowDemoWindow();
     }
@@ -1734,8 +1733,11 @@ void IMGUIObjectManager::Render(DrawingContext& context)
         auto window = GetRenderable(windowHandle);
         if (window) {
             window->Render(context);
+        } else {
+            ERR("IMGUIObjectManager::Render - Window handle %llu is null", windowHandle);
         }
     }
+    //ERR("IMGUIObjectManager::Render - Completed UI rendering");
 }
 
 void IMGUIObjectManager::EnableDemo(bool enable)
@@ -1793,7 +1795,7 @@ void IMGUIManager::InitializeUI()
 {
     if (initialized_) return;
 
-    IMGUI_DEBUG("IMGUIManager::InitializeUI()");
+    ERR("IMGUIManager::InitializeUI()");
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -1843,7 +1845,7 @@ void IMGUIManager::DestroyUI()
 {
     if (!initialized_) return;
 
-    IMGUI_DEBUG("IMGUIManager::DestroyUI()");
+    ERR("IMGUIManager::DestroyUI()");
 
     initialized_ = false;
     renderer_->DestroyUI();
@@ -1855,18 +1857,20 @@ void IMGUIManager::DestroyUI()
 void IMGUIManager::EnableUI(bool enabled)
 {
     enableUI_ = enabled;
-    IMGUI_DEBUG("IMGUIManager::EnableUI: %d", enabled ? 1 : 0);
+    ERR("IMGUIManager::EnableUI: %d", enabled ? 1 : 0);
 }
 
 void IMGUIManager::SetObjects(IMGUIObjectManager* objects)
 {
+    ERR("IMGUIManager::SetObjects() - Objects pointer: %p", objects);
     objects_ = objects;
 
     if (objects_ == nullptr) {
+        ERR("IMGUIManager::SetObjects() - Objects null, clearing frame");
         renderer_->ClearFrame();
     }
 
-    IMGUI_DEBUG("IMGUIManager::SetObjects() - Binding object manager");
+    ERR("IMGUIManager::SetObjects() - Binding object manager");
 }
 
 bool IMGUIManager::LoadFont(FixedString const& name, char const* path, float size)
@@ -1994,7 +1998,7 @@ glm::ivec2 IMGUIManager::GetViewportSize()
 
 void IMGUIManager::OnRenderBackendInitialized()
 {
-    IMGUI_DEBUG("IMGUIManager::OnRenderBackendInitialized()");
+    ERR("IMGUIManager::OnRenderBackendInitialized()");
     OnViewportUpdated();
     frameNo_ = 0;
 
@@ -2002,7 +2006,7 @@ void IMGUIManager::OnRenderBackendInitialized()
         InitializeUI();
     }
 
-    IMGUI_DEBUG("READY STATE CHECK - enableUI %d, initialized %d, objects %d, rendererInitialized %d",
+    ERR("READY STATE CHECK - enableUI %d, initialized %d, objects %d, rendererInitialized %d",
         enableUI_ ? 1 : 0, initialized_ ? 1 : 0, objects_ ? 1 : 0, renderer_->IsInitialized() ? 1 : 0);
 }
 
@@ -2017,7 +2021,7 @@ void IMGUIManager::OnViewportUpdated()
 
 void IMGUIManager::UpdateStyle()
 {
-    IMGUI_DEBUG("Recalculating IMGUI style");
+    ERR("Recalculating IMGUI style");
     auto& style = ImGui::GetStyle();
     style = ImGuiStyle();
 
@@ -2113,16 +2117,19 @@ void IMGUIManager::UpdateStyle()
 
 void IMGUIManager::Update()
 {
+    
     if (!enableUI_
         || !initialized_
         || !objects_
         || !renderer_->IsInitialized()) {
 
-        IMGUI_FRAME_DEBUG("Skip drawing - enableUI %d, initialized %d, objects %d, rendererInitialized %d",
-            enableUI_ ? 1 : 0, initialized_ ? 1 : 0, objects_ ? 1 : 0, renderer_->IsInitialized() ? 1 : 0);
+        //ERR("Skip drawing - enableUI %d, initialized %d, objects %d, rendererInitialized %d",
+        //    enableUI_ ? 1 : 0, initialized_ ? 1 : 0, objects_ ? 1 : 0, renderer_->IsInitialized() ? 1 : 0);
         frameNo_++;
         return;
     }
+    //ERR("IMGUIManager::Update() - Frame %d - State: UI=%d Init=%d Objects=%d Backend=%d", 
+    //    frameNo_, enableUI_ ? 1 : 0, initialized_ ? 1 : 0, objects_ ? 1 : 0, renderer_->IsInitialized() ? 1 : 0);
 
     if (scale_ != requestedScale_ 
         || uiScaleMultiplier_ != requestedUiScaleMultiplier_
@@ -2141,21 +2148,24 @@ void IMGUIManager::Update()
     }
 
     if (frameNo_ == 0) {
-        IMGUI_DEBUG("Draw initial frame");
+        ERR("Draw initial frame");
     }
 
     frameNo_++;
 
     textureLoader_.Update();
     renderer_->NewFrame();
+    //ERR("IMGUIManager::Update() - Frame %d - Starting new ImGui frame", frameNo_);
     ImGui::NewFrame();
 
     DrawingContext dc{
         .UIScale = scale_
     };
+    //ERR("IMGUIManager::Update() - Frame %d - Rendering UI objects", frameNo_);
     objects_->Render(dc);
     se_assert(dc.ScalingStack.empty());
 
+    //ERR("IMGUIManager::Update() - Frame %d - Finishing frame", frameNo_);
     ImGui::Render();
     renderer_->FinishFrame();
 
@@ -2188,6 +2198,7 @@ void IMGUITextureLoader::Update()
 
 std::optional<TextureLoadResult> IMGUITextureLoader::IncTextureRef(FixedString const& textureGuid)
 {
+    ERR("IMGUITextureLoader::IncTextureRef - Loading texture '%s'", textureGuid.GetString());
     if (!renderer_) {
         ERR("Loading texture with no rendering backend?");
         return {};
@@ -2217,10 +2228,12 @@ std::optional<TextureLoadResult> IMGUITextureLoader::IncTextureRef(FixedString c
 
     auto loadResult = renderer_->RegisterTexture(descriptor);
     if (!loadResult) {
+        ERR("IMGUITextureLoader::IncTextureRef - Failed to register texture '%s' with renderer", textureGuid.GetString());
         auto textureManager = (*GetStaticSymbols().ls__gGlobalResourceManager)->TextureManager;
         (*GetStaticSymbols().ls__TextureManager__UnloadTexture)(textureManager, textureGuid);
         return {};
     }
+    ERR("IMGUITextureLoader::IncTextureRef - Successfully registered texture '%s'", textureGuid.GetString());
 
     refCounts_.set(textureGuid, TextureRefCount{ descriptor, *loadResult, 1 });
     pendingUnloads_.remove(textureGuid);
@@ -2251,13 +2264,19 @@ bool IMGUITextureLoader::DecTextureRef(TextureOpaqueHandle id, FixedString const
 
 std::optional<TextureLoadResult> IMGUIManager::RegisterTexture(FixedString const& textureGuid)
 {
-    return textureLoader_.IncTextureRef(textureGuid);
+    ERR("IMGUIManager::RegisterTexture('%s')", textureGuid.GetString());
+    auto result = textureLoader_.IncTextureRef(textureGuid);
+    if (!result) {
+        ERR("IMGUIManager::RegisterTexture('%s') - Failed", textureGuid.GetString());
+    }
+    return result;
 }
 
 void IMGUIManager::UnregisterTexture(TextureOpaqueHandle id, FixedString const& textureGuid)
 {
     textureLoader_.DecTextureRef(id, textureGuid);
 }
+
 
 std::optional<ImTextureID> IMGUIManager::BindTexture(TextureOpaqueHandle opaqueHandle)
 {

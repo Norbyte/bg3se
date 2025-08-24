@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Compile and Deploy ScriptExtender DLL (Release)",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": ".\\build_and_deploy_extender.ps1",
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
