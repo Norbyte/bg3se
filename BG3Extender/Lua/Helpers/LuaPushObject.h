@@ -121,6 +121,9 @@ inline void push(lua_State* L, T* value, LifetimeHandle lifetime)
 {
     if (value == nullptr) {
         push(L, nullptr);
+    // Special exception for pushing strings (char const *)
+    } else if constexpr (std::is_same_v<std::remove_cv_t<T>, char>) {
+        push(L, value);
     } else if constexpr (IsByVal<std::remove_cv_t<T>>) {
         push(L, *value);
     } else {
