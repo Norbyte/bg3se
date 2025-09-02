@@ -316,6 +316,13 @@ UserReturn GetHashSetValueAt(lua_State* L, AnyRef object, uint32_t index)
     return 1;
 }
 
+std::tuple<char const*, int> GetFunctionLocation(lua_State* L, AnyRef func)
+{
+    int line;
+    auto loc = lua_get_function_location(L, func.Index, line);
+    return std::make_tuple(loc, line);
+}
+
 bool AddCustomFunction(lua_State* L, FixedString const& typeName, FixedString const& property, FunctionRef func)
 {
     auto const& type = TypeInformationRepository::GetInstance().GetType(typeName);
@@ -372,6 +379,7 @@ void RegisterTypesLib()
     MODULE_FUNCTION(Unserialize)
     MODULE_FUNCTION(Construct)
     MODULE_FUNCTION(GetHashSetValueAt)
+    MODULE_FUNCTION(GetFunctionLocation)
     MODULE_FUNCTION(AddCustomFunction)
     MODULE_FUNCTION(AddCustomProperty)
     END_MODULE()
