@@ -184,7 +184,7 @@ struct HitDesc
     FixedString SpellId;
     [[bg3::legacy(field_150)]] FixedString StatusId;
     [[bg3::legacy(field_158)]] EntityHandle StatusEntity;
-    uint8_t field_160{ 0 };
+    [[bg3::legacy(field_160)]] SurfaceType SurfaceType{ 0 };
     SpellSchoolId SpellSchool{ SpellSchoolId::None };
     [[bg3::legacy(HitDescFlags)]] uint8_t HealingTypes{ 1 };
     AttackFlags AttackFlags{ 0 };

@@ -213,7 +213,7 @@ struct StatusInSurface : public Status
 
     HashMap<EntityHandle, std::array<SurfaceLayerCheck, 2>> TargetData;
     HashMap<SurfaceType, SurfaceTypeCheck> TypeData;
-    HashMap<FixedString, bool> Unknown;
+    HashMap<FixedString, bool> AlreadyAppliedStatuses;
 };
 
 struct StatusInvisible : public StatusBoost
