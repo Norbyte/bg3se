@@ -61,7 +61,7 @@ namespace bg3se::lua
 
         lua_State* L;
         LuaInternalState* Internal;
-        ExtensionStateBase& state_;
+        std::atomic<int64_t> AllocatedMemory{ 0 };
     };
 
     class State;
@@ -118,6 +118,11 @@ namespace bg3se::lua
         }
 
         inline lua_State * GetState()
+        {
+            return L;
+        }
+
+        inline LuaStateWrapper& GetStateWrapper()
         {
             return L;
         }

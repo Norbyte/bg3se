@@ -332,7 +332,9 @@ int LuaPanic(lua_State * L)
 
 void* LuaAlloc(void* ud, void* ptr, size_t osize, size_t nsize)
 {
-    (void)ud; (void)osize;  /* not used */
+    auto state = static_cast<LuaStateWrapper*>(ud);
+    state->AllocatedMemory += (int64_t)nsize - (int64_t)osize;
+
     if (nsize == 0) {
         GameFree(ptr);
         return NULL;
@@ -353,9 +355,8 @@ LifetimeHandle GetCurrentLifetime(lua_State* L)
 }
 
 LuaStateWrapper::LuaStateWrapper(ExtensionStateBase& state)
-    : state_(state)
 {
-    L = lua_newstate(LuaAlloc, nullptr);
+    L = lua_newstate(LuaAlloc, this);
     Internal = lua_new_internal_state();
     lua_setup_cppobjects(L, &LuaCppAlloc, &LuaCppFree, &LuaCppGetLightMetatable, &LuaCppGetMetatable, &LuaCppFinalize, &LuaCppCanonicalize);
     lua_setup_strcache(L, &LuaCacheString, &LuaReleaseString);

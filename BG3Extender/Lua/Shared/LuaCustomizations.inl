@@ -656,6 +656,19 @@ void lua_release_internal_state(LuaInternalState* state)
     GameDelete(state);
 }
 
+char const* lua_get_function_location(lua_State* L, int index, int& line)
+{
+    StkId o = index2addr(L, index);
+    if (ttisLclosure(o)) {
+        auto proto = clLvalue(o)->p;
+        line = proto->linedefined;
+        return getstr(proto->source);
+    }
+
+    line = 0;
+    return "";
+}
+
 void* LuaCppCanonicalize(lua_State* L, void* val)
 {
     auto v = reinterpret_cast<TValue*>(val);
