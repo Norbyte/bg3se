@@ -26,7 +26,7 @@ function SubscribableEvent:Instantiate(name, idPrefix)
     return {
         First = nil,
         NextIndex = 1,
-        IdPrefix = idPrefix or Ext.Math.Round(Ext.Math.Random() * 0xfffffff),
+        IdPrefix = idPrefix or Ext.Math.Random(1, 0xfffffff),
         Name = name,
         PendingDeletions = {},
         EnterCount = 0
@@ -150,6 +150,34 @@ function SubscribableEvent:ProcessUnsubscriptions()
     end
 end
 
+if Ext.Config.ProfilerEnabled then
+
+    -- Separate profiler-enabled version for perf reasons
+    function SubscribableEvent:Dispatch(event, handler)
+        local startTime = Ext.Timer.MicrosecTime()
+        local ok, result = xpcall(handler, debug.traceback, event)
+        local took = Ext.Timer.MicrosecTime() - startTime
+        if not ok then
+            Ext.Log.PrintError("Error while dispatching event " .. self.Name .. ": ", result)
+        else
+            if _I.Profiler:ShouldLikelyReport(took) then
+                local source, line = Ext.Types.GetFunctionLocation(handler)
+                _I.Profiler:Report(took, "Dispatching event " .. self.Name .. " (" .. source .. ":" .. line .. ")")
+            end
+        end
+    end
+
+else
+
+    function SubscribableEvent:Dispatch(event, handler)
+        local ok, result = xpcall(handler, debug.traceback, event)
+        if not ok then
+            Ext.Log.PrintError("Error while dispatching event " .. self.Name .. ": ", result)
+        end
+    end
+
+end
+
 function SubscribableEvent:Throw(event)
     self.EnterCount = self.EnterCount + 1
 
@@ -159,10 +187,7 @@ function SubscribableEvent:Throw(event)
             break
         end
 
-        local ok, result = xpcall(cur.Handler, debug.traceback, event)
-        if not ok then
-            Ext.Log.PrintError("Error while dispatching event " .. self.Name .. ": ", result)
-        end
+        self:Dispatch(event, cur.Handler)
 
         if cur.Once then
             local last = cur
