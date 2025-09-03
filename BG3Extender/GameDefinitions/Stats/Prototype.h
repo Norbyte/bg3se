@@ -43,7 +43,7 @@ struct SpellPrototypeAnimationData
     std::array<FixedString, 3> Part3;
     std::array<FixedString, 3> Part7;
     std::array<FixedString, 3> Part8;
-    uint8_t Flags;
+    uint8_t Flags{ 0 };
 };
 
 struct SpellPrototype : public Noncopyable<SpellPrototype>

@@ -628,10 +628,10 @@ public:
     ~TypedValue();
     
     TypedValue(TypedValue &);
-    TypedValue(TypedValue &&);
+    TypedValue(TypedValue &&) noexcept;
 
     TypedValue& operator = (TypedValue const&);
-    TypedValue& operator = (TypedValue &&);
+    TypedValue& operator = (TypedValue &&) noexcept;
 
     char const* GetString() const;
     void ClearValue();

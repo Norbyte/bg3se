@@ -321,10 +321,10 @@ namespace bg3se {
 
     private:
         WrappedFunction<R(Params...)> wrapped_;
-        HookFuncType* hook_;
-        void* func_;
-        void* func2_;
-        void* context_;
+        HookFuncType* hook_{ nullptr };
+        void* func_{ nullptr };
+        void* func2_{ nullptr };
+        void* context_{ nullptr };
 
         static R CallToTrampoline(Params... Args)
         {

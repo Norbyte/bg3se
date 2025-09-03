@@ -339,7 +339,7 @@ namespace bg3se::lua
 
     struct FindPathEvent : public EventBase
     {
-        AiPath* Path;
+        AiPath* Path{ nullptr };
     };
 }
 

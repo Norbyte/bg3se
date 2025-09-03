@@ -52,10 +52,10 @@ public:
     ~RegistryEntry();
 
     RegistryEntry(RegistryEntry const &);
-    RegistryEntry(RegistryEntry &&);
+    RegistryEntry(RegistryEntry &&) noexcept;
 
     RegistryEntry & operator = (RegistryEntry const &);
-    RegistryEntry & operator = (RegistryEntry &&);
+    RegistryEntry & operator = (RegistryEntry &&) noexcept;
 
     explicit inline operator bool() const
     {

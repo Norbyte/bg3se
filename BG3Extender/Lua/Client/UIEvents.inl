@@ -23,7 +23,7 @@ UIEventHooks::EventHandler::~EventHandler()
     Unsubscribe();
 }
 
-UIEventHooks::EventHandler::EventHandler(EventHandler&& o)
+UIEventHooks::EventHandler::EventHandler(EventHandler&& o) noexcept
     : Target(std::move(o.Target)),
     Event(o.Event),
     EventType(o.EventType),
@@ -33,7 +33,7 @@ UIEventHooks::EventHandler::EventHandler(EventHandler&& o)
     o.Target.Reset();
 }
 
-UIEventHooks::EventHandler& UIEventHooks::EventHandler::operator = (EventHandler&& o)
+UIEventHooks::EventHandler& UIEventHooks::EventHandler::operator = (EventHandler&& o) noexcept
 {
     Target = std::move(o.Target);
     Event = o.Event;

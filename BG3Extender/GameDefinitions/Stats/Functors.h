@@ -74,7 +74,7 @@ struct AttackTargetContextData : public ContextData
     ecs::EntityRef CasterProxy;
     ecs::EntityRef Target;
     ecs::EntityRef TargetProxy;
-    glm::vec3 Position;
+    glm::vec3 Position{ FLT_MAX };
     bool IsFromItem{ false };
     SpellIdWithPrototype SpellId;
     HitDesc Hit;
@@ -96,7 +96,7 @@ struct AttackPositionContextData : public ContextData
     virtual ~AttackPositionContextData() override;
 
     ecs::EntityRef Caster;
-    glm::vec3 Position;
+    glm::vec3 Position{ FLT_MAX };
     float HitRadius{ -1.0f };
     SpellIdWithPrototype SpellId;
     HitDesc Hit;
@@ -114,7 +114,7 @@ struct MoveContextData : public ContextData
     ecs::EntityRef Caster;
     ecs::EntityRef Target;
     ecs::EntityRef Source;
-    glm::vec3 Position;
+    glm::vec3 Position{ FLT_MAX };
     float Distance{ 0.0f };
 };
 
@@ -126,7 +126,7 @@ struct TargetContextData : public ContextData
 
     ecs::EntityRef Source;
     ecs::EntityRef SourceProxy;
-    glm::vec3 Position;
+    glm::vec3 Position{ FLT_MAX };
     uint8_t StatusExitCause{ 3 };
     uint8_t field_C5{ 0 };
     uint8_t field_C6{ 19 };

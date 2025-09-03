@@ -148,7 +148,7 @@ struct StatsDamage
     [[bg3::legacy(field_D0)]] uint32_t Multiplier{ 1 };
     [[bg3::legacy(field_D4)]] uint32_t BaseValue{ 1 };
     [[bg3::legacy(field_D8)]] uint32_t SecondaryValue{ 1 };
-    [[bg3::legacy(field_DC)]] uint8_t DamageMultiplierType;
+    [[bg3::legacy(field_DC)]] uint8_t DamageMultiplierType{ 0 };
 };
 
 struct HitDamageOverride

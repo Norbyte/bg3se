@@ -46,7 +46,7 @@ private:
     
     struct TextureUnloadRequest
     {
-        TextureOpaqueHandle Id;
+        TextureOpaqueHandle Id{ 0 };
         uint32_t WaitForFrames{ 0 };
     };
 
@@ -62,7 +62,7 @@ public:
     {
         FixedString Key;
         STDString Path;
-        float SizePixels;
+        float SizePixels{ .0 };
         ImFont* Font{ nullptr };
     };
 

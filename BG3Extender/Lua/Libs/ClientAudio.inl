@@ -54,6 +54,7 @@ SoundObjectId GetSoundObjectId(lua_State* L, int idx)
             return snd->CineHUD[playerIndex];
         } else {
             luaL_error(L, "Unknown built-in sound object name: %s", name);
+            return InvalidSoundObjectId;
         }
     }
 

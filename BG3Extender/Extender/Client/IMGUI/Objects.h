@@ -712,7 +712,7 @@ public:
     bool OverridesClickEvent() const override;
 
     std::optional<glm::vec2> Size;
-    GuiSelectableFlags Flags;
+    GuiSelectableFlags Flags{ 0 };
     bool Selected{ false };
 };
 
@@ -726,7 +726,7 @@ public:
     bool OverridesClickEvent() const override;
 
     std::optional<glm::vec2> Size;
-    GuiButtonFlags Flags;
+    GuiButtonFlags Flags{ 0 };
 };
 
 
@@ -741,7 +741,7 @@ public:
     ImageReference Image;
     glm::vec4 Background{ 0.0f };
     glm::vec4 Tint{ 1.0f };
-    GuiButtonFlags Flags;
+    GuiButtonFlags Flags{ 0 };
 };
 
 

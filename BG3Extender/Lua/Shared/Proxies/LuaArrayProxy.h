@@ -171,8 +171,8 @@ public:
     {
         auto obj = reinterpret_cast<TContainer*>(self.Ptr);
         if (key >= 0 && key < (int)obj->size()) {
-            push(L, ++key);
-            push(L, &(*obj)[key - 1], self.Lifetime);
+            push(L, key + 1);
+            push(L, &(*obj)[key], self.Lifetime);
             return 2;
         } else {
             return 0;
@@ -266,8 +266,8 @@ public:
     {
         auto obj = reinterpret_cast<TContainer*>(self.Ptr);
         if (key >= 0 && key < (int)obj->Size()) {
-            push(L, ++key);
-            push(L, &(*obj)[key - 1], self.Lifetime);
+            push(L, key + 1);
+            push(L, &(*obj)[key], self.Lifetime);
             return 2;
         } else {
             return 0;
@@ -363,8 +363,8 @@ public:
     {
         auto obj = reinterpret_cast<TContainer*>(self.Ptr);
         if (key >= 0 && key < obj->Count()) {
-            push(L, ++key);
-            auto ref = obj->GetComponent(key - 1);
+            push(L, key + 1);
+            auto ref = obj->GetComponent(key);
             push(L, ref.GetPtr(), self.Lifetime);
             return 2;
         } else {
@@ -451,8 +451,8 @@ public:
     {
         auto obj = reinterpret_cast<TContainer*>(self.Ptr);
         if (key >= 0 && (decltype(obj->size()))key < obj->size()) {
-            push(L, ++key);
-            push(L, &(*obj)[key - 1], self.Lifetime);
+            push(L, key + 1);
+            push(L, &(*obj)[key], self.Lifetime);
             return 2;
         } else {
             return 0;
@@ -533,8 +533,8 @@ public:
     {
         auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
         if (key >= 0 && (decltype(obj->size()))key < obj->size()) {
-            push(L, ++key);
-            bool isSet = obj->IsSet(key - 1);
+            push(L, key + 1);
+            bool isSet = obj->IsSet(key);
             push(L, &isSet, self.Lifetime);
             return 2;
         } else {

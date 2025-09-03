@@ -203,9 +203,9 @@ public:
 #endif
     static constexpr unsigned MaxLuaFullBacktraceLines = 200;
 
-    void* Backtrace[32];
-    WORD BacktraceSize;
-    DWORD CrashThreadId;
+    void* Backtrace[32]{ nullptr };
+    WORD BacktraceSize{ 0 };
+    DWORD CrashThreadId{ 0 };
 
     void Initialize()
     {

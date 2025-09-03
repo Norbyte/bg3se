@@ -401,7 +401,7 @@ private:
     LegacyMap<FixedString, TypeInformation*> types_;
     Array<StaticTypeInformation*> initializers_;
     TypeInformation undefinedType_;
-    bool initialized_;
+    bool initialized_{ false };
 
     void RegisterArrayType(char const* arrayClass, TypeInformationRef const& elementType);
     TypeInformation& RegisterType(char const* name, LuaTypeId typeId);

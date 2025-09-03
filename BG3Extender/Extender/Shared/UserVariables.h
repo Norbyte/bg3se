@@ -270,9 +270,9 @@ struct CachedUserVariable
     CachedUserVariable(FixedString const& v) : Type(CachedUserVariableType::String), Value(v) {}
     CachedUserVariable(lua_State* L, Ref const& v);
     CachedUserVariable(lua_State* L, UserVariable const& v);
-    CachedUserVariable(CachedUserVariable&& o);
+    CachedUserVariable(CachedUserVariable&& o) noexcept;
 
-    CachedUserVariable& operator = (CachedUserVariable&& o);
+    CachedUserVariable& operator = (CachedUserVariable&& o) noexcept;
 
     CachedUserVariableType Type{ CachedUserVariableType::Null };
     bool Dirty{ false };

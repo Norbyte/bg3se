@@ -40,7 +40,7 @@ public:
     WRAPPABLE(bool(void *, wchar_t *), Merge);
     WRAPPABLE(ReturnCode(void *, uint32_t, OsiArgumentDesc *), Event);
 
-    RuleActionCallProc OriginalRuleActionCallProc;
+    RuleActionCallProc OriginalRuleActionCallProc{ nullptr };
     WRAPPABLE(void(RuleActionNode *, void *, void *, void *, void *), RuleActionCall);
 
     WRAPPABLE(bool(uint32_t FunctionHandle, OsiArgumentDesc * Params), Call);
@@ -51,12 +51,12 @@ public:
     WRAPPABLE(HANDLE(LPCWSTR, DWORD, DWORD, LPSECURITY_ATTRIBUTES, DWORD, DWORD, HANDLE), CreateFileW);
     WRAPPABLE(BOOL(HANDLE), CloseHandle);
 
-    DivFunctions::CallProc CallOriginal;
-    DivFunctions::CallProc QueryOriginal;
-    DivFunctions::ErrorMessageProc ErrorOriginal;
-    DivFunctions::AssertProc AssertOriginal;
+    DivFunctions::CallProc CallOriginal{ nullptr };
+    DivFunctions::CallProc QueryOriginal{ nullptr };
+    DivFunctions::ErrorMessageProc ErrorOriginal{ nullptr };
+    DivFunctions::AssertProc AssertOriginal{ nullptr };
 
-    NodeVMT* VMTs[(unsigned)NodeType::Max + 1];
+    NodeVMT* VMTs[(unsigned)NodeType::Max + 1]{ nullptr };
 
     static bool CallWrapper(uint32_t FunctionHandle, OsiArgumentDesc * Params);
     static bool QueryWrapper(uint32_t FunctionHandle, OsiArgumentDesc * Params);

@@ -256,7 +256,7 @@ private:
         }
     }
 
-    void WINAPI CreateDXGIFactory1Hooked(REFIID riid, _COM_Outptr_ void** ppFactory, HRESULT result)
+    void WINAPI CreateDXGIFactory1Hooked(REFIID riid, void** ppFactory, HRESULT result)
     {
         IMGUI_DEBUG("CreateDXGIFactory1 -> %p, %d", *ppFactory, result);
         IMGUI_DEBUG("RIID: %08x %04x %04x %16llx", riid.Data1, riid.Data2, riid.Data3, *(uint64_t*)&riid.Data4[0]);
@@ -278,12 +278,12 @@ private:
 
     void STDMETHODCALLTYPE DXGICreateSwapChainForHwndHooked(
         IDXGIFactory2* pFactory,
-        _In_  IUnknown* pDevice,
-        _In_  HWND hWnd,
-        _In_  const DXGI_SWAP_CHAIN_DESC1* pDesc,
-        _In_opt_  const DXGI_SWAP_CHAIN_FULLSCREEN_DESC* pFullscreenDesc,
-        _In_opt_  IDXGIOutput* pRestrictToOutput,
-        _COM_Outptr_  IDXGISwapChain1** ppSwapChain, 
+        IUnknown* pDevice,
+        HWND hWnd,
+        const DXGI_SWAP_CHAIN_DESC1* pDesc,
+        const DXGI_SWAP_CHAIN_FULLSCREEN_DESC* pFullscreenDesc,
+        IDXGIOutput* pRestrictToOutput,
+        IDXGISwapChain1** ppSwapChain, 
         HRESULT result)
     {
         IMGUI_DEBUG("DXGICreateSwapChainForHwnd -> %p, %d", *ppSwapChain, result);

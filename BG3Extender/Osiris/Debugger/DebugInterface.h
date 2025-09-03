@@ -38,7 +38,7 @@ namespace bg3se
         SOCKET socket_;
         SOCKET clientSocket_{ 0 };
         uint8_t receiveBuf_[0x10000];
-        uint32_t receivePos_;
+        uint32_t receivePos_{ 0 };
         std::function<void()> connectHandler_;
         std::function<void()> disconnectHandler_;
         std::mutex sendMutex_;

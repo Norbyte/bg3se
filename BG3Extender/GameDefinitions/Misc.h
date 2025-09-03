@@ -678,7 +678,7 @@ namespace bg3se
         uint64_t FileHandle2{ 0 };
         ScratchBuffer Buffer;
         FileType Type{ FileType::Unknown };
-        void * FileObject;
+        void * FileObject{ nullptr };
     };
 
     class FileReaderPin

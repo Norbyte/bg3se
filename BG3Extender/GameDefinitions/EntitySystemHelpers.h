@@ -66,7 +66,7 @@ private:
 
 struct ECSComponentLog
 {
-    ComponentTypeIndex ComponentType;
+    ComponentTypeIndex ComponentType{ 0 };
     ComponentChangeFlags Flags{ 0 };
 
     StringView GetName() const;

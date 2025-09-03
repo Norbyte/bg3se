@@ -120,7 +120,7 @@ struct Protocol
     virtual void OnRemovedFromHost() = 0;
     virtual void Reset() = 0;
 
-    AbstractPeer * Peer;
+    AbstractPeer* Peer{ nullptr };
 };
 
 struct PacketHandlers : ProtectedGameObject<PacketHandlers>

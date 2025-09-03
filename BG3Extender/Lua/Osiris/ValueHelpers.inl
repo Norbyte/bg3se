@@ -68,7 +68,7 @@ TypedValue::TypedValue(TypedValue& o)
     }
 }
 
-TypedValue::TypedValue(TypedValue&& o)
+TypedValue::TypedValue(TypedValue&& o) noexcept
     : Value(o.Value), TypeId(o.TypeId), Index(o.Index), Flags(o.Flags)
 {
     o.Flags &= ~ValueFlags::IsValid;
@@ -99,7 +99,7 @@ TypedValue& TypedValue::operator = (TypedValue const& o)
     return *this;
 }
 
-TypedValue& TypedValue::operator = (TypedValue&& o)
+TypedValue& TypedValue::operator = (TypedValue&& o) noexcept
 {
     ReleaseValue();
 

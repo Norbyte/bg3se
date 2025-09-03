@@ -222,7 +222,7 @@ MemBuffer::MemBuffer(MemBuffer const& o)
     }
 }
 
-MemBuffer::MemBuffer(MemBuffer&& o)
+MemBuffer::MemBuffer(MemBuffer&& o) noexcept
 {
     Meta = o.Meta;
     Buffer = o.Buffer;
@@ -250,7 +250,7 @@ MemBuffer& MemBuffer::operator = (MemBuffer const& o)
     return *this;
 }
 
-MemBuffer& MemBuffer::operator = (MemBuffer&& o)
+MemBuffer& MemBuffer::operator = (MemBuffer&& o) noexcept
 {
     if (Meta.Origin == MemoryOrigin::Owned) {
         GameFree(Buffer);
@@ -277,7 +277,7 @@ ScratchBuffer::ScratchBuffer(ScratchBuffer const& o)
     RemapReadStream();
 }
 
-ScratchBuffer::ScratchBuffer(ScratchBuffer&& o)
+ScratchBuffer::ScratchBuffer(ScratchBuffer&& o) noexcept
     : Buffer(std::move(o.Buffer)),
     Write(std::move(o.Write)),
     Read(std::move(o.Read)),
@@ -296,7 +296,7 @@ ScratchBuffer& ScratchBuffer::operator = (ScratchBuffer const& o)
     return *this;
 }
 
-ScratchBuffer& ScratchBuffer::operator = (ScratchBuffer&& o)
+ScratchBuffer& ScratchBuffer::operator = (ScratchBuffer&& o) noexcept
 {
     Buffer = std::move(o.Buffer);
     Write = std::move(o.Write);
@@ -351,7 +351,7 @@ ScratchString::ScratchString(ScratchString const& o)
     }
 }
 
-ScratchString::ScratchString(ScratchString&& o)
+ScratchString::ScratchString(ScratchString&& o) noexcept
     : Buffer(o.Buffer),
     Position(o.Position),
     Capacity(o.Capacity),
@@ -382,7 +382,7 @@ ScratchString& ScratchString::operator = (ScratchString const& o)
     return *this;
 }
 
-ScratchString& ScratchString::operator = (ScratchString&& o)
+ScratchString& ScratchString::operator = (ScratchString&& o) noexcept
 {
     if (Managed && Buffer) {
         GameFree(Buffer);

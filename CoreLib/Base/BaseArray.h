@@ -239,7 +239,7 @@ public:
         CopyFrom(a);
     }
 
-    StaticArray(StaticArray&& a)
+    StaticArray(StaticArray&& a) noexcept
     {
         if (this != &a) {
             buf_ = a.buf_;
@@ -266,7 +266,7 @@ public:
         return *this;
     }
 
-    StaticArray& operator =(StaticArray&& a)
+    StaticArray& operator =(StaticArray&& a) noexcept
     {
         if (this != &a) {
             buf_ = a.buf_;
@@ -428,7 +428,7 @@ public:
 
     UninitializedStaticArray(UninitializedStaticArray const& a) = delete;
 
-    UninitializedStaticArray(UninitializedStaticArray&& a)
+    UninitializedStaticArray(UninitializedStaticArray&& a) noexcept
     {
         if (this != &a) {
             buf_ = a.buf_;
@@ -445,7 +445,7 @@ public:
 
     UninitializedStaticArray& operator =(UninitializedStaticArray const& a) = delete;
 
-    UninitializedStaticArray& operator =(UninitializedStaticArray&& a)
+    UninitializedStaticArray& operator =(UninitializedStaticArray&& a) noexcept
     {
         if (this != &a) {
             buf_ = a.buf_;

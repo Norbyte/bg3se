@@ -105,6 +105,7 @@ bool IsA(lua_State* L, AnyRef object, FixedString typeName)
     auto expectedType = TypeInformationRepository::GetInstance().TryGetType(typeName);
     if (expectedType == nullptr) {
         luaL_error(L, "No such type: %s", typeName.GetString());
+        return false;
     }
 
     auto type = TypeOf(L, object);

@@ -270,7 +270,7 @@ public:
         }
     }
 
-    LegacyMapBase(LegacyMapBase<TInternals> && other)
+    LegacyMapBase(LegacyMapBase<TInternals> && other) noexcept
     {
         this->HashTable = other.HashTable;
         this->HashSize = other.HashSize;
@@ -299,7 +299,7 @@ public:
         return *this;
     }
 
-    LegacyMapBase<TInternals>& operator =(LegacyMapBase<TInternals> && other)
+    LegacyMapBase<TInternals>& operator =(LegacyMapBase<TInternals> && other) noexcept
     {
         this->HashTable = other.HashTable;
         this->HashSize = other.HashSize;

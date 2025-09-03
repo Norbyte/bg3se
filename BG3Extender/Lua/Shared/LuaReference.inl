@@ -107,7 +107,7 @@ RegistryEntry::RegistryEntry(RegistryEntry const& other)
     }
 }
 
-RegistryEntry::RegistryEntry(RegistryEntry&& other)
+RegistryEntry::RegistryEntry(RegistryEntry&& other) noexcept
     : manager_(other.manager_), global_(other.global_)
 {
     other.global_ = -1;
@@ -129,7 +129,7 @@ RegistryEntry & RegistryEntry::operator = (RegistryEntry const& other)
     return *this;
 }
 
-RegistryEntry & RegistryEntry::operator = (RegistryEntry&& other)
+RegistryEntry & RegistryEntry::operator = (RegistryEntry&& other) noexcept
 {
     if (global_ != -1) {
         manager_->DecRef(global_);

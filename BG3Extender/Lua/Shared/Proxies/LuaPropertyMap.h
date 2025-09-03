@@ -34,7 +34,7 @@ struct RawPropertyAccessors
     using Serializer = PropertyOperationResult (lua_State* L, void const* object, RawPropertyAccessors const& prop);
 
     FixedString Name;
-    std::size_t Offset;
+    std::size_t Offset{ 0 };
     uint64_t Flag{ 0 };
     Getter* Get{ nullptr };
     Setter* Set{ nullptr };

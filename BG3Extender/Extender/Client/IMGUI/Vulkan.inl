@@ -327,8 +327,8 @@ private:
         VkRenderPass renderPass_{ VK_NULL_HANDLE };
         VkCommandPool commandPool_{ VK_NULL_HANDLE };
         Array<SwapchainImageInfo> images_;
-        uint32_t width_;
-        uint32_t height_;
+        uint32_t width_{ 0 };
+        uint32_t height_{ 0 };
     };
 
     struct ViewportInfo

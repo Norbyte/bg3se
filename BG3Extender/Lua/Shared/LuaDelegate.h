@@ -34,7 +34,7 @@ public:
         : ref_(o.ref_)
     {}
 
-    inline LuaDelegate(LuaDelegate && o)
+    inline LuaDelegate(LuaDelegate && o) noexcept
     {
         ref_ = std::move(o.ref_);
     }
@@ -45,7 +45,7 @@ public:
         return *this;
     }
     
-    inline LuaDelegate& operator = (LuaDelegate && o)
+    inline LuaDelegate& operator = (LuaDelegate && o) noexcept
     {
         ref_ = std::move(o.ref_);
         return *this;

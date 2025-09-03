@@ -67,7 +67,7 @@ struct FunctionStorage<R (Args...)>
         return *this;
     }
 
-    FunctionStorage& operator =(FunctionStorage&& o)
+    FunctionStorage& operator =(FunctionStorage&& o) noexcept
     {
         call_ = o.call_;
         copy_ = o.copy_;
@@ -135,7 +135,7 @@ public:
         storage_(o)
     {}
 
-    Function(Function&& o)
+    Function(Function&& o) noexcept
         : pStorage_(o ? &storage_ : nullptr)
     {
         if (o) {
@@ -159,7 +159,7 @@ public:
         return *this;
     }
 
-    Function& operator =(Function&& o)
+    Function& operator =(Function&& o) noexcept
     {
         pStorage_ = o ? &storage_ : nullptr;
         if (o) {
@@ -418,7 +418,7 @@ struct Signal
             RegistrantIndex(o.RegistrantIndex)
         {}
 
-        Connection(Connection&& o)
+        Connection(Connection&& o) noexcept
             : Handler(std::move(o.Handler)),
             RegistrantIndex(o.RegistrantIndex)
         {}
@@ -428,7 +428,7 @@ struct Signal
             RegistrantIndex(index)
         {}
 
-        Connection& operator =(Connection && o)
+        Connection& operator =(Connection && o) noexcept
         {
             Handler = std::move(o.Handler);
             RegistrantIndex = o.RegistrantIndex;
@@ -439,7 +439,7 @@ struct Signal
         uint64_t RegistrantIndex{ 0 };
     };
 
-    uint64_t NextRegistrantId;
+    uint64_t NextRegistrantId{ 1 };
     Array<Connection> Connections;
 
     uint64_t Add(Function const& handler)

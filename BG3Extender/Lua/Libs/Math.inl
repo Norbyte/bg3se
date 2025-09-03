@@ -532,6 +532,7 @@ void Rotate(lua_State* L, MathParam const& m, float angle, glm::vec3 const& axis
     {
         glm::rotate(m.mat4, angle, axis);
         assign(L, 1, m.mat4);
+        break;
     }
 
     case 9:
@@ -540,6 +541,7 @@ void Rotate(lua_State* L, MathParam const& m, float angle, glm::vec3 const& axis
         m4[3][3] = 1.0f;
         glm::rotate(m4, angle, axis);
         assign(L, 1, glm::mat3(m4));
+        break;
     }
 
     default:

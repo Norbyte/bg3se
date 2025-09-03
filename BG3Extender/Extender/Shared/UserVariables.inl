@@ -955,14 +955,14 @@ CachedUserVariable::CachedUserVariable(lua_State* L, Ref const& v)
     }
 }
 
-CachedUserVariable::CachedUserVariable(CachedUserVariable&& o)
+CachedUserVariable::CachedUserVariable(CachedUserVariable&& o) noexcept
 {
     Type = o.Type;
     Dirty = o.Dirty;
     Value = std::move(o.Value);
 }
 
-CachedUserVariable& CachedUserVariable::operator = (CachedUserVariable&& o)
+CachedUserVariable& CachedUserVariable::operator = (CachedUserVariable&& o) noexcept
 {
     Type = o.Type;
     Dirty = o.Dirty;

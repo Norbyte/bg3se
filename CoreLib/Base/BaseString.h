@@ -399,11 +399,11 @@ namespace bg3se
         inline MemBuffer() {}
         MemBuffer(std::span<char const> s);
         MemBuffer(MemBuffer const&);
-        MemBuffer(MemBuffer &&);
+        MemBuffer(MemBuffer &&) noexcept;
         ~MemBuffer();
 
         MemBuffer& operator = (MemBuffer const&);
-        MemBuffer& operator = (MemBuffer &&);
+        MemBuffer& operator = (MemBuffer &&) noexcept;
 
         MemBufferMeta Meta;
         void* Buffer{ nullptr };
@@ -430,11 +430,11 @@ namespace bg3se
         inline ScratchBuffer() {}
         ScratchBuffer(std::span<char const> s);
         ScratchBuffer(ScratchBuffer const&);
-        ScratchBuffer(ScratchBuffer&&);
+        ScratchBuffer(ScratchBuffer&&) noexcept;
         ~ScratchBuffer();
 
         ScratchBuffer& operator = (ScratchBuffer const&);
-        ScratchBuffer& operator = (ScratchBuffer&&);
+        ScratchBuffer& operator = (ScratchBuffer&&) noexcept;
 
         void RemapWriteStream();
         void RemapReadStream();
@@ -450,11 +450,11 @@ namespace bg3se
         inline ScratchString() {}
         ScratchString(std::span<char const> s);
         ScratchString(ScratchString const&);
-        ScratchString(ScratchString &&);
+        ScratchString(ScratchString &&) noexcept;
         ~ScratchString();
 
         ScratchString& operator = (ScratchString const&);
-        ScratchString& operator = (ScratchString&&);
+        ScratchString& operator = (ScratchString&&) noexcept;
 
         char* Buffer{ nullptr };
         uint32_t Position{ 0 };

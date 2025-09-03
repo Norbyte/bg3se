@@ -28,7 +28,7 @@ struct BitSet
         }
     }
 
-    BitSet(BitSet&& other)
+    BitSet(BitSet&& other) noexcept
     {
         InlineValue = other.InlineValue;
         Capacity = other.Capacity;
@@ -58,7 +58,7 @@ struct BitSet
         return *this;
     }
 
-    BitSet& operator = (BitSet&& other)
+    BitSet& operator = (BitSet&& other) noexcept
     {
         InlineValue = other.InlineValue;
         Capacity = other.Capacity;
