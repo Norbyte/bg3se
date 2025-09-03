@@ -118,9 +118,9 @@ private:
     void HookOsiris();
 
     void RunHandlers(uint64_t nodeRef, TuplePtrLL* tuple);
-    void RunHandler(ServerState& lua, RegistryEntry const& func, TuplePtrLL* tuple);
+    void RunHandler(ServerState& lua, uint64_t nodeRef, RegistryEntry const& func, TuplePtrLL* tuple);
     void RunHandlers(uint64_t nodeRef, OsiArgumentDesc* tuple);
-    void RunHandler(ServerState& lua, RegistryEntry const& func, OsiArgumentDesc* tuple);
+    void RunHandler(ServerState& lua, uint64_t nodeRef, RegistryEntry const& func, OsiArgumentDesc* tuple);
 };
 
 END_NS()

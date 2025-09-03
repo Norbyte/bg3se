@@ -571,7 +571,12 @@ namespace bg3se
             lua_setglobal(L, "ModuleUUID");
 
             OsiMsg("Loading bootstrap script: " << bootstrapPath);
+            PerfTimer timer;
             lua->LoadBootstrap(bootstrapFileName, config.ModTable);
+            auto took = timer.time();
+            if (PERF_SHOULD_REPORT(Load, took)) {
+                PERF_REPORT(Load, took, "Loading %s for mod %s took %ld ms", bootstrapFileName, mod.Info.Name.c_str(), took / 1000);
+            }
 
             lua::push(L, nullptr);
             lua_setglobal(L, "ModuleUUID");
@@ -594,7 +599,12 @@ namespace bg3se
         lua_setglobal(L, "ModuleUUID");
 
         OsiMsg("Loading preinit bootstrap script: " << path);
+        PerfTimer timer;
         lua->LoadBootstrap(bootstrapFileName, config.ModTable);
+        auto took = timer.time();
+        if (PERF_SHOULD_REPORT(Load, took)) {
+            PERF_REPORT(Load, took, "Loading %s for mod %s took %ld ms", bootstrapFileName, mod.Info.Name.c_str(), took / 1000);
+        }
 
         lua::push(L, nullptr);
         lua_setglobal(L, "ModuleUUID");

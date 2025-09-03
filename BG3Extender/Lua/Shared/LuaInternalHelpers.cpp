@@ -122,10 +122,52 @@ int ProtectedMethodCallerBase::CallUserFunctionWithTraceback(lua_State* L, lua_C
 }
 */
 
+void ReportSlowFunction(lua_State* L, char const* func, uint64_t time, Ref const& function)
+{
+    // Fast-path check for production configs
+    if (!gExtender->GetConfig().EnableProfiler) return;
+
+    auto client = State::FromLua(L)->IsClient();
+    bool loading;
+    if (client) {
+        auto state = GetStaticSymbols().GetClientState();
+        loading = state
+            && *state != ecl::GameState::Running
+            && *state != ecl::GameState::Paused;
+    } else {
+        auto state = GetStaticSymbols().GetServerState();
+        loading = state
+            && *state != esv::GameState::Running
+            && *state != esv::GameState::Paused;
+    }
+
+    bool report;
+    if (loading) {
+        report = PERF_SHOULD_REPORT(LoadCallback, time);
+    } else if (client) {
+        report = PERF_SHOULD_REPORT(ClientCallback, time);
+    } else {
+        report = PERF_SHOULD_REPORT(Callback, time);
+    }
+
+    if (report) {
+        int line;
+        auto source = lua_get_function_location(L, function, line);
+        if (loading) {
+            PERF_REPORT(LoadCallback, time, "Dispatching %s (%s:%d) took %.2f ms", func ? func : "user function call", source, line, time / 1000.0f);
+        } else if (client) {
+            PERF_REPORT(ClientCallback, time, "Dispatching %s (%s:%d) took %.2f ms", func ? func : "user function call", source, line, time / 1000.0f);
+        } else {
+            PERF_REPORT(Callback, time, "Dispatching %s (%s:%d) took %.2f ms", func ? func : "user function call", source, line, time / 1000.0f);
+        }
+    }
+}
+
 bool ProtectedFunctionCallerBase::ProtectedCall(lua_State* L, lua_CFunction fun, char const* funcDescription)
 {
     StackCheck _(L);
     EnterVMCheck(L);
+    PerfTimer timer;
     auto ret = CallUserFunction(L, fun);
     if (ret != LUA_OK) {
         if (funcDescription) {
@@ -136,6 +178,8 @@ bool ProtectedFunctionCallerBase::ProtectedCall(lua_State* L, lua_CFunction fun,
         lua_pop(L, 1);
         return false; 
     } else {
+        auto took = timer.time();
+        ReportSlowFunction(L, funcDescription, took, Function);
         return true;
     }
 }

@@ -129,7 +129,7 @@ template <class T>
 inline void PushUserCallArg(lua_State* L, T const& v)
 {
     if constexpr (std::is_pointer_v<std::remove_reference_t<T>>) {
-        MakeObjectRef(L, v);
+        push(L, v, GetCurrentLifetime(L));
     } else {
         push(L, v);
     }

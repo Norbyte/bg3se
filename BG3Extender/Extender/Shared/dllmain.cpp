@@ -8,85 +8,9 @@
 #include <ShlObj.h>
 #include <sstream>
 #include <fstream>
+#include <Extender/Shared/ExtenderConfig.inl>
 
 using namespace bg3se;
-
-void ConfigGetBool(Json::Value & node, char const * key, bool & value)
-{
-    auto configVar = node[key];
-    if (!configVar.isNull() && configVar.isBool()) {
-        value = configVar.asBool();
-    }
-}
-
-void ConfigGetInt(Json::Value& node, char const* key, uint32_t& value)
-{
-    auto configVar = node[key];
-    if (!configVar.isNull() && configVar.isUInt()) {
-        value = configVar.asUInt();
-    }
-}
-
-void ConfigGet(Json::Value& node, char const* key, std::string& value)
-{
-    auto configVar = node[key];
-    if (!configVar.isNull() && configVar.isString()) {
-        value = configVar.asString();
-    }
-}
-
-void ConfigGet(Json::Value& node, char const* key, std::wstring& value)
-{
-    auto configVar = node[key];
-    if (!configVar.isNull() && configVar.isString()) {
-        value = FromStdUTF8(StringView(configVar.asString()));
-    }
-}
-
-void LoadConfig(std::wstring const & configPath, ExtenderConfig & config)
-{
-    std::ifstream f(configPath, std::ios::in);
-    if (!f.good()) {
-        return;
-    }
-
-    Json::CharReaderBuilder factory;
-    Json::Value root;
-    std::string errs;
-    if (!Json::parseFromStream(factory, f, &root, &errs)) {
-        std::stringstream err;
-        err << "Failed to load configuration file '" << ToStdUTF8(configPath) << "':\r\n" << errs;
-        Fail(err.str().c_str());
-    }
-
-    ConfigGetBool(root, "CreateConsole", config.CreateConsole);
-    ConfigGetBool(root, "DefaultToClientConsole", config.DefaultToClientConsole);
-    ConfigGetBool(root, "EnableLogging", config.EnableLogging);
-    ConfigGetBool(root, "LogCompile", config.LogCompile);
-    ConfigGetBool(root, "LogFailedCompile", config.LogFailedCompile);
-    ConfigGetBool(root, "LogRuntime", config.LogRuntime);
-    ConfigGetBool(root, "ExtendStory", config.ExtendStory);
-    ConfigGetBool(root, "SendCrashReports", config.SendCrashReports);
-    ConfigGetBool(root, "ForceCrashReporting", config.ForceCrashReporting);
-    ConfigGetBool(root, "EnableDebugger", config.EnableDebugger);
-    ConfigGetBool(root, "EnableLuaDebugger", config.EnableLuaDebugger);
-    ConfigGetBool(root, "DeveloperMode", config.DeveloperMode);
-    ConfigGetBool(root, "ClearOnReset", config.ClearOnReset);
-    ConfigGetBool(root, "ShowPerfWarnings", config.ShowPerfWarnings);
-    ConfigGetBool(root, "EnableAchievements", config.EnableAchievements);
-    ConfigGetBool(root, "DisableLauncher", config.DisableLauncher);
-    ConfigGetBool(root, "DisableStoryPatching", config.DisableStoryPatching);
-    ConfigGetBool(root, "DisableStoryCompilation", config.DisableStoryCompilation);
-    ConfigGetBool(root, "InsanityCheck", config.InsanityCheck);
-
-    ConfigGetInt(root, "DebuggerPort", config.DebuggerPort);
-    ConfigGetInt(root, "LuaDebuggerPort", config.LuaDebuggerPort);
-    ConfigGetInt(root, "DebugFlags", config.DebugFlags);
-
-    ConfigGet(root, "LogDirectory", config.LogDirectory);
-    ConfigGet(root, "LuaBuiltinResourceDirectory", config.LuaBuiltinResourceDirectory);
-    ConfigGet(root, "CustomProfile", config.CustomProfile);
-}
 
 void SetupScriptExtender(HMODULE hModule)
 {

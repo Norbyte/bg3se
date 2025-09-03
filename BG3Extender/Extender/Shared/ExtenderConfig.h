@@ -3,7 +3,17 @@
 #include <cstdint>
 #include <string>
 
-namespace bg3se {
+BEGIN_SE()
+
+struct ProfilerThreshold
+{
+    inline constexpr ProfilerThreshold(uint32_t warn, uint32_t error)
+        : Warning(warn), Error(error)
+    {}
+
+    uint32_t Warning{ 0 };
+    uint32_t Error{ 0 };
+};
 
 struct ExtenderConfig
 {
@@ -50,6 +60,32 @@ struct ExtenderConfig
     std::wstring LogDirectory;
     std::wstring LuaBuiltinResourceDirectory;
     std::string CustomProfile;
+
+    // Lua profiler configuration
+    bool EnableProfiler{ true };
+    bool ProfilerWarnings{ false };
+    ProfilerThreshold ProfilerLoadThreshold{ 50000, 50000 };
+    ProfilerThreshold ProfilerLoadCallbackThreshold{ 50000, 50000 };
+    ProfilerThreshold ProfilerCallbackThreshold{ 1500, 5000 };
+    ProfilerThreshold ProfilerClientCallbackThreshold{ 1000, 2000 };
 };
 
+inline bool ProfilerShouldReport(uint64_t took, ExtenderConfig const& config, ProfilerThreshold const& threshold)
+{
+    return config.EnableProfiler
+        && (took >= threshold.Error
+            || config.ProfilerWarnings && took >= threshold.Warning);
 }
+
+inline bool ProfilerShouldWarn(uint64_t took, ExtenderConfig const& config, ProfilerThreshold const& threshold)
+{
+    return config.ProfilerWarnings && took >= threshold.Warning;
+}
+
+#define PERF_REPORT(type, took, ...) ProfilerShouldWarn(took, gExtender->GetConfig(), gExtender->GetConfig().Profiler##type##Threshold) \
+    ? WARN(##__VA_ARGS__) \
+    : ERR(##__VA_ARGS__)
+
+#define PERF_SHOULD_REPORT(type, took) ProfilerShouldReport((took), gExtender->GetConfig(), gExtender->GetConfig().Profiler##type##Threshold)
+
+END_SE()

@@ -424,6 +424,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="Extender\Client\IMGUI\DX11.inl" />
     <ClCompile Include="Extender\Client\SDL.cpp" />
     <None Include="Extender\Client\IMGUI\Vulkan.inl" />
+    <None Include="Extender\Shared\ExtenderConfig.inl" />
     <None Include="Extender\Shared\SavegameSerializer.inl" />
     <None Include="Extender\Shared\ExtenderProtocol.proto" />
     <None Include="Extender\Shared\StatLoadOrderHelper.inl" />

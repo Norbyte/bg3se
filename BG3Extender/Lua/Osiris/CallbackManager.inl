@@ -115,14 +115,34 @@ void OsirisCallbackManager::RunHandlers(uint64_t nodeRef, TuplePtrLL* tuple)
         for (auto index : *indices) {
             auto sub = subscriptions_.Find(index);
             if (sub) {
-                RunHandler(lua.Get(), sub->Callback, tuple);
+                RunHandler(lua.Get(), nodeRef, sub->Callback, tuple);
             }
         }
         pendingCallbacks_.Exit(indices);
     }
 }
 
-void OsirisCallbackManager::RunHandler(ServerState& lua, RegistryEntry const& func, TuplePtrLL* tuple)
+char const* GetNodeName(uint64_t nodeRef)
+{
+    auto idx = nodeRef & 0xffffffffull;
+    if (idx & 0xf0000000ull) {
+        auto funcs = *gExtender->GetServer().Osiris().GetGlobals().Functions;
+        auto func = funcs->FindById((uint32_t)idx);
+        if (func) {
+            return (*func)->Signature->Name;
+        }
+    } else {
+        auto nodes = *gExtender->GetServer().Osiris().GetGlobals().Nodes;
+        auto node = nodes->Db.Elements[idx - 1];
+        if (node->Function) {
+            return node->Function->Signature->Name;
+        }
+    }
+
+    return "(Unnamed)";
+}
+
+void OsirisCallbackManager::RunHandler(ServerState& lua, uint64_t nodeRef, RegistryEntry const& func, TuplePtrLL* tuple)
 {
     auto L = lua.GetState();
     StackCheck _(L, 0);
@@ -152,9 +172,17 @@ void OsirisCallbackManager::RunHandler(ServerState& lua, RegistryEntry const& fu
             }
         }
 
-        if (CallWithTraceback(L, numArgs, 0) != 0) {
+        PerfTimer timer;
+        if (CallWithTraceback(L, numArgs, 0) != LUA_OK) {
             LuaError("Osiris event handler failed: " << lua_tostring(L, -1));
             lua_pop(L, 1);
+        } else {
+            auto took = timer.time();
+            if (PERF_SHOULD_REPORT(Callback, took)) {
+                int line;
+                auto source = lua_get_function_location(L, func, line);
+                PERF_REPORT(Callback, took, "Dispatching Osiris handler for %s (%s:%d) took %.2f ms", GetNodeName(nodeRef), source, line, took / 1000.0f);
+            }
         }
     }
     catch (Exception& e) {
@@ -183,14 +211,14 @@ void OsirisCallbackManager::RunHandlers(uint64_t nodeRef, OsiArgumentDesc* args)
         for (auto index : *indices) {
             auto sub = subscriptions_.Find(index);
             if (sub) {
-                RunHandler(lua.Get(), sub->Callback, args);
+                RunHandler(lua.Get(), nodeRef, sub->Callback, args);
             }
         }
         pendingCallbacks_.Exit(indices);
     }
 }
 
-void OsirisCallbackManager::RunHandler(ServerState& lua, RegistryEntry const& func, OsiArgumentDesc* args)
+void OsirisCallbackManager::RunHandler(ServerState& lua, uint64_t nodeRef, RegistryEntry const& func, OsiArgumentDesc* args)
 {
     auto L = lua.GetState();
     StackCheck _(L, 0);
@@ -216,9 +244,17 @@ void OsirisCallbackManager::RunHandler(ServerState& lua, RegistryEntry const& fu
             numArgs++;
         }
 
-        if (CallWithTraceback(L, numArgs, 0) != 0) {
+        PerfTimer timer;
+        if (CallWithTraceback(L, numArgs, 0) != LUA_OK) {
             LuaError("Osiris event handler failed: " << lua_tostring(L, -1));
             lua_pop(L, 1);
+        } else {
+            auto took = timer.time();
+            if (PERF_SHOULD_REPORT(Callback, took)) {
+                int line;
+                auto source = lua_get_function_location(L, func, line);
+                PERF_REPORT(Callback, took, "Dispatching Osiris handler for %s (%s:%d) took %.2f ms", GetNodeName(nodeRef), source, line, took / 1000.0f);
+            }
         }
     }
     catch (Exception& e) {

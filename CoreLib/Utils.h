@@ -6,7 +6,7 @@
 BEGIN_SE()
 
 template <typename... Args>
-void Debug(DebugMessageType type, char const * fmt, Args... args)
+void Debug(DebugMessageType type, _Printf_format_string_ char const * fmt, Args... args)
 {
     if (gCoreLibPlatformInterface.GlobalConsole) {
         char buf[1024];

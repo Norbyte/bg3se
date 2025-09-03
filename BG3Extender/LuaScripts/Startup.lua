@@ -1,6 +1,7 @@
 --- @class ExtInternals
 --- @field ModLoader ModLoader
 --- @field FileLoader FileLoader
+--- @field Profiler Profiler
 --- @field EventManager EventManager
 --- @field _PublishedSharedEvents string[]
 --- @field _PublishedEvents string[]
@@ -23,6 +24,7 @@ Ext.Utils.Include(nil, "builtin://BuiltinLibrary.lua")
 Ext.CoreLib("Event")
 Ext.CoreLib("Stats")
 _I.ModLoader = Ext.CoreLib("ModLoader")
+_I.Profiler = Ext.CoreLib("Profiler")
 
 -- Unclobber global namespace
 Class = nil

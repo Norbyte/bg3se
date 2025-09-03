@@ -4,6 +4,7 @@
 #include <cassert>
 #include <type_traits>
 #include <iostream>
+#include <chrono>
 
 #define BEGIN_SE() namespace bg3se {
 #define END_SE() }
@@ -211,6 +212,24 @@ struct SRWLockPin
     }
 
     PSRWLOCK Lock;
+};
+
+class PerfTimer
+{
+public:
+    inline PerfTimer()
+    {
+        start_ = std::chrono::high_resolution_clock::now();
+    }
+    
+    inline long long time() const
+    {
+        auto now = std::chrono::high_resolution_clock::now();
+        return std::chrono::duration_cast<std::chrono::microseconds>(now - start_).count();
+    }
+
+private:
+    std::chrono::high_resolution_clock::time_point start_;
 };
 
 END_SE()

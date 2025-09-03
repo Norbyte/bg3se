@@ -72,6 +72,37 @@ void RegisterSystemProxy(lua_State* L)
     lua_pop(L, 1);
 }
 
+void RegisterConfig(lua_State* L)
+{
+    StackCheck _(L);
+    lua_getglobal(L, "Ext");
+
+    lua_newtable(L);
+
+    push(L, gExtender->GetConfig().EnableProfiler);
+    lua_setfield(L, -2, "ProfilerEnabled");
+
+    push(L, gExtender->GetConfig().ProfilerLoadCallbackThreshold.Warning);
+    lua_setfield(L, -2, "ProfilerLoadCallbackWarningThreshold");
+
+    push(L, gExtender->GetConfig().ProfilerLoadCallbackThreshold.Error);
+    lua_setfield(L, -2, "ProfilerLoadCallbackErrorThreshold");
+
+    if (State::FromLua(L)->IsClient()) {
+        push(L, gExtender->GetConfig().ProfilerClientCallbackThreshold.Warning);
+        push(L, gExtender->GetConfig().ProfilerClientCallbackThreshold.Error);
+    } else {
+        push(L, gExtender->GetConfig().ProfilerCallbackThreshold.Warning);
+        push(L, gExtender->GetConfig().ProfilerCallbackThreshold.Error);
+    }
+    lua_setfield(L, -3, "ProfilerCallbackErrorThreshold");
+    lua_setfield(L, -2, "ProfilerCallbackWarningThreshold");
+
+    lua_setfield(L, -2, "Config");
+
+    lua_pop(L, 1);
+}
+
 void RegisterSharedMetatables(lua_State* L)
 {
     ArrayProxyMetatable::RegisterMetatable(L);
@@ -88,6 +119,7 @@ void RegisterSharedMetatables(lua_State* L)
     SystemMapMetatable::RegisterMetatable(L);
     RegisterSystemProxy(L);
     types::RegisterEnumerations(L);
+    RegisterConfig(L);
 }
 
 void RegisterSharedLibraries()

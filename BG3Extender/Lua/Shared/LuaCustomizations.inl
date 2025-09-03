@@ -669,6 +669,22 @@ char const* lua_get_function_location(lua_State* L, int index, int& line)
     return "";
 }
 
+char const* lua_get_function_location(lua_State* L, RegistryEntry const& reg, int& line)
+{
+    reg.Push(L);
+    auto source = lua_get_function_location(L, -1, line);
+    lua_pop(L, 1);
+    return source;
+}
+
+char const* lua_get_function_location(lua_State* L, Ref const& reg, int& line)
+{
+    reg.Push(L);
+    auto source = lua_get_function_location(L, -1, line);
+    lua_pop(L, 1);
+    return source;
+}
+
 void* LuaCppCanonicalize(lua_State* L, void* val)
 {
     auto v = reinterpret_cast<TValue*>(val);

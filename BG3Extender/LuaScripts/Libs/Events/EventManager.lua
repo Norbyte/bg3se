@@ -63,18 +63,41 @@ function EventManager:RegisterNetListener(channel, fn)
     table.insert(self.NetListeners[channel], fn)
 end
 
+if Ext.Config.ProfilerEnabled then
 
-function EventManager:NetMessageReceived(channel, payload, userId)
-    if self.NetListeners[channel] ~= nil then
-        for i,callback in pairs(self.NetListeners[channel]) do
-            local ok, err = xpcall(callback, debug.traceback, channel, payload, userId)
-            if not ok then
-                _PE("Error during NetMessage dispatch: ", err)
+    -- Separate profiler-enabled version for perf reasons
+    function EventManager:NetMessageReceived(channel, payload, userId)
+        if self.NetListeners[channel] ~= nil then
+            for i,callback in pairs(self.NetListeners[channel]) do
+                local startTime = Ext.Timer.MicrosecTime()
+                local ok, err = xpcall(callback, debug.traceback, channel, payload, userId)
+                local took = Ext.Timer.MicrosecTime() - startTime
+                if not ok then
+                    _PE("Error during NetMessage dispatch: ", err)
+                else
+                    if _I.Profiler:ShouldLikelyReport(took) then
+                        local source, line = Ext.Types.GetFunctionLocation(callback)
+                        _I.Profiler:Report(took, "Dispatching net message on channel " .. channel .. " (" .. source .. ":" .. line .. ")")
+                    end
+                end
             end
         end
     end
-end
 
+else
+
+    function EventManager:NetMessageReceived(channel, payload, userId)
+        if self.NetListeners[channel] ~= nil then
+            for i,callback in pairs(self.NetListeners[channel]) do
+                local ok, err = xpcall(callback, debug.traceback, channel, payload, userId)
+                if not ok then
+                    _PE("Error during NetMessage dispatch: ", err)
+                end
+            end
+        end
+    end
+
+end
 
 function EventManager:DoConsoleCommand(cmd)
     local params = {}
