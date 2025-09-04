@@ -320,7 +320,91 @@ bool StringifyLightCppObject(lua_State* L, int index, CppObjectMetadata& meta, u
 }
 
 template <class Writer>
-void StringifyTableAsObject(lua_State * L, int index, unsigned depth, StringifyContext& ctx, Writer& writer)
+void StringifyTableAsObjectOrdered(lua_State * L, int index, unsigned depth, StringifyContext& ctx, Writer& writer)
+{
+    // Collect keys from object
+    Array<std::variant<char const*, int64_t, double>> keys;
+
+    lua_pushnil(L);
+    if (index < 0) index--;
+
+    while (lua_next(L, index) != 0) {
+        if (lua_type(L, -2) == LUA_TSTRING) {
+            auto key = lua_tostring(L, -2);
+            keys.push_back(key);
+        } else if (lua_type(L, -2) == LUA_TNUMBER) {
+            if (lua_isinteger(L, -2)) {
+                keys.push_back(lua_tointeger(L, -2));
+            } else {
+                keys.push_back(lua_tonumber(L, -2));
+            }
+        } else {
+            throw std::runtime_error("Can only stringify string or number table keys");
+        }
+
+        lua_pop(L, 1);
+    }
+
+    // Sort keys
+    std::sort(keys.begin(), keys.end(), [] (std::variant<char const*, int64_t, double> const& a, std::variant<char const*, int64_t, double> const& b) {
+        // Separate int, double, string keys
+        if (a.index() != b.index()) {
+            return a.index() < b.index();
+        }
+
+        switch (a.index()) {
+        case 0: return strcmp(std::get<char const*>(a), std::get<char const*>(b)) < 0;
+        case 1: return std::get<int64_t>(a) < std::get<int64_t>(b);
+        case 2: return std::get<double>(a) < std::get<double>(b);
+        default: throw std::runtime_error("Missing key");
+        }
+    });
+
+    // Fetch and write values
+    writer.StartObject();
+
+    for (auto const& key : keys) {
+        switch (key.index()) {
+        case 0:
+        {
+            auto k = std::get<char const*>(key);
+            push(L, k);
+            lua_rawget(L, index);
+            writer.Key(k);
+            break;
+        }
+        case 1:
+        {
+            auto k = std::get<int64_t>(key);
+            lua_rawgeti(L, index, k);
+            char iv[100];
+            _snprintf_s(iv, std::size(iv), "%lld", k);
+            writer.Key(iv);
+            break;
+        }
+        case 2:
+        {
+            auto k = std::get<double>(key);
+            push(L, k);
+            lua_rawget(L, index);
+            char iv[100];
+            _snprintf_s(iv, std::size(iv), "%lf", k);
+            writer.Key(iv);
+            break;
+        }
+        default:
+            throw std::runtime_error("Missing key");
+        }
+
+        Stringify(L, -1, depth + 1, ctx, writer);
+        lua_pop(L, 1);
+    }
+
+    writer.EndObject();
+}
+
+template <class Writer>
+void StringifyTableAsObjectUnordered(lua_State * L, int index, unsigned depth, StringifyContext& ctx, Writer& writer)
 {
     writer.StartObject();
     lua_pushnil(L);
@@ -341,7 +425,6 @@ void StringifyTableAsObject(lua_State * L, int index, unsigned depth, StringifyC
         }
 
         Stringify(L, -1, depth + 1, ctx, writer);
-
         lua_pop(L, 1);
     }
 
@@ -375,7 +458,11 @@ void StringifyTable(lua_State * L, int index, unsigned depth, StringifyContext& 
     if (lua_is_linear_array(L, index)) {
         StringifyTableAsArray(L, index, depth, ctx, writer);
     } else {
-        StringifyTableAsObject(L, index, depth, ctx, writer);
+        if (ctx.Beautify) {
+            StringifyTableAsObjectOrdered(L, index, depth, ctx, writer);
+        } else {
+            StringifyTableAsObjectUnordered(L, index, depth, ctx, writer);
+        }
     }
 }
 
