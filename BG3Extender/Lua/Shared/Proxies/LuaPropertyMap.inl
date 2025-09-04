@@ -46,6 +46,17 @@ void GenericPropertyMap::BuildHotPropertyMap()
     }
 
     PropertiesHot.Build(keys, hotProps);
+
+    // Lexicographically sort IterableProperties
+    Array<FixedStringUnhashed> iterableKeys = IterableProperties.keys();
+    std::sort(iterableKeys.begin(), iterableKeys.end(), [] (FixedStringUnhashed const& a, FixedStringUnhashed const& b) {
+        return strcmp(a.GetString(), b.GetString()) < 0;
+    });
+
+    IterableProperties.clear();
+    for (auto const& key : iterableKeys) {
+        IterableProperties.set(key, Properties.find_index(key));
+    }
 }
 
 bool GenericPropertyMap::HasProperty(FixedStringId const& prop) const

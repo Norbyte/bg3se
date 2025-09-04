@@ -20,15 +20,28 @@ public:
 
     ContiguousIterator operator ++ ()
     {
-        ContiguousIterator<T> it(ptr_);
-        ptr_++;
-        return it;
+        ++ptr_;
+        return *this;
+    }
+
+    ContiguousIterator operator -- ()
+    {
+        --ptr_;
+        return *this;
     }
 
     ContiguousIterator& operator ++ (int)
     {
-        ptr_++;
-        return *this;
+        ContiguousIterator<T> it(ptr_);
+        ++ptr_;
+        return it;
+    }
+
+    ContiguousIterator& operator -- (int)
+    {
+        ContiguousIterator<T> it(ptr_);
+        --ptr_;
+        return it;
     }
 
     bool operator == (ContiguousIterator const& it) const
@@ -39,6 +52,11 @@ public:
     bool operator != (ContiguousIterator const& it) const
     {
         return it.ptr_ != ptr_;
+    }
+
+    bool operator < (ContiguousIterator const& it) const
+    {
+        return ptr_ < it.ptr_;
     }
 
     ContiguousIterator operator + (difference_type n) const
@@ -91,15 +109,28 @@ public:
 
     ContiguousConstIterator operator ++ ()
     {
-        ContiguousConstIterator<T> it(ptr_);
-        ptr_++;
-        return it;
+        ++ptr_;
+        return *this;
+    }
+
+    ContiguousConstIterator operator -- ()
+    {
+        --ptr_;
+        return *this;
     }
 
     ContiguousConstIterator& operator ++ (int)
     {
-        ptr_++;
-        return *this;
+        ContiguousConstIterator<T> it(ptr_);
+        ++ptr_;
+        return it;
+    }
+
+    ContiguousConstIterator& operator -- (int)
+    {
+        ContiguousConstIterator<T> it(ptr_);
+        --ptr_;
+        return it;
     }
 
     bool operator == (ContiguousConstIterator const& it) const
@@ -110,6 +141,11 @@ public:
     bool operator != (ContiguousConstIterator const& it) const
     {
         return it.ptr_ != ptr_;
+    }
+
+    bool operator < (ContiguousConstIterator const& it) const
+    {
+        return ptr_ < it.ptr_;
     }
 
     ContiguousConstIterator operator + (difference_type n) const
