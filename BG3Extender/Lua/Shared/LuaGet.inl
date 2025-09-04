@@ -55,7 +55,12 @@ bool lua_is_linear_array(lua_State* L, int idx)
     auto tab = hvalue(val);
     if (tab->lsizenode > 0) return false;
 
-    for (unsigned i = 0; i < tab->sizearray; i++) {
+    // Skip trailing nil-s
+    unsigned int sz;
+    for (sz = tab->sizearray; sz > 0 && ttisnil(&tab->array[sz - 1]); sz--) {}
+
+    // Check if every real entry is non-nil
+    for (unsigned i = 0; i < sz; i++) {
         if (ttisnil(&tab->array[i])) {
             return false;
         }
