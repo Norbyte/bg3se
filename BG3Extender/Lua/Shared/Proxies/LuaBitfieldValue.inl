@@ -1,6 +1,6 @@
 #include <Lua/Shared/Proxies/LuaBitfieldValue.h>
 #include <Extender/ScriptExtender.h>
-#include <json/json.h>
+//#include <json/json.h>
 
 BEGIN_NS(lua)
 
@@ -44,18 +44,6 @@ STDString BitfieldValueMetatable::GetValueAsString(CppObjectMetadata& self)
     }
 
     return labels;
-}
-
-Json::Value BitfieldValueMetatable::ToJson(CppObjectMetadata& self)
-{
-    Json::Value arr(Json::arrayValue);
-    auto ei = GetBitfieldInfo(self);
-    for (auto const& val : ei->Values) {
-        if ((self.Value & val.Value) == val.Value) {
-            arr.append(val.Key.GetString());
-        }
-    }
-    return arr;
 }
 
 int BitfieldValueMetatable::Index(lua_State* L, CppObjectMetadata& self)

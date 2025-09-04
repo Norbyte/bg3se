@@ -4,7 +4,6 @@
 #include <Extender/Version.h>
 #include <Extender/Shared/ScriptHelpers.h>
 #include <fstream>
-#include "json/json.h"
 
 namespace bg3se::esv
 {

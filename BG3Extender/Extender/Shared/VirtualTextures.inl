@@ -1,4 +1,4 @@
-#include "json/json.h"
+#include "rapidjson/document.h"
 #include <Extender/Shared/VirtualTextureMerge.inl>
 
 BEGIN_SE()
@@ -104,22 +104,22 @@ HashMap<FixedString, FixedString> VirtualTextureHelpers::CollectRemaps()
 
         if (reader.IsLoaded()) {
             DEBUG("Loading virtual texture mappings: %s", virtualTextureConfig.c_str());
-
-            Json::CharReaderBuilder factory;
-            auto jsonReader = std::unique_ptr<Json::CharReader>(factory.newCharReader());
-
-            Json::Value root;
-            std::string errs;
             auto configText = reader.ToString();
-            if (!jsonReader->parse(configText.c_str(), configText.c_str() + configText.size(), &root, &errs)) {
-                OsiError("Unable to parse virtual texture configuration for mod '" << mod.Info.Name << "': " << errs);
+
+            rapidjson::Document root;
+            if (root.Parse(configText.c_str()).HasParseError()) {
+                OsiError("Unable to parse virtual texture configuration for mod '" << mod.Info.Name << "'");
             } else {
-                auto mappings = root["Mappings"];
-                if (mappings.isArray()) {
-                    for (auto const& mapping : mappings) {
-                        if (mapping.isObject() && mapping["GTexName"].isString() && mapping["GTS"].isString()) {
-                            auto gTex = mapping["GTexName"].asString();
-                            auto gts = mapping["GTS"].asString();
+                auto mappings = root.FindMember("Mappings");
+                if (mappings != root.MemberEnd() && mappings->value.IsArray()) {
+                    for (auto const& mapping : mappings->value.GetArray()) {
+                        if (mapping.IsObject() 
+                            && mapping.HasMember("GTexName")
+                            && mapping.HasMember("GTS")
+                            && mapping["GTexName"].IsString() 
+                            && mapping["GTS"].IsString()) {
+                            auto gTex = STDString(mapping["GTexName"].GetString());
+                            auto gts = STDString(mapping["GTS"].GetString());
                             if (!gTex.empty() && !gts.empty()) {
                                 remaps.set(FixedString(gTex), FixedString(gts));
                             }

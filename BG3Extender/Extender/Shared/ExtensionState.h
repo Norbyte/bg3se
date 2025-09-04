@@ -52,7 +52,6 @@ namespace bg3se
 
         void LoadConfigs();
         bool LoadConfig(Module const & mod, STDString const & configText, ExtensionModConfig & config);
-        bool LoadConfig(Module const & mod, Json::Value & json, ExtensionModConfig & config);
         bool HasFeatureFlag(char const * flag) const;
 
         inline ExtensionStateContext Context() const
@@ -142,9 +141,9 @@ namespace bg3se
             return server_;
         }
 
+        static std::unordered_set<std::string_view> sAllFeatureFlags;
     protected:
         friend class LuaVirtualPin;
-        static std::unordered_set<std::string_view> sAllFeatureFlags;
 
         ExtensionModConfig MergedConfig;
         Module const* HighestVersionMod{ nullptr };

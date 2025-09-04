@@ -3,7 +3,7 @@
 #include <Extender/Shared/ExtensionState.h>
 #include <Extender/Version.h>
 #include <fstream>
-#include "json/json.h"
+#include "rapidjson/document.h"
 
 namespace bg3se
 {
@@ -121,27 +121,27 @@ namespace bg3se
         }
     }
 
+    using namespace rapidjson;
+
+    bool LoadModConfig(Module const& mod, Document& json, ExtensionModConfig& config);
+
     bool ExtensionStateBase::LoadConfig(Module const & mod, STDString const & configText, ExtensionModConfig & config)
     {
-        Json::CharReaderBuilder factory;
-        auto reader = std::unique_ptr<Json::CharReader>(factory.newCharReader());
-
-        Json::Value root;
-        std::string errs;
-        if (!reader->parse(configText.c_str(), configText.c_str() + configText.size(), &root, &errs)) {
-            OsiError("Unable to parse configuration for mod '" << mod.Info.Name << "': " << errs);
+        Document root;
+        if (root.Parse(configText.data()).HasParseError()) {
+            OsiError("Unable to parse configuration for mod '" << mod.Info.Name << "'");
             return false;
         }
 
-        return LoadConfig(mod, root, config);
+        return LoadModConfig(mod, root, config);
     }
 
-    std::optional<bool> GetConfigBool(Json::Value & config, std::string const & key)
+    std::optional<bool> GetConfigBool(Value const& node, std::string_view const& key)
     {
-        auto value = config[key];
-        if (!value.isNull()) {
-            if (value.isBool()) {
-                return value.asBool();
+        auto v = node.FindMember(key.data());
+        if (v != node.MemberEnd()) {
+            if (v->value.IsBool()) {
+                return v->value.GetBool();
             } else {
                 OsiError("Config option '" << key << "' should be a boolean.");
             }
@@ -150,12 +150,12 @@ namespace bg3se
         return {};
     }
 
-    std::optional<int32_t> GetConfigInt(Json::Value & config, std::string const & key)
+    std::optional<int32_t> GetConfigInt(Value const& node, std::string_view const& key)
     {
-        auto value = config[key];
-        if (!value.isNull()) {
-            if (value.isInt()) {
-                return value.asInt();
+        auto v = node.FindMember(key.data());
+        if (v != node.MemberEnd()) {
+            if (v->value.IsInt()) {
+                return v->value.GetInt();
             } else {
                 OsiError("Config option '" << key << "' should be an integer.");
             }
@@ -164,12 +164,12 @@ namespace bg3se
         return {};
     }
 
-    std::optional<STDString> GetConfigString(Json::Value& config, std::string const& key)
+    std::optional<STDString> GetConfigString(Value const& node, std::string_view const& key)
     {
-        auto value = config[key];
-        if (!value.isNull()) {
-            if (value.isString()) {
-                return value.asString().c_str();
+        auto v = node.FindMember(key.data());
+        if (v != node.MemberEnd()) {
+            if (v->value.IsString()) {
+                return v->value.GetString();
             } else {
                 OsiError("Config option '" << key << "' should be a string.");
             }
@@ -178,7 +178,7 @@ namespace bg3se
         return {};
     }
 
-    bool ExtensionStateBase::LoadConfig(Module const & mod, Json::Value & json, ExtensionModConfig & config)
+    bool LoadModConfig(Module const & mod, Document& json, ExtensionModConfig & config)
     {
         auto version = GetConfigInt(json, "RequiredVersion");
         if (version) {
@@ -190,15 +190,15 @@ namespace bg3se
             config.ModTable = *modTable;
         }
 
-        auto featureFlags = json["FeatureFlags"];
-        if (featureFlags.isArray()) {
-            for (auto const & flag : featureFlags) {
-                if (flag.isString()) {
-                    auto flagStr = flag.asString();
-                    if (sAllFeatureFlags.find(flagStr) != sAllFeatureFlags.end()) {
+        auto featureFlags = json.FindMember("FeatureFlags");
+        if (featureFlags != json.MemberEnd() && featureFlags->value.IsArray()) {
+            for (auto const & flag : featureFlags->value.GetArray()) {
+                if (flag.IsString()) {
+                    auto flagStr = flag.GetString();
+                    if (ExtensionStateBase::sAllFeatureFlags.find(flagStr) != ExtensionStateBase::sAllFeatureFlags.end()) {
                         config.FeatureFlags.insert(STDString(flagStr));
                     } else {
-                        ERR("Feature flag '%s' not supported!", flagStr.c_str());
+                        ERR("Feature flag '%s' not supported!", flagStr);
                     }
                 } else {
                     ERR("Garbage found in FeatureFlags array");

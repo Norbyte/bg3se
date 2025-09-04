@@ -24,7 +24,6 @@ public:
     static BitfieldInfoStore* GetBitfieldInfo(CppObjectMetadata const& val);
     static EnumUnderlyingType GetValue(CppObjectMetadata const& self);
     static std::optional<EnumUnderlyingType> GetValueAtIndex(CppObjectMetadata const& self, int index);
-    static Json::Value ToJson(CppObjectMetadata& self);
     static STDString GetValueAsString(CppObjectMetadata& self);
 
     static int Index(lua_State* L, CppObjectMetadata& self);

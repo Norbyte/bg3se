@@ -1,56 +1,70 @@
 BEGIN_SE()
 
-void ConfigGet(Json::Value& node, char const* key, bool& value)
+using namespace rapidjson;
+
+void ConfigGet(Value& node, char const* key, bool& value)
 {
-    auto configVar = node[key];
-    if (!configVar.isNull() && configVar.isBool()) {
-        value = configVar.asBool();
+    auto configVar = node.FindMember(key);
+    if (configVar != node.MemberEnd() && configVar->value.IsBool()) {
+        value = configVar->value.GetBool();
     }
 }
 
-void ConfigGet(Json::Value& node, char const* key, uint32_t& value)
+void ConfigGet(Value& node, char const* key, uint32_t& value)
 {
-    auto configVar = node[key];
-    if (!configVar.isNull() && configVar.isUInt()) {
-        value = configVar.asUInt();
+    auto configVar = node.FindMember(key);
+    if (configVar != node.MemberEnd() && configVar->value.IsUint()) {
+        value = configVar->value.GetUint();
     }
 }
 
-void ConfigGet(Json::Value& node, char const* key, std::string& value)
+void ConfigGet(Value& node, char const* key, std::string& value)
 {
-    auto configVar = node[key];
-    if (!configVar.isNull() && configVar.isString()) {
-        value = configVar.asString();
+    auto configVar = node.FindMember(key);
+    if (configVar != node.MemberEnd() && configVar->value.IsString()) {
+        value = configVar->value.GetString();
     }
 }
 
-void ConfigGet(Json::Value& node, char const* key, std::wstring& value)
+void ConfigGet(Value& node, char const* key, std::wstring& value)
 {
-    auto configVar = node[key];
-    if (!configVar.isNull() && configVar.isString()) {
-        value = FromStdUTF8(StringView(configVar.asString()));
+    auto configVar = node.FindMember(key);
+    if (configVar != node.MemberEnd() && configVar->value.IsString()) {
+        value = FromStdUTF8(configVar->value.GetString());
     }
 }
 
-void ConfigGet(Json::Value& node, char const* key, ProfilerThreshold& value)
+void ConfigGet(Value& node, char const* key, ProfilerThreshold& value)
 {
     ConfigGet(node, (std::string(key) + "Warning").c_str(), value.Warning);
     ConfigGet(node, (std::string(key) + "Error").c_str(), value.Error);
 }
 
+bool ReadConfig(std::wstring const& configPath, std::string& configJson)
+{
+    std::ifstream f(configPath, std::ios::in | std::ios::binary);
+    if (f.good()) {
+        f.seekg(0, std::ios::end);
+        configJson.resize((unsigned)f.tellg());
+        f.seekg(0, std::ios::beg);
+        f.read(configJson.data(), configJson.size());
+        return true;
+    }
+
+    return false;
+}
+
 void LoadConfig(std::wstring const& configPath, ExtenderConfig& config)
 {
-    std::ifstream f(configPath, std::ios::in);
-    if (!f.good()) {
+    std::string configJson;
+    if (!ReadConfig(configPath, configJson)) {
         return;
     }
 
-    Json::CharReaderBuilder factory;
-    Json::Value root;
-    std::string errs;
-    if (!Json::parseFromStream(factory, f, &root, &errs)) {
+    Document root;
+    if (root.ParseInsitu(configJson.data()).HasParseError()) {
         std::stringstream err;
-        err << "Failed to load configuration file '" << ToStdUTF8(configPath) << "':\r\n" << errs;
+        err << "Failed to parse configuration file '" << ToStdUTF8(configPath) << "'";
         Fail(err.str().c_str());
     }
 

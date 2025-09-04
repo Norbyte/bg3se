@@ -53,6 +53,7 @@ bool lua_typecheck_cppvalue(lua_State* L, int idx);
 bool lua_typecheck_cppvalue(lua_State* L, int idx, MetatableTag expectedMetatableTag);
 bool lua_typecheck_cppvalue(lua_State* L, int idx, MetatableTag expectedMetatableTag, int propertyMapIndex);
 bool lua_typecheck_array_n(lua_State* L, int idx, int size);
+bool lua_is_linear_array(lua_State* L, int idx);
 
 CppValueOpaque* lua_get_opaque_cppvalue(lua_State* L, int idx, MetatableTag expectedMetatableTag);
 

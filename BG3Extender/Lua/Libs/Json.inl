@@ -2,84 +2,89 @@
 
 #include <fstream>
 #include <unordered_set>
-#include <json/json.h>
+#include <rapidjson/document.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/prettywriter.h>
 #include <lstate.h>
 
 /// <lua_module>Json</lua_module>
 BEGIN_NS(lua::json)
 
-void Parse(lua_State * L, Json::Value const & val);
+using namespace rapidjson;
 
-void ParseArray(lua_State * L, Json::Value const & val)
+using Val = rapidjson::Value;
+
+void Parse(lua_State * L, Val const& val);
+
+void ParseArray(lua_State * L, Val::ConstArray const& val)
 {
-    lua_createtable(L, (int)val.size(), 0);
+    lua_createtable(L, (int)val.Size(), 0);
     int idx = 1;
-    for (auto it = val.begin(), end = val.end(); it != end; ++it) {
+    for (auto& it : val) {
         push(L, idx++);
-        Parse(L, *it);
+        Parse(L, it);
         lua_rawset(L, -3);
     }
 }
 
-void ParseObject(lua_State * L, Json::Value const & val)
+void ParseObject(lua_State * L, Val::ConstObject const& val)
 {
-    lua_createtable(L, 0, (int)val.size());
-    for (auto it = val.begin(), end = val.end(); it != end; ++it) {
-        Parse(L, it.key());
-        Parse(L, *it);
+    lua_createtable(L, 0, (int)val.MemberCount());
+    for (auto& it : val) {
+        Parse(L, it.name);
+        Parse(L, it.value);
         lua_rawset(L, -3);
     }
 }
 
-void Parse(lua_State * L, Json::Value const & val)
+void Parse(lua_State * L, Val const& val)
 {
-    switch (val.type()) {
-    case Json::nullValue:
+    switch (val.GetType()) {
+    case Type::kNullType:
         lua_pushnil(L);
         break;
 
-    case Json::intValue:
-        push(L, val.asInt64());
+    case Type::kFalseType:
+        push(L, false);
         break;
 
-    case Json::uintValue:
-        push(L, (int64_t)val.asUInt64());
+    case Type::kTrueType:
+        push(L, true);
         break;
 
-    case Json::realValue:
-        push(L, val.asDouble());
+    case Type::kObjectType:
+        ParseObject(L, val.GetObj());
         break;
 
-    case Json::stringValue:
-        push(L, val.asCString());
+    case Type::kArrayType:
+        ParseArray(L, val.GetArray());
         break;
 
-    case Json::booleanValue:
-        push(L, val.asBool());
+    case Type::kNumberType:
+        if (val.IsDouble()) {
+            push(L, val.GetDouble());
+        } else if (val.IsInt64()) {
+            push(L, val.GetInt64());
+        } else {
+            luaL_error(L, "Unsupported JSON number format");
+        }
         break;
 
-    case Json::arrayValue:
-        ParseArray(L, val);
-        break;
-
-    case Json::objectValue:
-        ParseObject(L, val);
+    case Type::kStringType:
+        push(L, val.GetString());
         break;
 
     default:
-        luaL_error(L, "Attempted to parse unknown Json value");
+        luaL_error(L, "Attempted to parse unknown JSON value");
     }
 }
 
 bool Parse(lua_State * L, StringView json)
 {
-    Json::CharReaderBuilder factory;
-    std::unique_ptr<Json::CharReader> reader(factory.newCharReader());
-
-    Json::Value root;
-    std::string errs;
-    if (!reader->parse(json.data(), json.data() + json.size(), &root, &errs)) {
-        ERR("Unable to parse JSON: %s", errs.c_str());
+    StackCheck _(L, 1);
+    Document root;
+    if (root.Parse(json.data(), json.size()).HasParseError()) {
+        ERR("Unable to parse JSON");
         return false;
     }
 
@@ -93,13 +98,9 @@ UserReturn LuaParse(lua_State * L)
     size_t length;
     auto json = luaL_checklstring(L, 1, &length);
 
-    Json::CharReaderBuilder factory;
-    std::unique_ptr<Json::CharReader> reader(factory.newCharReader());
-
-    Json::Value root;
-    std::string errs;
-    if (!reader->parse(json, json + length, &root, &errs)) {
-        return luaL_error(L, "Unable to parse JSON: %s", errs.c_str());
+    Document root;
+    if (root.Parse(json, length).HasParseError()) {
+        return luaL_error(L, "Unable to parse JSON");
     }
 
     Parse(L, root);
@@ -201,29 +202,32 @@ bool IsMapOrArrayLikeUserdata(CppObjectMetadata const& meta)
         || meta.MetatableTag == MetatableTag::Array;
 }
 
-Json::Value Stringify(lua_State * L, int index, unsigned depth, StringifyContext& ctx);
+template <class Writer>
+void Stringify(lua_State * L, int index, unsigned depth, StringifyContext& ctx, Writer& writer);
 
-Json::Value StringifyLightCppObject(lua_State* L, int index, CppObjectMetadata& meta, unsigned depth, StringifyContext& ctx)
+template <class Writer>
+bool StringifyLightCppObject(lua_State* L, int index, CppObjectMetadata& meta, unsigned depth, StringifyContext& ctx, Writer& writer)
 {
     StackCheck _(L, 0);
 
     index = lua_absindex(L, index);
 
     if (CheckForRecursion(L, index, ctx)) {
-        return Json::Value("*RECURSION*");
+        writer.String("*RECURSION*");
+        return true;
     }
-
-    Json::Value arr;
-    if (IsArrayLikeUserdata(meta)) {
-        arr = Json::Value(Json::arrayValue);
-    } else {
-        arr = Json::Value(Json::objectValue);
-    }
-
-    bool isMapOrArray = IsMapOrArrayLikeUserdata(meta);
 
     if (!TryGetUserdataPairs(L, index)) {
-        return Json::Value();
+        return false;
+    }
+
+    bool isArray = IsArrayLikeUserdata(meta);
+    bool isMapOrArray = IsMapOrArrayLikeUserdata(meta);
+
+    if (isArray) {
+        writer.StartArray();
+    } else {
+        writer.StartObject();
     }
 
 #if !defined(NDEBUG)
@@ -259,20 +263,18 @@ Json::Value StringifyLightCppObject(lua_State* L, int index, CppObjectMetadata& 
         }
 #endif
 
-        Json::Value val(Stringify(L, -1, depth + 1, ctx));
-
         auto type = lua_type(L, -2);
         if (type == LUA_TSTRING) {
             auto key = lua_tostring(L, -2);
-            arr[key] = val;
+            writer.Key(key);
         } else if (type == LUA_TNUMBER) {
             auto key = lua_tointeger(L, -2);
-            if (arr.type() == Json::arrayValue) {
-                arr[(uint32_t)key - 1] = val;
+            if (isArray) {
+                // Using sequential keys, nothing to do
             } else {
                 lua_pushvalue(L, -2);
                 auto key = lua_tostring(L, -1);
-                arr[key] = val;
+                writer.Key(key);
                 lua_pop(L, 1);
             }
         } else if ((type == LUA_TLIGHTCPPOBJECT || type == LUA_TCPPOBJECT) && ctx.StringifyInternalTypes) {
@@ -282,13 +284,15 @@ Json::Value StringifyLightCppObject(lua_State* L, int index, CppObjectMetadata& 
             lua_call(L, 1, 1);
             const char* key = lua_tostring(L, -1);  /* get result */
             if (key) {
-                arr[key] = val;
+                writer.Key(key);
             }
             int top2 = lua_gettop(L);
             lua_pop(L, 1);  /* pop result */
         } else {
             throw std::runtime_error("Can only stringify string or number table keys");
         }
+
+        Stringify(L, -1, depth + 1, ctx, writer);
 
         // Push next, obj, k
         lua_pushvalue(L, nextIndex);
@@ -305,140 +309,132 @@ Json::Value StringifyLightCppObject(lua_State* L, int index, CppObjectMetadata& 
 
     // Pop __next, obj, nil
     lua_pop(L, 3);
-    return arr;
+
+    if (isArray) {
+        writer.EndArray();
+    } else {
+        writer.EndObject();
+    }
+
+    return true;
 }
 
-Json::Value StringifyTableAsObject(lua_State * L, int index, unsigned depth, StringifyContext& ctx)
+template <class Writer>
+void StringifyTableAsObject(lua_State * L, int index, unsigned depth, StringifyContext& ctx, Writer& writer)
 {
-    Json::Value arr(Json::objectValue);
+    writer.StartObject();
     lua_pushnil(L);
 
     if (index < 0) index--;
 
     while (lua_next(L, index) != 0) {
-        Json::Value val(Stringify(L, -1, depth + 1, ctx));
-
         if (lua_type(L, -2) == LUA_TSTRING) {
             auto key = lua_tostring(L, -2);
-            arr[key] = val;
+            writer.Key(key);
         } else if (lua_type(L, -2) == LUA_TNUMBER) {
             lua_pushvalue(L, -2);
             auto key = lua_tostring(L, -1);
-            arr[key] = val;
+            writer.Key(key);
             lua_pop(L, 1);
         } else {
             throw std::runtime_error("Can only stringify string or number table keys");
         }
 
+        Stringify(L, -1, depth + 1, ctx, writer);
+
         lua_pop(L, 1);
     }
 
-    return arr;
+    writer.EndObject();
 }
 
-Json::Value StringifyTableAsArray(lua_State * L, int index, unsigned depth, StringifyContext& ctx)
+template <class Writer>
+void StringifyTableAsArray(lua_State * L, int index, unsigned depth, StringifyContext& ctx, Writer& writer)
 {
-    Json::Value arr(Json::arrayValue);
+    writer.StartArray();
     lua_pushnil(L);
 
     if (index < 0) index--;
 
     while (lua_next(L, index) != 0) {
-        arr.append(Stringify(L, -1, depth + 1, ctx));
+        Stringify(L, -1, depth + 1, ctx, writer);
         lua_pop(L, 1);
     }
 
-    return arr;
+    writer.EndArray();
 }
 
-bool JsonCanStringifyAsArray(lua_State * L, int index)
-{
-    Json::Value arr(Json::objectValue);
-    lua_pushnil(L);
-
-    if (index < 0) index--;
-
-    int next = 1;
-    bool isArray = true;
-    while (lua_next(L, index) != 0) {
-#if LUA_VERSION_NUM > 501
-        if (lua_isinteger(L, -2)) {
-            auto key = lua_tointeger(L, -2);
-            if (key != next++) {
-                isArray = false;
-            }
-        } else {
-            isArray = false;
-        }
-#else
-        if (lua_isnumber(L, -2)) {
-            auto key = lua_tonumber(L, -2);
-            if (abs(key - next++) < 0.0001) {
-                isArray = false;
-            }
-        } else {
-            isArray = false;
-        }
-#endif
-
-        lua_pop(L, 1);
-    }
-
-    return isArray;
-}
-
-Json::Value StringifyTable(lua_State * L, int index, unsigned depth, StringifyContext& ctx)
+template <class Writer>
+void StringifyTable(lua_State * L, int index, unsigned depth, StringifyContext& ctx, Writer& writer)
 {
     if (CheckForRecursion(L, index, ctx)) {
-        return Json::Value("*RECURSION*");
+        writer.String("*RECURSION*");
+        return;
     }
 
-    if (JsonCanStringifyAsArray(L, index)) {
-        return StringifyTableAsArray(L, index, depth, ctx);
+    if (lua_is_linear_array(L, index)) {
+        StringifyTableAsArray(L, index, depth, ctx, writer);
     } else {
-        return StringifyTableAsObject(L, index, depth, ctx);
+        StringifyTableAsObject(L, index, depth, ctx, writer);
     }
 }
 
-
-Json::Value StringifyInternalType(lua_State * L, int index, StringifyContext& ctx)
+template <class Writer>
+void StringifyInternalType(lua_State * L, int index, StringifyContext& ctx, Writer& writer)
 {
     if (ctx.StringifyInternalTypes) {
-        auto val = Json::Value(luaL_tolstring(L, index, NULL));
+        writer.String(luaL_tolstring(L, index, NULL));
         lua_pop(L, 1);
-        return val;
     } else {
         throw std::runtime_error("Attempted to stringify unsupported type: " + std::string(GetDebugName(L, index)));
     }
 }
 
-Json::Value TryStringifyLightCppObject(lua_State* L, int index, unsigned depth, StringifyContext& ctx)
+template <class Writer>
+void StringifyBitfield(CppObjectMetadata& self, Writer& writer)
+{
+    writer.StartArray();
+    auto ei = BitfieldValueMetatable::GetBitfieldInfo(self);
+    for (auto const& val : ei->Values) {
+        if ((self.Value & val.Value) == val.Value) {
+            writer.String(val.Key.GetString());
+        }
+    }
+    
+    writer.EndArray();
+}
+
+template <class Writer>
+void TryStringifyLightCppObject(lua_State* L, int index, unsigned depth, StringifyContext& ctx, Writer& writer)
 {
     index = lua_absindex(L, index);
     auto meta = lua_get_lightcppany(L, index);
     if (meta.MetatableTag == EnumValueMetatable::MetaTag) {
-        return Json::Value(EnumValueMetatable::GetLabel(meta).GetString());
+        writer.String(EnumValueMetatable::GetLabel(meta).GetString());
+        return;
     }
 
     if (meta.MetatableTag == BitfieldValueMetatable::MetaTag) {
-        return BitfieldValueMetatable::ToJson(meta);
+        StringifyBitfield(meta, writer);
+        return;
     }
 
     if (ctx.IterateUserdata) {
         if (ctx.LimitDepth != -1 && depth > (uint32_t)ctx.LimitDepth) {
-            return Json::Value("*DEPTH LIMIT EXCEEDED*");
+            writer.String("*DEPTH LIMIT EXCEEDED*");
+            return;
         }
 
-        auto obj = StringifyLightCppObject(L, index, meta, depth, ctx);
-        if (!obj.isNull()) {
-            return obj;
+        if (StringifyLightCppObject(L, index, meta, depth, ctx, writer)) {
+            return;
         }
     }
 
-    return StringifyInternalType(L, index, ctx);
+    StringifyInternalType(L, index, ctx, writer);
 }
 
-Json::Value Stringify(lua_State * L, int index, unsigned depth, StringifyContext& ctx)
+template <class Writer>
+void Stringify(lua_State * L, int index, unsigned depth, StringifyContext& ctx, Writer& writer)
 {
     if (depth > ctx.MaxDepth) {
         throw std::runtime_error("Recursion depth exceeded while stringifying JSON");
@@ -446,40 +442,43 @@ Json::Value Stringify(lua_State * L, int index, unsigned depth, StringifyContext
 
     switch (lua_type(L, index)) {
     case LUA_TNIL:
-        return Json::Value(Json::nullValue);
+        writer.Null();
+        break;
 
     case LUA_TBOOLEAN:
-        return Json::Value(lua_toboolean(L, index) == 1);
+        writer.Bool(lua_toboolean(L, index) == 1);
+        break;
 
     case LUA_TNUMBER:
-#if LUA_VERSION_NUM > 501
         if (lua_isinteger(L, index)) {
-            return Json::Value(lua_tointeger(L, index));
+            writer.Int64(lua_tointeger(L, index));
         } else {
-            return Json::Value(lua_tonumber(L, index));
+            writer.Double(lua_tonumber(L, index));
         }
-#else
-        return Json::Value(lua_tonumber(L, index));
-#endif
+        break;
 
     case LUA_TSTRING:
-        return Json::Value(lua_tostring(L, index));
+        writer.String(lua_tostring(L, index));
+        break;
 
     case LUA_TTABLE:
         if (ctx.LimitDepth != -1 && depth > (uint32_t)ctx.LimitDepth) {
-            return Json::Value("*DEPTH LIMIT EXCEEDED*");
+            writer.String("*DEPTH LIMIT EXCEEDED*");
+        } else {
+            StringifyTable(L, lua_absindex(L, index), depth, ctx, writer);
         }
-
-        return StringifyTable(L, index, depth, ctx);
+        break;
 
     case LUA_TLIGHTCPPOBJECT:
     case LUA_TCPPOBJECT:
-        return TryStringifyLightCppObject(L, index, depth, ctx);
+        TryStringifyLightCppObject(L, index, depth, ctx, writer);
+        break;
 
     case LUA_TLIGHTUSERDATA:
     case LUA_TFUNCTION:
     case LUA_TTHREAD:
-        return StringifyInternalType(L, index, ctx);
+        StringifyInternalType(L, index, ctx, writer);
+        break;
 
     default:
         throw std::runtime_error("Attempted to stringify an unknown type");
@@ -491,18 +490,16 @@ std::string Stringify(lua_State * L, StringifyContext& ctx, int index)
 {
     StackCheck _(L);
 
-    Json::Value root;
-    root = Stringify(L, index, 0, ctx);
-
-    Json::StreamWriterBuilder builder;
+    StringBuffer sb;
     if (ctx.Beautify) {
-        builder["indentation"] = "\t";
+        PrettyWriter<StringBuffer> writer(sb);
+        Stringify(L, index, 0, ctx, writer);
+    } else {
+        Writer<StringBuffer> writer(sb);
+        Stringify(L, index, 0, ctx, writer);
     }
-    std::stringstream ss;
-    std::unique_ptr<Json::StreamWriter> writer(builder.newStreamWriter());
-    writer->write(root, &ss);
 
-    return ss.str();
+    return sb.GetString();
 }
 
 UserReturn LuaStringify(lua_State * L)
