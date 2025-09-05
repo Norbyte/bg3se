@@ -331,7 +331,6 @@ function Generator:Build(opts)
         if typeName == "EntityHandle" then
         -- EntityHandle generation handled separately
         elseif type.Kind == "Object" then
-            print(type.ComponentName)
             if type.ComponentName ~= "" then
                 table.insert(self.Components, type)
             end
