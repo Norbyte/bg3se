@@ -329,19 +329,10 @@ function Generator:Build(opts)
     for i,typeName in ipairs(sortedTypes) do
         local type = Ext.Types.GetTypeInfo(typeName)
         if typeName == "EntityHandle" then
-            -- EntityHandle generation handled separately
+        -- EntityHandle generation handled separately
         elseif type.Kind == "Object" then
-            local isComponent = false
-            local parent = type.ParentType
-            while parent ~= nil do
-                if parent.TypeName == "BaseComponent" then
-                    isComponent = true
-                    break
-                end
-                parent = parent.ParentType
-            end
-
-            if isComponent then
+            print(type.ComponentName)
+            if type.ComponentName ~= "" then
                 table.insert(self.Components, type)
             end
 
