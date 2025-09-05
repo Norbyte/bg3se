@@ -265,16 +265,18 @@ bool StringifyLightCppObject(lua_State* L, int index, CppObjectMetadata& meta, u
 
         auto type = lua_type(L, -2);
         if (type == LUA_TSTRING) {
-            auto key = lua_tostring(L, -2);
-            writer.Key(key);
+            size_t len{ 0 };
+            auto key = lua_tolstring(L, -2, &len);
+            writer.Key(key, (uint32_t)len);
         } else if (type == LUA_TNUMBER) {
             auto key = lua_tointeger(L, -2);
             if (isArray) {
                 // Using sequential keys, nothing to do
             } else {
                 lua_pushvalue(L, -2);
-                auto key = lua_tostring(L, -1);
-                writer.Key(key);
+                size_t len{ 0 };
+                auto key = lua_tolstring(L, -1, &len);
+                writer.Key(key, (uint32_t)len);
                 lua_pop(L, 1);
             }
         } else if ((type == LUA_TLIGHTCPPOBJECT || type == LUA_TCPPOBJECT) && ctx.StringifyInternalTypes) {
@@ -282,9 +284,10 @@ bool StringifyLightCppObject(lua_State* L, int index, CppObjectMetadata& meta, u
             lua_getglobal(L, "tostring");  /* function to be called */
             lua_pushvalue(L, -3);   /* value to print */
             lua_call(L, 1, 1);
-            const char* key = lua_tostring(L, -1);  /* get result */
+            size_t len{ 0 };
+            const char* key = lua_tolstring(L, -1, &len); /* get result */
             if (key) {
-                writer.Key(key);
+                writer.Key(key, (uint32_t)len);
             }
             int top2 = lua_gettop(L);
             lua_pop(L, 1);  /* pop result */
@@ -378,8 +381,8 @@ void StringifyTableAsObjectOrdered(lua_State * L, int index, unsigned depth, Str
             auto k = std::get<int64_t>(key);
             lua_rawgeti(L, index, k);
             char iv[100];
-            _snprintf_s(iv, std::size(iv), "%lld", k);
-            writer.Key(iv);
+            auto len = _snprintf_s(iv, std::size(iv), "%lld", k);
+            writer.Key(iv, (uint32_t)len);
             break;
         }
         case 2:
@@ -388,8 +391,8 @@ void StringifyTableAsObjectOrdered(lua_State * L, int index, unsigned depth, Str
             push(L, k);
             lua_rawget(L, index);
             char iv[100];
-            _snprintf_s(iv, std::size(iv), "%lf", k);
-            writer.Key(iv);
+            auto len = _snprintf_s(iv, std::size(iv), "%lf", k);
+            writer.Key(iv, (uint32_t)len);
             break;
         }
         default:
@@ -413,12 +416,14 @@ void StringifyTableAsObjectUnordered(lua_State * L, int index, unsigned depth, S
 
     while (lua_next(L, index) != 0) {
         if (lua_type(L, -2) == LUA_TSTRING) {
-            auto key = lua_tostring(L, -2);
-            writer.Key(key);
+            size_t len{ 0 };
+            auto key = lua_tolstring(L, -2, &len);
+            writer.Key(key, (uint32_t)len);
         } else if (lua_type(L, -2) == LUA_TNUMBER) {
             lua_pushvalue(L, -2);
-            auto key = lua_tostring(L, -1);
-            writer.Key(key);
+            size_t len{ 0 };
+            auto key = lua_tolstring(L, -1, &len);
+            writer.Key(key, (uint32_t)len);
             lua_pop(L, 1);
         } else {
             throw std::runtime_error("Can only stringify string or number table keys");
@@ -484,7 +489,8 @@ void StringifyBitfield(CppObjectMetadata& self, Writer& writer)
     auto ei = BitfieldValueMetatable::GetBitfieldInfo(self);
     for (auto const& val : ei->Values) {
         if ((self.Value & val.Value) == val.Value) {
-            writer.String(val.Key.GetString());
+            auto sv = val.Key.GetStringView();
+            writer.String(sv.data(), (uint32_t)sv.size());
         }
     }
     
@@ -497,7 +503,8 @@ void TryStringifyLightCppObject(lua_State* L, int index, unsigned depth, Stringi
     index = lua_absindex(L, index);
     auto meta = lua_get_lightcppany(L, index);
     if (meta.MetatableTag == EnumValueMetatable::MetaTag) {
-        writer.String(EnumValueMetatable::GetLabel(meta).GetString());
+        auto sv = EnumValueMetatable::GetLabel(meta).GetStringView();
+        writer.String(sv.data(), (uint32_t)sv.size());
         return;
     }
 
@@ -545,8 +552,12 @@ void Stringify(lua_State * L, int index, unsigned depth, StringifyContext& ctx, 
         break;
 
     case LUA_TSTRING:
-        writer.String(lua_tostring(L, index));
+    {
+        size_t len{ 0 };
+        auto str = lua_tolstring(L, index, &len);
+        writer.String(str, (uint32_t)len);
         break;
+    }
 
     case LUA_TTABLE:
         if (ctx.LimitDepth != -1 && depth > (uint32_t)ctx.LimitDepth) {
