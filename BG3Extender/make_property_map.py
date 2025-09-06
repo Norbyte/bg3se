@@ -647,6 +647,7 @@ sources = [
     'GameDefinitions/Components/Interrupt.h',
     'GameDefinitions/Components/Data.h',
     'GameDefinitions/Components/Death.h',
+    'GameDefinitions/Components/Dummy.h',
     'GameDefinitions/Components/Events.h',
     'GameDefinitions/Components/Hit.h',
     'GameDefinitions/Components/Item.h',
