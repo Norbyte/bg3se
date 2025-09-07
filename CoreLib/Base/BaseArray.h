@@ -649,7 +649,12 @@ public:
         return *this;
     }
 
-    inline constexpr T* raw_buf() const noexcept
+    inline constexpr T const* raw_buf() const noexcept
+    {
+        return buf_;
+    }
+
+    inline constexpr T* raw_buf() noexcept
     {
         return buf_;
     }

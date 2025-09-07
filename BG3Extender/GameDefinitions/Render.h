@@ -22,6 +22,7 @@ struct [[bg3::hidden]] Pose : ProtectedGameObject<Pose>
 struct MeshBinding : ProtectedGameObject<MeshBinding>
 {
     [[bg3::hidden]] void* VMT;
+    [[bg3::hidden]] void* field_8;
     [[bg3::hidden]] Pose Pose;
     MoveableObject* Object;
     glm::mat4 Transform;
