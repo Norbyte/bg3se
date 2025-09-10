@@ -773,7 +773,9 @@
     <None Include="Lua\Shared\Proxies\LuaSystemMap.inl" />
     <None Include="GameDefinitions\Components\ExposedSystemTypes.inl" />
     <None Include="Lua\Shared\SystemEvents.inl" />
+    <None Include="Lua\Libs\Table.inl" />
     <None Include="Extender\Shared\ExtenderConfig.inl" />
+    <None Include="Lua\Shared\LuaTable.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

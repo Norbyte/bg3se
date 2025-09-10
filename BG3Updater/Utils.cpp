@@ -201,27 +201,29 @@ std::optional<VersionNumber> GetModuleVersion(std::wstring_view path)
     return version;
 }
 
-void ConfigGetBool(Json::Value& node, char const* key, bool& value)
+using namespace rapidjson;
+
+void ConfigGetBool(Value& node, char const* key, bool& value)
 {
-    auto configVar = node[key];
-    if (!configVar.isNull() && configVar.isBool()) {
-        value = configVar.asBool();
+    auto configVar = node.FindMember(key);
+    if (configVar != node.MemberEnd() && configVar->value.IsBool()) {
+        value = configVar->value.GetBool();
     }
 }
 
-void ConfigGetString(Json::Value& node, char const* key, std::wstring& value)
+void ConfigGetString(Value& node, char const* key, std::wstring& value)
 {
-    auto configVar = node[key];
-    if (!configVar.isNull() && configVar.isString()) {
-        value = FromStdUTF8(configVar.asString());
+    auto configVar = node.FindMember(key);
+    if (configVar != node.MemberEnd() && configVar->value.IsString()) {
+        value = FromStdUTF8(configVar->value.GetString());
     }
 }
 
-void ConfigGetString(Json::Value& node, char const* key, std::string& value)
+void ConfigGetString(Value& node, char const* key, std::string& value)
 {
-    auto configVar = node[key];
-    if (!configVar.isNull() && configVar.isString()) {
-        value = configVar.asString();
+    auto configVar = node.FindMember(key);
+    if (configVar != node.MemberEnd() && configVar->value.IsString()) {
+        value = configVar->value.GetString();
     }
 }
 
@@ -251,19 +253,21 @@ void LoadConfigFile(std::wstring const& configPath, UpdaterConfig& config)
     config.IPv4Only = false;
     config.DisableUpdates = false;
 
-    std::ifstream f(configPath, std::ios::in);
+    STDString configJson;
+    std::ifstream f(configPath, std::ios::in | std::ios::binary);
     if (!f.good()) {
         return;
     }
 
-    Json::CharReaderBuilder factory;
-    Json::Value root;
-    std::string errs;
-    if (!Json::parseFromStream(factory, f, &root, &errs)) {
-        std::wstring werrs = FromStdUTF8(errs);
+    f.seekg(0, std::ios::end);
+    configJson.resize((uint32_t)f.tellg());
+    f.seekg(0, std::ios::beg);
+    f.read(configJson.data(), configJson.size());
 
+    Document root;
+    if (root.Parse(configJson.data(), configJson.size()).HasParseError()) {
         std::wstringstream err;
-        err << L"Failed to load configuration file '" << configPath << "':\r\n" << werrs;
+        err << L"Failed to load configuration file '" << configPath << "'";
         Fail(ToStdUTF8(err.str()).c_str());
     }
 

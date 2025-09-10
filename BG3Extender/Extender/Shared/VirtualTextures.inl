@@ -1,4 +1,4 @@
-#include "rapidjson/document.h"
+#include <CoreLib/JsonLibs.h>
 #include <Extender/Shared/VirtualTextureMerge.inl>
 
 BEGIN_SE()

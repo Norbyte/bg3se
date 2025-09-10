@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <algorithm>
 #include <optional>
-#include "json/json.h"
+#include <CoreLib/JsonLibs.h>
 
 BEGIN_SE()
 
@@ -128,9 +128,9 @@ public:
     std::string Stringify(Manifest& manifest);
 
 private:
-    bool Parse(Json::Value const& node, Manifest& manifest, std::string& parseError);
-    bool ParseResource(Json::Value const& node, Manifest::Resource& resource, std::string& parseError);
-    bool ParseVersion(Json::Value const& node, Manifest::ResourceVersion& version, std::string& parseError);
+    bool Parse(rapidjson::Value const& node, Manifest& manifest, std::string& parseError);
+    bool ParseResource(rapidjson::Value const& node, Manifest::Resource& resource, std::string& parseError);
+    bool ParseVersion(rapidjson::Value const& node, Manifest::ResourceVersion& version, std::string& parseError);
 };
 
 

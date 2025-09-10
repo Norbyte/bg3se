@@ -112,7 +112,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\External\glm;$(SolutionDir)\External\jsoncpp-master\include;$(SolutionDir)\External\tinycrypt\lib\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\External\glm;$(SolutionDir)External\rapidjson-master\include;$(SolutionDir)\External\tinycrypt\lib\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
@@ -133,7 +133,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\External\glm;$(SolutionDir)\External\jsoncpp-master\include;$(SolutionDir)\External\tinycrypt\lib\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\External\glm;$(SolutionDir)External\rapidjson-master\include;$(SolutionDir)\External\tinycrypt\lib\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -167,6 +167,7 @@
     <ClInclude Include="Console.h" />
     <ClInclude Include="Crypto.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="JsonLibs.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SymbolMapper.h" />
     <ClInclude Include="tinyxml2.h" />

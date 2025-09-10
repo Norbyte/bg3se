@@ -3,7 +3,7 @@
 #include <Extender/Shared/ExtensionState.h>
 #include <Extender/Version.h>
 #include <fstream>
-#include "rapidjson/document.h"
+#include <CoreLib/JsonLibs.h>
 
 namespace bg3se
 {

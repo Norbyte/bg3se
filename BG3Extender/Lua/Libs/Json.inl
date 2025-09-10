@@ -1,10 +1,8 @@
 #include <Lua/Libs/Json.h>
 
+#include <CoreLib/JsonLibs.h>
 #include <fstream>
 #include <unordered_set>
-#include <rapidjson/document.h>
-#include <rapidjson/stringbuffer.h>
-#include <rapidjson/prettywriter.h>
 #include <lstate.h>
 
 /// <lua_module>Json</lua_module>
