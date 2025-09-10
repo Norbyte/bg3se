@@ -16,6 +16,7 @@
 #include <Lua/Libs/StatMisc.inl>
 #include <Lua/Libs/Stats.inl>
 #include <Lua/Libs/StaticData.inl>
+#include <Lua/Libs/Table.inl>
 #include <Lua/Libs/Timer.inl>
 #include <Lua/Libs/Types.inl>
 #include <Lua/Libs/Utils.inl>
@@ -137,6 +138,7 @@ void RegisterSharedLibraries()
     stats::RegisterStatsLib();
     res::RegisterStaticDataLib();
     vars::RegisterVarsLib();
+    table::RegisterTableLib();
     timer::RegisterTimerLib();
     level::RegisterLevelLib();
 }

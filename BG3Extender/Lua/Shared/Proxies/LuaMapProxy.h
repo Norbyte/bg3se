@@ -18,12 +18,14 @@ public:
     virtual unsigned Length(CppObjectMetadata& self) = 0;
     virtual bool Unserialize(lua_State* L, CppObjectMetadata& self, int index) = 0;
     virtual void Serialize(lua_State* L, CppObjectMetadata& self) = 0;
+    virtual bool IsLinear() const = 0;
+    virtual bool GetValueAt(lua_State* L, CppObjectMetadata& self, unsigned index) = 0;
 
 private:
     int registryIndex_{ -1 };
 };
 
-    
+
 template <class TKey, class TValue>
 class MultiHashMapProxyImpl : public MapProxyImplBase
 {
@@ -129,6 +131,22 @@ public:
     {
         auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
         lua::Serialize(L, obj);
+    }
+
+    bool IsLinear() const override
+    {
+        return true;
+    }
+
+    bool GetValueAt(lua_State* L, CppObjectMetadata& self, unsigned index)
+    {
+        auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+        if (index < obj->values().size()) {
+            push(L, obj->values()[index], self.Lifetime);
+            return true;
+        } else {
+            return false;
+        }
     }
 };
 
@@ -240,6 +258,16 @@ public:
     {
         auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
         lua::Serialize(L, obj);
+    }
+
+    bool IsLinear() const override
+    {
+        return false;
+    }
+
+    bool GetValueAt(lua_State* L, CppObjectMetadata& self, unsigned index)
+    {
+        throw std::runtime_error("Not implemented");
     }
 };
 

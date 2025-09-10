@@ -73,4 +73,6 @@ void* LuaCppCanonicalize(lua_State* L, void* val);
 void LuaCacheString(lua_State* L, TString* s);
 void LuaReleaseString(lua_State* L, TString* s);
 
+UserReturn FindValue(lua_State* L, int tableIndex, int valueIndex);
+
 END_NS()

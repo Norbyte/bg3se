@@ -118,3 +118,6 @@ Ext.Entity.GetEntitiesOnTile = Ext.Level.GetEntitiesOnTile
 Ext.Utils.MonotonicTime = Ext.Timer.MonotonicTime
 Ext.Utils.MicrosecTime = Ext.Timer.MicrosecTime
 Ext.Utils.GameTime = Ext.Timer.GameTime
+
+-- New table lib aliases
+table.find = Ext.Table.Find
