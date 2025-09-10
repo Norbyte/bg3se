@@ -9,7 +9,7 @@ Table* lua_get_array(lua_State* L, int idx)
     }
 
     auto tab = hvalue(val);
-    if (tab->lastfree) {
+    if (!tab->sizearray && tab->lastfree) {
         luaL_error(L, "Param %d must be an array-like table, not a hashtable", idx);
         return nullptr;
     }
@@ -42,7 +42,7 @@ bool lua_typecheck_array_n(lua_State* L, int idx, int size)
     if (!ttistable(val)) return false;
 
     auto tab = hvalue(val);
-    if (tab->lastfree) return false;
+    if (!tab->sizearray && tab->lastfree) return false;
 
     return lua_get_array_size(tab) == size;
 }
@@ -53,7 +53,7 @@ bool lua_is_linear_array(lua_State* L, int idx)
     if (!ttistable(val)) return false;
 
     auto tab = hvalue(val);
-    if (tab->lastfree) return false;
+    if (!tab->sizearray && tab->lastfree) return false;
 
     // Skip trailing nil-s
     unsigned int sz;
@@ -275,7 +275,7 @@ MathParam do_get(lua_State* L, int index, Overload<MathParam>)
         val.Arity = 1;
     } else if (ttistable(arg)) {
         auto tab = hvalue(arg);
-        if (tab->lastfree) {
+        if (!tab->sizearray && tab->lastfree) {
             luaL_error(L, "Param %d must be an array-like table, not a hashtable", index);
         }
 
