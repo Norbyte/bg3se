@@ -5,6 +5,11 @@ package bg3se.net;
 option cc_enable_arenas = true;
 option optimize_for = LITE_RUNTIME;
 
+enum SerializerType {
+  SERIALIZER_JSON = 0;
+  SERIALIZER_BINARY = 1;
+}
+
 // Notifies the Lua runtime that a message was sent from a remote Lua script
 message MsgPostLuaMessage {
   string channel_name = 1;
@@ -12,6 +17,7 @@ message MsgPostLuaMessage {
   string module = 3;
   uint32 request_id = 4;
   uint32 reply_id = 5;
+  SerializerType serializer = 6;
 }
 
 // Notifies the Lua runtime to reload client-side state
@@ -81,6 +87,7 @@ message UserVar {
 // Synchronizes user variables between server and client
 message MsgUserVars {
   repeated UserVar vars = 1;
+  SerializerType serializer = 2;
 }
 
 message MessageWrapper {

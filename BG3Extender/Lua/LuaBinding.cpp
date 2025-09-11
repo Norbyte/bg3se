@@ -588,19 +588,21 @@ void State::OnStatsStructureLoaded()
     ThrowEvent("StatsStructureLoaded", params, false, 0);
 }
 
-void State::OnNetMessageReceived(char const* channel, char const* payload, char const* moduleUuid, int32_t requestId, int32_t replyId, UserId userId)
+void State::OnNetMessageReceived(StringView channel, StringView payload, StringView moduleUuid, int32_t requestId,
+    int32_t replyId, UserId userId, bool binary)
 {
     if (replyId != 0) {
-        networkRequests_.HandleReply(replyId, payload);
+        networkRequests_.HandleReply(replyId, payload, binary);
         return;
     }
 
     NetMessageEvent params {
         .Channel = channel,
         .Payload = payload,
-        .Module = (moduleUuid && *moduleUuid) ? Guid::Parse(moduleUuid) : std::optional<Guid>{},
+        .Module = !moduleUuid.empty() ? Guid::Parse(moduleUuid) : std::optional<Guid>{},
         .RequestId = (requestId != 0) ? requestId : std::optional<net::RequestId>{},
-        .UserID = userId
+        .UserID = userId,
+        .Binary = binary
     };
     if (!params.RequestId && !params.Module) {
         // Only dispatch legacy network messages through the old NetMessage event

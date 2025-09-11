@@ -6,15 +6,19 @@
 
 BEGIN_NS(net)
 
+enum class ProtoVersion : uint32_t
+{
+    VerInitial = 1,
+    VerBinSerializer = 2, // Added binary Lua serializer
+
+    Current = VerBinSerializer
+};
+
 class ExtenderMessage : public Message
 {
 public:
     static constexpr NetMessage MessageId = NetMessage::NETMSG_SCRIPT_EXTENDER;
     static constexpr uint32_t MaxPayloadLength = 0xfffff;
-
-    static constexpr uint32_t VerInitial = 1;
-    // Version of protocol, increment each time the protobuf changes
-    static constexpr uint32_t ProtoVersion = VerInitial;
 
     ExtenderMessage();
     ~ExtenderMessage() override;
@@ -75,6 +79,7 @@ struct LocalMessage
     int32_t RequestId{ 0 };
     int32_t ReplyId{ 0 };
     UserId User;
+    bool Binary{ false };
 };
 
 class BaseNetworkManager
@@ -82,9 +87,10 @@ class BaseNetworkManager
 public:
     virtual ExtenderMessage* GetFreeMessage() = 0;
     virtual ExtenderMessage* GetFreeMessage(UserId userId) = 0;
-    virtual void HandleLocalMessage(char const* channel, char const* payload, char const* moduleUuid, int32_t requestId, int32_t replyId, UserId userId) = 0;
+    virtual void HandleLocalMessage(net::LocalMessage const& msg) = 0;
     virtual void Update();
     virtual void OnResetExtensionState();
+    virtual ProtoVersion SharedVersion() = 0;
 
     inline void PushLocalMessage(LocalMessage&& msg)
     {

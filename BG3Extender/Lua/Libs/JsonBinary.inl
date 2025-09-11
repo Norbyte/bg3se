@@ -401,13 +401,13 @@ public:
 
         case TypeTag::String:
         {
-            uint32_t len{ 0 };
-            if (!ReadLongTag(len)) return false;
-            if (!Available(len)) return false;
-            std::string s(std::string_view((char const*)Cur(), len));
-            push(L, std::string_view((char const*)Cur(), len));
-            Consume(len);
-            return true;
+            std::string_view sv;
+            if (ReadString(sv)) {
+                push(L, sv);
+                return true;
+            } else {
+                return false;
+            }
         }
 
         case TypeTag::StringRef8:

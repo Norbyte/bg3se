@@ -229,7 +229,8 @@ namespace bg3se::lua
         void OnShutdown();
         virtual void OnUpdate(GameTime const& time);
         void OnStatsStructureLoaded();
-        void OnNetMessageReceived(char const* channel, char const* payload, char const* moduleUuid, int32_t requestId, int32_t replyId, UserId userId);
+        void OnNetMessageReceived(StringView channel, StringView payload, StringView moduleUuid, int32_t requestId,
+            int32_t replyId, UserId userId, bool binary);
         void OnFindPath(AiGrid* self, AiPathId pathId);
 
         template <class... Ret, class... Args>
@@ -330,11 +331,12 @@ namespace bg3se::lua
 
     struct NetMessageEvent : public EventBase
     {
-        STDString Channel;
-        STDString Payload;
+        StringView Channel;
+        StringView Payload;
         std::optional<Guid> Module;
         std::optional<net::RequestId> RequestId;
         UserId UserID;
+        bool Binary{ false };
     };
 
     struct FindPathEvent : public EventBase

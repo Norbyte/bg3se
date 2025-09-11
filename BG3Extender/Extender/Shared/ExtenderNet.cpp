@@ -164,7 +164,7 @@ void BaseNetworkManager::ProcessLocalMessages()
 {
     LocalMessage msg;
     while (localMessages_.try_pop(msg)) {
-        HandleLocalMessage(msg.Channel.c_str(), msg.Payload.c_str(), msg.Module.c_str(), msg.RequestId, msg.ReplyId, msg.User);
+        HandleLocalMessage(msg);
     }
 }
 

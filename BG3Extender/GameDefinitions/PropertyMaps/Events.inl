@@ -23,6 +23,7 @@ P(Payload)
 P(Module)
 P(RequestId)
 P(UserID)
+P(Binary)
 END_CLS()
 
 BEGIN_CLS(lua::FindPathEvent)

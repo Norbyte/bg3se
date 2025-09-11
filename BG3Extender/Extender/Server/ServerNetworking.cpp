@@ -23,7 +23,9 @@ void ExtenderProtocol::ProcessExtenderMessage(net::MessageContext& context, net:
             auto& postMsg = msg.post_lua();
             esv::LuaServerPin pin(esv::ExtensionState::Get());
             if (pin) {
-                pin->OnNetMessageReceived(postMsg.channel_name().c_str(), postMsg.payload().c_str(), postMsg.module().c_str(), postMsg.request_id(), postMsg.reply_id(), context.UserID);
+                pin->OnNetMessageReceived(postMsg.channel_name(), postMsg.payload(), postMsg.module(), 
+                    postMsg.request_id(), postMsg.reply_id(), context.UserID,
+                    postMsg.serializer() == net::SerializerType::SERIALIZER_BINARY);
             }
         }
         break;
@@ -33,7 +35,7 @@ void ExtenderProtocol::ProcessExtenderMessage(net::MessageContext& context, net:
     {
         auto const& hello = msg.c2s_extender_hello();
         DEBUG("Got extender support notification from user %d (version %d)", context.UserID.Id, hello.version());
-        gExtender->GetServer().GetNetworkManager().AllowExtenderMessages(context.UserID.GetPeerId(), hello.version());
+        gExtender->GetServer().GetNetworkManager().AllowExtenderMessages(context.UserID.GetPeerId(), (net::ProtoVersion)hello.version());
         break;
     }
 
@@ -58,7 +60,7 @@ bool NetworkManager::CanSendExtenderMessages(PeerId peerId) const
     return peerVersions_.find(peerId) != peerVersions_.end();
 }
 
-std::optional<uint32_t> NetworkManager::GetPeerVersion(PeerId peerId) const
+std::optional<net::ProtoVersion> NetworkManager::GetPeerVersion(PeerId peerId) const
 {
     auto it = peerVersions_.find(peerId);
     if (it != peerVersions_.end()) {
@@ -68,7 +70,7 @@ std::optional<uint32_t> NetworkManager::GetPeerVersion(PeerId peerId) const
     }
 }
 
-void NetworkManager::AllowExtenderMessages(PeerId peerId, uint32_t version)
+void NetworkManager::AllowExtenderMessages(PeerId peerId, net::ProtoVersion version)
 {
     peerVersions_.insert_or_assign(peerId, version);
 }
@@ -86,7 +88,7 @@ void NetworkManager::OnClientConnectMessage(net::MessageContext* context, net::C
         auto helloMsg = GetFreeMessage();
         if (helloMsg != nullptr) {
             auto hello = helloMsg->GetMessage().mutable_c2s_extender_hello();
-            hello->set_version(net::ExtenderMessage::ProtoVersion);
+            hello->set_version((uint32_t)net::ProtoVersion::Current);
             Send(helloMsg, context->UserID);
         } else {
             OsiErrorS("Could not get free message!");
@@ -143,11 +145,21 @@ net::ExtenderMessage * NetworkManager::GetFreeMessage()
     }
 }
 
-void NetworkManager::HandleLocalMessage(char const* channel, char const* payload, char const* moduleUuid, int32_t requestId, int32_t replyId, UserId userId)
+net::ProtoVersion NetworkManager::SharedVersion()
+{
+    auto ver{ net::ProtoVersion::Current };
+    for (auto const& peer : peerVersions_) {
+        ver = std::min(ver, peer.second);
+    }
+
+    return ver;
+}
+
+void NetworkManager::HandleLocalMessage(net::LocalMessage const& msg)
 {
     esv::LuaServerPin pin(esv::ExtensionState::Get());
     if (pin) {
-        pin->OnNetMessageReceived(channel, payload, moduleUuid, requestId, replyId, userId);
+        pin->OnNetMessageReceived(msg.Channel, msg.Payload, msg.Module, msg.RequestId, msg.ReplyId, msg.User, msg.Binary);
     }
 }
 

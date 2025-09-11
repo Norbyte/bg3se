@@ -13,7 +13,9 @@ void ExtenderProtocol::ProcessExtenderMessage(net::MessageContext& context, net:
             auto& postMsg = msg.post_lua();
             ecl::LuaClientPin pin(ecl::ExtensionState::Get());
             if (pin) {
-                pin->OnNetMessageReceived(postMsg.channel_name().c_str(), postMsg.payload().c_str(), postMsg.module().c_str(), postMsg.request_id(), postMsg.reply_id(), ReservedUserId);
+                pin->OnNetMessageReceived(postMsg.channel_name().c_str(), postMsg.payload().c_str(), 
+                    postMsg.module().c_str(), postMsg.request_id(), postMsg.reply_id(), 
+                    ReservedUserId, postMsg.serializer() == net::SerializerType::SERIALIZER_BINARY);
             }
         }
         break;
@@ -112,11 +114,12 @@ void NetworkManager::OnExtenderHello(net::MsgC2SExtenderHello const& hello)
 {
     DEBUG("Got extender support notification from host (version %d)", hello.version());
     AllowExtenderMessages();
+    hostVersion_ = (net::ProtoVersion)hello.version();
 
     auto helloMsg = GetFreeMessage();
     if (helloMsg != nullptr) {
         auto hello = helloMsg->GetMessage().mutable_c2s_extender_hello();
-        hello->set_version(net::ExtenderMessage::ProtoVersion);
+        hello->set_version((uint32_t)net::ProtoVersion::Current);
         Send(helloMsg);
     } else {
         OsiErrorS("Could not get free message!");
@@ -152,11 +155,17 @@ net::ExtenderMessage* NetworkManager::GetFreeMessage(UserId userId)
     return GetFreeMessage();
 }
 
-void NetworkManager::HandleLocalMessage(char const* channel, char const* payload, char const* moduleUuid, int32_t requestId, int32_t replyId, UserId userId)
+net::ProtoVersion NetworkManager::SharedVersion()
+{
+    // Never use a version number more recent than ours, even if the host is newer
+    return std::min(hostVersion_, net::ProtoVersion::Current);
+}
+
+void NetworkManager::HandleLocalMessage(net::LocalMessage const& msg)
 {
     ecl::LuaClientPin pin(ecl::ExtensionState::Get());
     if (pin) {
-        pin->OnNetMessageReceived(channel, payload, moduleUuid, requestId, replyId, userId);
+        pin->OnNetMessageReceived(msg.Channel, msg.Payload, msg.Module, msg.RequestId, msg.ReplyId, msg.User, msg.Binary);
     }
 }
 
