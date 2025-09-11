@@ -14,6 +14,8 @@ namespace bg3se {
     static constexpr uint32_t SavegameVerAddedTimers = 10;
     // Boolean user vars added
     static constexpr uint32_t SavegameVerBoolUserVars = 11;
+    // Binary user vars added
+    static constexpr uint32_t SavegameVerBinaryUserVars = 12;
     // Last version with savegame changes
-    static constexpr uint32_t SavegameVersion = 11;
+    static constexpr uint32_t SavegameVersion = 12;
 }

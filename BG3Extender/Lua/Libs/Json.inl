@@ -79,16 +79,25 @@ void Parse(lua_State * L, Val const& val)
     }
 }
 
-bool Parse(lua_State * L, StringView json)
+bool Parse(lua_State * L, StringView json, bool binary)
 {
     StackCheck _(L, 1);
-    Document root;
-    if (root.Parse(json.data(), json.size()).HasParseError()) {
-        ERR("Unable to parse JSON");
-        return false;
+
+    if (binary) {
+        BinaryReader reader(std::span<uint8_t const>((uint8_t const*)json.data(), json.size()));
+        if (!reader.ParseNext(L) || reader.Available() > 0) {
+            return luaL_error(L, "Unable to parse blob");
+        }
+    } else {
+        Document root;
+        if (root.Parse(json.data(), json.size()).HasParseError()) {
+            ERR("Unable to parse JSON");
+            return false;
+        }
+
+        Parse(L, root);
     }
 
-    Parse(L, root);
     return true;
 }
 

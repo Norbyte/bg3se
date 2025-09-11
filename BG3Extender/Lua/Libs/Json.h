@@ -14,6 +14,6 @@ struct StringifyContext
 };
 
 STDString Stringify(lua_State * L, StringifyContext& ctx, int index);
-bool Parse(lua_State* L, StringView json);
+bool Parse(lua_State* L, StringView json, bool binary = false);
 
 END_NS()

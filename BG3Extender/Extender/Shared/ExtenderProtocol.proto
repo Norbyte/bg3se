@@ -80,6 +80,7 @@ message UserVar {
     string strval = 6;
     bytes luaval = 7;
     bool boolval = 9;
+    bytes binaryval = 10;
   };
   UserVarType type = 8;
 }
@@ -87,7 +88,6 @@ message UserVar {
 // Synchronizes user variables between server and client
 message MsgUserVars {
   repeated UserVar vars = 1;
-  SerializerType serializer = 2;
 }
 
 message MessageWrapper {

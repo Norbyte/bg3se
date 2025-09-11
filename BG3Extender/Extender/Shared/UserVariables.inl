@@ -80,7 +80,14 @@ void UserVariable::SavegameVisit(ObjectVisitor* visitor)
         {
             STDString value;
             visitor->VisitSTDString(GFS.strValue, value, STDString{});
-            Value = value;
+            Value = std::move(value);
+            break;
+        }
+        case UserVariableType::CompositeBinary:
+        {
+            ScratchBuffer value;
+            visitor->VisitBuffer(GFS.strValue, value);
+            Value = STDString((char const*)value.Buffer.Buffer, (uint32_t)value.Size);
             break;
         }
         }
@@ -108,14 +115,21 @@ void UserVariable::SavegameVisit(ObjectVisitor* visitor)
         }
         case UserVariableType::String:
         {
-            auto value = std::get<FixedString>(Value);
+            auto& value = std::get<FixedString>(Value);
             visitor->VisitFixedString(GFS.strValue, value, GFS.strEmpty);
             break;
         }
         case UserVariableType::Composite:
         {
-            auto value = std::get<STDString>(Value);
+            auto& value = std::get<STDString>(Value);
             visitor->VisitSTDString(GFS.strValue, value, STDString{});
+            break;
+        }
+        case UserVariableType::CompositeBinary:
+        {
+            auto& value = std::get<STDString>(Value);
+            ScratchBuffer scratch(std::span(value.data(), value.size()));
+            visitor->VisitBuffer(GFS.strValue, scratch);
             break;
         }
         }
@@ -150,6 +164,13 @@ void UserVariable::ToNetMessage(net::UserVar& var) const
         var.set_luaval(s.c_str(), s.size());
         break;
     }
+
+    case UserVariableType::CompositeBinary:
+    {
+        auto const& s = std::get<STDString>(Value);
+        var.set_binaryval(s.c_str(), s.size());
+        break;
+    }
     }
 }
 
@@ -181,6 +202,11 @@ void UserVariable::FromNetMessage(net::UserVar const& var)
         Value = STDString(var.luaval());
         break;
 
+    case net::UserVar::kBinaryval:
+        Type = UserVariableType::CompositeBinary;
+        Value = STDString(var.binaryval().data(), (uint32_t)var.binaryval().size());
+        break;
+
     case net::UserVar::VAL_NOT_SET:
     default:
         Type = UserVariableType::Null;
@@ -198,7 +224,9 @@ size_t UserVariable::Budget() const
     case UserVariableType::Int64: budget += 8; break;
     case UserVariableType::Double: budget += 8; break;
     case UserVariableType::String: budget += std::get<FixedString>(Value).GetLength(); break;
-    case UserVariableType::Composite: budget += std::get<STDString>(Value).size(); break;
+    case UserVariableType::Composite:
+    case UserVariableType::CompositeBinary:
+        budget += std::get<STDString>(Value).size(); break;
     }
 
     return budget;
@@ -900,7 +928,11 @@ CachedUserVariable::CachedUserVariable(lua_State* L, UserVariable const& v)
         break;
 
     case UserVariableType::Composite:
-        ParseReference(L, std::get<STDString>(v.Value));
+        ParseReference(L, std::get<STDString>(v.Value), false);
+        break;
+
+    case UserVariableType::CompositeBinary:
+        ParseReference(L, std::get<STDString>(v.Value), true);
         break;
 
     case UserVariableType::Null:
@@ -971,9 +1003,9 @@ CachedUserVariable& CachedUserVariable::operator = (CachedUserVariable&& o) noex
     return *this;
 }
 
-void CachedUserVariable::ParseReference(lua_State* L, StringView json)
+void CachedUserVariable::ParseReference(lua_State* L, StringView json, bool binary)
 {
-    if (json::Parse(L, json)) {
+    if (json::Parse(L, json, binary)) {
         Value = RegistryEntry(L, -1);
         lua_pop(L, 1);
         Type = CachedUserVariableType::Reference;
@@ -1022,7 +1054,7 @@ bool CachedUserVariable::LikelyChanged(CachedUserVariable const& o) const
     }
 }
 
-UserVariable CachedUserVariable::ToUserVariable(lua_State* L) const
+UserVariable CachedUserVariable::ToUserVariable(lua_State* L, bool binary) const
 {
     UserVariable var;
     switch (Type) {
@@ -1051,9 +1083,13 @@ UserVariable CachedUserVariable::ToUserVariable(lua_State* L) const
         break;
         
     case CachedUserVariableType::Reference:
-        var.Value = StringifyReference(L);
+        var.Value = StringifyReference(L, binary);
         if (!std::get<STDString>(var.Value).empty()) {
-            var.Type = UserVariableType::Composite;
+            if (binary) {
+                var.Type = UserVariableType::CompositeBinary;
+            } else {
+                var.Type = UserVariableType::Composite;
+            }
         } else {
             var.Type = UserVariableType::Null;
         }
@@ -1064,11 +1100,12 @@ UserVariable CachedUserVariable::ToUserVariable(lua_State* L) const
     return var;
 }
 
-STDString CachedUserVariable::StringifyReference(lua_State* L) const
+STDString CachedUserVariable::StringifyReference(lua_State* L, bool binary) const
 {
     std::get<RegistryEntry>(Value).Push(L);
     json::StringifyContext ctx;
     ctx.Beautify = false;
+    ctx.Binary = binary;
 
     STDString str;
     try {
