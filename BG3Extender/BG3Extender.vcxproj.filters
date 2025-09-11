@@ -776,6 +776,7 @@
     <None Include="Lua\Libs\Table.inl" />
     <None Include="Extender\Shared\ExtenderConfig.inl" />
     <None Include="Lua\Shared\LuaTable.inl" />
+    <None Include="Lua\Libs\JsonBinary.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

@@ -498,6 +498,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="Lua\Libs\Entity.inl" />
     <None Include="Lua\Libs\IO.inl" />
     <None Include="Lua\Libs\Json.inl" />
+    <None Include="Lua\Libs\JsonBinary.inl" />
     <None Include="Lua\Libs\Level.inl" />
     <None Include="Lua\Libs\Localization.inl" />
     <None Include="Lua\Libs\Log.inl" />

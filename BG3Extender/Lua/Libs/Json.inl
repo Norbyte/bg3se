@@ -5,6 +5,8 @@
 #include <unordered_set>
 #include <lstate.h>
 
+#include <Lua/Libs/JsonBinary.inl>
+
 /// <lua_module>Json</lua_module>
 BEGIN_NS(lua::json)
 
@@ -90,18 +92,30 @@ bool Parse(lua_State * L, StringView json)
     return true;
 }
 
-UserReturn LuaParse(lua_State * L)
+UserReturn LuaParse(lua_State* L)
 {
     StackCheck _(L, 1);
     size_t length;
     auto json = luaL_checklstring(L, 1, &length);
-
-    Document root;
-    if (root.Parse(json, length).HasParseError()) {
-        return luaL_error(L, "Unable to parse JSON");
+    bool binary{ false };
+    if (lua_gettop(L) >= 2) {
+        binary = get<bool>(L, 2);
     }
 
-    Parse(L, root);
+    if (binary) {
+        BinaryReader reader(std::span<uint8_t const>((uint8_t const*)json, length));
+        if (!reader.ParseNext(L) || reader.Available() > 0) {
+            return luaL_error(L, "Unable to parse blob");
+        }
+    } else {
+        Document root;
+        if (root.Parse(json, length).HasParseError()) {
+            return luaL_error(L, "Unable to parse JSON");
+        }
+
+        Parse(L, root);
+    }
+
     return 1;
 }
 
@@ -581,21 +595,26 @@ void Stringify(lua_State * L, int index, unsigned depth, StringifyContext& ctx, 
     }
 }
 
-
-std::string Stringify(lua_State * L, StringifyContext& ctx, int index)
+STDString Stringify(lua_State * L, StringifyContext& ctx, int index)
 {
     StackCheck _(L);
 
-    StringBuffer sb;
-    if (ctx.Beautify) {
-        PrettyWriter<StringBuffer> writer(sb);
+    if (ctx.Binary) {
+        BinaryWriter writer;
         Stringify(L, index, 0, ctx, writer);
+        return writer.GetString();
     } else {
-        Writer<StringBuffer> writer(sb);
-        Stringify(L, index, 0, ctx, writer);
-    }
+        StringBuffer sb;
+        if (ctx.Beautify) {
+            PrettyWriter<StringBuffer> writer(sb);
+            Stringify(L, index, 0, ctx, writer);
+        } else {
+            Writer<StringBuffer> writer(sb);
+            Stringify(L, index, 0, ctx, writer);
+        }
 
-    return sb.GetString();
+        return sb.GetString();
+    }
 }
 
 UserReturn LuaStringify(lua_State * L)
@@ -619,6 +638,7 @@ UserReturn LuaStringify(lua_State * L)
             ctx.StringifyInternalTypes = try_gettable<bool>(L, "StringifyInternalTypes", 2, false);
             ctx.IterateUserdata = try_gettable<bool>(L, "IterateUserdata", 2, false);
             ctx.AvoidRecursion = try_gettable<bool>(L, "AvoidRecursion", 2, false);
+            ctx.Binary = try_gettable<bool>(L, "Binary", 2, false);
             ctx.MaxDepth = try_gettable<uint32_t>(L, "MaxDepth", 2, 64);
             ctx.LimitDepth = try_gettable<int32_t>(L, "LimitDepth", 2, -1);
             ctx.LimitArrayElements = try_gettable<int32_t>(L, "LimitArrayElements", 2, -1);
