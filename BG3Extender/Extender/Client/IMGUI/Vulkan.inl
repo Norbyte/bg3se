@@ -14,7 +14,27 @@
 #include <Extender/Client/IMGUI/sl/sl_core_types.h>
 #include <Extender/Client/IMGUI/sl/sl_helpers.h>
 #include <Extender/Client/IMGUI/sl/sl_core_api.h>
+#include <Extender/Client/IMGUI/nvsdk_ngx_vk.h>
+#include <Extender/Client/IMGUI/nvsdk_ngx_params.h>
+#include <atomic>
+#include <unordered_map>
+#include <unordered_set>
 
+// Mapping filled by your vkCreateImageView hook  (see note ↓)
+static std::unordered_map<VkImageView, VkImage>  gViewToImage;
+static std::unordered_map<VkImageView, VkFormat> gViewToFormat;
+
+// Caches for NGX overlay rendering
+static std::unordered_map<VkFormat, VkRenderPass>   gFormatToRenderPass;    // per-format render pass
+static std::unordered_map<VkImageView, VkFramebuffer> gViewToFramebuffer;   // per-view framebuffer
+
+// Handles consumed later by presentPreHook
+static VkImage      gDepthImage   = VK_NULL_HANDLE;
+static VkImageView  gDepthView    = VK_NULL_HANDLE;
+static VkFormat     gDepthFormat  = VK_FORMAT_UNDEFINED;
+
+static VkImage      gMotionImage  = VK_NULL_HANDLE;
+static VkImageView  gMotionView   = VK_NULL_HANDLE;
 
 BEGIN_SE()
 
@@ -67,9 +87,35 @@ VK_HOOK(CreatePipelineCache)
 VK_HOOK(CreateSwapchainKHR)
 VK_HOOK(DestroySwapchainKHR)
 VK_HOOK(QueuePresentKHR)
+VK_HOOK(CreateImageView)
+VK_HOOK(CmdBeginRenderPass)
+
 enum class SlDLSSGSetOptionsHookTag {};
 using SlDLSSGSetOptionsHookType = WrappableFunction<SlDLSSGSetOptionsHookTag, sl::Result(sl::ViewportHandle, const sl::DLSSGOptions&)>;
 template<> SlDLSSGSetOptionsHookType* SlDLSSGSetOptionsHookType::gHook = nullptr;
+
+// Hook for slEvaluateFeature(feature, token, inputs, numInputs, cmdBuffer)
+enum class SlEvaluateFeatureHookTag {};
+using SlEvaluateFeatureHookType = WrappableFunction<SlEvaluateFeatureHookTag, sl::Result(sl::Feature, const sl::FrameToken&, const sl::BaseStructure**, uint32_t, sl::CommandBuffer*)>;
+template<> SlEvaluateFeatureHookType* SlEvaluateFeatureHookType::gHook = nullptr;
+
+// Hook for NVSDK_NGX_VULKAN_EvaluateFeature_C
+enum class NgxEvaluateFeatureCHookTag {};
+using NgxEvaluateFeatureCHookType = WrappableFunction<NgxEvaluateFeatureCHookTag, NVSDK_NGX_Result(VkCommandBuffer, const NVSDK_NGX_Handle*, const NVSDK_NGX_Parameter*, PFN_NVSDK_NGX_ProgressCallback_C)>;
+template<> NgxEvaluateFeatureCHookType* NgxEvaluateFeatureCHookType::gHook = nullptr;
+
+// Hooks for NVSDK NGX CreateFeature APIs (to capture DLSS-SR feature handles)
+enum class NgxCreateFeatureHookTag {};
+using NgxCreateFeatureHookType = WrappableFunction<NgxCreateFeatureHookTag, NVSDK_NGX_Result(VkCommandBuffer, NVSDK_NGX_Feature, NVSDK_NGX_Parameter*, NVSDK_NGX_Handle**)>;
+template<> NgxCreateFeatureHookType* NgxCreateFeatureHookType::gHook = nullptr;
+
+enum class NgxCreateFeature1HookTag {};
+using NgxCreateFeature1HookType = WrappableFunction<NgxCreateFeature1HookTag, NVSDK_NGX_Result(VkDevice, VkCommandBuffer, NVSDK_NGX_Feature, NVSDK_NGX_Parameter*, NVSDK_NGX_Handle**)>;
+template<> NgxCreateFeature1HookType* NgxCreateFeature1HookType::gHook = nullptr;
+
+enum class NgxReleaseFeatureHookTag {};
+using NgxReleaseFeatureHookType = WrappableFunction<NgxReleaseFeatureHookTag, NVSDK_NGX_Result(NVSDK_NGX_Handle*)>;
+template<> NgxReleaseFeatureHookType* NgxReleaseFeatureHookType::gHook = nullptr;
 
 END_SE()
 
@@ -89,7 +135,6 @@ namespace {
     thread_local bool makingOwnDLSSGCall_ = false;
 }
 
-
 class VulkanBackend : public RenderingBackend
 {
 public:
@@ -104,6 +149,103 @@ public:
         releaseSwapChain(swapchain_);
         DestroyUI();
         DisableHooks();
+    }
+
+    // Deferred installer for NVSDK NGX CreateFeature* hooks
+    void tryInstallNgxCreateFeatureHooks() {
+        static bool installedCreate0 = false;
+        static bool installedCreate1 = false;
+        static bool installedRelease  = false;
+
+        if ((installedCreate0 || ngxCreateFeatureHook_.IsWrapped()) &&
+            (installedCreate1 || ngxCreateFeature1Hook_.IsWrapped()) &&
+            (installedRelease  || ngxReleaseFeatureHook_.IsWrapped())) {
+            return;
+        }
+
+        auto tryInstallFromModule = [&](HMODULE mod) -> bool {
+            if (!mod) return false;
+            bool any = false;
+
+            if (!(installedCreate0 || ngxCreateFeatureHook_.IsWrapped())) {
+                auto p0 = reinterpret_cast<NgxCreateFeatureHookType::BaseFuncType*>(
+                    GetProcAddress(mod, "NVSDK_NGX_VULKAN_CreateFeature"));
+                if (p0) {
+                    wchar_t path[MAX_PATH] = {0};
+                    GetModuleFileNameW(mod, path, MAX_PATH);
+                    ERR("[NGX-DEFERRED] Installing CreateFeature hook from %ls @ %p", path, p0);
+                    DetourTransactionBegin();
+                    DetourUpdateThread(GetCurrentThread());
+                    ngxCreateFeatureHook_.Wrap(ResolveFunctionTrampoline(p0));
+                    DetourTransactionCommit();
+                    ngxCreateFeatureHook_.SetWrapper(&VulkanBackend::ngxCreateFeatureHook, this);
+                    installedCreate0 = true;
+                    any = true;
+                    ERR("[NGX-DEFERRED] ✓ NVSDK_NGX_VULKAN_CreateFeature hook installed");
+                }
+            }
+
+            if (!(installedCreate1 || ngxCreateFeature1Hook_.IsWrapped())) {
+                auto p1 = reinterpret_cast<NgxCreateFeature1HookType::BaseFuncType*>(
+                    GetProcAddress(mod, "NVSDK_NGX_VULKAN_CreateFeature1"));
+                if (p1) {
+                    wchar_t path[MAX_PATH] = {0};
+                    GetModuleFileNameW(mod, path, MAX_PATH);
+                    ERR("[NGX-DEFERRED] Installing CreateFeature1 hook from %ls @ %p", path, p1);
+                    DetourTransactionBegin();
+                    DetourUpdateThread(GetCurrentThread());
+                    ngxCreateFeature1Hook_.Wrap(ResolveFunctionTrampoline(p1));
+                    DetourTransactionCommit();
+                    ngxCreateFeature1Hook_.SetWrapper(&VulkanBackend::ngxCreateFeature1Hook, this);
+                    installedCreate1 = true;
+                    any = true;
+                    ERR("[NGX-DEFERRED] ✓ NVSDK_NGX_VULKAN_CreateFeature1 hook installed");
+                }
+            }
+
+            if (!(installedRelease || ngxReleaseFeatureHook_.IsWrapped())) {
+                auto pR = reinterpret_cast<NgxReleaseFeatureHookType::BaseFuncType*>(
+                    GetProcAddress(mod, "NVSDK_NGX_VULKAN_ReleaseFeature"));
+                if (pR) {
+                    wchar_t path[MAX_PATH] = {0};
+                    GetModuleFileNameW(mod, path, MAX_PATH);
+                    ERR("[NGX-DEFERRED] Installing ReleaseFeature hook from %ls @ %p", path, pR);
+                    DetourTransactionBegin();
+                    DetourUpdateThread(GetCurrentThread());
+                    ngxReleaseFeatureHook_.Wrap(ResolveFunctionTrampoline(pR));
+                    DetourTransactionCommit();
+                    ngxReleaseFeatureHook_.SetWrapper(&VulkanBackend::ngxReleaseFeatureHook, this);
+                    installedRelease = true;
+                    any = true;
+                    ERR("[NGX-DEFERRED] ✓ NVSDK_NGX_VULKAN_ReleaseFeature hook installed");
+                }
+            }
+
+            return any;
+        };
+
+        // 1) Probe Streamline interposer (may re-export NGX symbols)
+        if (sl_) tryInstallFromModule(sl_);
+
+        // 2) Probe well-known NGX module names quickly
+        if (HMODULE quick = GetModuleHandleW(L"nvngx_dlss.dll")) {
+            tryInstallFromModule(quick);
+        }
+
+        // 3) Walk all loaded modules
+        PPEB peb = reinterpret_cast<PPEB>(__readgsqword(0x60)); // x64 only
+        PPEB_LDR_DATA ldr = peb->Ldr;
+        PLIST_ENTRY head = &ldr->InLoadOrderModuleList;
+        PLIST_ENTRY entry = head->Flink;
+        int count = 0;
+        while (entry != head && count < 1000) {
+            PLDR_DATA_TABLE_ENTRY de = CONTAINING_RECORD(entry, LDR_DATA_TABLE_ENTRY, InLoadOrderLinks);
+            if (de->FullDllName.Buffer && de->DllBase) {
+                tryInstallFromModule(reinterpret_cast<HMODULE>(de->DllBase));
+            }
+            entry = entry->Flink;
+            count++;
+        }
     }
 
     void EnableHooks() override
@@ -125,9 +267,8 @@ public:
         CreateSwapchainKHRHook_.SetPostHook(&VulkanBackend::vkCreateSwapchainKHRHooked, this);
         DestroySwapchainKHRHook_.SetPreHook(&VulkanBackend::vkDestroySwapchainKHRHooked, this);
         QueuePresentKHRHook_.SetPreHook(&VulkanBackend::vkQueuePresentKHRHooked, this);
-
-
-        ///HERE
+        CreateImageViewHook_.SetPostHook(&VulkanBackend::vkCreateImageViewHooked, this);
+        CmdBeginRenderPassHook_.SetPostHook(&VulkanBackend::vkCmdBeginRenderPassHooked, this);
 
         hSL_  = LoadLibraryW(L"upscaler.dll");
         if (hSL_) {
@@ -147,6 +288,17 @@ public:
             ERR("[EXTUI_HOOK_SETUP] sl.interposer.dll not found — DLSS-FG hook skipped");
         }
         else {
+            // Try to locate the REAL Streamline interposer and install SL hooks immediately
+            if (!okayToModifyFG_) {
+                HMODULE realSl = linkStreamline();
+                if (realSl) {
+                    ERR("[EXTUI_HOOK_SETUP] linkStreamline() succeeded: %p", realSl);
+                    sl_ = realSl;
+                } else {
+                    ERR("[EXTUI_HOOK_SETUP] linkStreamline() failed now; will retry later in NewFrame()");
+                }
+            }
+
             auto slQueuePresent = reinterpret_cast<PFN_vkQueuePresentKHR>(
                 GetProcAddress(sl_, "vkQueuePresentKHR")
             );
@@ -170,6 +322,82 @@ public:
         }
     }
 
+    // Deferred installer for NVSDK_NGX_VULKAN_EvaluateFeature_C only
+    void tryInstallNgxEvaluateFeatureHook() {
+        static bool installedC = false;
+
+        if (installedC || ngxEvaluateFeatureHook_.IsWrapped()) {
+            return; // C variant already handled
+        }
+
+        auto tryInstallFromModule = [&](HMODULE mod) -> bool {
+            if (!mod) return false;
+
+            bool any = false;
+            auto pC = reinterpret_cast<NgxEvaluateFeatureCHookType::BaseFuncType*>(
+                GetProcAddress(mod, "NVSDK_NGX_VULKAN_EvaluateFeature_C"));
+            if (pC && !installedC && !ngxEvaluateFeatureHook_.IsWrapped()) {
+                wchar_t path[MAX_PATH] = {0};
+                GetModuleFileNameW(mod, path, MAX_PATH);
+                ERR("[NGX-DEFERRED] Installing EvaluateFeature_C hook from %ls @ %p", path, pC);
+                DetourTransactionBegin();
+                DetourUpdateThread(GetCurrentThread());
+                ngxEvaluateFeatureHook_.Wrap(ResolveFunctionTrampoline(pC));
+                DetourTransactionCommit();
+                ngxEvaluateFeatureHook_.SetWrapper(&VulkanBackend::ngxEvaluateFeatureCHook, this);
+                installedC = true;
+                any = true;
+                ERR("[NGX-DEFERRED] ✓ NVSDK_NGX_VULKAN_EvaluateFeature_C hook installed");
+            }
+
+            return any;
+        };
+
+        // 1) Probe Streamline interposer (may re-export NGX symbols)
+        if (sl_) {
+            tryInstallFromModule(sl_);
+        }
+
+        // 2) Probe well-known NGX module names quickly
+        HMODULE quick = GetModuleHandleW(L"nvngx_dlss.dll");
+        if (quick) {
+            tryInstallFromModule(quick);
+        }
+
+        // 3) Walk all loaded modules via PEB (x64)
+        PPEB peb = reinterpret_cast<PPEB>(__readgsqword(0x60)); // x64 only
+        PPEB_LDR_DATA ldr = peb->Ldr;
+        
+        PLIST_ENTRY head = &ldr->InLoadOrderModuleList;
+        PLIST_ENTRY entry = head->Flink;
+        
+        int count = 0;
+        while (entry != head && count < 1000) { // Safety limit
+            PLDR_DATA_TABLE_ENTRY de = CONTAINING_RECORD(entry, LDR_DATA_TABLE_ENTRY, InLoadOrderLinks);
+            
+            if (de->FullDllName.Buffer && de->DllBase) {
+                wchar_t* dllName = de->FullDllName.Buffer;
+                HMODULE m = reinterpret_cast<HMODULE>(de->DllBase);
+                
+                // Try C export on every module; stop early if installed
+                tryInstallFromModule(m);
+                if (installedC || ngxEvaluateFeatureHook_.IsWrapped()) {
+                    break;
+                }
+            }
+            
+            entry = entry->Flink;
+            count++;
+        }
+
+        if (!(installedC || ngxEvaluateFeatureHook_.IsWrapped())) {
+            static int tries = 0;
+            if (++tries % 300 == 1) {
+                ERR("[NGX-DEFERRED] Could not locate NVSDK_NGX_VULKAN_EvaluateFeature_C export yet; will retry");
+            }
+        }
+    }
+
     void DisableHooks() override
     {
         if (!CreateInstanceHook_.IsWrapped()) return;
@@ -187,6 +415,18 @@ public:
         QueuePresentKHRHook_.Unwrap();
         if (slDLSSGSetOptionsHook_.IsWrapped()) {
             slDLSSGSetOptionsHook_.Unwrap();
+        }
+        if (ngxEvaluateFeatureHook_.IsWrapped()) {
+            ngxEvaluateFeatureHook_.Unwrap();
+        }
+        if (ngxCreateFeatureHook_.IsWrapped()) {
+            ngxCreateFeatureHook_.Unwrap();
+        }
+        if (ngxCreateFeature1Hook_.IsWrapped()) {
+            ngxCreateFeature1Hook_.Unwrap();
+        }
+        if (ngxReleaseFeatureHook_.IsWrapped()) {
+            ngxReleaseFeatureHook_.Unwrap();
         }
         DetourTransactionCommit();
     }
@@ -249,6 +489,8 @@ public:
         };
         // init_info.RenderPass = presentRenderPass_;
         init_info.RenderPass = swapchain_.renderPass_;
+        init_info.UseDynamicRendering = true;
+        init_info.ColorAttachmentFormat = swapchain_format; // e.g. your swapchain_.format
         ImGui_ImplVulkan_Init(&init_info);
         ImGui_ImplVulkan_CreateFontsTexture();
 
@@ -261,7 +503,7 @@ public:
         ERR("VK POSTINIT - initialized: %d, drawViewport_: %d, uiFrameworkStarted: %d", 
             initialized_ ? 1 : 0, drawViewport_, uiFrameworkStarted_ ? 1 : 0);
         ERR("    Instance %p, PhysicalDevice %p, Device %p", instance_, physicalDevice_, device_);
-        ERR("    QueueFamily %d, RenderQueue %p", queueFamily_, renderQueue_, swapChain_);
+        ERR("    QueueFamily %d, RenderQueue %p, CommandPool %p", queueFamily_, renderQueue_, swapchain_.commandPool_);
         ERR("    PipelineCache %p, DescriptorPool %p, Sampler %p", pipelineCache_, descriptorPool_, sampler_);
         ERR("VK SWAPCHAIN");
         ERR("    SwapChain %p, RenderPass %p, CommandPool %p", swapChain_, swapchain_.renderPass_, swapchain_.commandPool_);
@@ -351,7 +593,7 @@ public:
                     if (r == sl::Result::eOk)
                     {
                         //HERE GOOD
-                        //DumpDLSSGState(st);
+                        DumpDLSSGState(st);
                     }
                     
                     //ERR("[DLSSG HOOK] originalSlDLSSGSetOptions_ returned, setting makingOwnDLSSGCall_ = false");
@@ -385,6 +627,383 @@ public:
         }
         
         //ERR("[DLSSG HOOK] === POST-HOOK EXIT ===");
+    }
+
+    // Hook wrapper for slEvaluateFeature: suppress game's call when menu is visible,
+    // forward otherwise. Our own call is always forwarded.
+    sl::Result slEvaluateFeatureHook(
+        SlEvaluateFeatureHookType::BaseFuncType* orig,
+        sl::Feature feature,
+        const sl::FrameToken& token,
+        const sl::BaseStructure** inputs,
+        uint32_t numInputs,
+        sl::CommandBuffer* cmdBuffer)
+    {
+        //ERR("[FG-HOOK] slEvaluateFeature called: feature=%u, token=%p, inputs=%u, cmd=%p, ourCall=%d, menu=%d",
+        //    (unsigned)feature, &token, numInputs, cmdBuffer,
+        //    makingOwnDLSSGCall_ ? 1 : 0,
+        //    menuVisible_ ? 1 : 0);
+
+        // External (game/plugin) evaluate. If menu visible, inject ImGui into their command buffer
+        if (menuVisible_) {
+            //ERR("[FG-HOOK] INJECT ImGui into GAME cmd buffer: inputs=%u, cmd=%p", numInputs, cmdBuffer);
+            
+            // Render ImGui into the game's command buffer
+            /*if (injectImGuiIntoCommandBuffer(reinterpret_cast<VkCommandBuffer>(cmdBuffer))) {
+                ERR("[FG-HOOK] ✓ ImGui injected successfully, forwarding call");
+                evalForwardedThisFrame_ = true;
+                return orig(feature, token, inputs, numInputs, cmdBuffer);
+            } else {
+                ERR("[FG-HOOK] ✗ ImGui injection failed, suppressing call");
+                suppressedGameEvalThisFrame_ = true;
+                return sl::Result::eOk;
+            }*/
+        }
+
+        // No menu: allow the game's call
+        //ERR("[FG-HOOK] forward GAME evaluate (menu closed): inputs=%u, cmd=%p", numInputs, cmdBuffer);
+        //evalForwardedThisFrame_ = true; 
+        return orig(feature, token, inputs, numInputs, cmdBuffer);
+    }
+
+
+
+    // Helper: Fallback-detect and capture a DLSS-SR handle by inspecting NGX parameters
+    bool tryCaptureDlssSRHandleFromEvaluate(const NVSDK_NGX_Handle* InFeatureHandle,
+                                            const NVSDK_NGX_Parameter* InParameters)
+    {
+        ERR("ATTEMPT HOOK INSIDE EVALUATE FEATURE HOOK");
+        bool looksLikeSR = false;
+        void* tmpPtr = nullptr;
+        NVSDK_NGX_Result tmpRes = NVSDK_NGX_Result_Fail;
+        if (InParameters) {
+            tmpRes = InParameters->Get(NVSDK_NGX_Parameter_Output, &tmpPtr);
+            if (!(tmpRes == NVSDK_NGX_Result_Success && tmpPtr)) {
+                // Try C API variant for Output
+                PFN_NVSDK_NGX_Parameter_GetVoidPointer pGetVoid = pNgxParamGetVoidPointer_;
+                if (!pGetVoid) {
+                    HMODULE mod = sl_ ? sl_ : GetModuleHandleW(L"nvngx_dlss.dll");
+                    if (!mod) mod = GetModuleHandleW(L"nvngx.dll");
+                    if (mod) {
+                        pGetVoid = reinterpret_cast<PFN_NVSDK_NGX_Parameter_GetVoidPointer>(
+                            GetProcAddress(mod, "NVSDK_NGX_Parameter_GetVoidPointer"));
+                        if (pGetVoid) {
+                            pNgxParamGetVoidPointer_ = pGetVoid;
+                        }
+                    }
+                }
+                if (pGetVoid) {
+                    tmpRes = pGetVoid(const_cast<NVSDK_NGX_Parameter*>(InParameters), NVSDK_NGX_Parameter_Output, &tmpPtr);
+                }
+            }
+            
+            if (!(tmpRes == NVSDK_NGX_Result_Success && tmpPtr)) {
+                // Try Color as a fallback
+                tmpRes = InParameters->Get(NVSDK_NGX_Parameter_Color, &tmpPtr);
+                if (!(tmpRes == NVSDK_NGX_Result_Success && tmpPtr)) {
+                    PFN_NVSDK_NGX_Parameter_GetVoidPointer pGetVoid = pNgxParamGetVoidPointer_;
+                    if (!pGetVoid) {
+                        HMODULE mod = sl_ ? sl_ : GetModuleHandleW(L"nvngx_dlss.dll");
+                        if (!mod) mod = GetModuleHandleW(L"nvngx.dll");
+                        if (mod) {
+                            pGetVoid = reinterpret_cast<PFN_NVSDK_NGX_Parameter_GetVoidPointer>(
+                                GetProcAddress(mod, "NVSDK_NGX_Parameter_GetVoidPointer"));
+                            if (pGetVoid) {
+                                pNgxParamGetVoidPointer_ = pGetVoid;
+                            }
+                        }
+                    }
+                    if (pGetVoid) {
+                        tmpRes = pGetVoid(const_cast<NVSDK_NGX_Parameter*>(InParameters), NVSDK_NGX_Parameter_Color, &tmpPtr);
+                    }
+                }
+            }
+            
+            if (tmpRes == NVSDK_NGX_Result_Success && tmpPtr) {
+                auto* resVK = reinterpret_cast<NVSDK_NGX_Resource_VK*>(tmpPtr);
+                looksLikeSR = (resVK && resVK->Type == NVSDK_NGX_RESOURCE_VK_TYPE_VK_IMAGEVIEW);
+            }
+        }
+        
+        if (looksLikeSR && InFeatureHandle) {
+            std::lock_guard _(globalResourceLock_);
+            dlssSRHandles_.insert(InFeatureHandle);
+            ERR("[NGX-HOOK] Fallback-captured DLSS-SR handle %p from EvaluateFeature (set size=%zu)", InFeatureHandle, dlssSRHandles_.size());
+            return true;
+        }
+        
+        return false;
+    }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// NVSDK_NGX_VULKAN_EvaluateFeature_C hook
+//  - Always forward to NGX first
+//  - If this is DLSS-SR and the menu is visible, composite ImGui into the
+//    NGX output using a pipeline compatible with *that* target.
+//  - Prefer VK_KHR_dynamic_rendering to avoid RenderPass-mismatch issues.
+// ─────────────────────────────────────────────────────────────────────────────
+NVSDK_NGX_Result ngxEvaluateFeatureCHook(
+    NgxEvaluateFeatureCHookType::BaseFuncType* orig,
+    VkCommandBuffer                 InCmdList,
+    const NVSDK_NGX_Handle*         InFeatureHandle,
+    const NVSDK_NGX_Parameter*      InParameters,
+    PFN_NVSDK_NGX_ProgressCallback_C InCallback)
+{
+    ERR("[NGX-HOOK] NVSDK_NGX_VULKAN_EvaluateFeature_C: cmd=%p, feature=%p, params=%p, cb=%p, menu=%d, ourDLSSG=%d",
+        InCmdList, InFeatureHandle, InParameters, (void*)InCallback,
+        menuVisible_ ? 1 : 0,
+        makingOwnDLSSGCall_ ? 1 : 0);
+
+    // 0) Let NGX do its work first so resources are in their expected state
+    NVSDK_NGX_Result evalRes = orig(InCmdList, InFeatureHandle, InParameters, InCallback);
+    if (evalRes != NVSDK_NGX_Result_Success || !initialized_ || !menuVisible_ || !InCmdList || !InParameters)
+        return evalRes;
+
+    // 1) Make sure this evaluate belongs to DLSS-SR
+    bool isDlssSR = false;
+    {
+        std::lock_guard _(globalResourceLock_);
+        isDlssSR = (InFeatureHandle && dlssSRHandles_.find(InFeatureHandle) != dlssSRHandles_.end());
+    }
+    if (!isDlssSR) {
+        // Late-created CreateFeature hooks? Try to capture on the fly:
+        if (!tryCaptureDlssSRHandleFromEvaluate(InFeatureHandle, InParameters))
+            return evalRes;
+    }
+
+    // 2) Pull NGX output as a Vulkan view/image/format/extent
+    void* outPtr = nullptr;
+    NVSDK_NGX_Result getRes = InParameters->Get(NVSDK_NGX_Parameter_Output, &outPtr);
+    if (getRes != NVSDK_NGX_Result_Success || !outPtr)
+        return evalRes;
+
+    auto* outResVK = reinterpret_cast<NVSDK_NGX_Resource_VK*>(outPtr);
+    if (!outResVK || outResVK->Type != NVSDK_NGX_RESOURCE_VK_TYPE_VK_IMAGEVIEW)
+        return evalRes;
+
+    const NVSDK_NGX_ImageViewInfo_VK& iv = outResVK->Resource.ImageViewInfo;
+    VkImageView  targetView   = iv.ImageView;
+    VkImage      targetImage  = iv.Image;
+    VkFormat     targetFormat = iv.Format;
+    uint32_t     targetW      = iv.Width;
+    uint32_t     targetH      = iv.Height;
+
+    VkImageSubresourceRange range = iv.SubresourceRange;
+    if (range.aspectMask == 0)  range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    if (range.levelCount == 0)  range.levelCount = 1;
+    if (range.layerCount == 0)  range.layerCount = 1;
+
+    if (targetView == VK_NULL_HANDLE || targetImage == VK_NULL_HANDLE || targetFormat == VK_FORMAT_UNDEFINED)
+    {
+        ERR("[NGX-HOOK] Invalid NGX output: view=%p image=%p fmt=%d", targetView, (void*)targetImage, (int)targetFormat);
+        return evalRes;
+    }
+
+    // 3) Ensure ImGui draw-data uses the NGX output size (avoid scissor/viewport mismatch)
+    {
+        // We render the already-built UI into a different target; fix the target metrics.
+        auto& dd = viewports_[drawViewport_].Viewport.DrawDataP;
+        dd.DisplayPos   = ImVec2(0.0f, 0.0f);
+        dd.DisplaySize  = ImVec2((float)targetW, (float)targetH);
+        dd.FramebufferScale = ImVec2(1.0f, 1.0f);
+    }
+
+    // 4) Transition NGX output → COLOR_ATTACHMENT for overlay
+    VkImageMemoryBarrier toColor{ VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER };
+    toColor.srcAccessMask = VK_ACCESS_MEMORY_WRITE_BIT | VK_ACCESS_SHADER_WRITE_BIT |
+                            VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_TRANSFER_WRITE_BIT;
+    toColor.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+    toColor.oldLayout     = VK_IMAGE_LAYOUT_GENERAL;                  // NGX usually leaves it in GENERAL
+    toColor.newLayout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL; // needed for color writes
+    toColor.image         = targetImage;
+    toColor.subresourceRange = range;
+
+    vkCmdPipelineBarrier(
+        InCmdList,
+        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+        VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+        0, 0, nullptr, 0, nullptr, 1, &toColor);
+
+    // 5) Composite the UI into the NGX output
+    bool injectedOk = false;
+
+#ifdef VK_KHR_dynamic_rendering
+    // Prefer dynamic rendering when the device supports it AND ImGui was initialized with it.
+    // (ImGui 1.90.9 uses a different pipeline path when UseDynamicRendering=true.)
+    // If your init uses dynamic rendering, this block will run; otherwise we fall back below.
+    if (true /* UseDynamicRendering at init -> see comment below */)
+    {
+        VkRenderingAttachmentInfo colorAtt{ VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO };
+        colorAtt.imageView   = targetView;
+        colorAtt.imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        colorAtt.loadOp      = VK_ATTACHMENT_LOAD_OP_LOAD;   // keep NGX result
+        colorAtt.storeOp     = VK_ATTACHMENT_STORE_OP_STORE;
+
+        VkRenderingInfo ri{ VK_STRUCTURE_TYPE_RENDERING_INFO };
+        ri.renderArea.offset = { 0, 0 };
+        ri.renderArea.extent = { targetW, targetH };
+        ri.layerCount        = 1;
+        ri.colorAttachmentCount = 1;
+        ri.pColorAttachments = &colorAtt;
+
+        vkCmdBeginRendering(InCmdList, &ri);
+        injectedOk = ImGui_ImplVulkan_RenderDrawData(&viewports_[drawViewport_].Viewport.DrawDataP, InCmdList);
+        vkCmdEndRendering(InCmdList);
+    }
+    else
+#endif
+    {
+        // Fallback: legacy render-pass path (if you didn't turn on dynamic rendering).
+        // Build (and cache) a render pass compatible with the NGX target format.
+        auto getOrCreateRenderPass = [&](VkFormat fmt) -> VkRenderPass {
+            auto it = gFormatToRenderPass.find(fmt);
+            if (it != gFormatToRenderPass.end()) return it->second;
+
+            VkAttachmentDescription attDesc{};
+            attDesc.format         = fmt;
+            attDesc.samples        = VK_SAMPLE_COUNT_1_BIT;
+            attDesc.loadOp         = VK_ATTACHMENT_LOAD_OP_LOAD;   // preserve NGX output
+            attDesc.storeOp        = VK_ATTACHMENT_STORE_OP_STORE;
+            attDesc.stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+            attDesc.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+            // Keep color-optimal throughout the pass; we did the explicit barrier above.
+            attDesc.initialLayout  = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+            attDesc.finalLayout    = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+            VkAttachmentReference colorRef{ 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL };
+
+            VkSubpassDescription sub{};
+            sub.pipelineBindPoint    = VK_PIPELINE_BIND_POINT_GRAPHICS;
+            sub.colorAttachmentCount = 1;
+            sub.pColorAttachments    = &colorRef;
+
+            VkRenderPassCreateInfo rpInfo{ VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO };
+            rpInfo.attachmentCount = 1;
+            rpInfo.pAttachments    = &attDesc;
+            rpInfo.subpassCount    = 1;
+            rpInfo.pSubpasses      = &sub;
+
+            VkRenderPass rp = VK_NULL_HANDLE;
+            VK_CHECK(vkCreateRenderPass(device_, &rpInfo, nullptr, &rp));
+            gFormatToRenderPass[fmt] = rp;
+            ERR("[NGX-HOOK] Created render pass %p for format %d", rp, (int)fmt);
+            return rp;
+        };
+
+        VkRenderPass rp = getOrCreateRenderPass(targetFormat);
+
+        // Create (and cache) a framebuffer for this exact view
+        VkFramebuffer fb = VK_NULL_HANDLE;
+        auto itFB = gViewToFramebuffer.find(targetView);
+        if (itFB != gViewToFramebuffer.end()) {
+            fb = itFB->second;
+        } else {
+            VkImageView attachments[1] = { targetView };
+            VkFramebufferCreateInfo fbInfo{ VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO };
+            fbInfo.renderPass   = rp;
+            fbInfo.attachmentCount = 1;
+            fbInfo.pAttachments = attachments;
+            fbInfo.width        = targetW;
+            fbInfo.height       = targetH;
+            fbInfo.layers       = 1;
+            VK_CHECK(vkCreateFramebuffer(device_, &fbInfo, nullptr, &fb));
+            gViewToFramebuffer[targetView] = fb;
+            ERR("[NGX-HOOK] Created framebuffer %p for view=%p (%ux%u)", fb, targetView, targetW, targetH);
+        }
+
+        // Begin the pass, draw ImGui, end the pass
+        VkRenderPassBeginInfo rpBegin{ VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO };
+        rpBegin.renderPass  = rp;
+        rpBegin.framebuffer = fb;
+        rpBegin.renderArea.offset = { 0, 0 };
+        rpBegin.renderArea.extent = { targetW, targetH };
+        rpBegin.clearValueCount   = 0;
+        rpBegin.pClearValues      = nullptr;
+
+        vkCmdBeginRenderPass(InCmdList, &rpBegin, VK_SUBPASS_CONTENTS_INLINE);
+        injectedOk = ImGui_ImplVulkan_RenderDrawData(&viewports_[drawViewport_].Viewport.DrawDataP, InCmdList);
+        vkCmdEndRenderPass(InCmdList);
+    }
+
+    ERR("[NGX-HOOK] ImGui overlay %s into NGX output (cmd=%p)", injectedOk ? "done" : "skipped", InCmdList);
+
+    // 6) Transition back to GENERAL so the rest of the frame can read it again
+    VkImageMemoryBarrier toGeneral{ VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER };
+    toGeneral.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+    toGeneral.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT | VK_ACCESS_SHADER_READ_BIT;
+    toGeneral.oldLayout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    toGeneral.newLayout     = VK_IMAGE_LAYOUT_GENERAL;
+    toGeneral.image         = targetImage;
+    toGeneral.subresourceRange = range;
+
+    vkCmdPipelineBarrier(
+        InCmdList,
+        VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+        0, 0, nullptr, 0, nullptr, 1, &toGeneral);
+
+    return evalRes;
+}
+
+
+    // Hook wrapper for NVSDK_NGX_VULKAN_CreateFeature
+    NVSDK_NGX_Result ngxCreateFeatureHook(
+        NgxCreateFeatureHookType::BaseFuncType* orig,
+        VkCommandBuffer InCmdBuffer,
+        NVSDK_NGX_Feature InFeatureID,
+        NVSDK_NGX_Parameter* InParameters,
+        NVSDK_NGX_Handle** OutHandle)
+    {
+        ERR("[NGX-HOOK] NVSDK_NGX_VULKAN_CreateFeature: cmd=%p, featureID=%d, params=%p, outHandle=%p",
+            InCmdBuffer, (int)InFeatureID, InParameters, OutHandle);
+
+        NVSDK_NGX_Result res = orig(InCmdBuffer, InFeatureID, InParameters, OutHandle);
+        if (res == NVSDK_NGX_Result_Success && OutHandle && *OutHandle) {
+            if (InFeatureID == NVSDK_NGX_Feature_SuperSampling || InFeatureID == NVSDK_NGX_Feature_ImageSuperResolution) {
+                std::lock_guard _(globalResourceLock_);
+                dlssSRHandles_.insert(*OutHandle);
+                ERR("[NGX-HOOK] Stored DLSS-SR feature handle %p (set size=%zu)", *OutHandle, dlssSRHandles_.size());
+            }
+        }
+        return res;
+    }
+
+    // Hook wrapper for NVSDK_NGX_VULKAN_CreateFeature1
+    NVSDK_NGX_Result ngxCreateFeature1Hook(
+        NgxCreateFeature1HookType::BaseFuncType* orig,
+        VkDevice InDevice,
+        VkCommandBuffer InCmdList,
+        NVSDK_NGX_Feature InFeatureID,
+        NVSDK_NGX_Parameter* InParameters,
+        NVSDK_NGX_Handle** OutHandle)
+    {
+        ERR("[NGX-HOOK] NVSDK_NGX_VULKAN_CreateFeature1: device=%p, cmd=%p, featureID=%d, params=%p, outHandle=%p",
+            InDevice, InCmdList, (int)InFeatureID, InParameters, OutHandle);
+
+        NVSDK_NGX_Result res = orig(InDevice, InCmdList, InFeatureID, InParameters, OutHandle);
+        if (res == NVSDK_NGX_Result_Success && OutHandle && *OutHandle) {
+            if (InFeatureID == NVSDK_NGX_Feature_SuperSampling || InFeatureID == NVSDK_NGX_Feature_ImageSuperResolution) {
+                std::lock_guard _(globalResourceLock_);
+                dlssSRHandles_.insert(*OutHandle);
+                ERR("[NGX-HOOK] Stored DLSS-SR feature handle %p (set size=%zu)", *OutHandle, dlssSRHandles_.size());
+            }
+        }
+        return res;
+    }
+
+    // Hook wrapper for NVSDK_NGX_VULKAN_ReleaseFeature
+    NVSDK_NGX_Result ngxReleaseFeatureHook(
+        NgxReleaseFeatureHookType::BaseFuncType* orig,
+        NVSDK_NGX_Handle* InHandle)
+    {
+        ERR("[NGX-HOOK] NVSDK_NGX_VULKAN_ReleaseFeature: handle=%p", InHandle);
+        NVSDK_NGX_Result res = orig(InHandle);
+        if (res == NVSDK_NGX_Result_Success && InHandle) {
+            std::lock_guard _(globalResourceLock_);
+            size_t erased = dlssSRHandles_.erase(InHandle);
+            ERR("[NGX-HOOK] ReleaseFeature %s tracked handle %p (set size=%zu)", erased ? "removed" : "did not contain", InHandle, dlssSRHandles_.size());
+        }
+        return res;
     }
 
     HMODULE linkStreamline() {
@@ -446,11 +1065,16 @@ public:
                             ERR("[STREAMLINE] Got slGetFeatureFunction: %p", slGetFeatureFunction_);
                             
                             void* funcPtr = nullptr;
+                            
+                            // Skip slEvaluateFeature hook here - Streamline not initialized yet
+                            // Will be installed later via tryInstallSlEvaluateFeatureHook()
+                            
+                            // Now try to get slDLSSGSetOptions (this can fail without affecting the slEvaluateFeature hook)
                             sl::Result result = slGetFeatureFunction_(sl::kFeatureDLSS_G, "slDLSSGSetOptions", funcPtr);
                             if (result == sl::Result::eOk && funcPtr) {
                                 slDLSSGSetOptions_ = reinterpret_cast<PFun_slDLSSGSetOptions*>(funcPtr);
                                 originalSlDLSSGSetOptions_ = slDLSSGSetOptions_; // Store original
-                                okayToModifyFG_ = true;
+                                okayToModifyFG_ = true; 
                                 ERR("[STREAMLINE] ✓ Got slDLSSGSetOptions: %p", slDLSSGSetOptions_);
 
                                 slSetTag_ = reinterpret_cast<PFun_slSetTag*>(GetProcAddress(baseAddress, "slSetTag"));
@@ -484,20 +1108,12 @@ public:
                                 } else {
                                     ERR("[STREAMLINE] ✗ Failed to get slGetNewFrameToken");
                                 }
-                                sl::Result result = slGetFeatureFunction_(sl::kFeatureCommon, "slSetConstants", funcPtr);
-                                if (result == sl::Result::eOk && funcPtr) {
+                                sl::Result constantsResult = slGetFeatureFunction_(sl::kFeatureCommon, "slSetConstants", funcPtr);
+                                if (constantsResult == sl::Result::eOk && funcPtr) {
                                     slSetConstants_ = reinterpret_cast<PFun_slSetConstants*>(funcPtr);
                                     ERR("[STREAMLINE] ✓ Got slSetConstants: %p", slSetConstants_);
                                 } else {
-                                    ERR("[STREAMLINE] ✗ Failed to get slSetConstants: %s", sl::getResultAsStr(result));
-                                }
-
-                                result = slGetFeatureFunction_(sl::kFeatureCommon, "slEvaluateFeature", funcPtr);
-                                if (result == sl::Result::eOk && funcPtr) {
-                                    slEvaluateFeature_ = reinterpret_cast<PFun_slEvaluateFeature*>(funcPtr);
-                                    ERR("[STREAMLINE] ✓ Got slEvaluateFeature: %p", slEvaluateFeature_);
-                                } else {
-                                    ERR("[STREAMLINE] ✗ Failed to get slEvaluateFeature: %s", sl::getResultAsStr(result));
+                                    ERR("[STREAMLINE] ✗ Failed to get slSetConstants: %s", sl::getResultAsStr(constantsResult));
                                 }
                                 
                                 // Hook slDLSSGSetOptions
@@ -510,7 +1126,7 @@ public:
                                 ERR("[STREAMLINE] ✓ Hooked slDLSSGSetOptions");
                                 
                             } else {
-                                ERR("[STREAMLINE] ✗ Failed to get slDLSSGSetOptions, result: %d", static_cast<int>(result));
+                                ERR("[STREAMLINE] ✗ Failed to get slDLSSGSetOptions, result: %d (continuing anyway)", static_cast<int>(result));
                             }
                     }
                     auto slInit = GetProcAddress(baseAddress, "slInit");
@@ -548,6 +1164,13 @@ public:
         curViewport_ = (curViewport_ + 1) % viewports_.size();
         GImGui->Viewports[0] = &viewports_[curViewport_].Viewport;
 
+        // Try to install slEvaluateFeature hook if not done yet
+        tryInstallSlEvaluateFeatureHook();
+        // Try to install NGX EvaluateFeature_C hook if not done yet
+        tryInstallNgxEvaluateFeatureHook();
+        // Try to install NGX CreateFeature hooks to capture DLSS-SR handles
+        tryInstallNgxCreateFeatureHooks();
+
         if (requestReloadFonts_) {
             ERR("Rebuilding font atlas");
             ImGui_ImplVulkan_DestroyFontsTexture();
@@ -564,6 +1187,84 @@ public:
         ImGui_ImplVulkan_NewFrame();
         //ERR("VK: NewFrame");
     }
+
+    // ---------------------------------------------------------------------------
+
+
+    void vkCreateImageViewHooked(
+        VkDevice                        device,
+        const VkImageViewCreateInfo*    pCreateInfo,
+        const VkAllocationCallbacks*    pAllocator,
+        VkImageView*                    pView,
+        VkResult                        result)
+{
+    if (result == VK_SUCCESS && pView && pCreateInfo)
+    {
+        gViewToImage[*pView]  = pCreateInfo->image;
+        gViewToFormat[*pView] = pCreateInfo->format;
+        // Optional debug:
+        //ERR("NEW HOOK [MAP] view=%p  image=%p  format=%d", *pView,
+        //(void*)pCreateInfo->image, int(pCreateInfo->format));
+    }
+}
+
+// ---------------------------------------------------------------------------
+// VulkanBackend::vkCmdBeginRenderPassHooked
+//   • Captures depth & motion-vector views once per frame
+//   • Requires the view→image/format maps you fill in vkCreateImageViewHooked
+//   • Assumes attachment 0 = colour, 1 = motion vectors, 2 = depth
+//     -- adjust the indices if your pass layout differs.
+// ---------------------------------------------------------------------------
+void vkCmdBeginRenderPassHooked(
+    VkCommandBuffer               cmd,
+    const VkRenderPassBeginInfo*  pInfo,
+    VkSubpassContents             contents)
+{
+// Call original first so the game keeps running
+CmdBeginRenderPassHook_.CallOriginal(cmd, pInfo, contents);
+
+//---------------- capture only once per frame -------------------------
+static uint64_t lastFrame = ~0ull;
+if (frameNo_ == lastFrame) return;
+lastFrame = frameNo_;
+
+//---------------- find VkRenderPassAttachmentBeginInfo ----------------
+const VkRenderPassAttachmentBeginInfo* att = nullptr;
+for (const VkBaseInStructure* n = reinterpret_cast<const VkBaseInStructure*>(pInfo->pNext);
+     n;
+     n = n->pNext)
+{
+    if (n->sType == VK_STRUCTURE_TYPE_RENDER_PASS_ATTACHMENT_BEGIN_INFO)
+    {
+        att = reinterpret_cast<const VkRenderPassAttachmentBeginInfo*>(n);
+        break;
+    }
+}
+if (!att || att->attachmentCount < 3) return;      // need colour + MV + depth
+
+//---------------- extract MV & depth views ----------------------------
+VkImageView mvView    = att->pAttachments[1];       // motion vectors
+VkImageView depthView = att->pAttachments[2];       // depth
+if (mvView == VK_NULL_HANDLE || depthView == VK_NULL_HANDLE) return;
+
+//---------------- map views → images ----------------------------------
+auto itMV    = gViewToImage.find(mvView);
+auto itDepth = gViewToImage.find(depthView);
+if (itMV == gViewToImage.end() || itDepth == gViewToImage.end()) return;
+
+gMotionView   = mvView;
+gMotionImage  = itMV->second;
+
+gDepthView    = depthView;
+gDepthImage   = itDepth->second;
+
+auto itFmt    = gViewToFormat.find(depthView);
+gDepthFormat  = (itFmt == gViewToFormat.end()) ? VK_FORMAT_UNDEFINED
+                                               : itFmt->second;
+
+ERR("[DLSSG] Captured depth=%p  motion=%p",
+    (void*)gDepthImage, (void*)gMotionImage);
+}
 
     void FinishFrame() override
     {
@@ -818,6 +1519,12 @@ auto  vkDestroySwapchainKHR = reinterpret_cast<PFN_vkDestroySwapchainKHR>(
 auto  gamePresent           = reinterpret_cast<PFN_vkQueuePresentKHR>(
     vkGetDeviceProcAddr(*pDevice, "vkQueuePresentKHR"));
 
+auto  vkCreateImageView = reinterpret_cast<PFN_vkCreateImageView>(
+    vkGetDeviceProcAddr(*pDevice, "vkCreateImageView"));
+
+auto vkCmdBeginRenderPass = reinterpret_cast<PFN_vkCmdBeginRenderPass>(
+    vkGetDeviceProcAddr(*pDevice, "vkCmdBeginRenderPass"));
+
     // Decide which functions we should hook based on DLSS-FG availability
     PFN_vkQueuePresentKHR nextPresent =
         dlssgPresentFunction_ ? dlssgPresentFunction_ : gamePresent;
@@ -841,6 +1548,9 @@ auto  gamePresent           = reinterpret_cast<PFN_vkQueuePresentKHR>(
         CreateSwapchainKHRHook_.Wrap (ResolveFunctionTrampoline(nextCreateSwapchain));
         DestroySwapchainKHRHook_.Wrap(ResolveFunctionTrampoline(vkDestroySwapchainKHR));
         QueuePresentKHRHook_.Wrap    (ResolveFunctionTrampoline(nextPresent));
+        CreateImageViewHook_.Wrap(ResolveFunctionTrampoline(vkCreateImageView));
+        CmdBeginRenderPassHook_.Wrap(ResolveFunctionTrampoline(vkCmdBeginRenderPass));
+
 
         // our PreHook was already registered in EnableHooks()
         DetourTransactionCommit();
@@ -1165,17 +1875,15 @@ void tagUIWithSlSetTag(SwapchainImageInfo& image)
     
     sl::ResourceTag uiTag;
     uiTag.resource = &uiResource;
-    uiTag.type = sl::kBufferTypeHUDLessColor;  // Changed to HUD-less for DLSS-G UI handling
+    // For DLSS-G UI composition we must tag the buffer containing UI with color+alpha
+    uiTag.type = sl::kBufferTypeUIColorAndAlpha;
     uiTag.lifecycle = sl::ResourceLifecycle::eOnlyValidNow;  // Copy now, as buffer will be modified by ImGui render
     uiTag.extent = uiExtent;
-    sl::ViewportHandle vp = 0;  // DLSS-G requires viewport 0 (docs specify no multi-viewport support)
+    // Use DLSS-G viewport (defaults to 0 when not set)
+    sl::ViewportHandle vp = dlssgViewport_;
     sl::Result result = slSetTag_(vp, &uiTag, 1, reinterpret_cast<sl::CommandBuffer*>(image.commandBuffer));
 
-    sl::ViewportHandle vp1 = dlssgViewport_;  // DLSS-G requires viewport 0 (docs specify no multi-viewport support)
-    sl::Result result1 = slSetTag_(vp, &uiTag, 1, reinterpret_cast<sl::CommandBuffer*>(image.commandBuffer));
-
     ERR("[UI TAG] vp=%d slSetTag result: %s", vp, sl::getResultAsStr(result));
-    ERR("[UI TAG] vp=%d slSetTag result: %s", vp, sl::getResultAsStr(result1));
 }
 
 void tagUIColorBuffer(SwapchainImageInfo& image)
@@ -1186,150 +1894,137 @@ void tagUIColorBuffer(SwapchainImageInfo& image)
         return;
     }
 }
+// ─────────────────────────────────────────────────────────────────────────────
+// VulkanBackend::presentPreHook – FG-friendly overlay (no tagging)
+//   1.  Draw ImGui first
+//   2.  Run a 2nd slEvaluateFeature so DLSS-FG re-feeds with the UI
+//   3.  Transition backbuffer to PRESENT_SRC_KHR
+// Works on Streamline ≥2.7 (no DLSSGInputs structure required)
+// ─────────────────────────────────────────────────────────────────────────────
 void presentPreHook(VkPresentInfoKHR* pPresentInfo)
 {
-    //ERR("presentPreHook: Called for viewport %d, swapchainCount=%d", drawViewport_, pPresentInfo->swapchainCount);
-
-    if (pPresentInfo->swapchainCount > 0) {
-        //ERR("presentPreHook: pSwapchains[0]=%p, our swapChain_=%p",
-        //    pPresentInfo->pSwapchains[0], swapChain_);
-    }
+    // ── quick outs ───────────────────────────────────────────────────────
+    if (!initialized_                         ||
+        drawViewport_   < 0                   ||
+        pPresentInfo->swapchainCount == 0     ||
+        swapchain_.images_.empty())
+        return;
 
     auto& vp = viewports_[drawViewport_].Viewport;
+    if (!vp.DrawDataP.Valid || vp.DrawDataP.CmdListsCount == 0)
+        return;                       // nothing to draw this frame
 
-    //ERR("presentPreHook: DrawData valid=%d, CmdListsCount=%d", vp.DrawDataP.Valid, vp.DrawDataP.CmdListsCount);
+    uint32_t imgIndex = pPresentInfo->pImageIndices[0];
+    if (imgIndex >= swapchain_.images_.size())
+        return;                       // out-of-range index
 
-    if (!vp.DrawDataP.Valid || vp.DrawDataP.CmdListsCount == 0) {
-        //ERR("presentPreHook: DrawData valid=%d, CmdListsCount=%d", vp.DrawDataP.Valid, vp.DrawDataP.CmdListsCount);
-        return;
-    }
+    auto& scImg = swapchain_.images_[imgIndex];
 
-    //ERR("presentPreHook: DLSS-FG active: %s", isDlssgActive() ? "YES" : "NO");
+    // ── recycle one-shot command buffer ──────────────────────────────────
+    VK_CHECK(vkWaitForFences(device_, 1, &scImg.fence, VK_TRUE, UINT64_MAX));
+    VK_CHECK(vkResetFences(device_, 1, &scImg.fence));
+    VK_CHECK(vkResetCommandBuffer(scImg.commandBuffer, 0));
 
-    if (!swapchain_.images_.size()) {
-        //ERR("presentPreHook: No swapchain images available!");
-        return;
-    }
+    VkCommandBufferBeginInfo begin{ VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO };
+    begin.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+    VK_CHECK(vkBeginCommandBuffer(scImg.commandBuffer, &begin));
 
-    uint32_t imageIdx = pPresentInfo->pImageIndices[0];
-    if (imageIdx >= swapchain_.images_.size()) {
-        //ERR("presentPreHook: Invalid image index %d (max %d)", imageIdx, (uint32_t)swapchain_.images_.size());
-        return;
-    }
+    // ── PRESENT_SRC → COLOR_ATTACHMENT for overlay pass ──────────────────
+    VkImageMemoryBarrier toColor{ VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER };
+    toColor.oldLayout     = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+    toColor.newLayout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    toColor.srcAccessMask = VK_ACCESS_ALL_READ_BITS;
+    toColor.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+    toColor.image         = scImg.image;
+    toColor.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
 
-    auto& image = swapchain_.images_[imageIdx];
-
-    // wait for this command buffer to be free
-    VK_CHECK(vkWaitForFences(device_, 1, &image.fence, VK_TRUE, UINT64_MAX));
-    VK_CHECK(vkResetFences(device_, 1, &image.fence));
-    VK_CHECK(vkResetCommandBuffer(image.commandBuffer, 0));
-
-    VkCommandBufferBeginInfo beginInfo{ VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO };
-    beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-    VK_CHECK(vkBeginCommandBuffer(image.commandBuffer, &beginInfo));
-
-    VkImageMemoryBarrier bbBarrier = {
-        VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-        nullptr,
+    vkCmdPipelineBarrier(
+        scImg.commandBuffer,
+        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
         0,
-        0,
-        VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-        VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-        queueFamily_,
-        queueFamily_,
-        image.image,
-        { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 }
-    };
-    bbBarrier.srcAccessMask = VK_ACCESS_ALL_READ_BITS;
-    bbBarrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        0, nullptr,
+        0, nullptr,
+        1, &toColor);
 
-    vkCmdPipelineBarrier(image.commandBuffer,
-                         VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-                         VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-                         0, 0, nullptr, 0, nullptr, 1, &bbBarrier);
+    // ── draw ImGui ───────────────────────────────────────────────────────
+    VkRenderPassBeginInfo rp{ VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO };
+    rp.renderPass  = swapchain_.renderPass_;
+    rp.framebuffer = scImg.framebuffer;
+    rp.renderArea  = { {0,0}, { swapchain_.width_, swapchain_.height_ } };
+    VkClearValue cv{}; rp.clearValueCount = 1; rp.pClearValues = &cv;
 
-    //------------------------------------------------------------------
-    // **FIXED SECTION** — get frame token correctly
-    //------------------------------------------------------------------
-    sl::FrameToken* frameToken = nullptr;
-    if (isDlssgActive() && slGetNewFrameToken_ && slSetConstants_) {
-        // PASS THE POINTER BY REFERENCE (no extra &)
-        sl::Result tokenRes = slGetNewFrameToken_(frameToken, nullptr);
-        ERR("[FG] slGetNewFrameToken: %s", sl::getResultAsStr(tokenRes));
+    vkCmdBeginRenderPass(scImg.commandBuffer, &rp, VK_SUBPASS_CONTENTS_INLINE);
+    ImGui_ImplVulkan_RenderDrawData(&vp.DrawDataP, scImg.commandBuffer);
+    vkCmdEndRenderPass(scImg.commandBuffer);
+    // Tag UI buffer for DLSS-G after overlay render, before transitioning to PRESENT
+    tagUIColorBuffer(scImg);
 
-        if (tokenRes == sl::Result::eOk && frameToken) {
-            sl::Constants consts{};
-            consts.reset = sl::Boolean::eFalse;
-            sl::Result constsRes = slSetConstants_(consts, *frameToken, dlssgViewport_);
-            ERR("[FG] slSetConstants: %s", sl::getResultAsStr(constsRes));
+    // ── obtain Streamline frame-token & refresh constants ────────────────
+    sl::FrameToken* token = nullptr;
+    if (isDlssgActive() && slGetNewFrameToken_ && slSetConstants_)
+    {
+        if (slGetNewFrameToken_(token, nullptr) == sl::Result::eOk && token)
+        {
+            sl::Constants c{};                // no reset, no flags
+            slSetConstants_(c, *token, dlssgViewport_);
         }
     }
-    //------------------------------------------------------------------
 
-    VkSubmitInfo submitInfo{ VK_STRUCTURE_TYPE_SUBMIT_INFO };
-    VkPipelineStageFlags waitStages[3] = {
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT
-    };
-
-    submitInfo.pWaitDstStageMask = waitStages;
-    submitInfo.pWaitSemaphores   = pPresentInfo->pWaitSemaphores;
-    submitInfo.waitSemaphoreCount = pPresentInfo->waitSemaphoreCount;
-    submitInfo.pSignalSemaphores  = &image.uiDoneSemaphore;
-    submitInfo.signalSemaphoreCount = 1;
-
-    VkClearValue clearval{};
-    VkRenderPassBeginInfo rpbegin = {
-        VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-        nullptr,
-        swapchain_.renderPass_,
-        image.framebuffer,
-        { { 0, 0 }, { swapchain_.width_, swapchain_.height_ } },
-        1,
-        &clearval
-    };
-    vkCmdBeginRenderPass(image.commandBuffer, &rpbegin, VK_SUBPASS_CONTENTS_INLINE);
-    ImGui_ImplVulkan_RenderDrawData(&vp.DrawDataP, image.commandBuffer);
-    vkCmdEndRenderPass(image.commandBuffer);
-
-    // Evaluate DLSS-FG after UI draw so HUD is included
-    if (isDlssgActive() && slEvaluateFeature_ && frameToken) {
-        const sl::BaseStructure* inputs = nullptr;
-        uint32_t numInputs = 0;
-        sl::Result evalRes = slEvaluateFeature_(sl::kFeatureDLSS_G,
-                                                *frameToken,
-                                                &inputs,
-                                                numInputs,
-                                                reinterpret_cast<sl::CommandBuffer*>(image.commandBuffer));
-        ERR("[FG] slEvaluateFeature for DLSS-G: %s", sl::getResultAsStr(evalRes));
+    // ── CONDITIONAL slEvaluateFeature – only if we suppressed earlier or none forwarded ──
+    if (isDlssgActive() && slEvaluateFeature_ && token && menuVisible_)
+    {
+        bool shouldDoOurEval = suppressedGameEvalThisFrame_ || !evalForwardedThisFrame_;
+        if (shouldDoOurEval)
+        {
+            makingOwnDLSSGCall_ = true;
+            /*
+            sl::Result r = slEvaluateFeature_(sl::kFeatureDLSS_G,
+                                              *token,
+                                              nullptr,
+                                              0,
+                                              reinterpret_cast<sl::CommandBuffer*>(scImg.commandBuffer));
+            makingOwnDLSSGCall_ = false;
+            ERR("[FG] Our slEvaluateFeature (menu open): %s", sl::getResultAsStr(r));
+            */
+        }
     }
 
-    VkImageMemoryBarrier bbBarrier2 = bbBarrier;
-    bbBarrier2.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-    bbBarrier2.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-    bbBarrier2.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-    bbBarrier2.dstAccessMask = VK_ACCESS_ALL_READ_BITS;
+    // ── COLOR_ATTACHMENT → PRESENT_SRC so WSI can display image ──────────
+    VkImageMemoryBarrier toPresent = toColor;
+    toPresent.oldLayout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    toPresent.newLayout     = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+    toPresent.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+    toPresent.dstAccessMask = VK_ACCESS_ALL_READ_BITS;
 
-    vkCmdPipelineBarrier(image.commandBuffer,
-                         VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-                         VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-                         0, 0, nullptr, 0, nullptr, 1, &bbBarrier2);
+    vkCmdPipelineBarrier(scImg.commandBuffer,
+        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+        0, 0, nullptr, 0, nullptr, 1, &toPresent);
 
-    VK_CHECK(vkEndCommandBuffer(image.commandBuffer));
+    VK_CHECK(vkEndCommandBuffer(scImg.commandBuffer));
 
-    submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers    = &image.commandBuffer;
-    VK_CHECK(vkQueueSubmit(renderQueue_, 1, &submitInfo, image.fence));
+    // ── submit & chain our semaphore into the present-wait list ──────────
+    VkPipelineStageFlags waitStages[8] = {};
+    VkSubmitInfo submit{ VK_STRUCTURE_TYPE_SUBMIT_INFO };
+    submit.waitSemaphoreCount   = pPresentInfo->waitSemaphoreCount;
+    submit.pWaitSemaphores      = pPresentInfo->pWaitSemaphores;
+    submit.pWaitDstStageMask    = waitStages;
+    submit.commandBufferCount   = 1;
+    submit.pCommandBuffers      = &scImg.commandBuffer;
+    submit.signalSemaphoreCount = 1;
+    submit.pSignalSemaphores    = &scImg.uiDoneSemaphore;
 
-    // Append our semaphore to the present-wait list
-    static thread_local VkSemaphore semBuffer[8];
+    VK_CHECK(vkQueueSubmit(renderQueue_, 1, &submit, scImg.fence));
+
+    static thread_local VkSemaphore semBuf[8];
     uint32_t orig = pPresentInfo->waitSemaphoreCount;
-    std::memcpy(semBuffer, pPresentInfo->pWaitSemaphores, orig * sizeof(VkSemaphore));
-    semBuffer[orig] = image.uiDoneSemaphore;
-    pPresentInfo->pWaitSemaphores  = semBuffer;
+    std::memcpy(semBuf, pPresentInfo->pWaitSemaphores, orig * sizeof(VkSemaphore));
+    semBuf[orig] = scImg.uiDoneSemaphore;
+
+    pPresentInfo->pWaitSemaphores    = semBuf;
     pPresentInfo->waitSemaphoreCount = orig + 1;
 }
+
 
     static void DumpDLSSGState(const sl::DLSSGState& s)
     {
@@ -1393,6 +2088,9 @@ void presentPreHook(VkPresentInfoKHR* pPresentInfo)
                 //    initialized_ ? 1 : 0, drawViewport_);
         }
 
+        // New frame begins after this present; reset per-frame eval tracking
+        evalForwardedThisFrame_ = false;
+        suppressedGameEvalThisFrame_ = false;
         frameNo_++;
     }
 
@@ -1426,6 +2124,13 @@ void presentPreHook(VkPresentInfoKHR* pPresentInfo)
     VkCreateSwapchainKHRHookType CreateSwapchainKHRHook_;
     VkDestroySwapchainKHRHookType DestroySwapchainKHRHook_;
     VkQueuePresentKHRHookType QueuePresentKHRHook_;
+    VkCreateImageViewHookType CreateImageViewHook_;
+    VkCmdBeginRenderPassHookType CmdBeginRenderPassHook_;
+    SlEvaluateFeatureHookType slEvaluateFeatureHook_;
+    NgxEvaluateFeatureCHookType ngxEvaluateFeatureHook_;
+    NgxCreateFeatureHookType    ngxCreateFeatureHook_;
+    NgxCreateFeature1HookType   ngxCreateFeature1Hook_;
+    NgxReleaseFeatureHookType   ngxReleaseFeatureHook_;
 
     SwapchainInfo swapchain_;
     uint32_t textures_{ 0 };
@@ -1439,6 +2144,7 @@ void presentPreHook(VkPresentInfoKHR* pPresentInfo)
     HMODULE slImGui_{ nullptr };
     bool                  fgPaused_          { true };   // our FG state
     bool                  menuVisible_       { true };   // set each frame1
+    bool                  slEvalHookInstalled_ { false }; // track if slEvaluateFeature hook is installed
     //auto slInit{nullptr};
     //auto slShutdown{nullptr};
     PFun_slGetFeatureFunction* slGetFeatureFunction_{ nullptr };
@@ -1458,10 +2164,91 @@ void presentPreHook(VkPresentInfoKHR* pPresentInfo)
 
     
     // Store the original game's present function
-    //PFN_vkQueuePresentKHR originalGamePresentFunction_{ nullptr };
-    
+    PFN_vkQueuePresentKHR originalGamePresentFunction_{ nullptr };
+
     // Helper functions to route Vulkan calls through DLSS-FG when active
     inline bool isDlssgActive() const { return dlssgPresentFunction_ != nullptr; }
+
+    // Per-frame state: which caller actually forwarded evaluate
+    std::atomic<bool> evalForwardedThisFrame_{ false };
+    std::atomic<bool> suppressedGameEvalThisFrame_{ false };
+
+    // Track NGX handles corresponding to DLSS Super Resolution features
+    std::unordered_set<const NVSDK_NGX_Handle*> dlssSRHandles_;
+
+    // Cached function pointer for NVSDK_NGX_Parameter_GetVoidPointer loaded at runtime
+    PFN_NVSDK_NGX_Parameter_GetVoidPointer pNgxParamGetVoidPointer_{ nullptr };
+
+    // Inject ImGui rendering into game's command buffer
+    bool injectImGuiIntoCommandBuffer(VkCommandBuffer gameCmd) {
+        if (!initialized_ || drawViewport_ < 0 || !gameCmd) {
+            return false;
+        }
+
+        auto& vp = viewports_[drawViewport_].Viewport;
+        if (!vp.DrawDataP.Valid || vp.DrawDataP.CmdListsCount == 0) {
+            return false; // Nothing to draw
+        }
+
+        try {
+            ERR("[IMGUI-INJECT] Injecting ImGui into game cmd buffer %p", gameCmd);
+            
+            // We can't safely transition images or set up render passes in the game's command buffer
+            // since we don't know the current state. Instead, just render ImGui commands directly
+            // This assumes the game's command buffer is already in a compatible render pass
+            ImGui_ImplVulkan_RenderDrawData(&vp.DrawDataP, gameCmd);
+            
+            ERR("[IMGUI-INJECT] ✓ ImGui commands recorded successfully");
+            return true;
+            
+        } catch (...) {
+            ERR("[IMGUI-INJECT] ✗ Exception during ImGui injection");
+            return false;
+        }
+    }
+
+    // Deferred hook installation for slEvaluateFeature (after Streamline initializes)
+    void tryInstallSlEvaluateFeatureHook() {
+        if (slEvalHookInstalled_ || !slGetFeatureFunction_ || slEvaluateFeatureHook_.IsWrapped()) {
+            return; // Already installed or not ready
+        }
+
+        void* funcPtr = nullptr;
+        sl::Result evalResult = slGetFeatureFunction_(sl::kFeatureCommon, "slEvaluateFeature", funcPtr);
+        if (evalResult == sl::Result::eOk && funcPtr) {
+            slEvaluateFeature_ = reinterpret_cast<PFun_slEvaluateFeature*>(funcPtr);
+            
+            // Try to get export from the module we found earlier
+            void* exportEval = nullptr;
+            if (sl_) {
+                exportEval = reinterpret_cast<void*>(GetProcAddress(sl_, "slEvaluateFeature"));
+            }
+            ERR("[STREAMLINE-DEFERRED] ✓ Got slEvaluateFeature via GetFeature=%p, export=%p", slEvaluateFeature_, exportEval);
+
+            // Choose the most robust hook target: prefer exported symbol if available
+            PFun_slEvaluateFeature* hookTarget = exportEval
+                ? reinterpret_cast<PFun_slEvaluateFeature*>(exportEval)
+                : slEvaluateFeature_;
+
+            // Install hook to control per-frame evaluate policy
+            ERR("[STREAMLINE-DEFERRED] Installing slEvaluateFeature hook @ %p (target=%p)", slEvaluateFeature_, hookTarget);
+            DetourTransactionBegin();
+            DetourUpdateThread(GetCurrentThread());
+            slEvaluateFeatureHook_.Wrap(ResolveFunctionTrampoline(hookTarget));
+            DetourTransactionCommit();
+            slEvaluateFeatureHook_.SetWrapper(&VulkanBackend::slEvaluateFeatureHook, this);
+            ERR("[STREAMLINE-DEFERRED] ✓ slEvaluateFeature hook installed successfully");
+            slEvalHookInstalled_ = true;
+        } else {
+            // Don't spam logs - only log occasionally
+            static int retryCount = 0;
+            if (++retryCount % 120 == 1) { // Log every ~2 seconds at 60fps
+                ERR("[STREAMLINE-DEFERRED] Still waiting for Streamline init (retry %d): %s", retryCount, sl::getResultAsStr(evalResult));
+            }
+        }
+    }
+
+    
 };
 
 END_NS()

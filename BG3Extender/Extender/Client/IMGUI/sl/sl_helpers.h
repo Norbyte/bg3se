@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2022-2023 NVIDIA CORPORATION. All rights reserved
+* Copyright (c) 2022-2025 NVIDIA CORPORATION. All rights reserved
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,28 @@
 #include "sl_pcl.h"
 #include "sl_dlss.h"
 #include "sl_nis.h"
+#include "sl_dlss_d.h"
 #include "sl_dlss_g.h"
+
+#if defined(__clang__)
+    #define SL_DISABLE_DEPRECATED_WARNINGS \
+        _Pragma("clang diagnostic push") \
+        _Pragma("clang diagnostic ignored \"-Wdeprecated-declarations\"")
+    #define SL_RESTORE_DEPRECATED_WARNINGS \
+        _Pragma("clang diagnostic pop")
+
+#elif defined(_MSC_VER)
+    #define SL_DISABLE_DEPRECATED_WARNINGS \
+        __pragma(warning(push)) \
+        __pragma(warning(disable: 4996))
+    #define SL_RESTORE_DEPRECATED_WARNINGS \
+        __pragma(warning(pop))
+
+#else
+    #define SL_DISABLE_DEPRECATED_WARNINGS
+    #define SL_RESTORE_DEPRECATED_WARNINGS
+#endif
+
 
 namespace sl
 {
@@ -112,6 +133,7 @@ inline const char* getNISModeAsStr(NISMode v)
         SL_CASE_STR(NISMode::eOff);
         SL_CASE_STR(NISMode::eScaler);
         SL_CASE_STR(NISMode::eSharpen);
+        case NISMode::eCount: break;
     };
     return "Unknown";
 }
@@ -123,6 +145,7 @@ inline const char* getNISHDRAsStr(NISHDR v)
         SL_CASE_STR(NISHDR::eNone);
         SL_CASE_STR(NISHDR::eLinear);
         SL_CASE_STR(NISHDR::ePQ);
+        case NISHDR::eCount: break;
     };
     return "Unknown";
 }
@@ -134,6 +157,7 @@ inline const char* getReflexModeAsStr(ReflexMode mode)
         SL_CASE_STR(ReflexMode::eOff);
         SL_CASE_STR(ReflexMode::eLowLatency);
         SL_CASE_STR(ReflexMode::eLowLatencyWithBoost);
+        case ReflexMode::ReflexMode_eCount: break;
     };
     return "Unknown";
 }
@@ -154,6 +178,14 @@ inline const char* getPCLMarkerAsStr(PCLMarker marker)
         SL_CASE_STR(PCLMarker::eOutOfBandRenderSubmitEnd);
         SL_CASE_STR(PCLMarker::eOutOfBandPresentStart);
         SL_CASE_STR(PCLMarker::eOutOfBandPresentEnd);
+        SL_CASE_STR(PCLMarker::eControllerInputSample);
+        SL_CASE_STR(PCLMarker::eDeltaTCalculation);
+        SL_CASE_STR(PCLMarker::eLateWarpPresentStart);
+        SL_CASE_STR(PCLMarker::eLateWarpPresentEnd);
+        SL_CASE_STR(PCLMarker::eCameraConstructed);
+        SL_CASE_STR(PCLMarker::eLateWarpRenderSubmitStart);
+        SL_CASE_STR(PCLMarker::eLateWarpRenderSubmitEnd);
+        case PCLMarker::eMaximum: break;
     };
     return "Unknown";
 }
@@ -169,6 +201,7 @@ inline const char* getDLSSModeAsStr(DLSSMode mode)
         SL_CASE_STR(DLSSMode::eMaxQuality);
         SL_CASE_STR(DLSSMode::eUltraPerformance);
         SL_CASE_STR(DLSSMode::eUltraQuality);
+        case DLSSMode::eCount: break;
     };
     return "Unknown";
 }
@@ -180,6 +213,7 @@ inline const char* getDLSSGModeAsStr(DLSSGMode mode)
         SL_CASE_STR(sl::DLSSGMode::eOff);
         SL_CASE_STR(sl::DLSSGMode::eOn);
         SL_CASE_STR(sl::DLSSGMode::eAuto);
+        case DLSSGMode::eCount: break;
     };
     return "Unknown";
 }
@@ -277,9 +311,7 @@ inline const char* getFeatureAsStr(Feature f)
         SL_CASE_STR(kFeatureDirectSR);
         SL_CASE_STR(kFeatureLatewarp);
         // Removed features
-        case kFeatureNRD_INVALID: SL_FALLTHROUGH
-        default:
-            break;
+        case kFeatureNRD_INVALID: break;
     }
     return "Unknown";
 }
@@ -302,9 +334,9 @@ inline const char* getFeatureFilenameAsStrNoSL(Feature f)
         case kFeatureDLSS_RR: return "dlss_d";
         case kFeatureDirectSR: return "directsr";
         case kFeatureLatewarp: return "latewarp";
-        case kFeatureNRD_INVALID: SL_FALLTHROUGH
-        default: return "Unknown";
+        case kFeatureNRD_INVALID: break;
     }
+    return "Unknown";
 }
 
 inline const char* getLogLevelAsStr(LogLevel v)
@@ -314,6 +346,7 @@ inline const char* getLogLevelAsStr(LogLevel v)
         SL_CASE_STR(LogLevel::eOff);
         SL_CASE_STR(LogLevel::eDefault);
         SL_CASE_STR(LogLevel::eVerbose);
+        case LogLevel::eCount: break;
     };
     return "Unknown";
 }
@@ -330,6 +363,8 @@ inline const char* getResourceTypeAsStr(ResourceType v)
         SL_CASE_STR(ResourceType::eFence);
         SL_CASE_STR(ResourceType::eSwapchain);
         SL_CASE_STR(ResourceType::eHostFence);
+        case ResourceType::eUnknown: break;
+        case ResourceType::eCount: break;
     };
     return "Unknown";
 }
@@ -344,6 +379,33 @@ inline const char* getResourceLifecycleAsStr(ResourceLifecycle v)
     };
     return "Unknown";
 }
+
+SL_DISABLE_DEPRECATED_WARNINGS
+inline DLSSPreset resolveDLSSPreset(DLSSPreset preset)
+{
+    switch (preset)
+    {
+        case DLSSPreset::ePresetA:
+        case DLSSPreset::ePresetB:
+        case DLSSPreset::ePresetC:
+        case DLSSPreset::ePresetD:
+        case DLSSPreset::ePresetE:
+        case DLSSPreset::ePresetF:
+        case DLSSPreset::ePresetJ:
+        case DLSSPreset::ePresetK:
+            return preset;
+        default:
+            return DLSSPreset::eDefault;
+    }
+}
+SL_RESTORE_DEPRECATED_WARNINGS
+
+inline DLSSDPreset resolveDLSSDPreset(DLSSDPreset preset)
+{
+    return static_cast<DLSSDPreset>(resolveDLSSPreset(static_cast<DLSSPreset>(preset)));
+}
+
+
 
 // Advanced/internal functions that are not useful or necessary in the vast majority of integrations
 // and would just pollute the namespace and/or cause distractions.

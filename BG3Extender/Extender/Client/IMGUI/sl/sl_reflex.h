@@ -49,12 +49,13 @@ SL_STRUCT_BEGIN(ReflexOptions, StructType({ 0xf03af81a, 0x6d0b, 0x4902, { 0xa6, 
     //! It is overridden (ignored) by frameLimitUs if set in sl.reflex.json in non-production builds.
     uint32_t frameLimitUs = 0;
     //! This should only be enabled in specific scenarios with subtle caveats.
-    //! Most integrations should leave it unset unless advised otherwise by the Reflex team
+    //! Most integrations should leave unset unless advised otherwise by the Reflex team
     bool useMarkersToOptimize = false;
     //! Specifies the hot-key which should be used instead of custom message for PC latency marker
     //! Possible values: VK_F13, VK_F14, VK_F15
     uint16_t virtualKey = 0;
     //! ThreadID for PCL Stats messages
+    //! Most integrations should leave unset unless advised otherwise by the Reflex team
     uint32_t idThread = 0;
 
     //! IMPORTANT: New members go here or if optional can be chained in a new struct, see sl_struct.h for details

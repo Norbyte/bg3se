@@ -41,5 +41,10 @@ Copy-Item -Path "${WorkspaceFolder}\x64\Game Release\BG3ScriptExtender.dll" -Des
 if ($LASTEXITCODE -ne 0) { Write-Error "Copying DLL FAILED!"; exit 1 }
 Write-Host "DLL successfully copied to '$DestinationDll2'!" -ForegroundColor Green
 
-
-Write-Host "Build and deploy process completed successfully." -ForegroundColor Green
+# Compose success message with Eastern Time
+$etTz = [System.TimeZoneInfo]::FindSystemTimeZoneById("Eastern Standard Time")
+$nowLocal = Get-Date
+$nowEt = [System.TimeZoneInfo]::ConvertTime($nowLocal, $etTz)
+$etAbbrev = if ($etTz.SupportsDaylightSavingTime -and $etTz.IsDaylightSavingTime($nowEt)) { "EDT" } else { "EST" }
+$etStamp = $nowEt.ToString("yyyy-MM-dd HH:mm:ss")
+Write-Host ("Build and deploy process completed successfully. (ET: {0} {1})" -f $etStamp, $etAbbrev) -ForegroundColor Green

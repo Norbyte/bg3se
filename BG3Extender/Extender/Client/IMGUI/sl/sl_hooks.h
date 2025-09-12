@@ -92,6 +92,7 @@ inline const char* getFunctionHookIDAsStr(FunctionHookID v)
         SL_CASE_STR(FunctionHookID::eIDXGISwapChain_Present);
         SL_CASE_STR(FunctionHookID::eIDXGISwapChain_Present1);
         SL_CASE_STR(FunctionHookID::eIDXGISwapChain_GetBuffer);
+        SL_CASE_STR(FunctionHookID::eIDXGISwapChain_GetDesc);
         SL_CASE_STR(FunctionHookID::eIDXGISwapChain_ResizeBuffers);
         SL_CASE_STR(FunctionHookID::eIDXGISwapChain_ResizeBuffers1);
         SL_CASE_STR(FunctionHookID::eIDXGISwapChain_GetCurrentBackBufferIndex);
@@ -106,6 +107,7 @@ inline const char* getFunctionHookIDAsStr(FunctionHookID v)
         SL_CASE_STR(FunctionHookID::eVulkan_DeviceWaitIdle);
         SL_CASE_STR(FunctionHookID::eVulkan_CreateWin32SurfaceKHR);
         SL_CASE_STR(FunctionHookID::eVulkan_DestroySurfaceKHR);
+        case FunctionHookID::eMaxNum: break;
     };
     return "Unknown";
 }

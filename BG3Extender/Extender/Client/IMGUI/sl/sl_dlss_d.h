@@ -24,6 +24,12 @@
 
 #include "sl_dlss.h"
 
+#if __cplusplus >= 201402L
+#define RR_DEPRECATED_PRESET [[deprecated("Presets A-C are deprecated. Use defaults or preset D or E")]]
+#else
+#define RR_DEPRECATED_PRESET
+#endif
+
 namespace sl
 {
 
@@ -31,9 +37,9 @@ enum class DLSSDPreset : uint32_t
 {
     //! Default behavior, may or may not change after an OTA
     eDefault,
-    ePresetA,   // Deprecated
-    ePresetB,   // Deprecated
-    ePresetC,   // Deprecated
+    ePresetA    RR_DEPRECATED_PRESET,   // Deprecated, use preset D or E
+    ePresetB    RR_DEPRECATED_PRESET,   // Deprecated, use preset D or E
+    ePresetC    RR_DEPRECATED_PRESET,   // Deprecated, use preset D or E
     ePresetD,   // Default model (transformer)
     ePresetE,   // Latest transformer model (must use if DoF guide is needed)
     ePresetF,   // Reverts to default
