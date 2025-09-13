@@ -489,8 +489,6 @@ public:
         };
         // init_info.RenderPass = presentRenderPass_;
         init_info.RenderPass = swapchain_.renderPass_;
-        init_info.UseDynamicRendering = true;
-        init_info.ColorAttachmentFormat = swapchain_format; // e.g. your swapchain_.format
         ImGui_ImplVulkan_Init(&init_info);
         ImGui_ImplVulkan_CreateFontsTexture();
 
@@ -735,126 +733,78 @@ public:
         return false;
     }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// NVSDK_NGX_VULKAN_EvaluateFeature_C hook
-//  - Always forward to NGX first
-//  - If this is DLSS-SR and the menu is visible, composite ImGui into the
-//    NGX output using a pipeline compatible with *that* target.
-//  - Prefer VK_KHR_dynamic_rendering to avoid RenderPass-mismatch issues.
-// ─────────────────────────────────────────────────────────────────────────────
-NVSDK_NGX_Result ngxEvaluateFeatureCHook(
-    NgxEvaluateFeatureCHookType::BaseFuncType* orig,
-    VkCommandBuffer                 InCmdList,
-    const NVSDK_NGX_Handle*         InFeatureHandle,
-    const NVSDK_NGX_Parameter*      InParameters,
-    PFN_NVSDK_NGX_ProgressCallback_C InCallback)
-{
-    ERR("[NGX-HOOK] NVSDK_NGX_VULKAN_EvaluateFeature_C: cmd=%p, feature=%p, params=%p, cb=%p, menu=%d, ourDLSSG=%d",
-        InCmdList, InFeatureHandle, InParameters, (void*)InCallback,
-        menuVisible_ ? 1 : 0,
-        makingOwnDLSSGCall_ ? 1 : 0);
-
-    // 0) Let NGX do its work first so resources are in their expected state
-    NVSDK_NGX_Result evalRes = orig(InCmdList, InFeatureHandle, InParameters, InCallback);
-    if (evalRes != NVSDK_NGX_Result_Success || !initialized_ || !menuVisible_ || !InCmdList || !InParameters)
-        return evalRes;
-
-    // 1) Make sure this evaluate belongs to DLSS-SR
-    bool isDlssSR = false;
+    // Hook wrapper for NVSDK_NGX_VULKAN_EvaluateFeature_C: just log and forward
+    NVSDK_NGX_Result ngxEvaluateFeatureCHook(
+        NgxEvaluateFeatureCHookType::BaseFuncType* orig,
+        VkCommandBuffer InCmdList,
+        const NVSDK_NGX_Handle* InFeatureHandle,
+        const NVSDK_NGX_Parameter* InParameters,
+        PFN_NVSDK_NGX_ProgressCallback_C InCallback)
     {
-        std::lock_guard _(globalResourceLock_);
-        isDlssSR = (InFeatureHandle && dlssSRHandles_.find(InFeatureHandle) != dlssSRHandles_.end());
-    }
-    if (!isDlssSR) {
-        // Late-created CreateFeature hooks? Try to capture on the fly:
-        if (!tryCaptureDlssSRHandleFromEvaluate(InFeatureHandle, InParameters))
+        ERR("[NGX-HOOK] NVSDK_NGX_VULKAN_EvaluateFeature_C: cmd=%p, feature=%p, params=%p, cb=%p, menu=%d, ourDLSSG=%d",
+            InCmdList, InFeatureHandle, InParameters, (void*)InCallback,
+            menuVisible_ ? 1 : 0,
+            makingOwnDLSSGCall_ ? 1 : 0);
+
+        // Always call the original first so NGX records its work and final resource states
+        NVSDK_NGX_Result evalRes = orig(InCmdList, InFeatureHandle, InParameters, InCallback);
+
+        // Only attempt UI injection if we are initialized and menu is visible
+        if (!initialized_ || !menuVisible_ || evalRes != NVSDK_NGX_Result_Success || !InCmdList || !InParameters)
             return evalRes;
-    }
 
-    // 2) Pull NGX output as a Vulkan view/image/format/extent
-    void* outPtr = nullptr;
-    NVSDK_NGX_Result getRes = InParameters->Get(NVSDK_NGX_Parameter_Output, &outPtr);
-    if (getRes != NVSDK_NGX_Result_Success || !outPtr)
-        return evalRes;
+        // Only inject for DLSS Super Resolution evaluate calls (match by feature handle captured at CreateFeature)
+        bool isDlssSR = false;
+        {
+            std::lock_guard _(globalResourceLock_);
+            isDlssSR = (InFeatureHandle && dlssSRHandles_.find(InFeatureHandle) != dlssSRHandles_.end());
+            if (!isDlssSR) {
+                ERR("[NGX-HOOK] Not a tracked DLSS-SR handle: %p (set size=%zu)", InFeatureHandle, dlssSRHandles_.size());
+            } else {
+                ERR("[NGX-HOOK] Matched DLSS-SR handle: %p (set size=%zu)", InFeatureHandle, dlssSRHandles_.size());
+            }
+        }
+        //IGNORE FOR LOGIC
+        if (!isDlssSR) {
+            // Fallback: If CreateFeature hooks were installed after DLSS-SR was created,
+            // try to detect SR by inspecting parameters here and capture the handle.
+            if (tryCaptureDlssSRHandleFromEvaluate(InFeatureHandle, InParameters)) {
+                isDlssSR = true;
+            } else {
+                return evalRes;
+            }
+        }
+        //END IGNORE FOR LOGIC
 
-    auto* outResVK = reinterpret_cast<NVSDK_NGX_Resource_VK*>(outPtr);
-    if (!outResVK || outResVK->Type != NVSDK_NGX_RESOURCE_VK_TYPE_VK_IMAGEVIEW)
-        return evalRes;
+        // 1) Extract NGX output as a Vulkan image view (try C++ Get first, then C API GetVoidPointer; fallback to Color)
+        void* outPtr = nullptr;
+        const char* usedKey = nullptr;
+        const char* usedAPI = nullptr;
+        NVSDK_NGX_Result getRes = InParameters->Get(NVSDK_NGX_Parameter_Output, &outPtr);
+        if (getRes == NVSDK_NGX_Result_Success && outPtr) {
+            usedKey = NVSDK_NGX_Parameter_Output; usedAPI = "Get";
+        }
 
-    const NVSDK_NGX_ImageViewInfo_VK& iv = outResVK->Resource.ImageViewInfo;
-    VkImageView  targetView   = iv.ImageView;
-    VkImage      targetImage  = iv.Image;
-    VkFormat     targetFormat = iv.Format;
-    uint32_t     targetW      = iv.Width;
-    uint32_t     targetH      = iv.Height;
 
-    VkImageSubresourceRange range = iv.SubresourceRange;
-    if (range.aspectMask == 0)  range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-    if (range.levelCount == 0)  range.levelCount = 1;
-    if (range.layerCount == 0)  range.layerCount = 1;
+        auto* outResVK = reinterpret_cast<NVSDK_NGX_Resource_VK*>(outPtr);
 
-    if (targetView == VK_NULL_HANDLE || targetImage == VK_NULL_HANDLE || targetFormat == VK_FORMAT_UNDEFINED)
-    {
-        ERR("[NGX-HOOK] Invalid NGX output: view=%p image=%p fmt=%d", targetView, (void*)targetImage, (int)targetFormat);
-        return evalRes;
-    }
+        const NVSDK_NGX_ImageViewInfo_VK& iv = outResVK->Resource.ImageViewInfo;
+        VkImageView  targetView   = iv.ImageView;
+        VkImage      targetImage  = iv.Image;
+        VkFormat     targetFormat = iv.Format;
+        uint32_t     targetW      = iv.Width;
+        uint32_t     targetH      = iv.Height;
+        VkImageSubresourceRange range = iv.SubresourceRange;
+        if (range.aspectMask == 0)                     range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        if (range.levelCount == 0)                     range.levelCount = 1;
+        if (range.layerCount == 0)                     range.layerCount = 1;
 
-    // 3) Ensure ImGui draw-data uses the NGX output size (avoid scissor/viewport mismatch)
-    {
-        // We render the already-built UI into a different target; fix the target metrics.
-        auto& dd = viewports_[drawViewport_].Viewport.DrawDataP;
-        dd.DisplayPos   = ImVec2(0.0f, 0.0f);
-        dd.DisplaySize  = ImVec2((float)targetW, (float)targetH);
-        dd.FramebufferScale = ImVec2(1.0f, 1.0f);
-    }
+        if (targetView == VK_NULL_HANDLE || targetImage == VK_NULL_HANDLE || targetFormat == VK_FORMAT_UNDEFINED) {
+            ERR("[NGX-HOOK] Invalid NGX output: view=%p image=%p fmt=%d", targetView, (void*)targetImage, (int)targetFormat);
+            return evalRes;
+        }
 
-    // 4) Transition NGX output → COLOR_ATTACHMENT for overlay
-    VkImageMemoryBarrier toColor{ VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER };
-    toColor.srcAccessMask = VK_ACCESS_MEMORY_WRITE_BIT | VK_ACCESS_SHADER_WRITE_BIT |
-                            VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_TRANSFER_WRITE_BIT;
-    toColor.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-    toColor.oldLayout     = VK_IMAGE_LAYOUT_GENERAL;                  // NGX usually leaves it in GENERAL
-    toColor.newLayout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL; // needed for color writes
-    toColor.image         = targetImage;
-    toColor.subresourceRange = range;
-
-    vkCmdPipelineBarrier(
-        InCmdList,
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-        0, 0, nullptr, 0, nullptr, 1, &toColor);
-
-    // 5) Composite the UI into the NGX output
-    bool injectedOk = false;
-
-#ifdef VK_KHR_dynamic_rendering
-    // Prefer dynamic rendering when the device supports it AND ImGui was initialized with it.
-    // (ImGui 1.90.9 uses a different pipeline path when UseDynamicRendering=true.)
-    // If your init uses dynamic rendering, this block will run; otherwise we fall back below.
-    if (true /* UseDynamicRendering at init -> see comment below */)
-    {
-        VkRenderingAttachmentInfo colorAtt{ VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO };
-        colorAtt.imageView   = targetView;
-        colorAtt.imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-        colorAtt.loadOp      = VK_ATTACHMENT_LOAD_OP_LOAD;   // keep NGX result
-        colorAtt.storeOp     = VK_ATTACHMENT_STORE_OP_STORE;
-
-        VkRenderingInfo ri{ VK_STRUCTURE_TYPE_RENDERING_INFO };
-        ri.renderArea.offset = { 0, 0 };
-        ri.renderArea.extent = { targetW, targetH };
-        ri.layerCount        = 1;
-        ri.colorAttachmentCount = 1;
-        ri.pColorAttachments = &colorAtt;
-
-        vkCmdBeginRendering(InCmdList, &ri);
-        injectedOk = ImGui_ImplVulkan_RenderDrawData(&viewports_[drawViewport_].Viewport.DrawDataP, InCmdList);
-        vkCmdEndRendering(InCmdList);
-    }
-    else
-#endif
-    {
-        // Fallback: legacy render-pass path (if you didn't turn on dynamic rendering).
-        // Build (and cache) a render pass compatible with the NGX target format.
+        // 2) Get/create a compatible render pass for this format
         auto getOrCreateRenderPass = [&](VkFormat fmt) -> VkRenderPass {
             auto it = gFormatToRenderPass.find(fmt);
             if (it != gFormatToRenderPass.end()) return it->second;
@@ -866,16 +816,17 @@ NVSDK_NGX_Result ngxEvaluateFeatureCHook(
             attDesc.storeOp        = VK_ATTACHMENT_STORE_OP_STORE;
             attDesc.stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
             attDesc.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-            // Keep color-optimal throughout the pass; we did the explicit barrier above.
             attDesc.initialLayout  = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
             attDesc.finalLayout    = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-            VkAttachmentReference colorRef{ 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL };
+            VkAttachmentReference colorRef{};
+            colorRef.attachment = 0;
+            colorRef.layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
             VkSubpassDescription sub{};
-            sub.pipelineBindPoint    = VK_PIPELINE_BIND_POINT_GRAPHICS;
-            sub.colorAttachmentCount = 1;
-            sub.pColorAttachments    = &colorRef;
+            sub.pipelineBindPoint       = VK_PIPELINE_BIND_POINT_GRAPHICS;
+            sub.colorAttachmentCount    = 1;
+            sub.pColorAttachments       = &colorRef;
 
             VkRenderPassCreateInfo rpInfo{ VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO };
             rpInfo.attachmentCount = 1;
@@ -891,8 +842,12 @@ NVSDK_NGX_Result ngxEvaluateFeatureCHook(
         };
 
         VkRenderPass rp = getOrCreateRenderPass(targetFormat);
+        if (rp == VK_NULL_HANDLE) {
+            ERR("[NGX-HOOK] Failed to create/acquire render pass for fmt=%d", (int)targetFormat);
+            return evalRes;
+        }
 
-        // Create (and cache) a framebuffer for this exact view
+        // 3) Get/create framebuffer for this view
         VkFramebuffer fb = VK_NULL_HANDLE;
         auto itFB = gViewToFramebuffer.find(targetView);
         if (itFB != gViewToFramebuffer.end()) {
@@ -900,51 +855,72 @@ NVSDK_NGX_Result ngxEvaluateFeatureCHook(
         } else {
             VkImageView attachments[1] = { targetView };
             VkFramebufferCreateInfo fbInfo{ VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO };
-            fbInfo.renderPass   = rp;
+            fbInfo.renderPass = rp;
             fbInfo.attachmentCount = 1;
             fbInfo.pAttachments = attachments;
-            fbInfo.width        = targetW;
-            fbInfo.height       = targetH;
-            fbInfo.layers       = 1;
+            fbInfo.width  = targetW;
+            fbInfo.height = targetH;
+            fbInfo.layers = 1;
             VK_CHECK(vkCreateFramebuffer(device_, &fbInfo, nullptr, &fb));
             gViewToFramebuffer[targetView] = fb;
             ERR("[NGX-HOOK] Created framebuffer %p for view=%p (%ux%u)", fb, targetView, targetW, targetH);
         }
 
-        // Begin the pass, draw ImGui, end the pass
+        if (fb == VK_NULL_HANDLE) {
+            ERR("[NGX-HOOK] Failed to create/acquire framebuffer for NGX output view");
+            return evalRes;
+        }
+
+        // 4) Transition NGX output → COLOR_ATTACHMENT for overlay rendering
+        VkImageMemoryBarrier toColor{ VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER };
+        toColor.srcAccessMask = VK_ACCESS_MEMORY_WRITE_BIT | VK_ACCESS_SHADER_WRITE_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_TRANSFER_WRITE_BIT;
+        toColor.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        toColor.oldLayout     = VK_IMAGE_LAYOUT_GENERAL;                  // best-effort: NGX often uses GENERAL
+        toColor.newLayout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL; // needed for render pass
+        toColor.image         = targetImage;
+        toColor.subresourceRange = range;
+
+        vkCmdPipelineBarrier(
+            InCmdList,
+            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+            0,
+            0, nullptr,
+            0, nullptr,
+            1, &toColor);
+
+        // 5) Begin render pass, render ImGui, end render pass
         VkRenderPassBeginInfo rpBegin{ VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO };
         rpBegin.renderPass  = rp;
         rpBegin.framebuffer = fb;
         rpBegin.renderArea.offset = { 0, 0 };
         rpBegin.renderArea.extent = { targetW, targetH };
-        rpBegin.clearValueCount   = 0;
+        rpBegin.clearValueCount   = 0; // load old contents, no clear
         rpBegin.pClearValues      = nullptr;
 
         vkCmdBeginRenderPass(InCmdList, &rpBegin, VK_SUBPASS_CONTENTS_INLINE);
-        injectedOk = ImGui_ImplVulkan_RenderDrawData(&viewports_[drawViewport_].Viewport.DrawDataP, InCmdList);
+        bool injectedOk = injectImGuiIntoCommandBuffer(InCmdList);
         vkCmdEndRenderPass(InCmdList);
+        ERR("[NGX-HOOK] ImGui overlay %s into NGX output (cmd=%p)", injectedOk ? "done" : "skipped", InCmdList);
+
+        // 6) Transition back to GENERAL so downstream consumers can read
+        VkImageMemoryBarrier toGeneral = toColor;
+        toGeneral.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        toGeneral.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT | VK_ACCESS_SHADER_READ_BIT;
+        toGeneral.oldLayout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        toGeneral.newLayout     = VK_IMAGE_LAYOUT_GENERAL;
+
+        vkCmdPipelineBarrier(
+            InCmdList,
+            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+            0,
+            0, nullptr,
+            0, nullptr,
+            1, &toGeneral);
+
+        return evalRes;
     }
-
-    ERR("[NGX-HOOK] ImGui overlay %s into NGX output (cmd=%p)", injectedOk ? "done" : "skipped", InCmdList);
-
-    // 6) Transition back to GENERAL so the rest of the frame can read it again
-    VkImageMemoryBarrier toGeneral{ VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER };
-    toGeneral.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-    toGeneral.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT | VK_ACCESS_SHADER_READ_BIT;
-    toGeneral.oldLayout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-    toGeneral.newLayout     = VK_IMAGE_LAYOUT_GENERAL;
-    toGeneral.image         = targetImage;
-    toGeneral.subresourceRange = range;
-
-    vkCmdPipelineBarrier(
-        InCmdList,
-        VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        0, 0, nullptr, 0, nullptr, 1, &toGeneral);
-
-    return evalRes;
-}
-
 
     // Hook wrapper for NVSDK_NGX_VULKAN_CreateFeature
     NVSDK_NGX_Result ngxCreateFeatureHook(
