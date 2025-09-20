@@ -390,7 +390,7 @@ namespace bg3se
         MemoryOrigin Origin{ MemoryOrigin::Owned };
         MemBufferFlags Flags{ MemBufferFlags::Mutable };
         uint16_t AllocatorTag{ 0 };
-        uint32_t Alignment{ 0 };
+        uint32_t Alignment{ 1 };
     };
 
 

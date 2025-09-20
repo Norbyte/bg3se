@@ -666,7 +666,8 @@ struct RenderableObject : public MoveableObject
     Array<AppliedMaterial*> AppliedMaterials;
     AppliedMaterial* ActiveMaterial;
     Array<AppliedMaterial*> AppliedOverlayMaterials;
-    [[bg3::legacy(LOD)]] uint8_t DirtyFlags;
+    uint8_t DirtyFlags;
+    uint8_t LOD;
 
     // Lua helpers
     BlendShapeWeights* LuaGetBlendShape() const;
