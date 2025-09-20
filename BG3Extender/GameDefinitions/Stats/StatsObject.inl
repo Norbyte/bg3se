@@ -48,12 +48,13 @@ std::optional<STDString> Object::GetString(FixedString const& attributeName) con
 
     auto index = IndexedProperties[attributeIndex];
     if (typeInfo->Name == GFS.strFixedString
-        || typeInfo->Name == GFS.strStatusIDs
-        || typeInfo->Name == GFS.strAIFlags) {
+        || typeInfo->Name == GFS.strStatusIDs) {
         auto val = GetStaticSymbols().GetStats()->GetFixedString(index);
         if (val) {
             return (*val)->GetString();
         }
+    } else if (typeInfo->Name == GFS.strAIFlags) {
+        return STDString(AIFlags.GetStringView());
     } else if (typeInfo->Name == GFS.strConditions
         || typeInfo->Name == GFS.strTargetConditions
         || typeInfo->Name == GFS.strUseConditions) {
