@@ -42,8 +42,8 @@ function NetChannel:SendToServer(message)
 end
 
 function NetChannel:RequestToServer(message, handler)
-    local replyHandler = function (reply)
-        handler(Ext.Json.Parse(reply))
+    local replyHandler = function (reply, binary)
+        handler(Ext.Json.Parse(reply, binary))
     end
     self:DoSendToServer(message, replyHandler)
 end
@@ -62,8 +62,8 @@ function NetChannel:SendToClient(message, user)
 end
 
 function NetChannel:RequestToClient(message, user, handler)
-    local replyHandler = function (reply)
-        handler(Ext.Json.Parse(reply))
+    local replyHandler = function (reply, binary)
+        handler(Ext.Json.Parse(reply, binary))
     end
     self:DoSendToClient(message, user, replyHandler)
 end
