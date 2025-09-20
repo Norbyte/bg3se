@@ -137,9 +137,22 @@ int ComputePathDigest(int argc, char** argv)
     return 0;
 }
 
+void* OSAlloc(std::size_t size)
+{
+    return malloc(size);
+}
+
+void OSFree(void* ptr)
+{
+    return free(ptr);
+}
+
 int SignerMain(int argc, char** argv)
 {
     if (argc < 2) return 0;
+
+    gCoreLibPlatformInterface.Alloc = &OSAlloc;
+    gCoreLibPlatformInterface.Free = &OSFree;
 
     if (!CryptAcquireContext(
         &hCryptProv,

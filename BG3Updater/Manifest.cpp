@@ -330,10 +330,10 @@ bool ManifestSerializer::ParseVersion(Value const& node, Manifest::ResourceVersi
 
 std::string ManifestSerializer::Stringify(Manifest& manifest)
 {
-    Document doc;
+    Document doc{ kObjectType };
     auto& alloc = doc.GetAllocator();
 
-    Value resources{ kObjectType };
+    Value resources{ kArrayType };
     for (auto const& res : manifest.Resources) {
         Value jsonRes{ kObjectType };
         jsonRes.AddMember("Name", res.first, alloc);
@@ -387,7 +387,7 @@ std::string ManifestSerializer::Stringify(Manifest& manifest)
     doc.AddMember("Resources", resources, alloc);
 
     StringBuffer sb;
-    Writer<StringBuffer> writer(sb);
+    PrettyWriter<StringBuffer> writer(sb);
     doc.Accept(writer);
 
     std::ostringstream os;
