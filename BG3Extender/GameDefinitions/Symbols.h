@@ -141,6 +141,8 @@ namespace bg3se
         AppliedMaterial::LoadTextureProc* ls__AppliedMaterial__LoadTexture{ nullptr };
         TextureManager::UnloadTextureProc* ls__TextureManager__UnloadTexture{ nullptr };
 
+        Visual::UpdateBlendshapeWeightsFromSkeletonProc* ls__Visual__UpdateBlendshapeWeightsFromSkeleton{ nullptr };
+
         void* Noesis__gReflection{ nullptr };
         void* Noesis__SymbolManager__Buf1{ nullptr };
         void* Noesis__GUI__LoadXaml{ nullptr };

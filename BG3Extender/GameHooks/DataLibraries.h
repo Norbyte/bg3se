@@ -49,6 +49,11 @@ namespace bg3se {
             return InitFailed;
         }
 
+        inline bool IsDX11() const
+        {
+            return DX11;
+        }
+
         inline SymbolMapper& Mapper()
         {
             return symbolMapper_;
@@ -79,5 +84,6 @@ namespace bg3se {
         bool CriticalInitFailed{ false };
         bool PostLoaded{ false };
         bool EnabledCustomStats{ false };
+        bool DX11{ false };
     };
 }

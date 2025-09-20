@@ -148,6 +148,7 @@
     <ClCompile Include="Extender\Client\IMGUI\IMGUI.cpp" />
     <ClCompile Include="Extender\Client\SDL.cpp" />
     <ClCompile Include="GameDefinitions\GameDefinitionHelpers.cpp" />
+    <ClCompile Include="Extender\Client\VisualHelpers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -518,6 +519,7 @@
     <ClInclude Include="GameDefinitions\Components\Death.h" />
     <ClInclude Include="GameDefinitions\AiHelpers.h" />
     <ClInclude Include="GameDefinitions\Thoth.h" />
+    <ClInclude Include="Extender\Client\VisualHelpers.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

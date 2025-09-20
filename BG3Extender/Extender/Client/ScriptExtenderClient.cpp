@@ -102,6 +102,7 @@ void ScriptExtender::PostStartup()
     if (postStartupDone_) return;
 
     entityHelpers_.Setup();
+    visualHelpers_.Setup();
     gExtender->GetPropertyMapManager().RegisterComponents(entityHelpers_);
     postStartupDone_ = true;
 }

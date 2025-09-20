@@ -24,10 +24,12 @@ namespace bg3se
     {
         if (GetModuleHandleW(L"bg3.exe") != NULL)
         {
+            DX11 = false;
             mapper.AddModule("Main", L"bg3.exe");
         }
         else
         {
+            DX11 = true;
             mapper.AddModule("Main", L"bg3_dx11.exe");
         }
 
@@ -225,6 +227,8 @@ namespace bg3se
         SYM_OFF(ls__gTextureAtlasMap);
         SYM_OFF(ls__AppliedMaterial__LoadTexture);
         SYM_OFF(ls__TextureManager__UnloadTexture);
+
+        SYM_OFF(ls__Visual__UpdateBlendshapeWeightsFromSkeleton);
 
         SYM_OFF(ls__GlobalSwitches);
 

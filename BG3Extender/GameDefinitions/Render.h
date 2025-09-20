@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GameDefinitions/AllSparkShared.h>
+#include <GameDefinitions/Resources.h>
 
 BEGIN_SE()
 
@@ -424,6 +425,8 @@ struct Visual : public MoveableObject
 {
     static constexpr uint32_t StaticRTTI = 0x1001;
 
+    using UpdateBlendshapeWeightsFromSkeletonProc = void(Visual* self);
+
     virtual bool AddObject(RenderableObject*, uint8_t flags) = 0;
     virtual void SetLODDistances(RenderableObject*) const = 0;
     virtual void Pick(void const* ray, void* result) = 0;
@@ -499,6 +502,139 @@ struct Effect : public Visual
     float CullingDistance;
 };
 
+struct BasicModel : ProtectedGameObject<BasicModel>
+{
+    static constexpr uint32_t StaticRTTI = 0x1000000;
+
+    virtual uint32_t GetRTTI() = 0;
+    virtual void Destroy() = 0;
+
+    FixedString Name;
+    FixedString Id;
+    FixedString LinkId;
+    AABound Bound;
+};
+
+struct [[bg3::hidden]] PickingData
+{
+    float* Vertices;
+    uint32_t* Indices;
+    int IndexCount;
+    int VertexCount;
+};
+
+struct FormatDesc
+{
+    uint8_t Stream;
+    uint8_t Usage;
+    uint8_t UsageIndex;
+    uint8_t RefType;
+    uint8_t Format;
+    uint8_t Size;
+};
+
+struct Model : BasicModel
+{
+    static constexpr uint32_t StaticRTTI = 0x3000000;
+
+    virtual bool IsBlendShape() = 0;
+    virtual bool IsSkinned() = 0;
+    virtual bool IsCloth() = 0;
+
+    int IndexCount;
+    int IndexSize;
+    int VertexCount;
+    int VertexSize;
+    Array<FormatDesc> Attributes;
+    [[bg3::hidden]] void* VertexBuffer;
+    [[bg3::hidden]] void* IndexBuffer;
+    uint8_t Topology;
+    [[bg3::hidden]] PickingData Picking;
+    bool HasUVs;
+    uint32_t UVCount;
+};
+
+struct ModelProxy : BasicModel
+{
+    static constexpr uint32_t StaticRTTI = 0x5000000;
+
+    Array<glm::vec3> Vertices;
+    Array<int> Indices;
+};
+
+struct TransformingVertexModel;
+
+struct GrBlendShapeModelData : ProtectedGameObject<GrBlendShapeModelData>
+{
+    virtual void Destroy() = 0;
+    virtual uint32_t GetVertexCount(int) = 0;
+    virtual std::span<void*>* GetVertexCount(std::span<void*>&, int) = 0;
+    virtual std::span<void*>* GetVertices(std::span<void*>&, int) = 0;
+    virtual FixedString* GetMorphMeshName(int) = 0;
+    virtual uint32_t GetMorphTargetCount(int) = 0;
+    virtual float GetMaxVertDisplacement(int) = 0;
+
+    [[bg3::hidden]] void* Mesh;
+    Array<FixedString> MorphTargetDrivers;
+};
+
+struct BlendShapeModelData : ProtectedGameObject<BlendShapeModelData>
+{
+    GrBlendShapeModelData* Data;
+    TransformingVertexModel* TransformingModel;
+    [[bg3::hidden]] void* VertexBuffer;
+    uint32_t NumVertices;
+    [[bg3::hidden]] void* Buffer1;
+    [[bg3::hidden]] void* Buffer2;
+    [[bg3::hidden]] void* MorphVBView[2];
+    [[bg3::hidden]] void* MorphIBView[2];
+};
+
+struct TransformingVertexModel : Model
+{
+    [[bg3::hidden]] void* SkinnedModelData;
+    BlendShapeModelData* BlendShapeModelData;
+    [[bg3::hidden]] void* ClothModelData;
+    bool HasClothInstance;
+};
+
+struct [[bg3::hidden]] BufferBindingInfo
+{
+    __int64 field_0;
+    __int64 field_8;
+};
+
+struct BlendShapeWeightOverride
+{
+    int32_t BlendShapeIndex;
+    float Weight;
+};
+
+struct BlendShapeWeights
+{
+    Array<float> Weights;
+#if 0
+    // Editor only
+    // Array<WeightOverride> WeightOverrides;
+#endif
+};
+
+struct [[bg3::hidden]] BlendShapeObjectDataDX11 : ProtectedGameObject<BlendShapeObjectDataDX11>
+{
+    void* VertexBuffer;
+    void* Buffer;
+    BufferBindingInfo BufferBinding;
+    BlendShapeWeights Weights;
+};
+
+struct [[bg3::hidden]] BlendShapeObjectDataVK : ProtectedGameObject<BlendShapeObjectDataVK>
+{
+    void* VertexBuffer;
+    void* Buffer;
+    BufferBindingInfo BufferBinding[3];
+    BlendShapeWeights Weights;
+};
+
 
 struct RenderableObject : public MoveableObject
 {
@@ -521,14 +657,25 @@ struct RenderableObject : public MoveableObject
     virtual bool Ret0_5() const = 0;
     virtual bool CanUseOverlayBoneTransforms() const = 0;
 
-    [[bg3::hidden]] void* Model;
+    BasicModel* Model;
     RenderPropertyList PropertyList;
-    [[bg3::hidden]] void* ModelData;
+    Visual* Parent;
+    // either BlendShapeObjectDataDX11 or BlendShapeObjectDataVK
+    [[bg3::hidden]] void* BlendShape;
     glm::vec4 MeshRandomData;
     Array<AppliedMaterial*> AppliedMaterials;
     AppliedMaterial* ActiveMaterial;
     Array<AppliedMaterial*> AppliedOverlayMaterials;
-    uint8_t LOD;
+    [[bg3::legacy(LOD)]] uint8_t DirtyFlags;
+
+    // Lua helpers
+    BlendShapeWeights* LuaGetBlendShape() const;
+    bool SetBlendShapeWeight(FixedString const& param, std::optional<float> weight);
+    bool ClearBlendShapeWeights(FixedString const& param);
+
+    //# P_GETTER(BlendShape, LuaGetBlendShape)
+    //# P_FUN(SetBlendShapeWeight, RenderableObject::SetBlendShapeWeight)
+    //# P_FUN(ClearBlendShapeWeights, RenderableObject::ClearBlendShapeWeights)
 };
 
 struct AnimatableObject : public RenderableObject
@@ -660,5 +807,8 @@ LUA_POLYMORPHIC(MoveableObject);
 LUA_POLYMORPHIC(RenderableObject);
 LUA_POLYMORPHIC(AnimatableObject);
 LUA_POLYMORPHIC(Visual);
+
+LUA_POLYMORPHIC(BasicModel);
+LUA_POLYMORPHIC(Model);
 
 END_NS()

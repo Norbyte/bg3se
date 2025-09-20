@@ -997,5 +997,19 @@
       <Condition Type="String" Offset="@str1" Value="ls.thoth.client.condition" />
       <Target Type="Indirect" Offset="@ref1" Symbol="ls__gDragDropManager" />
     </Mapping>
+
+    <!-- Sig: ref to GFS::str_WrinkleWeightsR -->
+    <Mapping Name="ls::Visual::UpdateBlendshapeWeightsFromSkeleton">
+      48 8b c4 // mov     rax, rsp
+      55 // push    rbp
+      48 81 ec 80 01 00 00 // sub     rsp, 180h
+      66 83 b9 02 01 00 00 ff // cmp     word ptr [rcx+102h], 0FFFFh
+      48 8b e9 // mov     rbp, rcx
+      48 89 4c 24 38 // mov     [rsp+188h+var_150], rcx
+      0f 84 68 05 00 00 // jz      loc_143C41669
+      48 89 58 10 // mov     [rax+10h], rbx
+      48 8b 99 98 00 00 00 // mov     rbx, [rcx+98h]
+      <Target Type="Absolute" Offset="0" Symbol="ls__Visual__UpdateBlendshapeWeightsFromSkeleton" />
+    </Mapping>
   </Mappings>
 </BinaryMappings>

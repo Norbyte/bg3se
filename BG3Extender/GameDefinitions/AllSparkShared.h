@@ -7,9 +7,7 @@ struct RenderPropertyList
     uint32_t RenderPasses;
     uint8_t OpaqueChannel;
     uint8_t AlphaChannel;
-    uint8_t field_6;
-    uint8_t field_7;
-    uint32_t TransformType;
+    uint8_t TransformType;
 };
 
 END_SE()
