@@ -288,7 +288,7 @@ struct Origin : public resource::GuidResource
     FixedString Name;
     TranslatedString DisplayName;
     TranslatedString Description;
-    BodyType BodyType{ BodyType::Male };
+    uint8_t BodyType{ 0 };
     uint8_t BodyShape{ 0 };
     bool LockBody{ false };
     Guid RaceUUID;
@@ -638,7 +638,7 @@ struct CompanionPreset : public resource::GuidResource
 
     Guid RaceUuid;
     Guid SubRaceUuid;
-    BodyType BodyType{ BodyType::Male };
+    uint8_t BodyType{ 0 };
     uint8_t BodyShape{ 0 };
     Guid RootTemplate;
     STDString Overview;
@@ -706,7 +706,7 @@ struct CharacterCreationAppearanceVisual : public resource::GuidResource
 
     Guid RootTemplate;
     Guid RaceUUID;
-    BodyType BodyType{ BodyType::Male };
+    uint8_t BodyType{ 0 };
     uint8_t BodyShape{ 0 };
     uint32_t field_3C{ 0 };
     FixedString SlotName;
@@ -810,7 +810,7 @@ struct CharacterCreationPreset : public resource::GuidResource
 
     Guid RaceUUID;
     Guid SubRaceUUID;
-    BodyType BodyType{ BodyType::Male };
+    uint8_t BodyType{ 0 };
     uint8_t BodyShape{ 0 };
     Guid RootTemplate;
     STDString Overview;
@@ -1536,7 +1536,7 @@ struct Voice : public resource::GuidResource
     Guid TableUuid;
     TranslatedString DisplayName;
     Guid SpeakerUuid;
-    BodyType BodyType{ BodyType::Male };
+    uint8_t BodyType{ 0 };
     Array<Guid> Tags;
 };
 

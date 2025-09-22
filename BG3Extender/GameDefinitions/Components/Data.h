@@ -82,8 +82,8 @@ struct BodyTypeComponent : public BaseComponent
 {
     DEFINE_COMPONENT(BodyType, "eoc::BodyTypeComponent")
 
-    BodyType BodyType;
-    bg3se::BodyType BodyType2;
+    uint8_t BodyType;
+    uint8_t BodyType2;
 };
 
 struct ObjectSizeComponent : public BaseComponent
@@ -166,7 +166,7 @@ struct CharacterCreationStatsComponent : public BaseComponent
 
     Guid Race;
     Guid SubRace;
-    BodyType BodyType;
+    uint8_t BodyType;
     uint8_t BodyShape;
     STDString Name;
     std::array<int32_t, 7> Abilities;
@@ -563,7 +563,7 @@ struct AttitudeIdentifier
     [[bg3::legacy(field_0)]] EntityHandle Character;
     [[bg3::legacy(field_8)]] IdentityType Identity;
     [[bg3::legacy(field_10)]] Guid Race;
-    [[bg3::legacy(field_20)]] BodyType BodyType;
+    [[bg3::legacy(field_20)]] uint8_t BodyType;
 
     inline bool operator == (AttitudeIdentifier const& o) const
     {
