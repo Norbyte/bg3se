@@ -167,7 +167,7 @@ struct Settings
 {
     std::variant<Bezier3Trajectory, Bezier4Trajectory> Trajectory;
     [[bg3::hidden]] uint32_t _Pad;
-    uint8_t RotateMode{ 0 };
+    PathRotateMode RotateMode{ PathRotateMode::Static };
     std::variant<ConstantVelocity, LinearVelocity, MappedVelocity> Velocity;
 };
 

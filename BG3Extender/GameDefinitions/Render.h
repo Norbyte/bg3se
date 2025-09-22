@@ -284,8 +284,8 @@ struct Material : public ProtectedGameObject<Material>
     uint32_t Flags;
     uint32_t UsedWithFlags;
     uint8_t MaterialPassHint;
-    uint8_t MaterialType;
-    uint8_t RenderChannel;
+    MaterialType MaterialType;
+    RenderChannel RenderChannel;
     uint8_t MaterialUsage;
     FixedString DiffusionProfileUUID;
     ParametersSet Parameters;
@@ -464,7 +464,7 @@ struct Visual : public MoveableObject
         };
 
         FixedString RemapperSlot;
-        int field_4;
+        [[bg3::legacy(field_4)]] FixedString RemappedSlot;
         Skeleton* Skeleton;
         MiniCompactSet<Remap> Remaps;
     };
@@ -482,7 +482,7 @@ struct Visual : public MoveableObject
     VisualFlags VisualFlags;
     VisualCullFlags CullFlags;
     VisualPhysicsFlags PhysicsFlags;
-    uint8_t LightChannel;
+    LightChannelValue LightChannel;
     bool HasValidPose;
     bool HasAnimatedObjects;
     int16_t WrinkleBaseBoneIndex;

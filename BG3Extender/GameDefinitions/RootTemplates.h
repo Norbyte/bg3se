@@ -65,7 +65,7 @@ struct GameObjectTemplate
     OverrideableProperty<bool> IsReflecting;
     OverrideableProperty<bool> IsShadowProxy;
     uint8_t GlobalDeletedFlag;
-    OverrideableProperty<uint8_t> RenderChannel;
+    OverrideableProperty<RenderChannel> RenderChannel;
     OverrideableProperty<uint8_t> ParentTemplateFlags;
     STDString FileName;
 };
@@ -122,8 +122,8 @@ struct SceneryTemplate : public EoCGameObjectTemplate
     OverrideableProperty<bool> AllowCameraMovement;
     OverrideableProperty<bool> CanShineThrough;
     OverrideableProperty<bool> BlockAoEDamage;
-    OverrideableProperty<uint8_t> ShootThroughType;
-    OverrideableProperty<uint8_t> WadableSurfaceType;
+    OverrideableProperty<ShootThroughType> ShootThroughType;
+    OverrideableProperty<SurfaceType> WadableSurfaceType;
     bool ReferencedInTimeline;
     OverrideableProperty<FixedString> LoopSound;
     OverrideableProperty<FixedString> SoundInitEvent;
@@ -219,7 +219,7 @@ struct CharacterTemplate : public EoCGameObjectTemplate
     OverrideableProperty<float> LadderAttachOffset;
     OverrideableProperty<float> LadderLoopSpeed;
     OverrideableProperty<bool> CanShootThrough;
-    OverrideableProperty<uint8_t> ShootThroughType;
+    OverrideableProperty<ShootThroughType> ShootThroughType;
     OverrideableProperty<bool> WalkThrough;
     OverrideableProperty<bool> CanClimbLadders;
     OverrideableProperty<bool> CanConsumeItems;
@@ -242,7 +242,7 @@ struct CharacterTemplate : public EoCGameObjectTemplate
     OverrideableProperty<Array<Guid>> OnlyInDifficulty;
     OverrideableProperty<bool> JumpUpLadders;
     OverrideableProperty<bool> AnubisNonPersistent;
-    OverrideableProperty<uint8_t> BloodSurfaceType;
+    OverrideableProperty<SurfaceType> BloodSurfaceType;
     OverrideableProperty<bool> ForceLifetimeDeath;
     OverrideableProperty<Guid> EquipmentRace;
     OverrideableProperty<Array<IActionData*>> OnDeathActions;
@@ -304,21 +304,21 @@ struct CharacterTemplate : public EoCGameObjectTemplate
     OverrideableProperty<bool> CanBeTeleported;
     OverrideableProperty<int32_t> LevelOverride;
     OverrideableProperty<FixedString> ActivationGroupId;
-    OverrideableProperty<uint8_t> AliveInventoryType;
-    OverrideableProperty<uint8_t> InventoryType;
+    OverrideableProperty<InventoryAppearanceType> AliveInventoryType;
+    OverrideableProperty<InventoryAppearanceType> InventoryType;
     OverrideableProperty<LegacyRefMap<FixedString, FixedString>> PickingPhysicsTemplates;
     OverrideableProperty<FixedString> SoftBodyCollisionTemplate;
     OverrideableProperty<FixedString> RagdollTemplate;
     [[bg3::hidden]]
     OverrideableProperty<Array<void*>> FootStepInfos;
-    OverrideableProperty<uint8_t> DefaultState;
+    OverrideableProperty<CharacterState> DefaultState;
     OverrideableProperty<bool> IsLootable;
     OverrideableProperty<bool> IsEquipmentLootable;
     OverrideableProperty<bool> CanBePickedUp;
     OverrideableProperty<bool> CanBePickpocketed;
     OverrideableProperty<IsTradableType> IsTradable;
     OverrideableProperty<bool> IsDroppedOnDeath;
-    OverrideableProperty<uint8_t> LightChannel;
+    OverrideableProperty<LightChannelValue> LightChannel;
     OverrideableProperty<Guid> Race;
     OverrideableProperty<TranslatedString> Title;
     OverrideableProperty<FixedString> AnimationSetResourceID;
@@ -456,9 +456,9 @@ struct ItemTemplate : public SceneryTemplate
     OverrideableProperty<FixedString> ImpactSound;
     OverrideableProperty<FixedString> PhysicsCollisionSound;
     OverrideableProperty<bool> UseOcclusion;
-    OverrideableProperty<uint8_t> BloodSurfaceType;
+    OverrideableProperty<SurfaceType> BloodSurfaceType;
     OverrideableProperty<uint8_t> BookType;
-    OverrideableProperty<uint8_t> InventoryType;
+    OverrideableProperty<InventoryType> InventoryType;
     OverrideableProperty<TranslatedString> DisplayNameAlchemy;
     OverrideableProperty<TranslatedString> Description;
     OverrideableProperty<TranslatedString> TechnicalDescription;
@@ -470,8 +470,8 @@ struct ItemTemplate : public SceneryTemplate
     OverrideableProperty<bool> ContainerAutoAddOnPickup;
     OverrideableProperty<STDString> ContainerContentFilterCondition;
     HashSet<Guid>* InteractionFilterList;
-    OverrideableProperty<uint8_t> InteractionFilterType;
-    OverrideableProperty<uint8_t> InteractionFilterRequirement;
+    OverrideableProperty<InteractionFilterType> InteractionFilterType;
+    OverrideableProperty<InteractionFilterRequirement> InteractionFilterRequirement;
     OverrideableProperty<FixedString> ActivationGroupId;
     OverrideableProperty<int32_t> LevelOverride;
     OverrideableProperty<bool> IsSourceContainer;
@@ -479,7 +479,7 @@ struct ItemTemplate : public SceneryTemplate
     OverrideableProperty<bool> IgnoreGenerics;
     OverrideableProperty<bool> AllowSummonGenericUse;
     OverrideableProperty<bool> IsPortalProhibitedToPlayers;
-    OverrideableProperty<uint8_t> LightChannel;
+    OverrideableProperty<LightChannelValue> LightChannel;
     OverrideableProperty<Guid> EquipmentTypeID;
     OverrideableProperty<uint32_t> CinematicArenaFlags;
     OverrideableProperty<Guid> TimelineCameraRigOverride;
@@ -512,7 +512,7 @@ struct ProjectileTemplate : public EoCGameObjectTemplate
     OverrideableProperty<bool> RotateImpact;
     OverrideableProperty<bool> IgnoreRoof;
     OverrideableProperty<bool> DetachBeam;
-    OverrideableProperty<uint8_t> ProjectilePath;
+    OverrideableProperty<PathTrajectoryType> ProjectilePath;
     OverrideableProperty<float> DistanceMin_Bezier3;
     OverrideableProperty<float> DistanceMax_Bezier3;
     OverrideableProperty<glm::vec2> OffsetMin_Bezier3;
@@ -529,8 +529,8 @@ struct ProjectileTemplate : public EoCGameObjectTemplate
     OverrideableProperty<float> ShiftAMax_Bezier3;
     OverrideableProperty<float> ShiftBMin_Bezier3;
     OverrideableProperty<float> ShiftBMax_Bezier3;
-    OverrideableProperty<uint8_t> RotateMode;
-    OverrideableProperty<uint8_t> VelocityMode;
+    OverrideableProperty<PathRotateMode> RotateMode;
+    OverrideableProperty<PathVelocityMode> VelocityMode;
     OverrideableProperty<float> InitialSpeed;
     OverrideableProperty<float> Acceleration;
     OverrideableProperty<FixedString> CurveResourceId;
@@ -552,7 +552,7 @@ struct SurfaceVisualData
 struct SurfaceStatusData
 {
     FixedString StatusId;
-    uint8_t ApplyTypes;
+    SurfaceStatusApplyType ApplyTypes;
     float Chance;
     float Duration;
     bool Remove;
@@ -577,7 +577,7 @@ struct SurfaceTemplate : public GameObjectTemplate
     OverrideableProperty<Guid> CursorMessage;
     OverrideableProperty<FixedString> Icon;
     OverrideableProperty<FixedString> DecalMaterial;
-    OverrideableProperty<uint8_t> MaterialType;
+    OverrideableProperty<MaterialType> MaterialType;
     OverrideableProperty<uint8_t> SurfaceCategory;
     OverrideableProperty<bool> CanEnterCombat;
     OverrideableProperty<bool> AlwaysUseDefaultLifeTime;
@@ -597,7 +597,7 @@ struct SurfaceTemplate : public GameObjectTemplate
     OverrideableProperty<bool> CanSeeThrough;
     OverrideableProperty<bool> CanShootThrough;
     OverrideableProperty<STDString> RollConditions;
-    OverrideableProperty<uint8_t> ObscuredStateOverride;
+    OverrideableProperty<ObscuredState> ObscuredStateOverride;
     OverrideableProperty<float> OnEnterDistanceOverride;
     OverrideableProperty<float> OnMoveDistanceOverride;
     OverrideableProperty<bool> AiPathVisible;
@@ -638,7 +638,7 @@ struct LightTemplate : public GameObjectTemplate
     OverrideableProperty<bool> PreExpose;
     OverrideableProperty<bool> FlatFalloff;
     OverrideableProperty<uint8_t> LightChannelFlag;
-    OverrideableProperty<uint8_t> LightType;
+    OverrideableProperty<LightType> LightType;
     OverrideableProperty<FixedString> LightCookieTexture;
     OverrideableProperty<glm::vec3> DirectionLightDimensions;
     OverrideableProperty<uint8_t> DirectionLightAttenuationFunction;
@@ -855,7 +855,7 @@ struct TriggerTemplate : public GameObjectTemplate
     [[bg3::hidden]] ITriggerData* TriggerData;
     [[bg3::hidden]] ITriggerPhysicsData* PhysicsData;
     OverrideableProperty<FixedString> TriggerType;
-    OverrideableProperty<uint8_t> PhysicsType;
+    OverrideableProperty<TriggerPhysicsType> PhysicsType;
     OverrideableProperty<glm::aligned_highp_vec4> Color;
     OverrideableProperty<FixedString> TriggerGizmoOverride;
     OverrideableProperty<bool> Fadeable;

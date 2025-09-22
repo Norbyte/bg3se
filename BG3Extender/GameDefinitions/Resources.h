@@ -945,8 +945,8 @@ struct MaterialResource : public TwoStepLoadableResource
     Array<Texture2DParameter> Texture2DParameters;
     Array<VirtualTextureParameter> VirtualTextureParameters;
     FixedString DiffusionProfileUUID;
-    uint8_t MaterialType;
-    uint8_t RenderChannel;
+    MaterialType MaterialType;
+    RenderChannel RenderChannel;
 };
 
 struct MaterialPresetResource : public LoadableResource
@@ -1125,7 +1125,7 @@ struct TerrainBrushResource : public LoadableResource
     bool UseDetailNormalMap;
     bool UseHeightGradient_maybe;
     bool IsBlackBrush;
-    uint8_t MaterialType;
+    MaterialType MaterialType;
     [[bg3::hidden]] __int32 field_8c;
 };
 
@@ -1314,7 +1314,7 @@ struct VisualResource : public TwoStepLoadableResource
     glm::fvec3 BoundsMax;
     bool NeedsSkeletonRemap;
     bool SupportsVertexColorMask;
-    uint8_t MaterialType;
+    MaterialType MaterialType;
     uint8_t HairType;
     // Editor only
     // bool ExcludeFromHLOD;
