@@ -3,7 +3,7 @@
 /// <lua_module>Net</lua_module>
 BEGIN_NS(lua::net)
 
-RequestId NetworkRequestSystem::CreateRequest(LuaDelegate<void(StringView, bool)>&& callback)
+RequestId NetworkRequestSystem::CreateRequest(LuaDelegate<void(STDString, bool)>&& callback)
 {
     auto id = nextRequestId_++;
     pendingRequests_.set(id, std::move(callback));
@@ -14,7 +14,7 @@ void NetworkRequestSystem::HandleReply(RequestId replyId, StringView payload, bo
 {
     auto it = pendingRequests_.find(replyId);
     if (it) {
-        eventQueue_.Call(it->Value(), payload, binary);
+        eventQueue_.Call(it->Value(), STDString(payload), binary);
         pendingRequests_.remove(it);
     } else {
         WARN("No handler found for net message request id %d", replyId);
@@ -49,7 +49,7 @@ bg3se::net::ExtenderMessage* BuildMessage(lua_State* L, UserId userId, StringVie
             postMsg->set_module(moduleGuid->ToString().c_str());
         }
         if (requestHandler) {
-            auto requestId = State::FromLua(L)->GetNetworkRequests().CreateRequest(LuaDelegate<void(StringView, bool)>(L, *requestHandler));
+            auto requestId = State::FromLua(L)->GetNetworkRequests().CreateRequest(LuaDelegate<void(STDString, bool)>(L, *requestHandler));
             postMsg->set_request_id(requestId);
         }
         if (replyId) {
@@ -74,7 +74,7 @@ void BuildMessage(lua_State* L, bg3se::net::LocalMessage& msg, UserId userId, St
         msg.Module = moduleGuid->ToString();
     }
     if (requestHandler) {
-        auto requestId = State::FromLua(L)->GetNetworkRequests().CreateRequest(LuaDelegate<void(StringView, bool)>(L, *requestHandler));
+        auto requestId = State::FromLua(L)->GetNetworkRequests().CreateRequest(LuaDelegate<void(STDString, bool)>(L, *requestHandler));
         msg.RequestId = requestId;
     }
     if (replyId) {
