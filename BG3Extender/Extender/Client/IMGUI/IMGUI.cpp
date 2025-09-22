@@ -1871,7 +1871,10 @@ void IMGUIManager::SetObjects(IMGUIObjectManager* objects)
 
 bool IMGUIManager::LoadFont(FixedString const& name, char const* path, float size)
 {
-    if (fonts_.find(name) != fonts_.end()) {
+    auto curFont = fonts_.find(name);
+    if (curFont != fonts_.end()
+        && curFont->Value().Path == path
+        && curFont->Value().SizePixels == size) {
         return true;
     }
 
