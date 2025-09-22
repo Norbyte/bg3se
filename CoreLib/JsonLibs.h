@@ -1,5 +1,6 @@
 #pragma once
 
+#define RAPIDJSON_PARSE_DEFAULT_FLAGS kParseCommentsFlag | kParseTrailingCommasFlag | kParseNanAndInfFlag
 #define RAPIDJSON_WRITE_DEFAULT_FLAGS kWriteNanAndInfFlag | kWriteNanAndInfNullFlag
 #define RAPIDJSON_SIMD
 #define RAPIDJSON_SSE42
