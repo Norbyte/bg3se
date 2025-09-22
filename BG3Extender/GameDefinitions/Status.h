@@ -344,16 +344,11 @@ struct [[bg3::hidden]] StatusMachine
     Array<Status*> Statuses;
     Array<Status*> CleanseStatuses;
     Array<Status*> UnknownStatuses;
-    __int64 field_58;
-    __int64 field_60;
-    __int64 field_68;
-    __int64 field_70;
-    __int64 field_78;
-    __int64 field_80;
-    __int64 field_88;
-    __int64 field_90;
-    __int64 field_98;
-    __int64 field_A0;
+    HashMap<FixedString, Status*> field_50;
+    uint32_t field_90;
+    uint32_t field_94;
+    UnknownFunction field_98;
+    void* field_D8;
     Array<void*> RemoveStatusRequests;
 };
 

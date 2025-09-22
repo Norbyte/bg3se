@@ -323,7 +323,7 @@ BEGIN_BITMASK(VisualAttachmentFlags, uint32_t)
     EV(DoNotUpdate, 0x800)
     EV(ParticleSystem, 0x1000)
     EV(HasSkeleton, 0x2000)
-    EV(Unknown1000, 0x1000)
+    EV(Unknown4000, 0x4000)
     EV(DestroyWithParent, 0x8000)
 END_ENUM()
 

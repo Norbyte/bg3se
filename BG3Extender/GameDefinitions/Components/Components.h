@@ -12,7 +12,7 @@ struct RulesetComponent : public BaseComponent
     Array<Guid> Rulesets;
     // FIXME: First variant is void
     HashMap<Guid, std::variant<uint8_t, int32_t, float, FixedString, bool>> Modifiers;
-    [[bg3::hidden]] uint64_t field_40[2];
+    Guid field_40;
 };
 
 struct RulesetModifiersComponent : public BaseComponent

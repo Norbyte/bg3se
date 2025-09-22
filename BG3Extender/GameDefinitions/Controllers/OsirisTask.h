@@ -245,11 +245,9 @@ struct OsirisUseSpellTask : public Task
     SpellId Spell;
     glm::vec3 CastPosition;
     EntityHandle Target;
-    glm::vec3 TargetPos;
-    bool HasTargetPos;
+    std::optional<glm::vec3> TargetPos;
     EntityHandle Target2;
-    glm::vec3 TargetPos2;
-    bool HasTargetPos2;
+    std::optional<glm::vec3> TargetPos2;
     EntityHandle Item;
     bool Success;
     uint8_t field_A9;

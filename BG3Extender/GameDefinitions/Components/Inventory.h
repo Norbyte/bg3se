@@ -375,7 +375,6 @@ struct InteractionSystem : public BaseSystem
     [[bg3::hidden]] void* RPGStats;
     [[bg3::hidden]] void* ClassDescriptions;
     [[bg3::hidden]] void* SpellPrototypeManager;
-    [[bg3::hidden]] void* LevelManager;
 };
 
 struct LockingSystem : public BaseSystem

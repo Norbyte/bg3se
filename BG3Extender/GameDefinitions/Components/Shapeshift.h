@@ -122,6 +122,7 @@ struct System : public BaseSystem
     HashMap<EntityHandle, Array<AddRequest>> RequestAddStates;
     HashMap<EntityHandle, Array<Guid>> RequestDeleteStates;
     HashSet<EntityHandle> RequestDeleteAllStates;
+    HashMap<EntityHandle, EntityHandle> UpdateRequests;
     [[bg3::hidden]] void* ShapeshiftRulebook;
     [[bg3::hidden]] void* RPGStats;
 };

@@ -354,8 +354,10 @@ struct PrimaryMaterialRenderingData : public MaterialRenderingData
 
 
 
-struct ActiveMaterial
+struct AppliedMaterial
 {
+    using LoadTextureProc = TextureDescriptor * (void* self, FixedString const& textureGuid);
+
     struct Texture2DParam
     {
         [[bg3::hidden]] void* TextureResource;
@@ -378,7 +380,7 @@ struct ActiveMaterial
 
     [[bg3::hidden]] PrimaryMaterialRenderingData* PrimaryRenderingData;
     [[bg3::hidden]] std::array<MaterialRenderingData, 5> RenderingData;
-    [[bg3::hidden]] std::array<void*, 13> PipelineStates;
+    [[bg3::hidden]] std::array<void*, 8> PipelineStates;
     [[bg3::hidden]] Array<Texture2DParam> Texture2DParams;
     Array<VirtualTextureParam> VirtualTextureParams;
     RenderableObject* RenderableObject;
@@ -396,11 +398,14 @@ struct ActiveMaterial
     AppliedMaterialFlags Flags;
     bool Initialized;
     uint8_t AlphaChannel;
+    glm::vec4 MeshVertexColor;
+    glm::vec4 DynamicParameter;
+    [[bg3::hidden]] void* field_208;
 
-    //# P_FUN(SetScalar, ActiveMaterial::SetScalar)
-    //# P_FUN(SetVector2, ActiveMaterial::SetVector2)
-    //# P_FUN(SetVector3, ActiveMaterial::SetVector3)
-    //# P_FUN(SetVector4, ActiveMaterial::SetVector4)
+    //# P_FUN(SetScalar, AppliedMaterial::SetScalar)
+    //# P_FUN(SetVector2, AppliedMaterial::SetVector2)
+    //# P_FUN(SetVector3, AppliedMaterial::SetVector3)
+    //# P_FUN(SetVector4, AppliedMaterial::SetVector4)
     bool SetScalar(FixedString const& param, float value);
     bool SetVector2(FixedString const& param, glm::vec2 value);
     bool SetVector3(FixedString const& param, glm::vec3 value);
@@ -408,15 +413,6 @@ struct ActiveMaterial
 
     template <class T>
     void SetUniformParam(Material::UniformBindingData const& binding, T value);
-};
-
-
-struct AppliedMaterial : public ActiveMaterial
-{
-    using LoadTextureProc = TextureDescriptor* (void* self, FixedString const& textureGuid);
-
-    glm::vec4 MeshVertexColor;
-    glm::vec4 DynamicParameter;
 };
 
 

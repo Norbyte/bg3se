@@ -812,7 +812,7 @@ void MaterialRenderingData::SetUniformParam(Material& instance, Material::Unifor
 }
 
 template <class T>
-void ActiveMaterial::SetUniformParam(Material::UniformBindingData const& binding, T value)
+void AppliedMaterial::SetUniformParam(Material::UniformBindingData const& binding, T value)
 {
     if (PrimaryRenderingData != nullptr) {
         PrimaryRenderingData->SetUniformParam(*Material, binding, value);
@@ -823,7 +823,7 @@ void ActiveMaterial::SetUniformParam(Material::UniformBindingData const& binding
     }
 }
 
-bool ActiveMaterial::SetScalar(FixedString const& paramName, float value)
+bool AppliedMaterial::SetScalar(FixedString const& paramName, float value)
 {
     for (auto const& param : Material->Parameters.ScalarParameters) {
         if (param.ParameterName == paramName) {
@@ -836,7 +836,7 @@ bool ActiveMaterial::SetScalar(FixedString const& paramName, float value)
     return false;
 }
 
-bool ActiveMaterial::SetVector2(FixedString const& paramName, glm::vec2 value)
+bool AppliedMaterial::SetVector2(FixedString const& paramName, glm::vec2 value)
 {
     for (auto const& param : Material->Parameters.Vector2Parameters) {
         if (param.ParameterName == paramName) {
@@ -849,7 +849,7 @@ bool ActiveMaterial::SetVector2(FixedString const& paramName, glm::vec2 value)
     return false;
 }
 
-bool ActiveMaterial::SetVector3(FixedString const& paramName, glm::vec3 value)
+bool AppliedMaterial::SetVector3(FixedString const& paramName, glm::vec3 value)
 {
     for (auto const& param : Material->Parameters.Vector3Parameters) {
         if (param.ParameterName == paramName) {
@@ -862,7 +862,7 @@ bool ActiveMaterial::SetVector3(FixedString const& paramName, glm::vec3 value)
     return false;
 }
 
-bool ActiveMaterial::SetVector4(FixedString const& paramName, glm::vec4 value)
+bool AppliedMaterial::SetVector4(FixedString const& paramName, glm::vec4 value)
 {
     for (auto const& param : Material->Parameters.VectorParameters) {
         if (param.ParameterName == paramName) {

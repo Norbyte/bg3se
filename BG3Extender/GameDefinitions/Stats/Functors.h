@@ -387,6 +387,7 @@ struct DealDamageFunctor : public Functor
 
     DamageType DamageType{ DamageType::None }; // Arg2
     DealDamageWeaponType WeaponType{ DealDamageWeaponType::None }; // Arg1
+    DealDamageWeaponType WeaponTypeOverride{ DealDamageWeaponType::None };
     DealDamageWeaponDamageType WeaponDamageType{ DealDamageWeaponDamageType::None }; // Arg2
     StatsExpressionParam* Damage{ nullptr }; // Arg1
     int CoinMultiplier{ 0 };
