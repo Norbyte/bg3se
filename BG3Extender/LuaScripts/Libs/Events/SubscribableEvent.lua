@@ -160,7 +160,7 @@ if Ext.Config.ProfilerEnabled then
         if not ok then
             Ext.Log.PrintError("Error while dispatching event " .. self.Name .. ": ", result)
         else
-            if _I.Profiler:ShouldLikelyReport(took) then
+            if _I.Profiler:ShouldLikelyReport(took) and self.Name ~= "DoConsoleCommand" then
                 local source, line = Ext.Types.GetFunctionLocation(handler)
                 _I.Profiler:Report(took, "Dispatching event " .. self.Name .. " (" .. source .. ":" .. line .. ")")
             end
