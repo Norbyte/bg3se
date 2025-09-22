@@ -141,7 +141,7 @@ void SystemEventHooks::CallHandlerUnsafe(ecs::SystemTypeIndex type, SystemHook& 
     Ref func(L, lua_absindex(L, -1));
 
     ProtectedFunctionCaller<std::tuple<>, void> caller{ func, std::tuple() };
-    caller.Call(L, "System update event dispatch");
+    caller.Call(L, "System update event");
     lua_pop(L, 1);
 }
 
