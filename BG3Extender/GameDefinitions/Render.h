@@ -443,15 +443,15 @@ struct Visual : public MoveableObject
     struct Attachment
     {
         Visual* Visual;
-        int BoneIndex1;
-        int BoneIndex2;
-        FixedString Bone1;
-        FixedString Bone2;
+        [[bg3::legacy(BoneIndex1)]] int SourceIndex;
+        [[bg3::legacy(BoneIndex2)]] int AttachIndex;
+        [[bg3::legacy(Bone1)]] FixedString Attach;
+        [[bg3::legacy(Bone2)]] FixedString Source;
         VisualAttachmentFlags Flags;
-        uint8_t BoneType1;
-        uint8_t BoneType2;
+        [[bg3::legacy(BoneType1)]] VisualAttachType SourceType;
+        [[bg3::legacy(BoneType2)]] VisualAttachType TargetType;
         FixedString field_20;
-        glm::vec3 field_24;
+        [[bg3::legacy(field_24)]] glm::vec3 Offset;
     };
 
 
@@ -481,7 +481,7 @@ struct Visual : public MoveableObject
     [[bg3::hidden]] void* ClothScene;
     VisualFlags VisualFlags;
     VisualCullFlags CullFlags;
-    uint8_t PhysicsFlags;
+    VisualPhysicsFlags PhysicsFlags;
     uint8_t LightChannel;
     bool HasValidPose;
     bool HasAnimatedObjects;
