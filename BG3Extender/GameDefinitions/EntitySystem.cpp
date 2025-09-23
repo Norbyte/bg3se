@@ -939,6 +939,7 @@ UuidToHandleMappingComponent* EntitySystemHelpersBase::GetUuidMappings()
 
 void EntitySystemHelpersBase::Update()
 {
+    OPTICK_EVENT();
     if (CheckLevel == RuntimeCheckLevel::FullECS) {
         ValidateECBFlushChanges();
         ValidateEntityChanges();
@@ -954,6 +955,7 @@ void EntitySystemHelpersBase::Update()
 
 void EntitySystemHelpersBase::DebugLogUpdateChanges()
 {
+    OPTICK_EVENT(Optick::Category::Debug);
     auto world = GetEntityWorld();
 
     auto const& changes = world->Cache->WriteChanges;
@@ -972,6 +974,7 @@ void EntitySystemHelpersBase::DebugLogUpdateChanges()
 
 void EntitySystemHelpersBase::PostUpdate()
 {
+    OPTICK_EVENT();
     if (!validated_ && GetEntityWorld() != nullptr) {
         ValidateMappedComponentSizes();
         UpdateQueryCache();
@@ -1009,6 +1012,7 @@ void EntitySystemHelpersBase::DebugLogReplicationChanges()
 
     if (!buffers) return;
 
+    OPTICK_EVENT(Optick::Category::Debug);
     for (unsigned i = 0; i < buffers->ComponentPools.size(); i++) {
         auto const& pool = buffers->ComponentPools[i];
         if (pool.size() > 0) {
@@ -1038,6 +1042,7 @@ void EntitySystemHelpersBase::OnFlushECBs()
 
 void EntitySystemHelpersBase::DebugLogECBFlushChanges()
 {
+    OPTICK_EVENT(Optick::Category::Debug);
     auto world = GetEntityWorld();
 
     for (auto& ecb : world->CommandBuffers) {
@@ -1062,6 +1067,7 @@ void EntitySystemHelpersBase::ThrowECBFlushEvents()
     auto state = GetExtensionState();
     if (state == nullptr || !state->GetLua()) return;
 
+    OPTICK_EVENT();
     auto world = GetEntityWorld();
     auto& hooks = state->GetLua()->GetComponentEventHooks();
 
@@ -1088,6 +1094,7 @@ void EntitySystemHelpersBase::ValidateReplication()
     auto world = GetEntityWorld();
     if (!world->Replication || !world->Replication->Dirty) return;
 
+    OPTICK_EVENT(Optick::Category::Debug);
     for (unsigned i = 0; i < world->Replication->ComponentPools.size(); i++) {
         auto const& pool = world->Replication->ComponentPools[i];
         auto componentType = GetComponentType(ReplicationTypeIndex(i));
@@ -1107,6 +1114,7 @@ void EntitySystemHelpersBase::ValidateReplication()
 
 void EntitySystemHelpersBase::ValidateMappedComponentSizes()
 {
+    OPTICK_EVENT(Optick::Category::Debug);
     auto world = GetEntityWorld();
 
     Array<ComponentTypeIndex> deletions;
@@ -1173,6 +1181,7 @@ bool EntitySystemHelpersBase::ValidateMappedComponentSize(ecs::EntityWorld* worl
 
 void EntitySystemHelpersBase::ValidateECBFlushChanges()
 {
+    OPTICK_EVENT(Optick::Category::Debug);
     auto world = GetEntityWorld();
     EntityHandle last{};
 
@@ -1208,6 +1217,7 @@ void EntitySystemHelpersBase::ValidateECBFlushChanges()
 
 void EntitySystemHelpersBase::ValidateEntityChanges()
 {
+    OPTICK_EVENT(Optick::Category::Debug);
     auto world = GetEntityWorld();
     ValidateEntityChanges(world->Cache->WriteChanges);
 }
@@ -1259,6 +1269,7 @@ void EntitySystemHelpersBase::UpdateQueryCache()
 {
     if (queryCacheInitialized_) return;
 
+    OPTICK_EVENT();
     auto world = GetEntityWorld();
     unsigned queryIndex = 0;
     for (auto const& query : world->Queries.Queries) {

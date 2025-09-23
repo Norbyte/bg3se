@@ -85,6 +85,7 @@ void ServerEntityReplicationEventHooks::OnEntityReplication(ecs::EntityWorld& wo
 {
     if (!buffers || !buffers->Dirty) return;
 
+    OPTICK_EVENT();
     for (unsigned i = 0; i < buffers->ComponentPools.size(); i++) {
         auto const& pool = buffers->ComponentPools[i];
         if (hookedReplicationComponentMask_[i] && pool.size() > 0) {

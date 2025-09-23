@@ -7,7 +7,8 @@ BEGIN_NS(lua::level)
 
 
 PathfindingSystem::PathfindingSystem(LevelManager& levelManager)
-    : levelManager_(levelManager)
+    : levelManager_(levelManager),
+    eventQueue_("Pathfinding event")
 {}
 
 PathfindingSystem::~PathfindingSystem()
@@ -79,6 +80,7 @@ bool PathfindingSystem::ProcessRequest(PathRequest& request)
 
 void PathfindingSystem::Update()
 {
+    OPTICK_EVENT();
     Array<PathRequest> pending;
 
     for (auto& req : pendingRequests_) {
@@ -201,6 +203,7 @@ bool FindPath(lua_State* L, AiPath* path)
             return false;
         }
 
+        OPTICK_EVENT();
         auto find = GetStaticSymbols().eoc__AiGrid__FindPathImmediate;
         find(aiGrid, *pathId);
     }

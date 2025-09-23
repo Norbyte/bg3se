@@ -184,6 +184,7 @@ public:
         // Speculative check to avoid unnecessary locking
         if (!initialized_) return;
 
+        OPTICK_EVENT(Optick::Category::Rendering);
         std::lock_guard _(globalResourceLock_);
 
         // Locked check (at this point we're certain noone is manipulating the initialized flag)
@@ -207,6 +208,7 @@ public:
         // Speculative check to avoid unnecessary locking
         if (!initialized_) return;
 
+        OPTICK_EVENT(Optick::Category::Rendering);
         std::lock_guard _(globalResourceLock_);
 
         // Locked check (at this point we're certain noone is manipulating the initialized flag)

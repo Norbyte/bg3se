@@ -44,6 +44,7 @@ bg3se::LevelManager* ExtensionState::GetLevelManager()
 
 void ExtensionState::OnUpdate(GameTime const& time)
 {
+    OPTICK_EVENT("Client update");
     FireInputEvents();
     ExtensionStateBase::OnUpdate(time);
 }
@@ -87,6 +88,7 @@ void ExtensionState::BootstrapLua()
 
 void ExtensionState::FireInputEvents()
 {
+    OPTICK_EVENT(Optick::Category::Input);
     if (!deferredInputEvents_.empty()) {
         LuaClientPin lua(*this);
         if (lua) {

@@ -165,6 +165,7 @@ Array<FixedString> FetchStatEntriesBefore(RPGStats* stats, FixedString const& mo
 /// <returns></returns>
 Array<FixedString> GetStats(std::optional<FixedString> statType)
 {
+    OPTICK_EVENT();
     auto stats = GetStaticSymbols().GetStats();
     if (stats == nullptr) {
         OsiError("RPGStats not available");
@@ -211,6 +212,7 @@ Array<FixedString> GetStats(std::optional<FixedString> statType)
 /// <returns></returns>
 Array<FixedString> GetStatsLoadedBefore(FixedString const& modUuid, std::optional<FixedString> statType)
 {
+    OPTICK_EVENT();
     auto stats = GetStaticSymbols().GetStats();
     if (stats == nullptr) {
         OsiError("RPGStats not available");
@@ -784,6 +786,7 @@ void DoExecuteInterruptFunctors(ExecuteInterruptFunctorProc* proc, ecs::EntityWo
 
 void ExecuteFunctors(lua_State* L, Functors* functors, ContextData* context)
 {
+    OPTICK_EVENT();
     HitResult hit;
     switch (context->Type) {
     P(AttackTarget)
@@ -809,6 +812,7 @@ void ExecuteFunctors(lua_State* L, Functors* functors, ContextData* context)
 
 void ExecuteFunctor(lua_State* L, Functor* functor, ContextData* context)
 {
+    OPTICK_EVENT();
     Functors functors;
     functors.Insert(functor->Clone());
     ExecuteFunctors(L, &functors, context);

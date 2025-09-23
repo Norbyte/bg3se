@@ -178,6 +178,7 @@ UserReturn GetGuidResource(lua_State* L, Guid resourceGuid, ExtResourceManagerTy
 
 Array<Guid> GetAllGuidResources(lua_State* L, ExtResourceManagerType type)
 {
+    OPTICK_EVENT();
     return gGuidResourceHelpers.Get(type)->GetAll();
 }
 
@@ -227,6 +228,7 @@ UserReturn GetResource(lua_State* L, FixedString const& resourceGuid, ResourceBa
 
 Array<FixedString> GetAllResources(ResourceBankType type)
 {
+    OPTICK_EVENT();
     auto bank = GetStaticSymbols().GetCurrentResourceBank();
     if (!bank) {
         LuaError("Resource manager not available");

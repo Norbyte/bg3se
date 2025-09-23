@@ -8,6 +8,7 @@ using RequestId = uint32_t;
 class NetworkRequestSystem
 {
 public:
+    NetworkRequestSystem();
     RequestId CreateRequest(LuaDelegate<void(STDString, bool)>&& callback);
     void HandleReply(RequestId replyId, StringView payload, bool binary);
     void Update();

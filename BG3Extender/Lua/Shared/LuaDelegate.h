@@ -148,6 +148,12 @@ private:
 class DeferredLuaDelegateQueue
 {
 public:
+    inline DeferredLuaDelegateQueue(char const* name)
+#if USE_OPTICK
+        : description_(OPTICK_DESC(name, "", 0, IO))
+#endif
+    {}
+
     template <class TRet, class... TArgs>
     void Call(LuaDelegate<TRet(TArgs...)> const& delegate, TArgs... args)
     {
@@ -171,6 +177,9 @@ public:
 
 private:
     Array<GenericDeferredLuaDelegateCall*> queue_;
+#if USE_OPTICK
+    ::Optick::EventDescription* description_;
+#endif
 };
 
 END_NS()

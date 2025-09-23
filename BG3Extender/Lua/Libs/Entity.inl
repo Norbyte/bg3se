@@ -71,6 +71,7 @@ UserReturn Get(lua_State* L, lua::AnyRef entity)
 
 HashMap<Guid, EntityHandle> GetAllEntitiesWithUuid(lua_State* L)
 {
+    OPTICK_EVENT();
     auto mappings = State::FromLua(L)->GetEntitySystemHelpers()->GetUuidMappings();
     if (mappings) {
         return mappings->Mappings;
@@ -81,6 +82,7 @@ HashMap<Guid, EntityHandle> GetAllEntitiesWithUuid(lua_State* L)
 
 Array<EntityHandle> GetAllEntitiesWithComponent(lua_State* L, ExtComponentType component)
 {
+    OPTICK_EVENT();
     auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
     auto componentType = ecs->GetComponentIndex(component);
     if (!componentType) return {};
@@ -129,6 +131,7 @@ Array<EntityHandle> GetAllEntitiesWithComponent(lua_State* L, ExtComponentType c
 
 Array<EntityHandle> GetAllEntities(lua_State* L)
 {
+    OPTICK_EVENT();
     Array<EntityHandle> entities;
 
     auto world = State::FromLua(L)->GetEntitySystemHelpers()->GetEntityWorld();

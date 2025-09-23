@@ -464,6 +464,7 @@ void UserVariableManager::BindCache(lua::CachedUserVariableManager* cache)
 
 void UserVariableManager::Update()
 {
+    OPTICK_EVENT();
     Flush(true);
 }
 
@@ -484,6 +485,7 @@ void UserVariableManager::RegisterPrototype(FixedString const& key, UserVariable
 
 void UserVariableManager::SavegameVisit(ObjectVisitor* visitor)
 {
+    OPTICK_EVENT(Optick::Category::IO);
     if (visitor->IsReading()) {
         vars_.clear();
     }
@@ -791,6 +793,7 @@ void ModVariableManager::BindCache(lua::CachedModVariableManager* cache)
 
 void ModVariableManager::Update()
 {
+    OPTICK_EVENT();
     Flush(true);
 }
 
@@ -816,6 +819,7 @@ void ModVariableManager::RegisterPrototype(Guid const& modUuid, FixedString cons
 
 void ModVariableManager::SavegameVisit(ObjectVisitor* visitor)
 {
+    OPTICK_EVENT(Optick::Category::IO);
     if (visitor->IsReading()) {
         for (auto& mod : vars_) {
             mod.Value().ClearVars();

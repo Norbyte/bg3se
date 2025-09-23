@@ -162,6 +162,7 @@ void BaseNetworkManager::OnResetExtensionState()
 
 void BaseNetworkManager::ProcessLocalMessages()
 {
+    OPTICK_EVENT(Optick::Category::Network);
     LocalMessage msg;
     while (localMessages_.try_pop(msg)) {
         HandleLocalMessage(msg);

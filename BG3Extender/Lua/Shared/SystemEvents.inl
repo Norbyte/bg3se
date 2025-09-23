@@ -26,6 +26,7 @@ void SystemEventHooks::BindECS()
 
 void SystemEventHooks::FireDeferredEvents()
 {
+    OPTICK_EVENT();
     for (auto index : deferredUnsubscriptions_) {
         Unsubscribe(index);
     }

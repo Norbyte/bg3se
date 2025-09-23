@@ -6,6 +6,7 @@ BEGIN_NS(lua::io)
 
 std::optional<STDString> LoadFile(char const* path, std::optional<FixedString> context)
 {
+    OPTICK_EVENT();
     if (!context || *context == GFS.struser) {
         return script::LoadExternalFile(path, PathRootType::UserProfile);
     } else if (context == GFS.strdata) {
@@ -18,6 +19,7 @@ std::optional<STDString> LoadFile(char const* path, std::optional<FixedString> c
 
 bool SaveFile(char const* path, StringView contents)
 {
+    OPTICK_EVENT();
     return script::SaveExternalFile(path, PathRootType::UserProfile, contents);
 }
 

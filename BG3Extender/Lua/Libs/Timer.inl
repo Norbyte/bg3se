@@ -267,11 +267,13 @@ void TimerManager::SavegameVisit(ObjectVisitor* visitor)
 TimerSystem::TimerSystem(State& state, bool isServer)
     : realtime_(state, eventQueue_),
     game_(state, eventQueue_),
-    isServer_(isServer)
+    isServer_(isServer),
+    eventQueue_("Timer event")
 {}
 
 void TimerSystem::Update(double time)
 {
+    OPTICK_EVENT();
     realtime_.Update(time);
     game_.Update(time);
     eventQueue_.Flush();

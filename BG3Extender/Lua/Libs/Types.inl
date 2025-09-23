@@ -136,6 +136,7 @@ TypeInformation* GetTypeInfo(FixedString const& typeName)
 
 Array<FixedString> GetAllTypes()
 {
+    OPTICK_EVENT();
     Array<FixedString> types;
     auto const& allTypes = TypeInformationRepository::GetInstance().GetAllTypes();
     for (auto const& type : allTypes) {

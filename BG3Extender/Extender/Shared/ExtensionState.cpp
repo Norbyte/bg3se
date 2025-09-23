@@ -390,6 +390,9 @@ namespace bg3se
             return {};
         }
 
+
+        OPTICK_SCRIPT_EVENT(scriptName.c_str(), scriptName.c_str(), 0);
+
         return lua->LoadScript(reader.ToString(), scriptName, globalsIdx);
     }
 
@@ -478,6 +481,7 @@ namespace bg3se
 
     void ExtensionStateBase::LuaResetInternal()
     {
+        OPTICK_EVENT(Optick::Category::IO);
         // Make sure that we won't get destroyed during startup/shutdown
         IncLuaRefs();
 
@@ -520,6 +524,7 @@ namespace bg3se
 
     void ExtensionStateBase::BootstrapLua()
     {
+        OPTICK_EVENT(Optick::Category::IO);
         LuaVirtualPin lua(*this);
         if (!lua) {
             OsiErrorS("Called when the Lua VM has not been initialized!");

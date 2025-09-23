@@ -1633,6 +1633,7 @@ void ProgressBar::StyledRender(DrawingContext& context)
 IMGUIObjectPoolInterface::~IMGUIObjectPoolInterface() {}
 
 IMGUIObjectManager::IMGUIObjectManager()
+    : eventQueue_("IMGUI event")
 {
     pools_[(unsigned)IMGUIObjectType::Window] = std::make_unique<IMGUIObjectPool<Window>>();
     pools_[(unsigned)IMGUIObjectType::ChildWindow] = std::make_unique<IMGUIObjectPool<ChildWindow>>();
@@ -1726,6 +1727,7 @@ bool IMGUIObjectManager::DestroyRenderable(HandleType handle)
 
 void IMGUIObjectManager::Render(DrawingContext& context)
 {
+    OPTICK_EVENT(Optick::Category::Rendering);
     if (renderDemo_) {
         ImGui::ShowDemoWindow();
     }
@@ -1745,6 +1747,7 @@ void IMGUIObjectManager::EnableDemo(bool enable)
 
 void IMGUIObjectManager::ClientUpdate()
 {
+    OPTICK_EVENT();
     LuaVirtualPin lua(ecl::ExtensionState::Get());
     if (lua) {
         eventQueue_.Flush();
@@ -2020,6 +2023,7 @@ void IMGUIManager::OnViewportUpdated()
 
 void IMGUIManager::UpdateStyle()
 {
+    OPTICK_EVENT();
     IMGUI_DEBUG("Recalculating IMGUI style");
     auto& style = ImGui::GetStyle();
     style = ImGuiStyle();
@@ -2127,6 +2131,7 @@ void IMGUIManager::Update()
         return;
     }
 
+    OPTICK_EVENT("IMGUI Update");
     if (scale_ != requestedScale_ 
         || uiScaleMultiplier_ != requestedUiScaleMultiplier_
         || fontScaleMultiplier_ != requestedFontScaleMultiplier_) {
@@ -2134,6 +2139,7 @@ void IMGUIManager::Update()
     }
 
     {
+        OPTICK_EVENT("SDL New Frame", Optick::Category::Rendering);
         std::lock_guard _(sdl_.GetSDLMutex());
         sdl_.NewFrame();
     }
@@ -2159,7 +2165,11 @@ void IMGUIManager::Update()
     objects_->Render(dc);
     se_assert(dc.ScalingStack.empty());
 
-    ImGui::Render();
+    {
+        OPTICK_EVENT("IMGUI Render", Optick::Category::Rendering);
+        ImGui::Render();
+    }
+
     renderer_->FinishFrame();
 
     objects_->ClientUpdate();

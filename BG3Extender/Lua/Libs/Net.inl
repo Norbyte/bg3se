@@ -3,6 +3,10 @@
 /// <lua_module>Net</lua_module>
 BEGIN_NS(lua::net)
 
+NetworkRequestSystem::NetworkRequestSystem()
+    : eventQueue_("Network event")
+{}
+
 RequestId NetworkRequestSystem::CreateRequest(LuaDelegate<void(STDString, bool)>&& callback)
 {
     auto id = nextRequestId_++;
@@ -23,6 +27,7 @@ void NetworkRequestSystem::HandleReply(RequestId replyId, StringView payload, bo
 
 void NetworkRequestSystem::Update()
 {
+    OPTICK_EVENT();
     eventQueue_.Flush();
 }
 

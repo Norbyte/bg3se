@@ -71,6 +71,7 @@ void ThreadedExtenderState::SubmitTaskAndWait(std::function<void()> fun)
 
 void ThreadedExtenderState::RunPendingTasks()
 {
+    OPTICK_EVENT();
     std::function<void()> fun;
     while (threadTasks_.try_pop(fun)) {
         fun();

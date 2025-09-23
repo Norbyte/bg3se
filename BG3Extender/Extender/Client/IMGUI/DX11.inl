@@ -143,6 +143,7 @@ public:
         GImGui->Viewports[0] = &viewports_[curViewport_].Viewport;
 
         if (requestReloadFonts_) {
+            OPTICK_EVENT("InvalidateDeviceObjects", Optick::Category::Rendering);
             IMGUI_DEBUG("Rebuilding font atlas");
             ImGui_ImplDX11_InvalidateDeviceObjects();
             requestReloadFonts_ = false;
@@ -150,6 +151,7 @@ public:
         }
 
         if (!initializationFailed_ && !ImGui_ImplDX11_RenderObjectsInitialized()) {
+            OPTICK_EVENT("CreateDeviceObjects", Optick::Category::Rendering);
             IMGUI_DEBUG("Re-initializing DX11 render objects");
             initializationFailed_ = !ImGui_ImplDX11_CreateDeviceObjects();
             if (initializationFailed_) {
@@ -164,6 +166,7 @@ public:
 
     void FinishFrame() override
     {
+        OPTICK_EVENT(Optick::Category::Rendering);
         auto& vp = viewports_[curViewport_].Viewport;
         auto& drawLists = viewports_[curViewport_].ClonedDrawLists;
 

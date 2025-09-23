@@ -28,5 +28,7 @@
 #include <variant>
 #include <span>
 
+#include <Extender/BuildInfo.h>
 #include <Extender/Shared/Utils.h>
 #include <GameDefinitions/Base/Base.h>
+#include <Extender/Shared/Optick.h>

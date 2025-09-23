@@ -84,7 +84,7 @@ void ScriptExtender::Initialize()
     DetourTransactionCommit();
 
     gameStateWorkerStart_.SetWrapper(&ScriptExtender::GameStateWorkerWrapper, this);
-    gameStateMachineUpdate_.SetPostHook(&ScriptExtender::OnUpdate, this);
+    gameStateMachineUpdate_.SetPrePostHook(&ScriptExtender::OnPreUpdate, &ScriptExtender::OnUpdate, this);
 
     sdl_.EnableHooks();
 }
@@ -101,6 +101,7 @@ void ScriptExtender::PostStartup()
 {
     if (postStartupDone_) return;
 
+    OPTICK_EVENT();
     entityHelpers_.Setup();
     visualHelpers_.Setup();
     gExtender->GetPropertyMapManager().RegisterComponents(entityHelpers_);
@@ -268,12 +269,35 @@ void ScriptExtender::GameStateWorkerWrapper(void (*wrapped)(void*), void* self)
     wrapped(self);
 }
 
+#if USE_OPTICK
+std::unique_ptr< ::Optick::Event> frameEvent;
+#endif
+
+void ScriptExtender::OnPreUpdate(void* self, GameTime* time)
+{
+#if USE_OPTICK
+    static ::Optick::ThreadScope mainThreadScope("Client");
+    frameEvent.reset();
+    ::Optick::EndFrame();
+    ::Optick::Update();
+
+    auto frameNumber = ::Optick::BeginFrame();
+    frameEvent = std::make_unique<::Optick::Event>(*::Optick::GetFrameDescription());
+    OPTICK_TAG("Frame", frameNumber);
+#endif
+}
+
 void ScriptExtender::OnUpdate(void* self, GameTime* time)
 {
     BEGIN_GUARDED()
     // In case we're loaded too late to see LoadModule transition
     BindToThreadPersistent();
+    OnUpdateGuarded(self, time);
+    END_GUARDED()
+}
 
+void ScriptExtender::OnUpdateGuarded(void* self, GameTime* time)
+{
     network_.Update();
     RunPendingTasks();
     gExtender->IMGUI().Update();
@@ -283,7 +307,7 @@ void ScriptExtender::OnUpdate(void* self, GameTime* time)
             gExtender->GetLuaDebugger()->ClientTick();
         }
     }
-    END_GUARDED()
+
 }
 
 void ScriptExtender::OnIncLocalProgress(void* self, int progress, char const* state)
@@ -344,6 +368,7 @@ void ScriptExtender::ResetLuaState()
 
 void ScriptExtender::ResetExtensionState()
 {
+    OPTICK_EVENT();
     network_.OnResetExtensionState();
     extensionState_.reset();
     extensionState_ = std::make_unique<ExtensionState>();
@@ -358,6 +383,7 @@ void ScriptExtender::LoadExtensionState(ExtensionStateContext ctx)
         return;
     }
 
+    OPTICK_EVENT(Optick::Category::IO);
     PostStartup();
 
     if (!extensionState_) {

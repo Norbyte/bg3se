@@ -520,6 +520,7 @@
     <ClInclude Include="GameDefinitions\AiHelpers.h" />
     <ClInclude Include="GameDefinitions\Thoth.h" />
     <ClInclude Include="Extender\Client\VisualHelpers.h" />
+    <ClInclude Include="Extender\Shared\Optick.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

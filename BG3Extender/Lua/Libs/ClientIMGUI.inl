@@ -29,6 +29,7 @@ bool LoadFont(FixedString const& name, char const* path, float size)
         return false;
     }
 
+    OPTICK_EVENT();
     return gExtender->IMGUI().LoadFont(name, path, size);
 }
 

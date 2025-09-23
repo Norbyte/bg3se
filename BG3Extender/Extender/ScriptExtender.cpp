@@ -10,6 +10,9 @@
 #include <Extender/Shared/UserVariables.inl>
 #include <Extender/Shared/UseActions.inl>
 #include <Extender/Shared/VirtualTextures.inl>
+#if USE_OPTICK
+#include <optick_server.h>
+#endif
 
 #undef DEBUG_SERVER_CLIENT
 
@@ -117,6 +120,17 @@ void ScriptExtender::Initialize()
     }
 
     DetourTransactionCommit();
+
+#if USE_OPTICK
+    if (config_.Profiler) {
+        ::Optick::Server::Enable();
+        if (::Optick::Server::Get().IsListening()) {
+            DEBUG("Optick profiler listening on port %d", ::Optick::Server::Get().GetPort());
+        } else {
+            ERR("Optick profiler startup failed");
+        }
+    }
+#endif
 
     if (config_.EnableLuaDebugger && luaDebuggerThread_ == nullptr) {
         DEBUG("Starting Lua debugger server");

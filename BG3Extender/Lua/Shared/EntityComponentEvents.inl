@@ -26,6 +26,7 @@ void EntityComponentEventHooks::BindECS()
 
 void EntityComponentEventHooks::FireDeferredEvents()
 {
+    OPTICK_EVENT();
     for (auto index : deferredUnsubscriptions_) {
         Unsubscribe(index);
     }

@@ -5,6 +5,7 @@ BEGIN_SE()
 
 void SavegameSerializer::SavegameVisit(ObjectVisitor* visitor)
 {
+    OPTICK_EVENT(Optick::Category::IO);
     if (visitor->EnterRegion(GFS.strScriptExtenderSave)) {
         uint32_t version = SavegameVersion;
         visitor->VisitUInt32(GFS.strExtenderVersion, version, 0);
@@ -49,6 +50,7 @@ void SavegameSerializer::Serialize(ObjectVisitor* visitor, uint32_t version)
 
 void SavegameSerializer::SerializePersistentVariables(ObjectVisitor* visitor, uint32_t version)
 {
+    OPTICK_EVENT(Optick::Category::IO);
     STDString nullStr;
     if (visitor->EnterNode(GFS.strLuaVariables, GFS.strEmpty)) {
         auto const& configs = gExtender->GetServer().GetExtensionState().GetConfigs();

@@ -108,6 +108,7 @@ void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
 
     if (fromState != GameState::Unknown) {
         BindToThreadPersistent();
+        OPTICK_THREAD("Server");
     }
 
     switch (fromState) {

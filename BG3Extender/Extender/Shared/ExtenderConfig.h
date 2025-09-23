@@ -41,6 +41,7 @@ struct ExtenderConfig
     bool DisableStoryPatching{ false };
     bool DisableStoryCompilation{ true };
     bool InsanityCheck{ false };
+    bool Profiler{ false };
 
 #if defined(OSI_EXTENSION_BUILD)
 #if defined(_DEBUG)

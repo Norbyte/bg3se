@@ -278,6 +278,12 @@ namespace bg3se::esv
         return GetStaticSymbols().GetServerLevelManager();
     }
 
+    void ExtensionState::OnUpdate(GameTime const& time)
+    {
+        OPTICK_EVENT("Server update");
+        ExtensionStateBase::OnUpdate(time);
+    }
+
     void ExtensionState::OnGameSessionLoading()
     {
         cachedPersistentVars_.clear();
