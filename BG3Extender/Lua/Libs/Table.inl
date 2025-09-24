@@ -2,16 +2,6 @@
 /// <lua_module>Table</lua_module>
 BEGIN_NS(lua::table)
 
-// table: find(), isEmpty(), count(), copy(), removeValue(), concat(), insert(), remove()
-// contains(), 
-/*
-static const luaL_Reg tab_funcs[] = {
-  {"concat", tconcat},
-  {"insert", tinsert},
-  {"remove", tremove},
-  {NULL, NULL}
-};*/
-
 UserReturn Find(lua_State* L)
 {
     return FindValue(L, 1, 2);
