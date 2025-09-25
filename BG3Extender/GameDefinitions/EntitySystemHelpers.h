@@ -246,18 +246,6 @@ public:
         return log_;
     }
 
-    inline std::optional<QueryIndex> GetQueryIndex(STDString const& type) const
-    {
-        auto it = queryMappings_.find(type);
-        if (it != queryMappings_.end() && it->second != UndefinedQuery) {
-            return it->second;
-        } else {
-            return {};
-        }
-    }
-
-    QueryDescription* GetQuery(ExtQueryType type);
-
     BitSet<> * GetReplicationFlags(EntityHandle const& entity, ExtComponentType type);
     BitSet<> * GetOrCreateReplicationFlags(EntityHandle const& entity, ExtComponentType type);
     BitSet<> * GetReplicationFlags(EntityHandle const& entity, ReplicationTypeIndex replicationType);
@@ -265,11 +253,22 @@ public:
     void NotifyReplicationFlagsDirtied();
 
     void* GetRawComponent(EntityHandle entityHandle, ExtComponentType type);
+    void* GetRawSingleton(ExtComponentType type);
     ecs::SystemTypeEntry* GetSystemEntry(ExtSystemType type);
     void* GetRawSystem(ExtSystemType type);
     EntityHandle GetEntityHandle(FixedString const& guidString);
     EntityHandle GetEntityHandle(Guid const& uuid);
-    UuidToHandleMappingComponent* GetUuidMappings();
+    
+    template <class T>
+    inline T* GetSingleton()
+    {
+        auto p = GetRawSingleton(T::ComponentType);
+        if (p != nullptr) {
+            return reinterpret_cast<T*>(p);
+        } else {
+            return nullptr;
+        }
+    }
 
     void Update();
     void PostUpdate();
@@ -281,7 +280,6 @@ public:
 
 protected:
     void MapComponentIndices(char const* componentName, ExtComponentType type, std::size_t size, bool isProxy);
-    void MapQueryIndex(char const* name, ExtQueryType type);
     void MapResourceManagerIndex(char const* componentName, ExtResourceManagerType type);
     void MapSystemIndex(char const* systemName, ExtSystemType type);
     void UpdateComponentMappings();
@@ -312,8 +310,6 @@ private:
     ECSComponentDataMap ecsComponentData_;
     std::unordered_map<STDString, SystemTypeIndex> systemIndexMappings_;
     std::vector<STDString const*> systemTypeIdToName_;
-    std::unordered_map<STDString, QueryIndex> queryMappings_;
-    std::vector<STDString const*> queryTypeIdToName_;
     std::unordered_map<STDString, resource::StaticDataTypeIndex> staticDataMappings_;
     std::vector<STDString const*> staticDataIdToName_;
 
@@ -323,7 +319,6 @@ private:
     bool logging_{ false };
 
     std::array<PerComponentData, (size_t)ExtComponentType::Max> components_;
-    std::array<QueryIndex, (size_t)ExtQueryType::Max> queryIndices_;
     std::array<resource::StaticDataTypeIndex, (size_t)ExtResourceManagerType::Max> staticDataIndices_;
     std::array<SystemTypeIndex, (size_t)ExtSystemType::Max> systemIndices_;
 
@@ -333,7 +328,6 @@ private:
     ECSChangeLog log_;
 
     void BindSystem(std::string_view name, SystemTypeIndex id);
-    void BindQuery(std::string_view name, QueryIndex id);
     void BindStaticData(std::string_view name, resource::StaticDataTypeIndex id);
     void BindComponent(std::string_view name, ComponentTypeIndex id);
     void BindReplication(std::string_view name, ReplicationTypeIndex id);

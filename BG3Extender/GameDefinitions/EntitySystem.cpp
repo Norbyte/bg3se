@@ -565,8 +565,7 @@ RuntimeCheckLevel EntitySystemHelpersBase::CheckLevel{ RuntimeCheckLevel::FullEC
 #endif
 
 EntitySystemHelpersBase::EntitySystemHelpersBase()
-    : queryIndices_{ UndefinedQuery },
-    staticDataIndices_{ resource::UndefinedStaticDataType },
+    : staticDataIndices_{ resource::UndefinedStaticDataType },
     systemIndices_{ UndefinedSystem }
 {}
 
@@ -673,16 +672,6 @@ void EntitySystemHelpersBase::BindSystem(StringView name, SystemTypeIndex system
     systemTypeIdToName_[(unsigned)systemId] = &it.first->first;
 }
 
-void EntitySystemHelpersBase::BindQuery(StringView name, QueryIndex queryId)
-{
-    auto it = queryMappings_.insert(std::make_pair(name, queryId));
-    if (queryTypeIdToName_.size() <= (unsigned)queryId) {
-        queryTypeIdToName_.resize((unsigned)queryId + 1);
-    }
-
-    queryTypeIdToName_[(unsigned)queryId] = &it.first->first;
-}
-
 void EntitySystemHelpersBase::BindStaticData(StringView name, resource::StaticDataTypeIndex id)
 {
     auto it = staticDataMappings_.insert(std::make_pair(name, id));
@@ -726,7 +715,6 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
     componentNameToIndexMappings_.clear();
     ecsComponentData_.Clear();
     components_.fill(PerComponentData{});
-    queryIndices_.fill(UndefinedQuery);
     staticDataIndices_.fill(resource::UndefinedStaticDataType);
     systemIndices_.fill(UndefinedSystem);
 
@@ -750,9 +738,8 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
     for (auto const& mapping : symbolMaps) {
         auto name = SimplifyComponentName(mapping.second.name);
         if (name.starts_with("ecs::query::spec::Spec<")) {
-            BindQuery(name, QueryIndex(*mapping.first));
-        }
-        else {
+            // Queries ignored
+        } else {
             auto contextIt = contexts.find(mapping.second.context);
             if (contextIt != contexts.end()) {
                 switch (contextIt->second) {
@@ -798,8 +785,6 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
     #include <GameDefinitions/Components/AllSystemTypes.inl>
     #undef T
 
-    MapQueryIndex("ecs::query::spec::Spec<struct ls::TypeList<struct ls::uuid::ToHandleMappingComponent>,struct ls::TypeList<>,struct ls::TypeList<>,struct ls::TypeList<>,struct ls::TypeList<>,struct ls::TypeList<>,struct ecs::QueryTypePersistentTag,struct ecs::QueryTypeAliveTag>", ExtQueryType::UuidToHandleMapping);
-
 #define FOR_RESOURCE_TYPE(cls) MapResourceManagerIndex(resource::cls::EngineClass, resource::cls::ResourceManagerType);
     FOR_EACH_GUID_RESOURCE_TYPE()
 #undef FOR_RESOURCE_TYPE
@@ -833,16 +818,6 @@ void EntitySystemHelpersBase::MapComponentIndices(char const* componentName, Ext
         components_[(unsigned)type].IsProxy = isProxy;
     } else {
         OsiWarn("Could not find index for component: " << componentName);
-    }
-}
-
-void EntitySystemHelpersBase::MapQueryIndex(char const* name, ExtQueryType type)
-{
-    auto it = queryMappings_.find(name);
-    if (it != queryMappings_.end()) {
-        queryIndices_[(unsigned)type] = it->second;
-    } else {
-        OsiWarn("Could not find index for query: " << name);
     }
 }
 
@@ -901,6 +876,29 @@ void* EntitySystemHelpersBase::GetRawComponent(EntityHandle entityHandle, ExtCom
     }
 }
 
+void* EntitySystemHelpersBase::GetRawSingleton(ExtComponentType type)
+{
+    auto& meta = GetComponentMeta(type);
+    if (meta.SingleComponentQuery == ecs::UndefinedQuery) {
+        WARN("No query defined for singleton %s?", GetComponentName(meta.ComponentIndex)->c_str());
+        return nullptr;
+    }
+
+    auto world = GetEntityWorld();
+    auto const& query = world->Queries.Queries[(unsigned)meta.SingleComponentQuery];
+    if (query.EntityStorages.empty()) {
+        return nullptr;
+    }
+
+    auto const& storage = query.EntityStorages.values()[0];
+    if (storage.Storage->InstanceToPageMap.empty()) {
+        return nullptr;
+    }
+
+    auto page = storage.Storage->InstanceToPageMap.values()[0];
+    return storage.Storage->GetComponent(page, storage.GetComponentIndex(0), meta.Size, meta.IsProxy);
+}
+
 SystemTypeEntry* EntitySystemHelpersBase::GetSystemEntry(ExtSystemType type)
 {
     auto world = GetEntityWorld();
@@ -926,17 +924,6 @@ void* EntitySystemHelpersBase::GetRawSystem(ExtSystemType type)
     auto index = systemIndices_[(unsigned)type];
     if (index != UndefinedSystem) {
         return world->Systems.Systems[(unsigned)index].System;
-    } else {
-        return nullptr;
-    }
-}
-
-UuidToHandleMappingComponent* EntitySystemHelpersBase::GetUuidMappings()
-{
-    auto query = GetQuery(ExtQueryType::UuidToHandleMapping);
-    if (query) {
-        auto const& meta = GetComponentMeta(ExtComponentType::UuidToHandleMapping);
-        return reinterpret_cast<UuidToHandleMappingComponent*>(query->GetFirstMatchingComponent(meta.Size, meta.IsProxy));
     } else {
         return nullptr;
     }
@@ -1343,7 +1330,7 @@ EntityHandle EntitySystemHelpersBase::GetEntityHandle(FixedString const& guidStr
 
 EntityHandle EntitySystemHelpersBase::GetEntityHandle(Guid const& uuid)
 {
-    auto entityMap = GetUuidMappings();
+    auto entityMap = GetSingleton<UuidToHandleMappingComponent>();
     if (entityMap) {
         auto handle = entityMap->Mappings.try_get(uuid);
         if (handle) {
@@ -1375,22 +1362,6 @@ resource::GuidResourceBankBase* EntitySystemHelpersBase::GetRawResourceManager(E
     }
 
     return *res;
-}
-
-QueryDescription* EntitySystemHelpersBase::GetQuery(ExtQueryType type)
-{
-    auto index = queryIndices_[(unsigned)type];
-    if (index == UndefinedQuery) {
-        OsiError("No query index mapping registered for " << type);
-        return {};
-    }
-
-    auto world = GetEntityWorld();
-    if (!world) {
-        return {};
-    }
-
-    return &world->Queries.Queries[(unsigned)index];
 }
 
 bool EntitySystemHelpersBase::SetSystemUpdateHook(SystemTypeIndex systemType, std::function<SystemHookProc> preUpdate, std::function<SystemHookProc> postUpdate)

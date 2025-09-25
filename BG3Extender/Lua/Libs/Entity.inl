@@ -72,7 +72,7 @@ UserReturn Get(lua_State* L, lua::AnyRef entity)
 HashMap<Guid, EntityHandle> GetAllEntitiesWithUuid(lua_State* L)
 {
     OPTICK_EVENT();
-    auto mappings = State::FromLua(L)->GetEntitySystemHelpers()->GetUuidMappings();
+    auto mappings = State::FromLua(L)->GetEntitySystemHelpers()->GetSingleton<UuidToHandleMappingComponent>();
     if (mappings) {
         return mappings->Mappings;
     } else {

@@ -1228,11 +1228,6 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
     E(Max)
 END_ENUM()
 
-BEGIN_ENUM(ExtQueryType, uint32_t)
-    E(UuidToHandleMapping)
-    E(Max)
-END_ENUM()
-
 BEGIN_BITMASK(CanMoveFlags, uint16_t)
     EV(CanMove, 1)
     EV(CanBeTeleported, 2)
