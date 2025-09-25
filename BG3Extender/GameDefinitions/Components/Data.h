@@ -877,6 +877,19 @@ DEFINE_TAG_COMPONENT(eoc::heal, BlockComponent, HealBlock)
 
 END_NS()
 
+BEGIN_NS(spatial_grid)
+
+struct DataComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(SpatialGrid, "eoc::spatial_grid::DataComponent")
+
+    GridStructure Grid;
+    FixedString Level;
+    uint8_t field_94;
+};
+
+END_NS()
+
 BEGIN_NS(esv)
 
 struct GodSystem : public BaseSystem

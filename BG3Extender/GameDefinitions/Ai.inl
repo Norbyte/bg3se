@@ -483,3 +483,57 @@ void AiGrid::FreePath(AiPath* path)
 }
 
 END_SE()
+
+BEGIN_NS(spatial_grid)
+
+glm::ivec2 GridStructure::ClampToCell(glm::vec3 position) const
+{
+    auto p = position - MinPos;
+
+    auto xcell = (int)(p.x / CellSize);
+    auto zcell = (int)(p.z / CellSize);
+
+    return glm::ivec2(
+        std::min(std::max(xcell, 0), Size),
+        std::min(std::max(zcell, 0), Size)
+    );
+}
+
+Array<EntityHandle> GridStructure::Collect(glm::vec3 position, float radius, bool includeCharacters, bool includeItems) const
+{
+    Array<EntityHandle> entities;
+
+    auto minCell = ClampToCell(position - radius);
+    auto maxCell = ClampToCell(position + radius);
+    auto center = glm::vec2(position.x, position.z);
+
+    for (auto z = minCell.y; z <= maxCell.y; z++) {
+        for (auto x = minCell.x; x <= maxCell.x; x++) {
+
+            auto cell = Cells.try_get(z + Size * x);
+            if (cell != nullptr) {
+                if (includeCharacters) {
+                    for (auto const& entity : cell->Characters) {
+                        auto pos = glm::vec2(entity.Position.x, entity.Position.z);
+                        if (glm::distance(pos, center) < radius) {
+                            entities.push_back(entity.Entity);
+                        }
+                    }
+                }
+
+                if (includeItems) {
+                    for (auto const& entity : cell->Items) {
+                        auto pos = glm::vec2(entity.Position.x, entity.Position.z);
+                        if (glm::distance(pos, center) < radius) {
+                            entities.push_back(entity.Entity);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return entities;
+}
+
+END_NS()

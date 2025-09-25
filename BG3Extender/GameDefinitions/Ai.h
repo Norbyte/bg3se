@@ -586,7 +586,6 @@ struct AiGrid : public ProtectedGameObject<AiGrid>
     void FreePath(AiPath* path);
 };
 
-
 struct AiGridLuaTile
 {
     AiBaseFlags Flags;
@@ -605,5 +604,34 @@ struct AiGridLuaTile
     Array<EntityHandle> Entities;
 };
 
-
 END_SE()
+
+BEGIN_NS(spatial_grid)
+
+struct EntityRecord
+{
+    EntityHandle Entity;
+    glm::vec3 Position;
+};
+
+struct Cell
+{
+    Array<EntityRecord> Characters;
+    Array<EntityRecord> Items;
+    Array<EntityRecord> Platforms;
+};
+
+struct GridStructure
+{
+    static constexpr float CellSize = 12.727922f;
+
+    HashMap<int, Cell> Cells;
+    HashMap<EntityHandle, glm::vec3> EntityPositions;
+    glm::vec3 MinPos;
+    int Size;
+
+    glm::ivec2 ClampToCell(glm::vec3 position) const;
+    Array<EntityHandle> Collect(glm::vec3 position, float radius, bool includeCharacters, bool includeItems) const;
+};
+
+END_NS()

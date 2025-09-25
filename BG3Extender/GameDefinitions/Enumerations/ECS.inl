@@ -245,6 +245,7 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
     E(RulesetModifiers)
     E(TimeFactor)
     E(Clock)
+    E(SpatialGrid)
 
     // Exp
     E(Experience)
