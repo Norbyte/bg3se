@@ -141,6 +141,19 @@ Array<EntityHandle> GetAllEntities(lua_State* L)
     return entities;
 }
 
+Array<EntityHandle> GetEntitiesAroundPosition(lua_State* L, glm::vec3 position, float radius, 
+    std::optional<bool> includeCharacters, std::optional<bool> includeItems)
+{
+    auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
+    auto grid = ecs->GetSingleton<spatial_grid::DataComponent>();
+
+    if (grid) {
+        return grid->Grid.Collect(position, radius, includeCharacters.value_or(true), includeItems.value_or(true));
+    } else {
+        return {};
+    }
+}
+
 EntityHandle Create(lua_State* L)
 {
     auto world = State::FromLua(L)->GetEntitySystemHelpers()->GetEntityWorld();
@@ -286,6 +299,7 @@ void RegisterEntityLib()
     MODULE_FUNCTION(GetAllEntitiesWithUuid)
     MODULE_FUNCTION(GetAllEntitiesWithComponent)
     MODULE_FUNCTION(GetAllEntities)
+    MODULE_FUNCTION(GetEntitiesAroundPosition)
 
     MODULE_FUNCTION(Create)
     MODULE_FUNCTION(Destroy)
