@@ -152,6 +152,8 @@ int CallWithTraceback(lua_State * L, int narg, int nres)
 {
     EnterVMCheck(L);
 
+    OPTICK_SCRIPT_CALL_EVENT("", L, -narg - 1);
+
     int base = lua_gettop(L) - narg;  /* function index */
     lua_pushcfunction(L, &TracebackHandler);  /* push message handler */
     lua_insert(L, base);  /* put it under function and args */
@@ -449,6 +451,7 @@ LifetimeHandle State::GetCurrentLifetime()
 
 void State::LoadBootstrap(STDString const& path, STDString const& modTable)
 {
+    OPTICK_EVENT(Optick::Category::IO);
     CallExt("_LoadBootstrap", RestrictAll, path, modTable);
 }
 
@@ -577,9 +580,16 @@ void State::OnUpdate(GameTime const& time)
     TickEvent params{ .Time = time };
     ThrowEvent("Tick", params, false, 0);
 
-    lua_gc(L, LUA_GCSTEP, 10);
-    variableManager_.Flush();
-    modVariableManager_.Flush();
+    {
+        OPTICK_EVENT("GC");
+        lua_gc(L, LUA_GCSTEP, 10);
+    }
+
+    {
+        OPTICK_EVENT("Flush variable managers");
+        variableManager_.Flush();
+        modVariableManager_.Flush();
+    }
 }
 
 void State::OnStatsStructureLoaded()
@@ -634,6 +644,7 @@ STDString State::GetBuiltinLibrary(int resourceId)
 
 EventResult State::DispatchEvent(EventBase& evt, char const* eventName, bool canPreventAction, uint32_t restrictions)
 {
+    OPTICK_EVENT(eventName);
     auto stackSize = lua_gettop(L) - 2;
 
     try {

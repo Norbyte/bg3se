@@ -390,9 +390,6 @@ namespace bg3se
             return {};
         }
 
-
-        OPTICK_SCRIPT_EVENT(scriptName.c_str(), scriptName.c_str(), 0);
-
         return lua->LoadScript(reader.ToString(), scriptName, globalsIdx);
     }
 

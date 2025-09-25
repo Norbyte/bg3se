@@ -189,6 +189,7 @@ int ProtectedFunctionCallerBase::CallUserFunction(lua_State* L, lua_CFunction fu
     lua_pushcfunction(L, fun);
     lua_pushlightuserdata(L, this);
     Function.Push(L);
+    OPTICK_SCRIPT_CALL_EVENT("", L, -1);
     return lua_pcall(L, 2, 0, 0);
 }
 

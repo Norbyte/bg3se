@@ -695,6 +695,23 @@ char const* lua_get_function_location(lua_State* L, Ref const& reg, int& line)
     }
 }
 
+#if USE_OPTICK
+::Optick::EventDescription* lua_get_function_optick_desc(lua_State* L, int index)
+{
+    int line{ 0 };
+    auto file = lua_get_function_location(L, index, line);
+
+    if (file) {
+        return ::Optick::CreateDescription(file, file, line, nullptr, Optick::Category::Script, \
+            (Optick::EventDescription::COPY_NAME_STRING | Optick::EventDescription::COPY_FILENAME_STRING | Optick::EventDescription::IS_CUSTOM_NAME));
+    } else {
+        static ::Optick::EventDescription* desc = nullptr;
+        if (desc == nullptr) desc = ::Optick::CreateDescription("none", "", 0);
+        return desc;
+    }
+}
+#endif
+
 void* LuaCppCanonicalize(lua_State* L, void* val)
 {
     auto v = reinterpret_cast<TValue*>(val);
