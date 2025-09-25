@@ -142,7 +142,8 @@ char const* GetNodeName(uint64_t nodeRef)
     return "(Unnamed)";
 }
 
-void OsirisCallbackManager::RunHandler(ServerState& lua, uint64_t nodeRef, RegistryEntry const& func, TuplePtrLL* tuple)
+// Note: We make a copy of the func registry entry, as the original might be deleted during CallWithTraceback()
+void OsirisCallbackManager::RunHandler(ServerState& lua, uint64_t nodeRef, RegistryEntry func, TuplePtrLL* tuple)
 {
     auto L = lua.GetState();
     StackCheck _(L, 0);
@@ -218,7 +219,8 @@ void OsirisCallbackManager::RunHandlers(uint64_t nodeRef, OsiArgumentDesc* args)
     }
 }
 
-void OsirisCallbackManager::RunHandler(ServerState& lua, uint64_t nodeRef, RegistryEntry const& func, OsiArgumentDesc* args)
+// Note: We make a copy of the func registry entry, as the original might be deleted during CallWithTraceback()
+void OsirisCallbackManager::RunHandler(ServerState& lua, uint64_t nodeRef, RegistryEntry func, OsiArgumentDesc* args)
 {
     auto L = lua.GetState();
     StackCheck _(L, 0);
