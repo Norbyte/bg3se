@@ -49,6 +49,8 @@ struct PerECSReplicationData
 class ECSComponentDataMap
 {
 public:
+    ECSComponentDataMap();
+
     PerECSComponentData const& Get(ComponentTypeIndex type) const;
     PerECSComponentData& GetOrAdd(ComponentTypeIndex type);
     

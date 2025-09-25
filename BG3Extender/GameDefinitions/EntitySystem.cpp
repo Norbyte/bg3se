@@ -333,6 +333,11 @@ bool ImmediateWorldCache::RemoveComponent(EntityHandle entity, ComponentTypeInde
     }
 }
 
+ECSComponentDataMap::ECSComponentDataMap()
+{
+    nullComponentData_.Name = new STDString();
+}
+
 PerECSComponentData const& ECSComponentDataMap::Get(ComponentTypeIndex type) const
 {
     auto idx = (uint32_t)SparseHashMapHash(type);
@@ -1257,12 +1262,31 @@ void EntitySystemHelpersBase::ValidateEntityChanges(ImmediateWorldCache::Changes
     }
 }
 
-void EntitySystemHelpersBase::MapSingleComponentQuery(QueryIndex query, ComponentTypeIndex component)
+void EntitySystemHelpersBase::MapSingleComponentQuery(QueryIndex queryIndex, ComponentTypeIndex component)
 {
     auto extComponent = GetComponentType(component);
     if (!extComponent) return;
 
-    components_[(unsigned)*extComponent].SingleComponentQuery = query;
+    auto& desc = components_[(unsigned)*extComponent];
+    if (desc.SingleComponentQuery != ecs::UndefinedQuery) {
+        auto const& currentQuery = GetEntityWorld()->Queries.Queries[(unsigned)desc.SingleComponentQuery];
+        auto const& newQuery = GetEntityWorld()->Queries.Queries[(unsigned)desc.SingleComponentQuery];
+
+        // Game bug: Sometimes the same query is defined multiple times; in this case only the first instance
+        // of the query works, the later instances have no associated entity storages.
+        // Only allow replacing the query if it is different from the previous and has less optionals/adds
+        if (!(
+            newQuery.GetOptionalOneFrames().size() < currentQuery.GetOptionalOneFrames().size()
+            || newQuery.GetOptionals().size() < currentQuery.GetOptionals().size()
+            || newQuery.GetIncludeAny().size() < currentQuery.GetIncludeAny().size()
+            || newQuery.GetImmediates().size() < currentQuery.GetImmediates().size()
+            ))
+        {
+            return;
+        }
+    }
+
+    desc.SingleComponentQuery = queryIndex;
 }
 
 void EntitySystemHelpersBase::UpdateQueryCache()
@@ -1273,15 +1297,31 @@ void EntitySystemHelpersBase::UpdateQueryCache()
     auto world = GetEntityWorld();
     unsigned queryIndex = 0;
     for (auto const& query : world->Queries.Queries) {
+        if (query.Flags == QueryFlags::Added
+            && query.GetIncludes().empty()
+            && query.GetIncludeAny().empty()
+            && query.GetExcludes().empty()
+            // && query.GetAddOrs().empty()
+            // && query.GetOptionalOneFrames().empty()
+            // && query.GetImmediates().empty()
+            && query.GetAddAnds().size() == 1
+            && query.GetOneFrames().size() == 1) {
+
+            MapSingleComponentQuery((QueryIndex)queryIndex, query.GetOneFrames()[0]);
+        }
+        
         // Only include "normal" single-component include queries
         if ((unsigned)query.Flags == 0 
-            && query.GetIncludeAny().empty()
+            && (
+                (query.GetIncludes().size() == 1 && query.GetIncludeAny().empty())
+                || (query.GetIncludes().empty() && query.GetIncludeAny().size() == 1)
+                )
             && query.GetExcludes().empty()) {
 
-            if (query.GetIncludes().size() == 1 && query.GetOneFrames().empty()) {
+            if (query.GetIncludes().empty()) {
                 MapSingleComponentQuery((QueryIndex)queryIndex, query.GetIncludes()[0]);
-            } else if  (query.GetOneFrames().size() == 1 && query.GetIncludes().size() == 0) {
-                MapSingleComponentQuery((QueryIndex)queryIndex, query.GetOneFrames()[0]);
+            } else {
+                MapSingleComponentQuery((QueryIndex)queryIndex, query.GetIncludeAny()[0]);
             }
         }
 

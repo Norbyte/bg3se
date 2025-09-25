@@ -91,8 +91,7 @@ Array<EntityHandle> GetAllEntitiesWithComponent(lua_State* L, ExtComponentType c
     auto world = State::FromLua(L)->GetEntitySystemHelpers()->GetEntityWorld();
 
     auto const& meta = ecs->GetComponentMeta(component);
-    // Disabled for further investigation
-    if (false && meta.SingleComponentQuery != ecs::UndefinedQuery) {
+    if (meta.SingleComponentQuery != ecs::UndefinedQuery) {
         auto& query = world->Queries.Queries[(unsigned)meta.SingleComponentQuery];
         if (ecs::IsOneFrame(*componentType)) {
             for (auto const& storage : query.EntityStorages.values()) {
