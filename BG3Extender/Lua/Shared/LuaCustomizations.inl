@@ -671,18 +671,28 @@ char const* lua_get_function_location(lua_State* L, int index, int& line)
 
 char const* lua_get_function_location(lua_State* L, RegistryEntry const& reg, int& line)
 {
-    reg.Push(L);
-    auto source = lua_get_function_location(L, -1, line);
-    lua_pop(L, 1);
-    return source;
+    if (reg) {
+        reg.Push(L);
+        auto source = lua_get_function_location(L, -1, line);
+        lua_pop(L, 1);
+        return source;
+    } else {
+        line = 0;
+        return "";
+    }
 }
 
 char const* lua_get_function_location(lua_State* L, Ref const& reg, int& line)
 {
-    reg.Push(L);
-    auto source = lua_get_function_location(L, -1, line);
-    lua_pop(L, 1);
-    return source;
+    if (reg) {
+        reg.Push(L);
+        auto source = lua_get_function_location(L, -1, line);
+        lua_pop(L, 1);
+        return source;
+    } else {
+        line = 0;
+        return "";
+    }
 }
 
 void* LuaCppCanonicalize(lua_State* L, void* val)
