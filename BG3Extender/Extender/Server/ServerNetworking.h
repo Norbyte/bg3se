@@ -20,6 +20,7 @@ class NetworkManager : public net::BaseNetworkManager
 public:
     void Reset();
 
+    bool LocalPeerOnly() const;
     bool CanSendExtenderMessages(PeerId peerId) const;
     std::optional<net::ProtoVersion> GetPeerVersion(PeerId peerId) const;
     void AllowExtenderMessages(PeerId peerId, net::ProtoVersion version);

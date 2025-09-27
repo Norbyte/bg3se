@@ -55,6 +55,14 @@ void NetworkManager::Reset()
     peerVersions_.clear();
 }
 
+bool NetworkManager::LocalPeerOnly() const
+{
+    auto server = GetServer();
+    return server != nullptr
+        && server->ActivePeerIds.size() == 1
+        && server->ActivePeerIds[0] == (PeerId)server->LocalPeerId;
+}
+
 bool NetworkManager::CanSendExtenderMessages(PeerId peerId) const
 {
     return peerVersions_.find(peerId) != peerVersions_.end();

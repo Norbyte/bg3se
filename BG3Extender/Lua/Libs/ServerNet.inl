@@ -13,12 +13,18 @@ void BroadcastMessage(lua_State* L, StringView channel, StringView payload, std:
     }
 
     auto& networkMgr = gExtender->GetServer().GetNetworkManager();
-    auto msg = BuildMessage(L, ReservedUserId, channel, payload, moduleGuid, requestHandler, replyId, binary.value_or(false));
-    if (msg != nullptr) {
-        if (excludeCharacter != nullptr) {
-            networkMgr.Broadcast(msg, excludeCharacter->UserID);
-        } else {
-            networkMgr.Broadcast(msg, ReservedUserId);
+    if (moduleGuid && excludeCharacter == nullptr && networkMgr.LocalPeerOnly()) {
+        bg3se::net::LocalMessage msg;
+        BuildMessage(L, msg, ReservedUserId, channel, payload, moduleGuid, requestHandler, replyId, binary.value_or(false));
+        gExtender->GetClient().GetNetworkManager().PushLocalMessage(std::move(msg));
+    } else {
+        auto msg = BuildMessage(L, ReservedUserId, channel, payload, moduleGuid, requestHandler, replyId, binary.value_or(false));
+        if (msg != nullptr) {
+            if (excludeCharacter != nullptr) {
+                networkMgr.Broadcast(msg, excludeCharacter->UserID);
+            } else {
+                networkMgr.Broadcast(msg, ReservedUserId);
+            }
         }
     }
 }
