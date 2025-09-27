@@ -16,9 +16,10 @@ bool CustomLuaCall::Call(OsiArgumentDesc const & params)
         return false;
     }
 
+    VMCallEntry _(&*lua);
+
     auto L = lua->GetState();
     lua_checkstack(L, params.Count() + 1);
-    LifetimeStackPin _(L, lua->GetStack());
     handler_.Push(L);
 
     auto param = &params;
@@ -72,10 +73,10 @@ bool ServerState::Query(char const* mod, char const* name, RegistryEntry * func,
 bool ServerState::QueryInternal(char const* mod, char const* name, RegistryEntry * func,
     std::vector<CustomFunctionParam> const & signature, OsiArgumentDesc & params)
 {
+    VMCallEntry _(this);
+
     auto L = GetState();
     lua_checkstack(L, params.Count() + 1);
-    LifetimeStackPin _(L, GetStack());
-
     auto stackSize = lua_gettop(L);
     if (func) {
         func->Push(L);

@@ -66,6 +66,57 @@ namespace bg3se::lua
 
     class State;
 
+#if USE_OPTICK
+    class ProfilerStack
+    {
+    public:
+        void Begin(Optick::EventDescription const* desc);
+        void Begin(StringView msg);
+        void End();
+
+        inline bool WasEntered() const
+        {
+            return !stackAtEntry_.empty();
+        }
+
+        void EnterVM();
+        void ExitVM();
+
+    private:
+        Array<Optick::EventData*> stack_;
+        Array<uint32_t> stackAtEntry_;
+    };
+
+    class ProfilerStackGuard
+    {
+    public:
+        ProfilerStackGuard(State* state);
+        ~ProfilerStackGuard();
+
+    private:
+        State* state_;
+    };
+#else
+    class ProfilerStackGuard
+    {
+    public:
+        inline ProfilerStackGuard(State* state) {}
+        inline ~ProfilerStackGuard() {}
+    };
+#endif
+
+    class VMCallEntry
+    {
+    public:
+        inline VMCallEntry(State* state, int stackDelta = 0);
+        ~VMCallEntry();
+
+    private:
+        [[no_unique_address]] StackCheck check_;
+        LifetimeStackPin lifetime_;
+        [[no_unique_address]] ProfilerStackGuard profiler_;
+    };
+
     struct LuaExtraSpace
     {
         State* State;
@@ -174,6 +225,13 @@ namespace bg3se::lua
             return customProperties_;
         }
 
+#if USE_OPTICK
+        inline ProfilerStack& GetProfiler()
+        {
+            return profilerStack_;
+        }
+#endif
+
         inline CachedUserVariableManager& GetVariableManager()
         {
             return variableManager_;
@@ -236,9 +294,7 @@ namespace bg3se::lua
         template <class... Ret, class... Args>
         bool CallExtRet(char const * func, uint32_t restrictions, std::tuple<Ret...>& ret, Args... args)
         {
-            StackCheck _(L);
-            // FIXME - Restriction restriction(*this, restrictions);
-            LifetimeStackPin _p(L, lifetimeStack_);
+            VMCallEntry _(this);
             auto lifetime = lifetimeStack_.GetCurrent();
             PushInternalFunction(L, func);
             (push(L, args, lifetime), ...);
@@ -248,9 +304,7 @@ namespace bg3se::lua
         template <class... Args>
         bool CallExt(char const * func, uint32_t restrictions, Args... args)
         {
-            StackCheck _(L, 0);
-            // FIXME - Restriction restriction(*this, restrictions);
-            LifetimeStackPin _p(L, lifetimeStack_);
+            VMCallEntry _(this);
             auto lifetime = lifetimeStack_.GetCurrent();
             PushInternalFunction(L, func);
             (push(L, args, lifetime), ...);
@@ -261,8 +315,7 @@ namespace bg3se::lua
         EventResult ThrowEvent(char const* eventName, TEvent& evt, bool canPreventAction = false, uint32_t restrictions = 0)
         {
             static_assert(std::is_base_of_v<EventBase, TEvent>, "Event object must be a descendant of EventBase");
-            StackCheck _(L, 0);
-            LifetimeStackPin _p(L, GetStack());
+            VMCallEntry _(this);
             PushInternalFunction(L, "_ThrowEvent");
             MakeObjectRef(L, &evt);
             return DispatchEvent(evt, eventName, canPreventAction, restrictions);
@@ -286,6 +339,9 @@ namespace bg3se::lua
         CppMetatableManager metatableManager_;
         GlobalRefManager globals_;
         CustomPropertyManager customProperties_;
+#if USE_OPTICK
+        ProfilerStack profilerStack_;
+#endif
 
         CachedUserVariableManager variableManager_;
         CachedModVariableManager modVariableManager_;

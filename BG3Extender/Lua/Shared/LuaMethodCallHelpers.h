@@ -237,54 +237,6 @@ struct ReturnValueContainer<void>
 };
 
 
-struct ProtectedMethodCallerBase
-{
-    Ref Self;
-    char const* Method;
-
-    bool ProtectedCall(lua_State* L, lua_CFunction fun);
-    int CallUserFunctionWithTraceback(lua_State* L, lua_CFunction fun);
-};
-
-template <class TArgs, class TReturn>
-struct ProtectedMethodCaller : public ProtectedMethodCallerBase
-{
-    TArgs Args;
-    ReturnValueContainer<TReturn> Retval;
-    bool Optional{ false };
-
-    bool Call(lua_State* L)
-    {
-        return ProtectedCall(L, &ProtectedCtx);
-    }
-
-    static int ProtectedCtx(lua_State* L)
-    {
-        auto self = reinterpret_cast<ProtectedMethodCaller<TArgs, TReturn>*>(lua_touserdata(L, 1));
-
-        LifetimeStackPin _p(State::FromLua(L)->GetStack());
-
-        lua_pushvalue(L, 2);
-        lua_getfield(L, -1, self->Method);
-        if (self->Optional && lua_type(L, -1) == LUA_TNIL) {
-            lua_pop(L, 1);
-            return -1;
-        }
-
-        lua_pushvalue(L, 2);
-        PushUserCallArg(L, self->Args);
-
-        if (lua_pcall(L, 1 + TupleSize(Overload<TArgs>{}), TupleSize(Overload<TReturn>{}), 0) != LUA_OK) {
-            return luaL_error(L, "%s", lua_tostring(L, -1));
-        }
-
-        self->Retval.Fetch(L);
-        lua_pop(L, TupleSize(Overload<TReturn>{}));
-        return 0;
-    }
-};
-
-
 struct ProtectedFunctionCallerBase
 {
     Ref Function;
@@ -323,7 +275,7 @@ struct ProtectedFunctionCaller : public ProtectedFunctionCallerBase
     {
         auto self = reinterpret_cast<ProtectedFunctionCaller<TArgs, TReturn>*>(lua_touserdata(L, 1));
 
-        LifetimeStackPin _p(L, State::FromLua(L)->GetStack());
+        StackCheck _(L);
 
         lua_pushcfunction(L, &TracebackHandler);
         int tracebackHandlerIdx = lua_gettop(L);
@@ -331,7 +283,7 @@ struct ProtectedFunctionCaller : public ProtectedFunctionCallerBase
         lua_pushvalue(L, 2);
         PushUserCallArg(L, self->Args);
 
-        auto result = lua_pcall(L, TupleSize(Overload<TArgs>{}), TupleSize(Overload<TReturn>{}), tracebackHandlerIdx);
+        auto result = lua_enter_pcallk(L, TupleSize(Overload<TArgs>{}), TupleSize(Overload<TReturn>{}), tracebackHandlerIdx);
         lua_remove(L, tracebackHandlerIdx);
         if (result != LUA_OK) {
             return luaL_error(L, "%s", lua_tostring(L, -1));

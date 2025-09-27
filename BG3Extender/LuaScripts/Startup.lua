@@ -25,6 +25,7 @@ Ext.CoreLib("Event")
 Ext.CoreLib("Stats")
 _I.ModLoader = Ext.CoreLib("ModLoader")
 _I.Profiler = Ext.CoreLib("Profiler")
+_I.Profiler:AddUtilsHelpers(Ext.Utils)
 
 -- Unclobber global namespace
 Class = nil

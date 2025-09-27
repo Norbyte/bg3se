@@ -194,6 +194,30 @@ int64_t GetMemoryUsage(lua_State* L)
     return State::FromLua(L)->GetStateWrapper().AllocatedMemory;
 }
 
+void ProfileBegin(lua_State* L, Ref arg)
+{
+#if USE_OPTICK
+    if (arg) {
+        if (lua_type(L, arg.Index()) == LUA_TSTRING) {
+            auto desc = get<StringView>(L, arg.Index());
+            State::FromLua(L)->GetProfiler().Begin(desc);
+        } else {
+            auto desc = lua_get_function_optick_desc(L, arg.Index());
+            State::FromLua(L)->GetProfiler().Begin(desc);
+        }
+    } else {
+        State::FromLua(L)->GetProfiler().Begin("");
+    }
+#endif
+}
+
+void ProfileEnd(lua_State* L)
+{
+#if USE_OPTICK
+    State::FromLua(L)->GetProfiler().End();
+#endif
+}
+
 void RegisterUtilsLib()
 {
     DECLARE_MODULE(Utils, Both)
@@ -213,6 +237,9 @@ void RegisterUtilsLib()
     MODULE_FUNCTION(GetDialogManager)
     MODULE_FUNCTION(GetGameState)
     MODULE_FUNCTION(GetMemoryUsage)
+
+    MODULE_FUNCTION(ProfileBegin)
+    MODULE_FUNCTION(ProfileEnd)
     END_MODULE()
 }
 

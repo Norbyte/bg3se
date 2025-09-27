@@ -150,12 +150,12 @@ function SubscribableEvent:ProcessUnsubscriptions()
     end
 end
 
-if Ext.Config.ProfilerEnabled then
+if Ext.Config.PerfMessagesEnabled then
 
     -- Separate profiler-enabled version for perf reasons
     function SubscribableEvent:Dispatch(event, handler)
         local startTime = Ext.Timer.MicrosecTime()
-        local ok, result = xpcall(handler, debug.traceback, event)
+        local ok, result = xpcall(function (ev) Ext.Utils.Profile(handler, ev) end, debug.traceback, event)
         local took = Ext.Timer.MicrosecTime() - startTime
         if not ok then
             Ext.Log.PrintError("Error while dispatching event " .. self.Name .. ": ", result)
@@ -164,6 +164,15 @@ if Ext.Config.ProfilerEnabled then
                 local source, line = Ext.Types.GetFunctionLocation(handler)
                 _I.Profiler:Report(took, "Dispatching event " .. self.Name .. " (" .. source .. ":" .. line .. ")")
             end
+        end
+    end
+
+elseif Ext.Config.ProfilerEnabled then
+
+    function SubscribableEvent:Dispatch(event, handler)
+        local ok, result = xpcall(function (ev) Ext.Utils.Profile(handler, ev) end, debug.traceback, event)
+        if not ok then
+            Ext.Log.PrintError("Error while dispatching event " .. self.Name .. ": ", result)
         end
     end
 

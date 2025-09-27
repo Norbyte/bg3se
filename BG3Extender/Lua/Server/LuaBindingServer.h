@@ -97,8 +97,8 @@ public:
     template <class TArg>
     void Call(char const* mod, char const* func, std::vector<TArg> const & args)
     {
+        VMCallEntry _(this);
         auto L = GetState();
-        LifetimeStackPin _(L, GetStack());
         lua_checkstack(L, (int)args.size() + 1);
         auto stackSize = lua_gettop(L);
 

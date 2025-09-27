@@ -145,9 +145,8 @@ char const* GetNodeName(uint64_t nodeRef)
 // Note: We make a copy of the func registry entry, as the original might be deleted during CallWithTraceback()
 void OsirisCallbackManager::RunHandler(ServerState& lua, uint64_t nodeRef, RegistryEntry func, TuplePtrLL* tuple)
 {
+    VMCallEntry _(&lua);
     auto L = lua.GetState();
-    StackCheck _(L, 0);
-    LifetimeStackPin p_(L, lua.GetStack());
     int32_t stackArgs = 1;
     if (tuple != nullptr) {
         auto node = tuple->Items.Head->Next;
@@ -222,9 +221,8 @@ void OsirisCallbackManager::RunHandlers(uint64_t nodeRef, OsiArgumentDesc* args)
 // Note: We make a copy of the func registry entry, as the original might be deleted during CallWithTraceback()
 void OsirisCallbackManager::RunHandler(ServerState& lua, uint64_t nodeRef, RegistryEntry func, OsiArgumentDesc* args)
 {
+    VMCallEntry _(&lua);
     auto L = lua.GetState();
-    StackCheck _(L, 0);
-    LifetimeStackPin _p(L, lua.GetStack());
     int32_t stackArgs = 1;
     auto node = args;
     while (node) {

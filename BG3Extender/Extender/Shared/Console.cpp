@@ -117,6 +117,7 @@ void DebugConsole::ExecLuaCommand(std::string const& cmd)
         } else {
             auto L = pin->GetState();
             lua::StaticLifetimeStackPin _(L, lua::LifetimeHandle{});
+            lua::ProfilerStackGuard _p(&*pin);
             if (luaL_loadstring(L, cmd.c_str()) || lua::CallWithTraceback(L, 0, 0)) { // stack: errmsg
                 ERR("%s", lua_tostring(L, -1));
                 lua_pop(L, 1);

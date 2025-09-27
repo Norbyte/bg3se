@@ -22,6 +22,9 @@ struct LuaInternalState;
 LuaInternalState* lua_new_internal_state();
 void lua_release_internal_state(LuaInternalState* state);
 
+int lua_enter_pcallk(lua_State* L, int nargs, int nresults, int errfunc,
+    lua_KContext ctx = 0, lua_KFunction k = nullptr);
+
 char const* lua_get_function_location(lua_State* L, int index, int& line);
 char const* lua_get_function_location(lua_State* L, RegistryEntry const& reg, int& line);
 char const* lua_get_function_location(lua_State* L, Ref const& reg, int& line);

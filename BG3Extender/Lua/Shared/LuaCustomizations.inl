@@ -656,6 +656,18 @@ void lua_release_internal_state(LuaInternalState* state)
     GameDelete(state);
 }
 
+int lua_enter_pcallk(lua_State* L, int nargs, int nresults, int errfunc,
+    lua_KContext ctx, lua_KFunction k)
+{
+    auto state = State::FromLua(L);
+    se_assert(!state->GetStack().IsEmpty());
+#if USE_OPTICK
+    se_assert(state->GetProfiler().WasEntered());
+#endif
+
+    return lua_pcallk(L, nargs, nresults, errfunc, ctx, k);
+}
+
 char const* lua_get_function_location(lua_State* L, int index, int& line)
 {
     StkId o = index2addr(L, index);

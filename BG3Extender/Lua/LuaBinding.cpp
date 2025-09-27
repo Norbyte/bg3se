@@ -157,7 +157,7 @@ int CallWithTraceback(lua_State * L, int narg, int nres)
     int base = lua_gettop(L) - narg;  /* function index */
     lua_pushcfunction(L, &TracebackHandler);  /* push message handler */
     lua_insert(L, base);  /* put it under function and args */
-    int status = lua_pcall(L, narg, nres, base);
+    int status = lua_enter_pcallk(L, narg, nres, base);
     lua_remove(L, base);  /* remove message handler from the stack */
     return status;
 }
@@ -401,6 +401,75 @@ LuaStateWrapper::~LuaStateWrapper()
     lua_close(L);
 }
 
+#if USE_OPTICK
+void ProfilerStack::Begin(Optick::EventDescription const* desc)
+{
+    auto evt = Optick::Event::Start(*desc);
+    stack_.push_back(evt);
+}
+
+void ProfilerStack::Begin(StringView msg)
+{
+    auto desc = Optick::CreateDescription(msg.data(), "", 0, nullptr, Optick::Category::Script,
+        (Optick::EventDescription::COPY_NAME_STRING | Optick::EventDescription::IS_CUSTOM_NAME));
+    auto evt = Optick::Event::Start(*desc);
+    stack_.push_back(evt);
+}
+
+void ProfilerStack::End()
+{
+    if (stack_.empty()) {
+        WARN("No frame to end; mismatched ProfilerStart()/ProfilerEnd() calls? Profiler output might be incorrect");
+        return;
+    }
+
+    auto evt = stack_.pop_last();
+    Optick::Event::Stop(*evt);
+}
+
+void ProfilerStack::EnterVM()
+{
+    stackAtEntry_.push_back(stack_.size());
+}
+
+void ProfilerStack::ExitVM()
+{
+    if (stackAtEntry_.empty()) {
+        se_assert(false && "Enter/exit counts don't match?");
+        return;
+    }
+
+    auto size = stackAtEntry_.pop_last();
+    if (stack_.size() > size) {
+        WARN("%d frames not properly finished using ProfilerEnd(); profiler output might be incorrect", stack_.size() - size);
+    }
+
+    while (stack_.size() > size) {
+        End();
+    }
+}
+
+ProfilerStackGuard::ProfilerStackGuard(State* state)
+    : state_(state)
+{
+    state_->GetProfiler().EnterVM();
+}
+
+ProfilerStackGuard::~ProfilerStackGuard()
+{
+    state_->GetProfiler().ExitVM();
+}
+#endif
+
+VMCallEntry::VMCallEntry(State* state, int stackDelta)
+    : check_(state->GetState(), stackDelta),
+    lifetime_(state->GetState(), state->GetStack()),
+    profiler_(state)
+{}
+
+VMCallEntry::~VMCallEntry()
+{}
+
 State::State(ExtensionStateBase& state, uint32_t generationId, bool isServer)
     : L(state),
     generationId_(generationId),
@@ -513,6 +582,7 @@ std::optional<int> State::LoadScript(STDString const & script, STDString const &
 
     /* Ask Lua to run our little script */
     LifetimeStackPin _(L, lifetimeStack_);
+    ProfilerStackGuard _p(this);
     status = CallWithTraceback(L, 0, LUA_MULTRET);
     if (status != LUA_OK) {
         LuaError("Failed to execute script: " << lua_tostring(L, -1));
@@ -644,7 +714,7 @@ STDString State::GetBuiltinLibrary(int resourceId)
 
 EventResult State::DispatchEvent(EventBase& evt, char const* eventName, bool canPreventAction, uint32_t restrictions)
 {
-    OPTICK_EVENT(eventName);
+    OPTICK_SCRIPT_EVENT(eventName, "", 0);
     auto stackSize = lua_gettop(L) - 2;
 
     try {

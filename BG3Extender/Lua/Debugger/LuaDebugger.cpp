@@ -902,6 +902,7 @@ namespace bg3se::lua::dbg
         DebugEvalGuard _G(*this);
         StackCheck _(L);
         StaticLifetimeStackPin _LT(lua->GetState(), lua::LifetimeHandle{});
+        lua::ProfilerStackGuard _p(&*lua);
 
         if (req.Expression == "reset") {
             if (gExtender->GetServer().HasExtensionState() && gExtender->GetServer().GetExtensionState().GetLua()) {
@@ -1096,6 +1097,7 @@ namespace bg3se::lua::dbg
         DebugEvalGuard _G(*this);
         StackCheck _(L);
         StaticLifetimeStackPin _LT(lua->GetState(), lua::LifetimeHandle{});
+        lua::ProfilerStackGuard _p(&*lua);
 
         ContextDebuggerGetVarCtx ctx{ this, &req, ResultCode::Success };
         char const* error;

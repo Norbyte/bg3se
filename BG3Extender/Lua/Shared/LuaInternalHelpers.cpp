@@ -93,35 +93,6 @@ uint32_t get_generation_id(lua_State* L)
     return State::FromLua(L)->GetGenerationId();
 }
 
-/*
-bool ProtectedMethodCallerBase::ProtectedCall(lua_State* L, lua_CFunction fun)
-{
-    StackCheck _(L);
-    auto ret = CallUserFunctionWithTraceback(L, fun);
-    if (ret == -1) {
-        return false;
-    } else if (ret != LUA_OK) {
-        ERR("Error while dispatching user method call '%s': %s", Method, lua_tostring(L, -1));
-        lua_pop(L, 1);
-        return false; 
-    } else {
-        return true;
-    }
-}
-
-int ProtectedMethodCallerBase::CallUserFunctionWithTraceback(lua_State* L, lua_CFunction fun)
-{
-    lua_pushcfunction(L, &TracebackHandler);
-    int tracebackHandlerIdx = lua_gettop(L);
-    lua_pushcfunction(L, fun);
-    lua_pushlightuserdata(L, this);
-    Self.Push(L);
-    int status = lua_pcall(L, 2, 0, tracebackHandlerIdx);
-    lua_remove(L, tracebackHandlerIdx);
-    return status;
-}
-*/
-
 void ReportSlowFunction(lua_State* L, char const* func, uint64_t time, Ref const& function)
 {
     // Fast-path check for production configs
@@ -165,8 +136,8 @@ void ReportSlowFunction(lua_State* L, char const* func, uint64_t time, Ref const
 
 bool ProtectedFunctionCallerBase::ProtectedCall(lua_State* L, lua_CFunction fun, char const* funcDescription)
 {
-    StackCheck _(L);
     EnterVMCheck(L);
+    VMCallEntry _(State::FromLua(L));
     PerfTimer timer;
     auto ret = CallUserFunction(L, fun);
     if (ret != LUA_OK) {
@@ -190,22 +161,21 @@ int ProtectedFunctionCallerBase::CallUserFunction(lua_State* L, lua_CFunction fu
     lua_pushlightuserdata(L, this);
     Function.Push(L);
     OPTICK_SCRIPT_CALL_EVENT("", L, -1);
-    return lua_pcall(L, 2, 0, 0);
+    return lua_enter_pcallk(L, 2, 0, 0);
 }
 
 int TracebackHandler(lua_State* L);
 
 bool ProtectedCallC(lua_State* L, lua_CFunction fun, void* context, void* context2, char const* funcDescription, char const*& error)
 {
-    StackCheck _(L);
-    EnterVMCheck(L);
+    VMCallEntry _(State::FromLua(L));
 
     lua_pushcfunction(L, &TracebackHandler);
     int tracebackHandlerIdx = lua_gettop(L);
     lua_pushcfunction(L, fun);
     lua_pushlightuserdata(L, context);
     lua_pushlightuserdata(L, context2);
-    int status = lua_pcall(L, 2, 0, tracebackHandlerIdx);
+    int status = lua_enter_pcallk(L, 2, 0, tracebackHandlerIdx);
     lua_remove(L, tracebackHandlerIdx);
 
     if (status != LUA_OK) {
