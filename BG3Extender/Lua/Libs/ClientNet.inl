@@ -6,7 +6,7 @@ using namespace bg3se::lua::net;
 void PostMessageToServer(lua_State* L, StringView channel, StringView payload, std::optional<Guid> moduleGuid,
     std::optional<FunctionRef> requestHandler, std::optional<RequestId> replyId, std::optional<bool> binary)
 {
-    if (moduleGuid && gExtender->GetServer().HasExtensionState()) {
+    if (moduleGuid && gExtender->GetServer().HasExtensionState() && false) {
         bg3se::net::LocalMessage msg;
         BuildMessage(L, msg, UserId{0x10001}, channel, payload, moduleGuid, requestHandler, replyId, binary.value_or(false));
         gExtender->GetServer().GetNetworkManager().PushLocalMessage(std::move(msg));
