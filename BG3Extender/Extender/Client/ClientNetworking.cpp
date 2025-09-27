@@ -13,8 +13,8 @@ void ExtenderProtocol::ProcessExtenderMessage(net::MessageContext& context, net:
             auto& postMsg = msg.post_lua();
             ecl::LuaClientPin pin(ecl::ExtensionState::Get());
             if (pin) {
-                pin->OnNetMessageReceived(postMsg.channel_name().c_str(), postMsg.payload().c_str(), 
-                    postMsg.module().c_str(), postMsg.request_id(), postMsg.reply_id(), 
+                pin->OnNetMessageReceived(postMsg.channel_name(), postMsg.payload(), 
+                    postMsg.module(), postMsg.request_id(), postMsg.reply_id(), 
                     ReservedUserId, postMsg.serializer() == net::SerializerType::SERIALIZER_BINARY);
             }
         }
