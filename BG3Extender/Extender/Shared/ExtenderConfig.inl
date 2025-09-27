@@ -87,6 +87,7 @@ void LoadConfig(std::wstring const& configPath, ExtenderConfig& config)
     ConfigGet(root, "DisableStoryPatching", config.DisableStoryPatching);
     ConfigGet(root, "DisableStoryCompilation", config.DisableStoryCompilation);
     ConfigGet(root, "InsanityCheck", config.InsanityCheck);
+    ConfigGet(root, "LocalMessagePassing", config.LocalMessagePassing);
     ConfigGet(root, "Profiler", config.Profiler);
 
     ConfigGet(root, "DebuggerPort", config.DebuggerPort);

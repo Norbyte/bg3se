@@ -13,7 +13,10 @@ void BroadcastMessage(lua_State* L, StringView channel, StringView payload, std:
     }
 
     auto& networkMgr = gExtender->GetServer().GetNetworkManager();
-    if (moduleGuid && excludeCharacter == nullptr && networkMgr.LocalPeerOnly()) {
+    if (moduleGuid 
+        && excludeCharacter == nullptr 
+        && networkMgr.LocalPeerOnly()
+        && gExtender->GetConfig().LocalMessagePassing) {
         bg3se::net::LocalMessage msg;
         BuildMessage(L, msg, ReservedUserId, channel, payload, moduleGuid, requestHandler, replyId, binary.value_or(false));
         gExtender->GetClient().GetNetworkManager().PushLocalMessage(std::move(msg));
@@ -32,7 +35,9 @@ void BroadcastMessage(lua_State* L, StringView channel, StringView payload, std:
 void PostMessageToUserInternal(lua_State* L, UserId userId, StringView channel, StringView payload, std::optional<Guid> moduleGuid,
     std::optional<FunctionRef> requestHandler, std::optional<RequestId> replyId, std::optional<bool> binary)
 {
-    if (moduleGuid && (uint32_t)userId.GetPeerId() == 1) {
+    if (moduleGuid 
+        && (uint32_t)userId.GetPeerId() == 1
+        && gExtender->GetConfig().LocalMessagePassing) {
         bg3se::net::LocalMessage msg;
         BuildMessage(L, msg, userId, channel, payload, moduleGuid, requestHandler, replyId, binary.value_or(false));
         gExtender->GetClient().GetNetworkManager().PushLocalMessage(std::move(msg));
