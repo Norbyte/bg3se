@@ -122,7 +122,7 @@ void ScriptExtender::Initialize()
     DetourTransactionCommit();
 
 #if USE_OPTICK
-    if (config_.Profiler) {
+    if (config_.Optick) {
         ::Optick::Server::Enable();
         if (::Optick::Server::Get().IsListening()) {
             DEBUG("Optick profiler listening on port %d", ::Optick::Server::Get().GetPort());

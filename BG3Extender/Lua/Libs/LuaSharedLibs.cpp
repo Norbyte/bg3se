@@ -80,8 +80,8 @@ void RegisterConfig(lua_State* L)
 
     lua_newtable(L);
 
-    push(L, gExtender->GetConfig().EnableProfiler);
-    lua_setfield(L, -2, "ProfilerEnabled");
+    push(L, gExtender->GetConfig().EnablePerfMessages);
+    lua_setfield(L, -2, "PerfMessagesEnabled");
 
     push(L, gExtender->GetConfig().ProfilerLoadCallbackThreshold.Warning);
     lua_setfield(L, -2, "ProfilerLoadCallbackWarningThreshold");

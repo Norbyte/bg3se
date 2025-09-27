@@ -125,7 +125,7 @@ int ProtectedMethodCallerBase::CallUserFunctionWithTraceback(lua_State* L, lua_C
 void ReportSlowFunction(lua_State* L, char const* func, uint64_t time, Ref const& function)
 {
     // Fast-path check for production configs
-    if (!gExtender->GetConfig().EnableProfiler) return;
+    if (!gExtender->GetConfig().EnablePerfMessages) return;
 
     auto client = State::FromLua(L)->IsClient();
     bool loading;

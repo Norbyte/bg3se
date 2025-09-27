@@ -63,7 +63,7 @@ function EventManager:RegisterNetListener(channel, fn)
     table.insert(self.NetListeners[channel], fn)
 end
 
-if Ext.Config.ProfilerEnabled then
+if Ext.Config.PerfMessagesEnabled then
 
     -- Separate profiler-enabled version for perf reasons
     function EventManager:NetMessageReceived(channel, payload, userId)

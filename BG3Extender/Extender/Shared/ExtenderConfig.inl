@@ -88,7 +88,7 @@ void LoadConfig(std::wstring const& configPath, ExtenderConfig& config)
     ConfigGet(root, "DisableStoryCompilation", config.DisableStoryCompilation);
     ConfigGet(root, "InsanityCheck", config.InsanityCheck);
     ConfigGet(root, "LocalMessagePassing", config.LocalMessagePassing);
-    ConfigGet(root, "Profiler", config.Profiler);
+    ConfigGet(root, "Optick", config.Optick);
 
     ConfigGet(root, "DebuggerPort", config.DebuggerPort);
     ConfigGet(root, "LuaDebuggerPort", config.LuaDebuggerPort);
@@ -98,10 +98,10 @@ void LoadConfig(std::wstring const& configPath, ExtenderConfig& config)
     ConfigGet(root, "LuaBuiltinResourceDirectory", config.LuaBuiltinResourceDirectory);
     ConfigGet(root, "CustomProfile", config.CustomProfile);
 
-    config.EnableProfiler = config.CreateConsole;
-    config.ProfilerWarnings = config.EnableProfiler && config.DeveloperMode;
+    config.EnablePerfMessages = config.CreateConsole;
+    config.ProfilerWarnings = config.EnablePerfMessages && config.DeveloperMode;
 
-    ConfigGet(root, "EnableProfiler", config.EnableProfiler);
+    ConfigGet(root, "EnablePerfMessages", config.EnablePerfMessages);
     ConfigGet(root, "ProfilerWarnings", config.ProfilerWarnings);
     ConfigGet(root, "ProfilerLoadThreshold", config.ProfilerLoadThreshold);
     ConfigGet(root, "ProfilerLoadCallbackThreshold", config.ProfilerLoadCallbackThreshold);

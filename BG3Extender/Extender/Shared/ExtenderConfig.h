@@ -42,7 +42,7 @@ struct ExtenderConfig
     bool DisableStoryCompilation{ true };
     bool InsanityCheck{ false };
     bool LocalMessagePassing{ true };
-    bool Profiler{ false };
+    bool Optick{ false };
 
 #if defined(OSI_EXTENSION_BUILD)
 #if defined(_DEBUG)
@@ -64,7 +64,7 @@ struct ExtenderConfig
     std::string CustomProfile;
 
     // Lua profiler configuration
-    bool EnableProfiler{ true };
+    bool EnablePerfMessages{ true };
     bool ProfilerWarnings{ false };
     ProfilerThreshold ProfilerLoadThreshold{ 50000, 50000 };
     ProfilerThreshold ProfilerLoadCallbackThreshold{ 50000, 50000 };
@@ -74,7 +74,7 @@ struct ExtenderConfig
 
 inline bool ProfilerShouldReport(uint64_t took, ExtenderConfig const& config, ProfilerThreshold const& threshold)
 {
-    return config.EnableProfiler
+    return config.EnablePerfMessages
         && (took >= threshold.Error
             || config.ProfilerWarnings && took >= threshold.Warning);
 }
