@@ -129,6 +129,10 @@ void ExtenderMessage::Serialize(BitstreamSerializer & serializer)
             serializer.ReadBytes(buf, size);
             valid_ = msg.ParseFromArray(buf, size);
             GameFree(buf);
+
+            if (!valid_) {
+                OsiError("Failed to decode extender message");
+            }
         }
     }
 }
