@@ -40,12 +40,19 @@ void PrintRange(EntitySystemHelpersBase& eh, char const* name, std::span<Compone
     if (!inds.empty()) std::cout << std::endl;
 }
 
-void QueryDescription::DebugPrint(EntitySystemHelpersBase& eh) const
+void QueryDescription::DebugPrint(QueryIndex index, EntitySystemHelpersBase& eh) const
 {
+    auto const& queries = eh.GetEntityWorld()->Queries;
+
     std::cout << "Query ";
     if ((Flags & QueryFlags::Modified) == QueryFlags::Modified) std::cout << " Modified";
     if ((Flags & QueryFlags::Added) == QueryFlags::Added) std::cout << " Added";
     if ((Flags & QueryFlags::Removed) == QueryFlags::Removed) std::cout << " Removed";
+    if (queries.PersistentQueries.find(index) != queries.PersistentQueries.end()) std::cout << " Persistent";
+    if (queries.AliveQueries.find(index) != queries.AliveQueries.end()) std::cout << " Alive";
+    if (queries.RemovedQueries.find(index) != queries.RemovedQueries.end()) std::cout << " Removed2";
+    if (queries.DeadQueries.find(index) != queries.DeadQueries.end()) std::cout << " Dead";
+    if (queries.DeadOneFrameQueries.find(index) != queries.DeadOneFrameQueries.end()) std::cout << " DeadOneFrame";
     std::cout << std::endl;
 
     PrintRange(eh, "Includes", GetIncludes());
@@ -1257,10 +1264,8 @@ void EntitySystemHelpersBase::MapSingleComponentQuery(QueryIndex queryIndex, Com
     auto& desc = components_[(unsigned)*extComponent];
     if (desc.SingleComponentQuery != ecs::UndefinedQuery) {
         auto const& currentQuery = GetEntityWorld()->Queries.Queries[(unsigned)desc.SingleComponentQuery];
-        auto const& newQuery = GetEntityWorld()->Queries.Queries[(unsigned)desc.SingleComponentQuery];
+        auto const& newQuery = GetEntityWorld()->Queries.Queries[(unsigned)queryIndex];
 
-        // Game bug: Sometimes the same query is defined multiple times; in this case only the first instance
-        // of the query works, the later instances have no associated entity storages.
         // Only allow replacing the query if it is different from the previous and has less optionals/adds
         if (!(
             newQuery.GetOptionalOneFrames().size() < currentQuery.GetOptionalOneFrames().size()
@@ -1282,9 +1287,23 @@ void EntitySystemHelpersBase::UpdateQueryCache()
 
     OPTICK_EVENT();
     auto world = GetEntityWorld();
-    unsigned queryIndex = 0;
+
+    BitSet<> persistentQueries;
+    BitSet<> aliveQueries;
+
+    for (auto queryIndex : world->Queries.PersistentQueries) {
+        persistentQueries.Set((uint32_t)queryIndex);
+    }
+
+    for (auto queryIndex : world->Queries.AliveQueries) {
+        aliveQueries.Set((uint32_t)queryIndex);
+    }
+
+    unsigned queryIndex{ 0 };
     for (auto const& query : world->Queries.Queries) {
+
         if (query.Flags == QueryFlags::Added
+            && aliveQueries[queryIndex]
             && query.GetIncludes().empty()
             && query.GetIncludeAny().empty()
             && query.GetExcludes().empty()
@@ -1298,7 +1317,8 @@ void EntitySystemHelpersBase::UpdateQueryCache()
         }
         
         // Only include "normal" single-component include queries
-        if ((unsigned)query.Flags == 0 
+        if ((unsigned)query.Flags == 0
+            && persistentQueries[queryIndex]
             && (
                 (query.GetIncludes().size() == 1 && query.GetIncludeAny().empty())
                 || (query.GetIncludes().empty() && query.GetIncludeAny().size() == 1)

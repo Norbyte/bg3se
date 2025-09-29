@@ -322,7 +322,7 @@ struct QueryDescription : public ProtectedGameObject<QueryDescription>
     }
 
     void* GetFirstMatchingComponent(std::size_t componentSize, bool isProxy);
-    void DebugPrint(EntitySystemHelpersBase& eh) const;
+    void DebugPrint(QueryIndex index, EntitySystemHelpersBase& eh) const;
 };
 
 
@@ -332,8 +332,8 @@ struct QueryRegistry : public ProtectedGameObject<QueryRegistry>
     Array<QueryIndex> PersistentQueries;
     Array<QueryIndex> AliveQueries;
     Array<QueryIndex> RemovedQueries;
-    Array<QueryIndex> ComponentTypes4;
-    Array<QueryIndex> ComponentTypes5;
+    Array<QueryIndex> DeadQueries;
+    Array<QueryIndex> DeadOneFrameQueries;
     Array<QueryIndex> FrameData;
 };
 
