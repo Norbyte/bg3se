@@ -292,15 +292,6 @@ struct UserReservedForComponent : public BaseComponent
     int UserID;
 };
 
-struct ShapeshiftStateComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(ShapeshiftState, "eoc::shapeshift::StateComponent")
-
-    std::optional<uint8_t> BloodSurfaceType;
-    std::optional<FixedString> BloodType;
-    [[bg3::legacy(field_C)]] std::optional<TemplateInfo> Template;
-};
-
 END_SE()
 
 

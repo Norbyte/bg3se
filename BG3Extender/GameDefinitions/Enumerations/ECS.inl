@@ -288,7 +288,11 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 
     // Shapeshift
     E(ShapeshiftState)
+    E(ShapeshiftReplicatedChanges)
     E(ShapeshiftHealthReservation)
+    E(ShapeshiftRecoveryAnimation)
+    E(ShapeshiftSourceCache)
+    E(ShapeshiftAnimation)
     E(ServerShapeshiftStates)
 
     // Multiplayer

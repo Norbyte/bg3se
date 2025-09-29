@@ -1,13 +1,6 @@
 #pragma once
 
-BEGIN_NS(esv::shapeshift)
-
-struct HealthReservationComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(ShapeshiftHealthReservation, "esv::shapeshift::HealthReservationComponent")
-
-    HashMap<Guid, int32_t> Reservations;
-};
+BEGIN_NS(shapeshift)
 
 struct IntOverride
 {
@@ -19,6 +12,70 @@ struct FloatOverride
 {
     float Value;
     ShapeshiftChangeType Type;
+};
+
+struct StateComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ShapeshiftState, "eoc::shapeshift::StateComponent")
+
+    std::optional<uint8_t> BloodSurfaceType;
+    std::optional<FixedString> BloodType;
+    [[bg3::legacy(field_C)]] std::optional<TemplateInfo> Template;
+};
+
+struct RecoveryAnimationComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ShapeshiftRecoveryAnimation, "eoc::shapeshift::RecoveryAnimationComponent")
+
+    FixedString Animation;
+};
+
+struct SourceCacheComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ShapeshiftSourceCache, "eoc::shapeshift::SourceCacheComponent")
+
+    Array<Guid> Source;
+};
+
+struct AnimationComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ShapeshiftAnimation, "eoc::shapeshift::AnimationComponent")
+
+    uint32_t field_0;
+    uint8_t field_4;
+};
+
+struct ReplicatedChangesComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ShapeshiftReplicatedChanges, "eoc::shapeshift::ReplicatedChangesComponent")
+
+    std::array<Array<IntOverride>, 7> Abilities;
+    Array<IntOverride> HP;
+    bool VisualChanged;
+    bool ForceFinish;
+    uint16_t ItemTooltipFlags;
+    TranslatedString ItemDescription;
+    int32_t GoldAmount;
+    int32_t ItemWeight;
+    bool MuteEquipmentSound;
+    bool DisableEquipment;
+    bool HasWildShapeHotBar;
+    bool HasWeightOverride;
+    int32_t AC;
+};
+
+END_NS()
+
+BEGIN_NS(esv::shapeshift)
+
+using IntOverride = bg3se::shapeshift::IntOverride;
+using FloatOverride = bg3se::shapeshift::FloatOverride;
+
+struct HealthReservationComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ShapeshiftHealthReservation, "esv::shapeshift::HealthReservationComponent")
+
+    HashMap<Guid, int32_t> Reservations;
 };
 
 struct RootTemplateOverride
