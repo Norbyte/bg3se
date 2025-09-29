@@ -55,7 +55,6 @@ struct ExtenderConfig
 #endif // defined(OSI_EXTENSION_BUILD)
 
     bool ClearOnReset{ true };
-    bool ShowPerfWarnings{ false };
     uint32_t DebuggerPort{ 9999 };
     uint32_t LuaDebuggerPort{ 9998 };
     uint32_t DebugFlags{ 0 };

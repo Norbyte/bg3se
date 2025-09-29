@@ -81,7 +81,6 @@ void LoadConfig(std::wstring const& configPath, ExtenderConfig& config)
     ConfigGet(root, "EnableLuaDebugger", config.EnableLuaDebugger);
     ConfigGet(root, "DeveloperMode", config.DeveloperMode);
     ConfigGet(root, "ClearOnReset", config.ClearOnReset);
-    ConfigGet(root, "ShowPerfWarnings", config.ShowPerfWarnings);
     ConfigGet(root, "EnableAchievements", config.EnableAchievements);
     ConfigGet(root, "DisableLauncher", config.DisableLauncher);
     ConfigGet(root, "DisableStoryPatching", config.DisableStoryPatching);
