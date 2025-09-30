@@ -53,7 +53,7 @@ bool lua_is_linear_array(lua_State* L, int idx)
     if (!ttistable(val)) return false;
 
     auto tab = hvalue(val);
-    if (!tab->sizearray && tab->lastfree) return false;
+    if (tab->lastfree) return false;
 
     // Skip trailing nil-s
     unsigned int sz;
