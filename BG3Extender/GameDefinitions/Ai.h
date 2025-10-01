@@ -69,14 +69,14 @@ struct AiFlags
         return ((Flags >> 24) & 0xffff) != 0;
     }
 
-    inline uint8_t GetMaterial() const
+    inline MaterialType GetMaterial() const
     {
-        return (uint8_t)((Flags >> 40) & 0x3f);
+        return (MaterialType)((Flags >> 40) & 0x3f);
     }
 
-    inline uint32_t GetExtraFlags() const
+    inline AiExtraFlags GetExtraFlags() const
     {
-        return (uint32_t)(Flags >> 46);
+        return (AiExtraFlags)(Flags >> 46);
     }
 };
 
@@ -591,9 +591,9 @@ struct AiGridLuaTile
     AiBaseFlags Flags;
     SurfaceType GroundSurface;
     SurfaceType CloudSurface;
-    uint8_t Material;
+    MaterialType Material;
     uint32_t UnmappedFlags;
-    uint32_t ExtraFlags;
+    AiExtraFlags ExtraFlags;
     uint32_t SubgridId;
     int16_t TileX;
     int16_t TileY;
