@@ -50,7 +50,8 @@ struct BitfieldInfoStoreBase
                 Labels.resize(index + 1);
             }
 
-            se_assert(!Labels[index]);
+            // If multiple names are seen with the same value, only keep the last one.
+            // (assume older names are deprecated aliases)
             Labels[index] = fs;
         }
 
