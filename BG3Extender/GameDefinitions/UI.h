@@ -157,7 +157,7 @@ struct StoredValueHolder
 {
     inline StoredValueHolder() {}
     inline StoredValueHolder(void* val, bool owned) : Value(val), IsIntegral(true), IsOwned(owned) {}
-    inline StoredValueHolder(BaseObject* val) : Value(val), IsIntegral(false), IsOwned(false) {}
+    inline StoredValueHolder(BaseObject* val) : Value(val), IsIntegral(true), IsOwned(false) {}
     inline StoredValueHolder(String* val) : Value(val), IsIntegral(false), IsOwned(false) {}
 
     ~StoredValueHolder();
