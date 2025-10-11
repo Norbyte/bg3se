@@ -30,8 +30,8 @@ struct SymbolManagerInternals
 
 struct ReflectionInternals
 {
-    Vector<Type*> Types;
-    HashMap<uint32_t, Type*> Names;
+    Vector<Symbol> Names;
+    HashMap<uint32_t, Type*> NameToType;
 };
 
 inline void* Alloc(SizeT size)
@@ -68,12 +68,12 @@ inline Symbol Type::GetTypeId() const
 
 inline ReflectionInternals* GetReflection()
 {
-    return (ReflectionInternals* )GetStaticSymbols().Noesis__gReflection;
+    return (ReflectionInternals *)((uintptr_t)GetStaticSymbols().Noesis__Reflection__Data - sizeof(Noesis::BaseVector_));
 }
 
 inline SymbolManagerInternals* GetSymbolManager()
 {
-    return (SymbolManagerInternals * )((uintptr_t)GetStaticSymbols().Noesis__SymbolManager__Buf1 - 8);
+    return (SymbolManagerInternals*)((uintptr_t)GetStaticSymbols().Noesis__SymbolManager__Data - sizeof(Noesis::BaseVector_));
 }
 
 inline char const* SymbolManager::GetString(uint32_t index)
@@ -83,12 +83,19 @@ inline char const* SymbolManager::GetString(uint32_t index)
 
 inline const Type* Reflection::GetType(Symbol name)
 {
-    auto it = GetReflection()->Names.Find((uint32_t)name);
-    if (it != GetReflection()->Names.End()) {
-        return it->value;
+    auto lock = GetStaticSymbols().Noesis__Reflection__Lock;
+    AcquireSRWLockShared(lock);
+
+    Type* val;
+    auto it = GetReflection()->NameToType.Find((uint32_t)name);
+    if (it != GetReflection()->NameToType.End()) {
+        val = it->value;
     } else {
-        return nullptr;
+        val = nullptr;
     }
+
+    ReleaseSRWLockShared(lock);
+    return val;
 }
 
 inline TypeClass const* TypeClass::GetBase() const

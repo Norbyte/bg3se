@@ -48,6 +48,11 @@ bool BaseObject::Equals(const BaseObject* o) const
 BaseComponent::BaseComponent() {}
 BaseComponent::~BaseComponent() {}
 
+const TypeClass* BaseComponent::StaticGetClassType(TypeTag<BaseComponent>*)
+{
+    return gStaticSymbols.TypeClasses.BaseComponent.Type;
+}
+
 const TypeClass* BaseComponent::GetClassType() const
 {
     return gStaticSymbols.TypeClasses.BaseComponent.Type;
@@ -58,7 +63,96 @@ const TypeClass* BaseRefCounted::GetClassType() const
     return gStaticSymbols.TypeClasses.BaseRefCounted.Type;
 }
 
-uint32_t SymbolManager::FindString(char const* k)
+Type::Type(Symbol name)
+    : mName(name)
+{}
+
+const TypeClass* Type::GetClassType() const
+{
+    return gStaticSymbols.TypeClasses.Type.Type;
+}
+
+bool Type::IsAssignableFrom(const Type* type) const
+{
+    return type == this;
+}
+
+TypeMeta::TypeMeta(Symbol name)
+    : Type(name)
+{}
+
+TypeMeta::~TypeMeta()
+{}
+
+const TypeClass* TypeMeta::GetClassType() const
+{
+    return gStaticSymbols.TypeClasses.TypeMeta.Type;
+}
+
+TypeClass::TypeClass(Symbol name, bool isInterface)
+    : TypeMeta(name),
+    mIsInterface(isInterface),
+    mBase(nullptr),
+    mAncestors(nullptr)
+{
+}
+
+TypeClass::~TypeClass()
+{}
+
+const TypeClass* TypeClass::GetClassType() const
+{
+    return gStaticSymbols.TypeClasses.TypeClass.Type;
+}
+
+bool TypeClass::IsAssignableFrom(const Type* type) const
+{
+    if (type == this) return true;
+
+    // FIXME
+    return false;
+}
+
+void TypeClassBuilder::AddBase(const TypeClass* baseType)
+{
+    mBase = baseType;
+}
+
+NS_CORE_KERNEL_API Type* Reflection::RegisterType(const char* name, CreatorFn creator, FillerFn filler)
+{
+    auto tid = GetCurrentThreadId();
+    auto lockTid = GetStaticSymbols().Noesis__Reflection__LockedByThreadId;
+    auto lock = GetStaticSymbols().Noesis__Reflection__Lock;
+    auto numLocks = GetStaticSymbols().Noesis__Reflection__NumLocks;
+
+    if (tid != *lockTid) {
+        AcquireSRWLockExclusive(lock);
+        *lockTid = tid;
+    }
+
+    auto locks = *numLocks++;
+
+
+    auto reflection = GetReflection();
+
+    auto nameSym = Symbol(name);
+    auto cls = creator(nameSym);
+    if (filler) {
+        filler(cls);
+    }
+
+    reflection->NameToType.Insert((uint32_t)nameSym, cls);
+    reflection->Names.PushBack(nameSym);
+
+    if (locks == 0) {
+        *lockTid = 0xffffffffu;
+        ReleaseSRWLockExclusive(lock);
+    }
+
+    return cls;
+}
+
+uint32_t SymFindStringInternal(char const* k)
 {
     auto const& keys = GetSymbolManager()->Keys;
     auto it = keys.Find(k);
@@ -85,6 +179,40 @@ uint32_t SymbolManager::FindString(char const* k)
     }
 
     return 0;
+}
+
+uint32_t SymbolManager::FindString(char const* k)
+{
+    auto lock = GetStaticSymbols().Noesis__SymbolManager__Lock;
+    AcquireSRWLockShared(lock);
+
+    auto idx = SymFindStringInternal(k);
+
+    ReleaseSRWLockShared(lock);
+
+    return idx;
+}
+
+uint32_t SymbolManager::AddString(char const* k)
+{
+    auto lock = GetStaticSymbols().Noesis__SymbolManager__Lock;
+    AcquireSRWLockExclusive(lock);
+
+    uint32_t idx;
+    auto sym = GetSymbolManager();
+    auto it = sym->Keys.Find(k);
+    if (it != sym->Keys.End()) {
+        idx = it->value;
+    } else {
+        idx = sym->Strings.Size();
+        sym->Strings.PushBack(k);
+        sym->Keys.Insert(k, idx);
+
+        gStaticSymbols.Symbols.insert(std::make_pair(k, idx));
+    }
+
+    ReleaseSRWLockExclusive(lock);
+    return idx;
 }
 
 using AddVisualChildProc = void (Visual*, Visual*);

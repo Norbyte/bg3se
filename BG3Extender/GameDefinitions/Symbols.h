@@ -143,8 +143,13 @@ namespace bg3se
 
         Visual::UpdateBlendshapeWeightsFromSkeletonProc* ls__Visual__UpdateBlendshapeWeightsFromSkeleton{ nullptr };
 
-        void* Noesis__gReflection{ nullptr };
-        void* Noesis__SymbolManager__Buf1{ nullptr };
+        uint32_t* Noesis__Reflection__LockedByThreadId{ nullptr };
+        SRWLOCK* Noesis__Reflection__Lock{ nullptr };
+        uint32_t* Noesis__Reflection__NumLocks{ nullptr };
+        void* Noesis__Reflection__Data{ nullptr };
+
+        SRWLOCK* Noesis__SymbolManager__Lock{ nullptr };
+        void* Noesis__SymbolManager__Data{ nullptr };
         void* Noesis__GUI__LoadXaml{ nullptr };
         void* Noesis__Visual__AddVisualChild{ nullptr };
         void* Noesis__Visual__RemoveVisualChild{ nullptr };

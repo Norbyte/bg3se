@@ -15,6 +15,8 @@ namespace Noesis
     class BaseObject;
     class BaseObservableCollection;
     class UIElementCollection;
+    struct ReflectionInternals;
+    struct SymbolManagerInternals;
 }
 
 BEGIN_SE()

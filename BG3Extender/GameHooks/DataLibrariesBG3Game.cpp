@@ -207,8 +207,14 @@ namespace bg3se
 
         SYM_OFF(esv__SavegameManager);
 
-        SYM_OFF(Noesis__gReflection);
-        SYM_OFF(Noesis__SymbolManager__Buf1);
+        SYM_OFF(Noesis__Reflection__LockedByThreadId);
+        SYM_OFF(Noesis__Reflection__Lock);
+        SYM_OFF(Noesis__Reflection__NumLocks);
+        SYM_OFF(Noesis__Reflection__Data);
+
+        SYM_OFF(Noesis__SymbolManager__Data);
+        SYM_OFF(Noesis__SymbolManager__Lock);
+
         SYM_OFF(Noesis__GUI__LoadXaml);
         SYM_OFF(Noesis__Visual__AddVisualChild);
         SYM_OFF(Noesis__Visual__RemoveVisualChild);

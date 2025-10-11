@@ -109,6 +109,8 @@ struct StaticTypeClasses
     TypeClassInfo BaseCollection;
     TypeClassInfo BaseCommand;
     TypeClassInfo DependencyObject;
+    TypeClassInfo Type;
+    TypeClassInfo TypeMeta;
     TypeClassInfo TypeClass;
     TypeClassInfo TypeEnum;
     TypeClassInfo BoxedValue;
@@ -132,6 +134,8 @@ struct StaticTypeClasses
         BaseCollection.Setup("BaseCollection");
         BaseCommand.Setup("BaseCommand");
         DependencyObject.Setup("DependencyObject");
+        Type.Setup("Type");
+        TypeMeta.Setup("TypeMeta");
         TypeClass.Setup("TypeClass");
         TypeEnum.Setup("TypeEnum");
         BoxedValue.Setup("BoxedValue");
