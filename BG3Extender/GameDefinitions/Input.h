@@ -228,6 +228,7 @@ struct HoldRepeatEvents
 struct InputManager : public ProtectedGameObject<InputManager>
 {
 	[[bg3::hidden]] CRITICAL_SECTION CS;
+	[[bg3::hidden]] CRITICAL_SECTION CS2;
 	[[bg3::hidden]] UnknownSignal OnInputEvent;
 	HashMap<uint32_t, HoldRepeatEvents> HoldRepeatEvents;
 	HashMap<InputDeviceId, InputValueSet*> InputStates;
