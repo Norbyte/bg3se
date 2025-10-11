@@ -84,6 +84,18 @@ TypeMeta::TypeMeta(Symbol name)
 TypeMeta::~TypeMeta()
 {}
 
+struct TypeClassAncestors
+{
+    TypeClassAncestors()
+    {
+        InitializeSRWLock(&Lock);
+    }
+
+    bool Collapsed{ false };
+    Vector<TypeClass::AncestorInfo> Ancestors;
+    SRWLOCK Lock;
+};
+
 const TypeClass* TypeMeta::GetClassType() const
 {
     return gStaticSymbols.TypeClasses.TypeMeta.Type;
@@ -95,6 +107,7 @@ TypeClass::TypeClass(Symbol name, bool isInterface)
     mBase(nullptr),
     mAncestors(nullptr)
 {
+    mAncestors = (TypeClass::Ancestors*)GameAlloc<TypeClassAncestors>();
 }
 
 TypeClass::~TypeClass()
