@@ -143,9 +143,9 @@ namespace bg3se
 
         Visual::UpdateBlendshapeWeightsFromSkeletonProc* ls__Visual__UpdateBlendshapeWeightsFromSkeleton{ nullptr };
 
-        uint32_t* Noesis__Reflection__LockedByThreadId{ nullptr };
+        std::atomic<uint32_t>* Noesis__Reflection__LockedByThreadId{ nullptr };
         SRWLOCK* Noesis__Reflection__Lock{ nullptr };
-        uint32_t* Noesis__Reflection__NumLocks{ nullptr };
+        std::atomic<uint32_t>* Noesis__Reflection__NumLocks{ nullptr };
         void* Noesis__Reflection__Data{ nullptr };
 
         SRWLOCK* Noesis__SymbolManager__Lock{ nullptr };

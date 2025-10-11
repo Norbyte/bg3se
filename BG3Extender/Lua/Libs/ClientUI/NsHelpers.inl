@@ -130,8 +130,7 @@ NS_CORE_KERNEL_API Type* Reflection::RegisterType(const char* name, CreatorFn cr
         *lockTid = tid;
     }
 
-    auto locks = *numLocks++;
-
+    auto locks = ++*numLocks;
 
     auto reflection = GetReflection();
 
@@ -144,7 +143,8 @@ NS_CORE_KERNEL_API Type* Reflection::RegisterType(const char* name, CreatorFn cr
     reflection->NameToType.Insert((uint32_t)nameSym, cls);
     reflection->Names.PushBack(nameSym);
 
-    if (locks == 0) {
+    --*numLocks;
+    if (locks == 1) {
         *lockTid = 0xffffffffu;
         ReleaseSRWLockExclusive(lock);
     }
