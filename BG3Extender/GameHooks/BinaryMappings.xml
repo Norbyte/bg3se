@@ -332,6 +332,24 @@
       </Patch>
     </Mapping>
 
+    <!-- Needed to ensure that savegame loader doesn't convert warnings to errors in "unmodded" saves -->
+    <Mapping Name="esv::SavegameManager::ThrowError" AllowFail="true">
+      48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:esv__gEocServer
+      48 81 c1 08 01 00 00 // add     rcx, 108h
+      48 8d 54 24 20 // lea     rdx, [rsp+48h+var_28]
+      e8 ?? ?? ?? ?? // call    sub_143AD8280
+      90 // nop
+      84 db // test    bl, bl
+      75 0e // jnz     short loc_142A23756
+      48 8d 4c 24 20 // lea     rcx, [rsp+48h+var_28]
+      e8 ?? ?? ?? ?? // call    ls__ModuleSettings__HasCustomMods
+      84 c0 // test    al, al
+      @ref 74 03 // jz      short loc_142A23759
+      <Patch Type="Absolute" Offset="@ref">
+        eb 03
+      </Patch>
+    </Mapping>
+
     <Mapping Name="esv::spell_cast::UnitTestHelper::ExecuteStatsFunctors">
       41 8b 40 08 // mov     eax, [r8+8]
       ff c8 // dec     eax; switch 9 cases

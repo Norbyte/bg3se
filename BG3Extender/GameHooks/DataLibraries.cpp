@@ -116,7 +116,7 @@ namespace bg3se
     void LibraryManager::ApplyCodePatches()
     {
         if (gExtender->GetConfig().EnableAchievements && !WasPatchApplied("ls::ModuleSettings::IsModded")) {
-            if (ApplyCodePatch("ls::ModuleSettings::IsModded")) {
+            if (ApplyCodePatch("ls::ModuleSettings::IsModded") && ApplyCodePatch("esv::SavegameManager::ThrowError")) {
                 DEBUG("Modded achievements enabled.");
             } else {
                 ERR("Couldn't enable modded achievements (symbol not mapped)");
