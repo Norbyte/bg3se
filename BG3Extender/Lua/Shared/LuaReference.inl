@@ -206,7 +206,21 @@ void PersistentRegistryEntry::Release()
     if (ref_ != -1) {
         auto state = gExtender->GetCurrentExtensionState()->GetLua();
         if (state && state->GetGenerationId() == generationId_) {
-            luaL_unref(L_, LUA_REGISTRYINDEX, ref_);
+            auto L = state->GetState();
+            EnterVMCheck(L);
+            luaL_unref(L, LUA_REGISTRYINDEX, ref_);
+        }
+
+        ref_ = -1;
+    }
+}
+
+void PersistentRegistryEntry::Release(lua_State* L)
+{
+    if (ref_ != -1) {
+        if (State::FromLua(L)->GetGenerationId() == generationId_) {
+            EnterVMCheck(L);
+            luaL_unref(L, LUA_REGISTRYINDEX, ref_);
         }
 
         ref_ = -1;
@@ -230,9 +244,18 @@ bool PersistentRegistryEntry::TryPush(lua_State* L) const
     }
 }
 
+Ref PersistentRegistryEntry::ToRef(lua_State* L) const
+{
+    if (IsValid(L)) {
+        return Ref(L, RefType::Registry, ref_);
+    } else {
+        return Ref();
+    }
+}
+
 void PersistentRegistryEntry::Bind(lua_State* L, Ref const& ref)
 {
-    se_assert(ref_ == -1);
+    Release(L);
 
     L_ = L;
     generationId_ = get_generation_id(L);

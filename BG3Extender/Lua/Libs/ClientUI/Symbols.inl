@@ -111,6 +111,7 @@ struct StaticTypeClasses
     TypeClassInfo DependencyObject;
     TypeClassInfo Type;
     TypeClassInfo TypeMeta;
+    TypeClassInfo TypePointer;
     TypeClassInfo TypePtr;
     TypeClassInfo TypeClass;
     TypeClassInfo TypeEnum;
@@ -138,6 +139,7 @@ struct StaticTypeClasses
         DependencyObject.Setup("DependencyObject");
         Type.Setup("Type");
         TypeMeta.Setup("TypeMeta");
+        TypePointer.Setup("TypePointer");
         TypePtr.Setup("TypePtr");
         TypeClass.Setup("TypeClass");
         TypeEnum.Setup("TypeEnum");
@@ -214,6 +216,15 @@ struct ExtStaticSymbols
         for (uint32_t i = 0; i < strings.Size(); i++) {
             Symbols.insert(std::make_pair(strings[i], i));
         }
+
+        // Resolve LuaDelegateCommand dependencies
+        SymbolInfo<Noesis::TypeClass>::Name = MakeNoesisSymbol("TypeClass");
+        SymbolInfo<Noesis::BaseCommand>::Name = MakeNoesisSymbol("BaseCommand");
+        TypeClasses.BaseCommand.Setup("BaseCommand");
+
+        // Force registration of custom classes before resolving names
+        // (temporarily needed until symbol cache cleanup)
+        Noesis::LuaDelegateCommand::StaticGetClassType((Noesis::TypeTag<Noesis::LuaDelegateCommand>*)nullptr);
 
         #define FOR_NOESIS_TYPE(T) SymbolInfo<T>::Name = MakeNoesisSymbol(#T);
         FOR_EACH_NOESIS_TYPE()

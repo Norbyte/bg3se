@@ -91,6 +91,7 @@ public:
 
     bool IsValid(lua_State* L) const;
     bool TryPush(lua_State* L) const;
+    Ref ToRef(lua_State* L) const;
     void Bind(lua_State* L, Ref const& ref);
 
     inline int GetRef() const
@@ -110,6 +111,7 @@ private:
     int ref_;
 
     void Release();
+    void Release(lua_State* L);
 };
 
 enum class RefType

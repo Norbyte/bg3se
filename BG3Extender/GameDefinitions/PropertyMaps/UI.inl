@@ -100,6 +100,12 @@ P_FUN(Execute, Noesis::CommandHelpers::Execute)
 END_CLS()
 
 
+BEGIN_CLS(Noesis::LuaDelegateCommand)
+INHERIT(Noesis::BaseCommand)
+P_FUN(SetHandler, Noesis::LuaDelegateCommand::BindHandler)
+END_CLS()
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// UI OBJECTS

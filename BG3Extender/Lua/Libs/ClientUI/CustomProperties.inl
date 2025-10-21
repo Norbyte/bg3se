@@ -114,21 +114,21 @@ public:
     }
 };
 
-template <class TElem>
-class DynamicPropertyTypeImplCollection : public DynamicPropertyTypeImpl<Noesis::Ptr<Noesis::ObservableCollection<TElem>>>
+template <class TE>
+class DynamicPropertyTypeImplRORef : public DynamicPropertyTypeImpl<Noesis::Ptr<TE>>
 {
 public:
-    using T = Noesis::Ptr<Noesis::ObservableCollection<TElem>>;
+    using T = Noesis::Ptr<TE>;
 
     void ConstructProperty(void* object, uint32_t offset) override
     {
         auto v = reinterpret_cast<T*>((uintptr_t)object + offset);
-        new (v) T(new Noesis::ObservableCollection<TElem>());
+        new (v) T(new TE());
     }
 
     Noesis::TypeProperty* CreateTypeProperty(Symbol name, uint32_t offset) override
     {
-        return GameAlloc<Noesis::TypePropertyOffset<const T>>(name, offset);
+        return GameAlloc<Noesis::TypePropertyOffset<T>>(name, offset);
     }
 };
 
@@ -190,7 +190,8 @@ void InitializeDynamicPropertyTypes()
     gDynamicPropertyTypes.set(FixedString("Rect"), GameAlloc<DynamicPropertyTypeImplRW<Noesis::Rect>>());
     gDynamicPropertyTypes.set(FixedString("String"), GameAlloc<DynamicPropertyTypeImplRW<Noesis::String>>());
     gDynamicPropertyTypes.set(FixedString("Object"), GameAlloc<DynamicPropertyTypeImplRW<Noesis::Ptr<Noesis::BaseComponent>>>());
-    gDynamicPropertyTypes.set(FixedString("Collection"), GameAlloc<DynamicPropertyTypeImplCollection<Noesis::BaseComponent>>());
+    gDynamicPropertyTypes.set(FixedString("Collection"), GameAlloc<DynamicPropertyTypeImplRORef<Noesis::ObservableCollection<Noesis::BaseComponent>>>());
+    gDynamicPropertyTypes.set(FixedString("Command"), GameAlloc<DynamicPropertyTypeImplRORef<Noesis::LuaDelegateCommand>>());
 }
 
 class ClassDefinitionBuilder

@@ -257,6 +257,21 @@ void TypePtr::SetStaticContentType(Type const* t)
 }
 
 
+TypePointer::TypePointer(Symbol name)
+    : TypeMeta(name)
+{}
+
+const TypeClass* TypePointer::GetClassType() const
+{
+    return gStaticSymbols.TypeClasses.TypePointer.Type;
+}
+
+void TypePointer::SetStaticContentType(Type const* t)
+{
+    mContentType = t;
+}
+
+
 struct TypeClassAncestors
 {
     TypeClassAncestors()
@@ -616,6 +631,65 @@ void BaseObservableCollection::ClearItems()
 }
 
 
+BaseCommand::BaseCommand()
+{}
+
+BaseCommand::~BaseCommand()
+{}
+
+const TypeClass* BaseCommand::GetClassType() const
+{
+    return gStaticSymbols.TypeClasses.BaseCommand.Type;
+}
+
+
+const TypeClass* BaseCommand::StaticGetClassType(TypeTag<BaseCommand>*)
+{
+    return gStaticSymbols.TypeClasses.BaseCommand.Type;
+}
+
+EventHandler& BaseCommand::CanExecuteChanged()
+{
+    return mCanExecuteChanged;
+}
+
+bool BaseCommand::CanExecute(BaseComponent* param) const
+{
+    return false;
+}
+
+void BaseCommand::Execute(BaseComponent* param) const
+{}
+
+
+bool LuaDelegateCommand::CanExecute(BaseComponent* param) const
+{
+    ContextGuardAnyThread ctx(ContextType::Client);
+    ecl::LuaClientPin pin(ecl::ExtensionState::Get());
+    return pin && handler_.IsValid(pin->GetState());
+}
+
+void LuaDelegateCommand::Execute(BaseComponent* param) const
+{
+    ContextGuardAnyThread ctx(ContextType::Client);
+    ecl::LuaClientPin pin(ecl::ExtensionState::Get());
+    if (pin && handler_.IsValid(pin->GetState())) {
+        auto L = pin->GetState();
+        lua::LuaDelegate<void(BaseComponent*)> handler(L, handler_.ToRef(L));
+        handler.Call(L, { param });
+    }
+}
+
+void LuaDelegateCommand::BindHandler(lua_State* L, lua::Ref const& handler)
+{
+    handler_.Bind(L, handler);
+    CanExecuteChanged().Invoke(this, EventArgs{});
+}
+
+NS_IMPLEMENT_REFLECTION(LuaDelegateCommand)
+{
+}
+
 
 const TypeClass* BoxedValue::GetClassType() const
 {
@@ -655,7 +729,7 @@ NS_CORE_KERNEL_API Type* Reflection::RegisterType(Symbol name, CreatorFn creator
 
     auto currentTy = reflection->NameToType.Find((uint32_t)name);
     if (currentTy != reflection->NameToType.End() && gAllowTypeReregistration == 0) {
-        WARN("Re-registering type '%s'?", name.Str());
+        WARN("Registering type '%s' when it already exists in the registry? Might be problematic", name.Str());
         cls = currentTy->value;
     } else {
         cls = creator(name);

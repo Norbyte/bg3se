@@ -256,6 +256,19 @@ struct TypeHelpers
     static void ForEachMeta(TypeClass const* cls, const TypeClass* metaDataType, Fun fun);
 };
 
+class LuaDelegateCommand final : public BaseCommand
+{
+public:
+    bool CanExecute(BaseComponent* param) const override;
+    void Execute(BaseComponent* param) const override;
+    void BindHandler(lua_State* L, lua::Ref const& handler);
+
+    NS_DECLARE_REFLECTION(LuaDelegateCommand, BaseCommand)
+
+private:
+    lua::PersistentRegistryEntry handler_;
+};
+
 END_BARE_NS()
 
 
@@ -692,6 +705,7 @@ BEGIN_NS(lua)
     FOR_NOESIS_TYPE(Noesis::TypeMetaData) \
     FOR_NOESIS_TYPE(Noesis::TypeClass) \
     FOR_NOESIS_TYPE(Noesis::BaseCommand) \
+    FOR_NOESIS_TYPE(Noesis::LuaDelegateCommand) \
     FOR_NOESIS_TYPE(Noesis::DispatcherObject) \
     FOR_NOESIS_TYPE(Noesis::DependencyObject) \
     FOR_NOESIS_TYPE(Noesis::DependencyData) \
