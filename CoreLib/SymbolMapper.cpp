@@ -1023,6 +1023,12 @@ uint8_t const * AsmResolveInstructionRef(uint8_t const * insn)
         return insn + rel + 7;
     }
 
+    // CMP [rip+xx], imm8 (4b operand) instruction
+    if (insn[0] == 0x48 && insn[1] == 0x83 && insn[2] == 0x3D) {
+        int32_t rel = *(int32_t const *)(insn + 3);
+        return insn + rel + 8;
+    }
+
     // MOV cs:xxx, <imm4> instruction
     if (insn[0] == 0xc7 && insn[1] == 0x05) {
         int32_t rel = *(int32_t const *)(insn + 2);

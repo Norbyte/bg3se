@@ -171,6 +171,21 @@ ecl::PlayerDragData* GetDragDrop(uint16_t playerId)
     return nullptr;
 }
 
+void NoesisErrorHandler(const char* file, uint32_t line, const char* message, bool fatal)
+{
+    ERR("[Noesis] (%s:%d) %s", file, line, message);
+}
+
+void EnableErrorReporting(bool enable)
+{
+    auto handler = (Noesis::ErrorHandler*)GetStaticSymbols().Noesis__gErrorHandler;
+    if (enable) {
+        *handler = &NoesisErrorHandler;
+    } else {
+        *handler = nullptr;
+    }
+}
+
 void RegisterUILib()
 {
     DECLARE_MODULE(UI, Client)
@@ -183,6 +198,7 @@ void RegisterUILib()
     MODULE_FUNCTION(GetPickingHelper)
     MODULE_FUNCTION(GetCursorControl)
     MODULE_FUNCTION(GetDragDrop)
+    MODULE_FUNCTION(EnableErrorReporting)
     END_MODULE()
 }
 

@@ -215,6 +215,7 @@ namespace bg3se
         SYM_OFF(Noesis__SymbolManager__Data);
         SYM_OFF(Noesis__SymbolManager__Lock);
 
+        SYM_OFF(Noesis__gErrorHandler);
         SYM_OFF(Noesis__GUI__LoadXaml);
         SYM_OFF(Noesis__Visual__AddVisualChild);
         SYM_OFF(Noesis__Visual__RemoveVisualChild);
