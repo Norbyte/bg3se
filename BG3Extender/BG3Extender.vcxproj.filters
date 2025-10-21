@@ -780,6 +780,8 @@
     <None Include="Extender\Shared\ExtenderConfig.inl" />
     <None Include="Lua\Shared\LuaTable.inl" />
     <None Include="Lua\Libs\JsonBinary.inl" />
+    <None Include="Lua\Libs\ClientUI\Builtins.inl" />
+    <None Include="Lua\Libs\ClientUI\CustomProperties.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

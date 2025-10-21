@@ -243,6 +243,12 @@ INHERIT(ui::ViewModel)
 //P(PlayerId)
 END_CLS()
 
+BEGIN_CLS(ui::CustomPropertyDefn)
+P(Name)
+P(Type)
+P(Default)
+END_CLS()
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

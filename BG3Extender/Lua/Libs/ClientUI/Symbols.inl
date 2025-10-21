@@ -111,6 +111,7 @@ struct StaticTypeClasses
     TypeClassInfo DependencyObject;
     TypeClassInfo Type;
     TypeClassInfo TypeMeta;
+    TypeClassInfo TypePtr;
     TypeClassInfo TypeClass;
     TypeClassInfo TypeEnum;
     TypeClassInfo BoxedValue;
@@ -136,6 +137,7 @@ struct StaticTypeClasses
         DependencyObject.Setup("DependencyObject");
         Type.Setup("Type");
         TypeMeta.Setup("TypeMeta");
+        TypePtr.Setup("TypePtr");
         TypeClass.Setup("TypeClass");
         TypeEnum.Setup("TypeEnum");
         BoxedValue.Setup("BoxedValue");
@@ -244,6 +246,7 @@ struct ExtStaticSymbols
         }
     }
 
+    // FIXME - remove local symbol cache
     std::unordered_map<bg3se::STDString, Symbol> Symbols;
     StaticTypes Types;
     StaticTypeClasses TypeClasses;

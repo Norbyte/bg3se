@@ -25,7 +25,7 @@ using LoadXamlProc = Ptr<BaseComponent>* (Ptr<BaseComponent>& ret, char const* p
 struct SymbolManagerInternals
 {
     Vector<char const*> Strings;
-    HashMap<char const*, uint32_t> Keys;
+    HashMap<char const*, uint32_t, 0, HashBucket_KHV<const char*, uint32_t, CaseCharArrayHashKeyInfo>> Keys;
 };
 
 struct ReflectionInternals
@@ -671,6 +671,12 @@ struct DCWidget : public ViewModel
     __int64 field_F8;*/
 };
 
+struct CustomPropertyDefn
+{
+    STDString Name;
+    FixedString Type;
+    lua::RegistryEntry Default;
+};
 
 END_NS()
 

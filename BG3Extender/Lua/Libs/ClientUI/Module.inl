@@ -1,4 +1,6 @@
+#include <Lua/Libs/ClientUI/Builtins.inl>
 #include <Lua/Libs/ClientUI/NsHelpers.inl>
+#include <Lua/Libs/ClientUI/CustomProperties.inl>
 #include <NsGui/UIElementCollection.h>
 #include <NsGui/IList.h>
 #include <GameDefinitions/DragDrop.h>
@@ -101,6 +103,42 @@ void SetState(lua_State* L, FixedString state, std::optional<FixedString> subSta
     fireStateEvent(stateMachine, result, context, args);
 }
 
+bool RegisterType(StringView name, HashMap<FixedString, bg3se::ui::CustomPropertyDefn> properties)
+{
+    Noesis::gStaticSymbols.Initialize();
+    auto clsName = ClassDefinitionBuilder::MakeFullName(name);
+
+    if (Noesis::Reflection::GetType(clsName) != nullptr) {
+        if (gExtender->GetConfig().DeveloperMode) {
+            WARN("Registering Noesis type '%s' when it already exists - this is only supported in developer mode!", name.data());
+        } else {
+            ERR("Attempted to register Noesis type multiple times: %s", name.data());
+            return false;
+        }
+    }
+
+    ClassDefinitionBuilder cls(clsName);
+    for (auto const& prop : properties) {
+        if (!cls.AddProperty(prop.Key(), prop.Value().Type)) {
+            return false;
+        }
+    }
+    cls.Register();
+
+    return true;
+}
+
+Noesis::BaseComponent* Instantiate(FixedString name)
+{
+    auto cls = gDynamicClasses.try_get(name);
+    if (!cls) {
+        ERR("No custom class found with name '%s'", name.GetString());
+        return nullptr;
+    }
+
+    return (*cls)->Construct();
+}
+
 PlayerPickingHelper* GetPickingHelper(uint16_t playerIndex)
 {
     auto picking = ecl::ExtensionState::Get().GetClientLua()->GetEntitySystemHelpers()->GetSystem<ecl::PickingHelperManager>();
@@ -140,6 +178,8 @@ void RegisterUILib()
     MODULE_FUNCTION(GetRoot)
     MODULE_FUNCTION(GetStateMachine)
     MODULE_FUNCTION(SetState)
+    MODULE_FUNCTION(RegisterType)
+    MODULE_FUNCTION(Instantiate)
     MODULE_FUNCTION(GetPickingHelper)
     MODULE_FUNCTION(GetCursorControl)
     MODULE_FUNCTION(GetDragDrop)

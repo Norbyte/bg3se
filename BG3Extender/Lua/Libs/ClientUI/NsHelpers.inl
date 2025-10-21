@@ -1,246 +1,19 @@
-#include <GameDefinitions/UI.h>
-#include <NsGui/UIElementEvents.h>
-#include <NsGui/Uri.h>
-#include <NsDrawing/Color.h>
-#include <NsMath/Vector.h>
-#include <Lua/Libs/ClientUI/ClassCache.h>
-#include <Lua/Libs/ClientUI/Symbols.inl>
-#include <Lua/Libs/ClientUI/ClassCache.inl>
-
 BEGIN_BARE_NS(Noesis)
 
+bg3se::HashMap<bg3se::STDString, char const*> gDynamicNames;
+
+// SymbolManager doesn't hash names, so we need to keep a static pointer for each string
+Symbol MakeDynamicSymbol(STDString name)
+{
+    auto staticStr = gDynamicNames.try_get(name);
+    if (!staticStr) {
+        staticStr = gDynamicNames.set(name, _strdup(name.c_str()));
+    }
+
+    return Symbol(*staticStr);
+}
+
 Ptr<FrameworkElement> LoadXaml(char const* path);
-
-void* BaseObject::operator new(unsigned __int64 sz)
-{
-    return GameAllocRaw(sz);
-}
-
-void BaseObject::operator delete(void* ptr)
-{
-    GameFree(ptr);
-}
-
-BaseObject::BaseObject() {}
-BaseObject::~BaseObject() {}
-
-const TypeClass* BaseObject::GetClassType() const
-{
-    return gStaticSymbols.TypeClasses.BaseObject.Type;
-}
-
-String BaseObject::ToString() const
-{
-    return GetClassType()->GetName();
-}
-
-bool BaseObject::Equals(const BaseObject* left, const BaseObject* right)
-{
-    return left == right
-        || left->Equals(right);
-}
-
-bool BaseObject::Equals(const BaseObject* o) const
-{
-    return this == o;
-}
-
-BaseComponent::BaseComponent() {}
-BaseComponent::~BaseComponent() {}
-
-const TypeClass* BaseComponent::StaticGetClassType(TypeTag<BaseComponent>*)
-{
-    return gStaticSymbols.TypeClasses.BaseComponent.Type;
-}
-
-const TypeClass* BaseComponent::GetClassType() const
-{
-    return gStaticSymbols.TypeClasses.BaseComponent.Type;
-}
-
-const TypeClass* BaseRefCounted::GetClassType() const
-{
-    return gStaticSymbols.TypeClasses.BaseRefCounted.Type;
-}
-
-Type::Type(Symbol name)
-    : mName(name)
-{}
-
-const TypeClass* Type::GetClassType() const
-{
-    return gStaticSymbols.TypeClasses.Type.Type;
-}
-
-bool Type::IsAssignableFrom(const Type* type) const
-{
-    return type == this;
-}
-
-TypeMeta::TypeMeta(Symbol name)
-    : Type(name)
-{}
-
-TypeMeta::~TypeMeta()
-{}
-
-struct TypeClassAncestors
-{
-    TypeClassAncestors()
-    {
-        InitializeSRWLock(&Lock);
-    }
-
-    bool Collapsed{ false };
-    Vector<TypeClass::AncestorInfo> Ancestors;
-    SRWLOCK Lock;
-};
-
-const TypeClass* TypeMeta::GetClassType() const
-{
-    return gStaticSymbols.TypeClasses.TypeMeta.Type;
-}
-
-TypeClass::TypeClass(Symbol name, bool isInterface)
-    : TypeMeta(name),
-    mIsInterface(isInterface),
-    mBase(nullptr),
-    mAncestors(nullptr)
-{
-    mAncestors = (TypeClass::Ancestors*)GameAlloc<TypeClassAncestors>();
-}
-
-TypeClass::~TypeClass()
-{}
-
-const TypeClass* TypeClass::GetClassType() const
-{
-    return gStaticSymbols.TypeClasses.TypeClass.Type;
-}
-
-bool TypeClass::IsAssignableFrom(const Type* type) const
-{
-    if (type == this) return true;
-
-    // FIXME
-    return false;
-}
-
-void TypeClassBuilder::AddBase(const TypeClass* baseType)
-{
-    mBase = baseType;
-}
-
-NS_CORE_KERNEL_API Type* Reflection::RegisterType(const char* name, CreatorFn creator, FillerFn filler)
-{
-    auto tid = GetCurrentThreadId();
-    auto lockTid = GetStaticSymbols().Noesis__Reflection__LockedByThreadId;
-    auto lock = GetStaticSymbols().Noesis__Reflection__Lock;
-    auto numLocks = GetStaticSymbols().Noesis__Reflection__NumLocks;
-
-    if (tid != *lockTid) {
-        AcquireSRWLockExclusive(lock);
-        *lockTid = tid;
-    }
-
-    auto locks = ++*numLocks;
-
-    auto reflection = GetReflection();
-
-    auto nameSym = Symbol(name);
-    auto cls = creator(nameSym);
-    if (filler) {
-        filler(cls);
-    }
-
-    reflection->NameToType.Insert((uint32_t)nameSym, cls);
-    reflection->Names.PushBack(nameSym);
-
-    --*numLocks;
-    if (locks == 1) {
-        *lockTid = 0xffffffffu;
-        ReleaseSRWLockExclusive(lock);
-    }
-
-    return cls;
-}
-
-uint32_t SymFindStringInternal(char const* k)
-{
-    auto const& keys = GetSymbolManager()->Keys;
-    auto it = keys.Find(k);
-    if (it != keys.End()) {
-        return it->value;
-    }
-
-    auto it2 = gStaticSymbols.Symbols.find(k);
-    if (it2 != gStaticSymbols.Symbols.end()) {
-        return it2->second;
-    }
-
-    // If the symbol table changed since the last sync, re-sync and try again
-    if (keys.Size() != gStaticSymbols.Symbols.size()) {
-        auto& strings = Noesis::GetSymbolManager()->Strings;
-        for (uint32_t i = 0; i < strings.Size(); i++) {
-            gStaticSymbols.Symbols.insert(std::make_pair(strings[i], i));
-        }
-
-        auto it3 = gStaticSymbols.Symbols.find(k);
-        if (it3 != gStaticSymbols.Symbols.end()) {
-            return it3->second;
-        }
-    }
-
-    return 0;
-}
-
-uint32_t SymbolManager::FindString(char const* k)
-{
-    auto lock = GetStaticSymbols().Noesis__SymbolManager__Lock;
-    AcquireSRWLockShared(lock);
-
-    auto idx = SymFindStringInternal(k);
-
-    ReleaseSRWLockShared(lock);
-
-    return idx;
-}
-
-uint32_t SymbolManager::AddString(char const* k)
-{
-    auto lock = GetStaticSymbols().Noesis__SymbolManager__Lock;
-    AcquireSRWLockExclusive(lock);
-
-    uint32_t idx;
-    auto sym = GetSymbolManager();
-    auto it = sym->Keys.Find(k);
-    if (it != sym->Keys.End()) {
-        idx = it->value;
-    } else {
-        idx = sym->Strings.Size();
-        sym->Strings.PushBack(k);
-        sym->Keys.Insert(k, idx);
-
-        gStaticSymbols.Symbols.insert(std::make_pair(k, idx));
-    }
-
-    ReleaseSRWLockExclusive(lock);
-    return idx;
-}
-
-using AddVisualChildProc = void (Visual*, Visual*);
-
-void Visual::AddVisualChild(Visual* child)
-{
-    auto addProc = (AddVisualChildProc*)GetStaticSymbols().Noesis__Visual__AddVisualChild;
-    if (addProc) addProc(this, child);
-}
-
-void Visual::RemoveVisualChild(Visual* child)
-{
-    auto removeProc = (AddVisualChildProc*)GetStaticSymbols().Noesis__Visual__RemoveVisualChild;
-    if (removeProc) removeProc(this, child);
-}
 
 template <class T>
 Symbol StaticSymbol()
@@ -822,10 +595,42 @@ std::optional<StoredValueHolder> StoredValueHelpers::GetValue(lua_State* L, Type
 
     } else if (TypeHelpers::IsDescendantOf(type, classes.BaseObject.Type)) {
         return lua::get<BaseObject*>(L, value.Index);
+
     } else {
-        ERR("Don't know how to parse type '%s'", type->GetName());
-        return {};
+        auto typeOfType = type->GetClassType();
+
+        if (typeOfType == types.TypePtr.Type) {
+            auto contentType = static_cast<TypePtr const*>(type)->GetStaticContentType();
+            // Ptr only supports refcounted types, i.e. at least BaseComponent
+            auto obj = lua::get<BaseComponent*>(L, value.Index);
+            if (TypeHelpers::IsDescendantOf(obj->GetClassType(), static_cast<TypeClass const*>(contentType))) {
+                // Simulate 'returning' a Ptr<BaseComponent>
+                obj->AddReference();
+                return obj;
+            } else {
+                ERR("Expected object of type '%s', got '%s'", type->GetName(), obj->GetClassType()->GetName());
+                return {};
+            }
+
+        } else if (typeOfType == types.TypePointer.Type) {
+            auto contentType = static_cast<TypePointer const*>(type)->GetStaticContentType();
+            if (contentType->GetClassType() == classes.TypeClass.Type) {
+                auto obj = lua::get<BaseObject*>(L, value.Index);
+                if (TypeHelpers::IsDescendantOf(obj->GetClassType(), static_cast<TypeClass const*>(contentType))) {
+                    return obj;
+                } else {
+                    ERR("Expected object of type '%s', got '%s'", type->GetName(), obj->GetClassType()->GetName());
+                    return {};
+                }
+            } else {
+                ERR("Pointer to non-object '%s' not supported", type->GetName());
+                return {};
+            }
+        }
     }
+
+    ERR("Don't know how to parse type '%s'", type->GetName());
+    return {};
 }
 
 bool CommandHelpers::CanExecute(lua_State* L, BaseCommand const* o, std::optional<BaseComponent*> arg)
@@ -1116,18 +921,6 @@ TypeMetaData* TypeHelpers::FindMetaOrDescendant(TypeClass const* o, const TypeCl
     for (auto const& meta : o->mMetaData) {
         auto m = meta->GetClassType();
         if (IsDescendantOf(m, metaDataType)) {
-            return meta;
-        }
-    }
-
-    return nullptr;
-}
-
-TypeMetaData* TypeMeta::FindMeta(const TypeClass* metaDataType) const
-{
-    for (auto const& meta : mMetaData) {
-        auto m = meta->GetClassType();
-        if (m == metaDataType) {
             return meta;
         }
     }

@@ -491,6 +491,8 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="Lua\Libs\ClientInput.inl" />
     <None Include="Lua\Libs\ClientNet.inl" />
     <None Include="Lua\Libs\ClientTemplate.inl" />
+    <None Include="Lua\Libs\ClientUI\Builtins.inl" />
+    <None Include="Lua\Libs\ClientUI\CustomProperties.inl" />
     <None Include="Lua\Libs\ClientUI\Module.inl" />
     <None Include="Lua\Libs\ClientUI\Names.inl" />
     <None Include="Lua\Libs\ClientUI\NsHelpers.inl" />
