@@ -348,7 +348,7 @@ PropertyOperationResult UnserializeMapFromTable(lua_State* L, int index, HashMap
         for (auto idx : iterate(L, index)) {
             auto key = get<TK>(L, -2);
             auto value = obj->add_key(key);
-            Unserialize(L, -1, &value);
+            Unserialize(L, -1, value);
         }
 
         return PropertyOperationResult::Success;
