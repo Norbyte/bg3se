@@ -52,7 +52,8 @@ struct ReplicatedChangesComponent : public BaseComponent
     std::array<Array<IntOverride>, 7> Abilities;
     Array<IntOverride> HP;
     bool VisualChanged;
-    bool ForceFinish;
+    // Removed? 
+    // bool ForceFinish;
     uint16_t ItemTooltipFlags;
     TranslatedString ItemDescription;
     int32_t GoldAmount;
