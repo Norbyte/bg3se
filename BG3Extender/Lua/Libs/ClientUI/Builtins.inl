@@ -395,6 +395,228 @@ void TypeClassBuilder::AddProperty(TypeProperty* prop)
 }
 
 
+BaseCollection::BaseCollection()
+{}
+
+BaseCollection::~BaseCollection()
+{}
+
+void BaseCollection::InsertItem(uint32_t index, BaseComponent* item)
+{
+    mItems.Insert(mItems.Data() + index, Ptr<BaseComponent>(item));
+}
+
+void BaseCollection::SetItem(uint32_t index, BaseComponent* item)
+{
+    if (mItems[index] != item) {
+        mItems[index].Reset(item);
+    }
+}
+
+void BaseCollection::RemoveItem(uint32_t index)
+{
+    mItems.Erase(mItems.Data() + index);
+}
+
+void BaseCollection::ClearItems()
+{
+    mItems.Clear();
+}
+
+const TypeClass* BaseCollection::GetClassType() const
+{
+    return gStaticSymbols.TypeClasses.BaseCollection.Type;
+}
+
+const TypeClass* BaseCollection::GetItemType() const
+{
+    return BaseComponent::StaticGetClassType((TypeTag<BaseComponent>*)nullptr);
+}
+
+bool BaseCollection::CheckType(BaseComponent* item) const
+{
+    auto ty = GetItemType();
+    auto itemTy = item->GetClassType();
+
+    if (ty->IsAssignableFrom(itemTy)) {
+        return true;
+    }
+
+    // TODO boxed types etc.
+
+    ERR("Tried to add object of type '%s' to a collection of type '%s'", itemTy->GetName(), ty->GetName());
+    return false;
+}
+
+void BaseCollection::Set(uint32_t index, BaseComponent* item)
+{
+    if (index < mItems.Size()) {
+        if (mItems[index].GetPtr() != item) {
+            SetItem(index, item);
+        }
+    } else {
+        ERR("BaseCollection::Set(%d) out of bounds (size is %d)", index, mItems.Size());
+    }
+}
+
+Ptr<BaseComponent> BaseCollection::GetComponent(uint32_t index) const
+{
+    if (index < mItems.Size()) {
+        return mItems[index];
+    } else {
+        ERR("BaseCollection::GetComponent(%d) out of bounds (size is %d)", index, mItems.Size());
+        return {};
+    }
+}
+
+void BaseCollection::SetComponent(uint32_t index, BaseComponent* item)
+{
+    if (CheckType(item)) {
+        Set(index, item);
+    }
+}
+
+int BaseCollection::AddComponent(BaseComponent* item)
+{
+    if (CheckType(item)) {
+        auto idx = mItems.Size();
+        InsertItem(idx, item);
+        return idx;
+    } else {
+        return -1;
+    }
+}
+
+int BaseCollection::IndexOfComponent(const BaseComponent* item) const
+{
+    for (uint32_t i = 0; i < mItems.Size(); i++) {
+        if (mItems[i].GetPtr() == item) {
+            return (int32_t)i;
+        }
+    }
+
+    return -1;
+}
+
+int BaseCollection::Count() const
+{
+    return (int)mItems.Size();
+}
+
+
+const TypeClass* BaseObservableCollection::StaticGetClassType(TypeTag<BaseObservableCollection>*)
+{
+    return gStaticSymbols.TypeClasses.BaseObservableCollection.Type;
+}
+
+
+BaseObservableCollection::BaseObservableCollection()
+{}
+
+BaseObservableCollection::~BaseObservableCollection()
+{}
+
+const TypeClass* BaseObservableCollection::GetClassType() const
+{
+    return gStaticSymbols.TypeClasses.BaseObservableCollection.Type;
+}
+
+NotifyCollectionChangedEventHandler& BaseObservableCollection::CollectionChanged()
+{
+    return mCollectionChanged;
+}
+
+PropertyChangedEventHandler& BaseObservableCollection::PropertyChanged()
+{
+    return mPropertyChanged;
+}
+
+void BaseObservableCollection::MoveItem(int oldIndex, int newIndex)
+{
+    auto oldItem = mItems[oldIndex];
+    BaseCollection::RemoveItem(oldIndex);
+    BaseCollection::InsertItem(newIndex, oldItem.GetPtr());
+    // FIXME - NOTIFY Item[]
+    mCollectionChanged(this, NotifyCollectionChangedEventArgs{
+        .action = NotifyCollectionChangedAction_Move,
+        .oldIndex = (int32_t)oldIndex,
+        .newIndex = (int32_t)newIndex,
+        .oldValue = oldItem.GetPtr(),
+        .newValue = oldItem.GetPtr()
+    });
+}
+
+void BaseObservableCollection::InsertItem(uint32_t index, BaseComponent* item)
+{
+    BaseCollection::InsertItem(index, item);
+    // FIXME - NOTIFY Count, Item[]
+    mCollectionChanged(this, NotifyCollectionChangedEventArgs{
+        .action = NotifyCollectionChangedAction_Add,
+        .oldIndex = -1,
+        .newIndex = (int32_t)index,
+        .oldValue = nullptr,
+        .newValue = item
+    });
+}
+
+void BaseObservableCollection::SetItem(uint32_t index, BaseComponent* item)
+{
+    auto oldItem = mItems[index];
+    BaseCollection::SetItem(index, item);
+    // FIXME - NOTIFY Item[]
+    mCollectionChanged(this, NotifyCollectionChangedEventArgs{
+        .action = NotifyCollectionChangedAction_Replace,
+        .oldIndex = (int32_t)index,
+        .newIndex = (int32_t)index,
+        .oldValue = oldItem.GetPtr(),
+        .newValue = item
+    });
+}
+
+void BaseObservableCollection::RemoveItem(uint32_t index)
+{
+    auto item = mItems[index];
+    BaseCollection::RemoveItem(index);
+    // FIXME - NOTIFY Count, Item[]
+    mCollectionChanged(this, NotifyCollectionChangedEventArgs{
+        .action = NotifyCollectionChangedAction_Remove,
+        .oldIndex = (int32_t)index,
+        .newIndex = -1,
+        .oldValue = item.GetPtr(),
+        .newValue = nullptr
+    });
+}
+
+void BaseObservableCollection::ClearItems()
+{
+    mCollectionChanged(this, NotifyCollectionChangedEventArgs{
+        .action = NotifyCollectionChangedAction_PreReset,
+        .oldIndex = -1,
+        .newIndex = -1,
+        .oldValue = nullptr,
+        .newValue = nullptr
+    });
+
+    BaseCollection::ClearItems();
+
+    /*
+    mPropertyChanged(this, PropertyChangedEventArgs{
+        .propertyName = SymCount
+    });
+    // FIXME - NOTIFY Count, Item[]
+    */
+
+    mCollectionChanged(this, NotifyCollectionChangedEventArgs{
+        .action = NotifyCollectionChangedAction_Reset,
+        .oldIndex = -1,
+        .newIndex = -1,
+        .oldValue = nullptr,
+        .newValue = nullptr
+    });
+}
+
+
+
 const TypeClass* BoxedValue::GetClassType() const
 {
     return gStaticSymbols.TypeClasses.BoxedValue.Type;

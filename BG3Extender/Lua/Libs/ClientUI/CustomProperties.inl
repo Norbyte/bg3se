@@ -102,10 +102,33 @@ public:
         auto v = reinterpret_cast<T*>((uintptr_t)object + offset);
         v->~T();
     }
+};
 
+template <class T>
+class DynamicPropertyTypeImplRW : public DynamicPropertyTypeImpl<T>
+{
+public:
     Noesis::TypeProperty* CreateTypeProperty(Symbol name, uint32_t offset) override
     {
         return GameAlloc<Noesis::TypePropertyOffset<T>>(name, offset);
+    }
+};
+
+template <class TElem>
+class DynamicPropertyTypeImplCollection : public DynamicPropertyTypeImpl<Noesis::Ptr<Noesis::ObservableCollection<TElem>>>
+{
+public:
+    using T = Noesis::Ptr<Noesis::ObservableCollection<TElem>>;
+
+    void ConstructProperty(void* object, uint32_t offset) override
+    {
+        auto v = reinterpret_cast<T*>((uintptr_t)object + offset);
+        new (v) T(new Noesis::ObservableCollection<TElem>());
+    }
+
+    Noesis::TypeProperty* CreateTypeProperty(Symbol name, uint32_t offset) override
+    {
+        return GameAlloc<Noesis::TypePropertyOffset<const T>>(name, offset);
     }
 };
 
@@ -149,24 +172,25 @@ void InitializeDynamicPropertyTypes()
 {
     if (!gDynamicPropertyTypes.empty()) return;
 
-    gDynamicPropertyTypes.set(FixedString("Bool"), GameAlloc<DynamicPropertyTypeImpl<bool>>());
-    gDynamicPropertyTypes.set(FixedString("Int8"), GameAlloc<DynamicPropertyTypeImpl<int8_t>>());
-    gDynamicPropertyTypes.set(FixedString("Int16"), GameAlloc<DynamicPropertyTypeImpl<int16_t>>());
-    gDynamicPropertyTypes.set(FixedString("Int32"), GameAlloc<DynamicPropertyTypeImpl<int32_t>>());
-    gDynamicPropertyTypes.set(FixedString("Int64"), GameAlloc<DynamicPropertyTypeImpl<int64_t>>());
-    gDynamicPropertyTypes.set(FixedString("UInt8"), GameAlloc<DynamicPropertyTypeImpl<uint8_t>>());
-    gDynamicPropertyTypes.set(FixedString("UInt16"), GameAlloc<DynamicPropertyTypeImpl<uint16_t>>());
-    gDynamicPropertyTypes.set(FixedString("UInt32"), GameAlloc<DynamicPropertyTypeImpl<uint32_t>>());
-    gDynamicPropertyTypes.set(FixedString("UInt64"), GameAlloc<DynamicPropertyTypeImpl<uint64_t>>());
-    gDynamicPropertyTypes.set(FixedString("Single"), GameAlloc<DynamicPropertyTypeImpl<float>>());
-    gDynamicPropertyTypes.set(FixedString("Double"), GameAlloc<DynamicPropertyTypeImpl<double>>());
-    gDynamicPropertyTypes.set(FixedString("Color"), GameAlloc<DynamicPropertyTypeImpl<Noesis::Color>>());
-    gDynamicPropertyTypes.set(FixedString("Vector2"), GameAlloc<DynamicPropertyTypeImpl<Noesis::Vector2>>());
-    gDynamicPropertyTypes.set(FixedString("Vector3"), GameAlloc<DynamicPropertyTypeImpl<Noesis::Vector3>>());
-    gDynamicPropertyTypes.set(FixedString("Point"), GameAlloc<DynamicPropertyTypeImpl<Noesis::Point>>());
-    gDynamicPropertyTypes.set(FixedString("Rect"), GameAlloc<DynamicPropertyTypeImpl<Noesis::Rect>>());
-    gDynamicPropertyTypes.set(FixedString("String"), GameAlloc<DynamicPropertyTypeImpl<Noesis::String>>());
-    gDynamicPropertyTypes.set(FixedString("Object"), GameAlloc<DynamicPropertyTypeImpl<Noesis::Ptr<Noesis::BaseComponent>>>());
+    gDynamicPropertyTypes.set(FixedString("Bool"), GameAlloc<DynamicPropertyTypeImplRW<bool>>());
+    gDynamicPropertyTypes.set(FixedString("Int8"), GameAlloc<DynamicPropertyTypeImplRW<int8_t>>());
+    gDynamicPropertyTypes.set(FixedString("Int16"), GameAlloc<DynamicPropertyTypeImplRW<int16_t>>());
+    gDynamicPropertyTypes.set(FixedString("Int32"), GameAlloc<DynamicPropertyTypeImplRW<int32_t>>());
+    gDynamicPropertyTypes.set(FixedString("Int64"), GameAlloc<DynamicPropertyTypeImplRW<int64_t>>());
+    gDynamicPropertyTypes.set(FixedString("UInt8"), GameAlloc<DynamicPropertyTypeImplRW<uint8_t>>());
+    gDynamicPropertyTypes.set(FixedString("UInt16"), GameAlloc<DynamicPropertyTypeImplRW<uint16_t>>());
+    gDynamicPropertyTypes.set(FixedString("UInt32"), GameAlloc<DynamicPropertyTypeImplRW<uint32_t>>());
+    gDynamicPropertyTypes.set(FixedString("UInt64"), GameAlloc<DynamicPropertyTypeImplRW<uint64_t>>());
+    gDynamicPropertyTypes.set(FixedString("Single"), GameAlloc<DynamicPropertyTypeImplRW<float>>());
+    gDynamicPropertyTypes.set(FixedString("Double"), GameAlloc<DynamicPropertyTypeImplRW<double>>());
+    gDynamicPropertyTypes.set(FixedString("Color"), GameAlloc<DynamicPropertyTypeImplRW<Noesis::Color>>());
+    gDynamicPropertyTypes.set(FixedString("Vector2"), GameAlloc<DynamicPropertyTypeImplRW<Noesis::Vector2>>());
+    gDynamicPropertyTypes.set(FixedString("Vector3"), GameAlloc<DynamicPropertyTypeImplRW<Noesis::Vector3>>());
+    gDynamicPropertyTypes.set(FixedString("Point"), GameAlloc<DynamicPropertyTypeImplRW<Noesis::Point>>());
+    gDynamicPropertyTypes.set(FixedString("Rect"), GameAlloc<DynamicPropertyTypeImplRW<Noesis::Rect>>());
+    gDynamicPropertyTypes.set(FixedString("String"), GameAlloc<DynamicPropertyTypeImplRW<Noesis::String>>());
+    gDynamicPropertyTypes.set(FixedString("Object"), GameAlloc<DynamicPropertyTypeImplRW<Noesis::Ptr<Noesis::BaseComponent>>>());
+    gDynamicPropertyTypes.set(FixedString("Collection"), GameAlloc<DynamicPropertyTypeImplCollection<Noesis::BaseComponent>>());
 }
 
 class ClassDefinitionBuilder

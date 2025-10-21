@@ -322,11 +322,13 @@ public:
                 if (lua_type(L, luaIndex) == LUA_TNIL) {
                     obj->RemoveItem(arrayIndex - 1);
                 } else {
-                    obj->SetComponent(arrayIndex - 1, get<T>(L, luaIndex));
+                    obj->SetItem(arrayIndex - 1, get<T>(L, luaIndex));
                 }
                 return true;
             } else if (arrayIndex == size + 1) {
-                obj->AddComponent(get<T>(L, luaIndex));
+                if (lua_type(L, luaIndex) != LUA_TNIL) {
+                    obj->InsertItem(size, get<T>(L, luaIndex));
+                }
                 return true;
             } else {
                 return false;

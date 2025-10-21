@@ -115,6 +115,7 @@ struct StaticTypeClasses
     TypeClassInfo TypeClass;
     TypeClassInfo TypeEnum;
     TypeClassInfo BoxedValue;
+    TypeClassInfo BaseObservableCollection;
     TypeClassInfo UIElementData;
     TypeClassInfo DependencyData;
     TypeClassInfo FrameworkElement;
@@ -141,6 +142,7 @@ struct StaticTypeClasses
         TypeClass.Setup("TypeClass");
         TypeEnum.Setup("TypeEnum");
         BoxedValue.Setup("BoxedValue");
+        BaseObservableCollection.Setup("BaseObservableCollection");
         UIElementData.Setup("UIElementData");
         DependencyData.Setup("DependencyData");
         FrameworkElement.Setup("FrameworkElement");
