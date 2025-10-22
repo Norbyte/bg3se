@@ -346,7 +346,7 @@
       84 c0 // test    al, al
       @ref 74 03 // jz      short loc_142A23759
       <Patch Type="Absolute" Offset="@ref">
-        eb 03
+        66 90
       </Patch>
     </Mapping>
 
