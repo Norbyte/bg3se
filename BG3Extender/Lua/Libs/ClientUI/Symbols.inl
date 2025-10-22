@@ -212,11 +212,6 @@ struct ExtStaticSymbols
     {
         if (Initialized) return;
 
-        auto& strings = Noesis::GetSymbolManager()->Strings;
-        for (uint32_t i = 0; i < strings.Size(); i++) {
-            Symbols.insert(std::make_pair(strings[i], i));
-        }
-
         // Resolve LuaDelegateCommand dependencies
         SymbolInfo<Noesis::TypeClass>::Name = MakeNoesisSymbol("TypeClass");
         SymbolInfo<Noesis::BaseCommand>::Name = MakeNoesisSymbol("BaseCommand");
@@ -251,16 +246,9 @@ struct ExtStaticSymbols
             n = n.substr(8);
         }
 
-        auto it = Symbols.find(n);
-        if (it == Symbols.end()) {
-            return Symbol{};
-        } else {
-            return it->second;
-        }
+        return Symbol(n.c_str());
     }
 
-    // FIXME - remove local symbol cache
-    std::unordered_map<bg3se::STDString, Symbol> Symbols;
     StaticTypes Types;
     StaticTypeClasses TypeClasses;
     EventNames Events;

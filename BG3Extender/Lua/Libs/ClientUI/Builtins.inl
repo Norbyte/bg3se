@@ -756,27 +756,9 @@ uint32_t SymFindStringInternal(char const* k)
     auto it = keys.Find(k);
     if (it != keys.End()) {
         return it->value;
+    } else {
+        return 0;
     }
-
-    auto it2 = gStaticSymbols.Symbols.find(k);
-    if (it2 != gStaticSymbols.Symbols.end()) {
-        return it2->second;
-    }
-
-    // If the symbol table changed since the last sync, re-sync and try again
-    if (keys.Size() != gStaticSymbols.Symbols.size()) {
-        auto& strings = Noesis::GetSymbolManager()->Strings;
-        for (uint32_t i = 0; i < strings.Size(); i++) {
-            gStaticSymbols.Symbols.insert(std::make_pair(strings[i], i));
-        }
-
-        auto it3 = gStaticSymbols.Symbols.find(k);
-        if (it3 != gStaticSymbols.Symbols.end()) {
-            return it3->second;
-        }
-    }
-
-    return 0;
 }
 
 uint32_t SymbolManager::FindString(char const* k)
@@ -812,8 +794,6 @@ uint32_t SymbolManager::AddString(char const* k)
         auto keyCopy = _strdup(k);
         sym->Strings.PushBack(keyCopy);
         sym->Keys.Insert(keyCopy, idx);
-
-        gStaticSymbols.Symbols.insert(std::make_pair(keyCopy, idx));
     }
 
     ReleaseSRWLockExclusive(lock);
