@@ -1,18 +1,5 @@
 BEGIN_BARE_NS(Noesis)
 
-bg3se::HashMap<bg3se::STDString, char const*> gDynamicNames;
-
-// SymbolManager doesn't hash names, so we need to keep a static pointer for each string
-Symbol MakeDynamicSymbol(STDString name)
-{
-    auto staticStr = gDynamicNames.try_get(name);
-    if (!staticStr) {
-        staticStr = gDynamicNames.set(name, _strdup(name.c_str()));
-    }
-
-    return Symbol(*staticStr);
-}
-
 Ptr<FrameworkElement> LoadXaml(char const* path);
 
 template <class T>

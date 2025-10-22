@@ -103,7 +103,8 @@ void SetState(lua_State* L, FixedString state, std::optional<FixedString> subSta
     fireStateEvent(stateMachine, result, context, args);
 }
 
-bool RegisterType(StringView name, HashMap<FixedString, bg3se::ui::CustomPropertyDefn> properties)
+bool RegisterType(lua_State* L, StringView name, HashMap<FixedString, bg3se::ui::CustomPropertyDefn> properties,
+    std::optional<StringView> wrappedContextType)
 {
     Noesis::gStaticSymbols.Initialize();
     auto clsName = ClassDefinitionBuilder::MakeFullName(name);
@@ -112,7 +113,8 @@ bool RegisterType(StringView name, HashMap<FixedString, bg3se::ui::CustomPropert
         if (gExtender->GetConfig().DeveloperMode) {
             WARN("Registering Noesis type '%s' when it already exists - this is only supported in developer mode!", name.data());
         } else {
-            ERR("Attempted to register Noesis type multiple times: %s", name.data());
+            // FIXME - support this if definition is unchanged
+            luaL_error(L, "Attempted to register Noesis type multiple times: %s", name.data());
             return false;
         }
     }
@@ -120,23 +122,38 @@ bool RegisterType(StringView name, HashMap<FixedString, bg3se::ui::CustomPropert
     ClassDefinitionBuilder cls(clsName);
     for (auto const& prop : properties) {
         if (!cls.AddProperty(prop.Key(), prop.Value().Type, prop.Value().Notify)) {
+            luaL_error(L, "Incorrect definition for property '%s'", prop.Key().GetString());
             return false;
         }
     }
+
+    if (wrappedContextType) {
+        if (!cls.SetWrappedContext(Noesis::Symbol(wrappedContextType->data()))) {
+            luaL_error(L, "Invalid wrapped context type '%s'", wrappedContextType->data());
+            return false;
+        }
+    }
+
     cls.Register();
 
     return true;
 }
 
-Noesis::BaseComponent* Instantiate(FixedString name)
+Noesis::BaseComponent* Instantiate(lua_State* L, FixedString name, std::optional<Noesis::BaseComponent*> wrappedContext)
 {
     auto cls = gDynamicClasses.try_get(name);
     if (!cls) {
-        ERR("No custom class found with name '%s'", name.GetString());
+        luaL_error(L, "No custom class found with name '%s'", name.GetString());
         return nullptr;
     }
 
-    return (*cls)->Construct();
+    auto inst = (*cls)->Construct(wrappedContext.value_or(nullptr));
+    if (!inst) {
+        luaL_error(L, "Unable to construct data context '%s' - invalid parameters", name.GetString());
+        return nullptr;
+    }
+
+    return inst;
 }
 
 PlayerPickingHelper* GetPickingHelper(uint16_t playerIndex)

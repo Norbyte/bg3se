@@ -3,12 +3,27 @@ BEGIN_BARE_NS(Noesis)
 class NsCustomDataContext : public BaseComponent, public INotifyPropertyChanged
 {
 public:
-    NsCustomDataContext(TypeClass* cls)
-        : class_(cls)
-    {}
+    NsCustomDataContext(TypeClass* cls, BaseComponent* wrappedContext)
+        : class_(cls),
+        wrappedContext_(wrappedContext),
+        installedChangeHandler_(false)
+    {
+        if (wrappedContext_) {
+            auto notifies = DynamicCast<INotifyPropertyChanged*, BaseComponent*>(wrappedContext_);
+            if (notifies) {
+                notifies->PropertyChanged().Add(MakeDelegate(this, &NsCustomDataContext::OnWrappedPropertyChanged));
+                installedChangeHandler_ = true;
+            }
+        }
+    }
 
     ~NsCustomDataContext()
-    {}
+    {
+        if (installedChangeHandler_) {
+            auto notifies = DynamicCast<INotifyPropertyChanged*, BaseComponent*>(wrappedContext_);
+            notifies->PropertyChanged().Remove(MakeDelegate(this, &NsCustomDataContext::OnWrappedPropertyChanged));
+        }
+    }
 
     static void* operator new(std::size_t count, void* ptr)
     {
@@ -42,17 +57,33 @@ public:
         return class_;
     }
 
+    BaseComponent* GetWrappedContext() const
+    {
+        return wrappedContext_.GetPtr();
+    }
+
     PropertyChangedEventHandler& PropertyChanged() override
     {
         return propertyChanged_;
     }
 
+    static uint32_t WrappedContextOffset()
+    {
+        return (uint32_t)offsetof(NsCustomDataContext, wrappedContext_);
+    }
+
     NS_IMPLEMENT_INTERFACE_FIXUP
 
 private:
-    Ptr<BaseComponent> basedOn_;
     TypeClass* class_;
+    Ptr<BaseComponent> wrappedContext_;
     PropertyChangedEventHandler propertyChanged_;
+    bool installedChangeHandler_;
+
+    void OnWrappedPropertyChanged(BaseComponent* obj, const PropertyChangedEventArgs& evt)
+    {
+        propertyChanged_(obj, evt);
+    }
 };
 
 template <class T>
@@ -80,6 +111,59 @@ public:
             ctx->PropertyChanged().Invoke(ctx, PropertyChangedEventArgs(this->GetName()));
         }
     }
+};
+
+
+class TypePropertyDataContextWrapped : public TypeProperty
+{
+public:
+    TypePropertyDataContextWrapped(Symbol name, TypeProperty const* baseProperty)
+        : TypeProperty(name, baseProperty->GetContentType()),
+        baseProperty_(baseProperty)
+    {}
+
+    static BaseComponent* GetWrapped(const void* ptr)
+    {
+        return reinterpret_cast<NsCustomDataContext const*>(ptr)->GetWrappedContext();
+    }
+
+    void* GetContent(const void* ptr) const override
+    {
+        return baseProperty_->GetContent(GetWrapped(ptr));
+    }
+
+    bool IsReadOnly() const override
+    {
+        return baseProperty_->IsReadOnly();
+    }
+
+    Ptr<BaseComponent> GetComponent(const void* ptr) const override
+    {
+        return baseProperty_->GetComponent(GetWrapped(ptr));
+    }
+
+    void SetComponent(void* ptr, BaseComponent* value) const override
+    {
+        return baseProperty_->SetComponent(GetWrapped(ptr), value);
+    }
+
+    void GetCopy(const void* ptr, void* dest) const override
+    {
+        return baseProperty_->GetCopy(GetWrapped(ptr), dest);
+    }
+
+    const void* Get(const void* ptr) const override
+    {
+        return baseProperty_->Get(GetWrapped(ptr));
+    }
+
+    void Set(void* ptr, const void* value) const override
+    {
+        return baseProperty_->Set(GetWrapped(ptr), value);
+    }
+
+private:
+    TypeProperty const* baseProperty_;
 };
 
 END_BARE_NS()
@@ -173,13 +257,53 @@ struct DynamicPropertyDefinition
 struct DynamicClassType
 {
     Noesis::TypeClassBuilder* Type{ nullptr };
+    Noesis::TypeClass const* WrappedContextType{ nullptr };
     Array<DynamicPropertyDefinition> Properties;
     uint32_t Size{ 0 };
+    Symbol Name;
 
-    Noesis::NsCustomDataContext* Construct()
+    bool ValidateWrappedContext(Noesis::BaseComponent*& wrappedContext)
     {
+        if (WrappedContextType == nullptr) {
+            if (wrappedContext != nullptr) {
+                ERR("Passing wrapped context to type '%s' that doesn't support wrapped contexts", Name.Str());
+                return false;
+            }
+
+            return true;
+        }
+
+        if (wrappedContext == nullptr) {
+            ERR("Context '%s' requires a wrapped context", Name.Str());
+            return false;
+        }
+
+        if (!TypeHelpers::IsDescendantOf(wrappedContext->GetClassType(), WrappedContextType)) {
+            // Check if it is an SE context that wraps another context; if so, redo the check with the wrapped context
+            if (TypeHelpers::IsDescendantOf(wrappedContext->GetClassType(), Noesis::TypeOf<Noesis::NsCustomDataContext>())) {
+                auto baseCtx = static_cast<Noesis::NsCustomDataContext*>(wrappedContext)->GetWrappedContext();
+                if (baseCtx && ValidateWrappedContext(baseCtx)) {
+                    wrappedContext = baseCtx;
+                    return true;
+                }
+            }
+
+            ERR("Context '%s' requires a wrapped context of type '%s', got '%s'", Name.Str(),
+                WrappedContextType->GetName(), wrappedContext->GetClassType()->GetName());
+            return false;
+        }
+
+        return true;
+    }
+
+    Noesis::NsCustomDataContext* Construct(Noesis::BaseComponent* wrappedContext)
+    {
+        if (!ValidateWrappedContext(wrappedContext)) {
+            return nullptr;
+        }
+
         auto ctx = reinterpret_cast<Noesis::NsCustomDataContext *>(GameAllocRaw(Size));
-        new (ctx) NsCustomDataContext(Type);
+        new (ctx) NsCustomDataContext(Type, wrappedContext);
         for (auto const& prop : Properties) {
             prop.Type->ConstructProperty(ctx, prop.Offset);
         }
@@ -231,7 +355,7 @@ class ClassDefinitionBuilder
 public:
     static Symbol MakeFullName(StringView name)
     {
-        return Noesis::MakeDynamicSymbol(STDString("se::") + name.data());
+        return Noesis::Symbol((STDString("se::") + name.data()).c_str());
     }
 
     ClassDefinitionBuilder(Symbol name)
@@ -241,6 +365,7 @@ public:
         type_->AddBase(Noesis::TypeOf<Noesis::NsCustomDataContext>());
 
         dynamicCls_ = GameAlloc<DynamicClassType>();
+        dynamicCls_->Name = name_;
         dynamicCls_->Type = type_;
 
         InitializeDynamicPropertyTypes();
@@ -262,7 +387,7 @@ public:
 
     bool AddProperty(FixedString const& name, FixedString const& typeName, bool notifies)
     {
-        auto nameSym = Noesis::MakeDynamicSymbol(STDString(name.GetStringView()));
+        auto nameSym = Noesis::Symbol(name.GetString());
 
         auto type = gDynamicPropertyTypes.try_get(typeName);
         if (!type) {
@@ -284,6 +409,46 @@ public:
         type_->AddProperty(prop);
 
         lastOffset_ += (*type)->GetSize();
+
+        return true;
+    }
+
+    bool SetWrappedContext(Symbol name)
+    {
+        auto type = Noesis::Reflection::GetType(name);
+        if (!type) {
+            ERR("Wrapped context type '%s' does not exist", name.Str());
+            return false;
+        }
+
+        if (!TypeHelpers::IsDescendantOf(type, Noesis::gStaticSymbols.TypeClasses.BaseComponent.Type)) {
+            ERR("Wrapped context type '%s' must be a component", name.Str());
+            return false;
+        }
+
+        if (TypeHelpers::IsDescendantOf(type, Noesis::gStaticSymbols.TypeClasses.DependencyObject.Type)) {
+            ERR("Wrapped context type '%s' cannot be a dependency object", name.Str());
+            return false;
+        }
+
+        auto cls = static_cast<Noesis::TypeClass const*>(type);
+        dynamicCls_->WrappedContextType = cls;
+
+        auto baseContextProp = GameAlloc<Noesis::TypePropertyOffset<Noesis::Ptr<Noesis::BaseComponent>>>(
+            Noesis::Symbol("WrappedContext"), Noesis::NsCustomDataContext::WrappedContextOffset());
+        type_->AddProperty(baseContextProp);
+
+        // Use the cached class to ensure we also get properties from all parents
+        auto cacheCls = gClassCache.GetClass(cls);
+        for (auto prop : cacheCls.Names) {
+            if (prop->Value().Property) {
+                auto propName = prop->Value().Property->GetName();
+                if (type_->mProperties.FindIf([&] (TypeProperty* p) { return p->GetName() == propName; }) == type_->mProperties.End()) {
+                    auto wrappedProp = GameAlloc<Noesis::TypePropertyDataContextWrapped>(propName, prop->Value().Property);
+                    type_->AddProperty(wrappedProp);
+                }
+            }
+        }
 
         return true;
     }
