@@ -119,7 +119,7 @@ bool RegisterType(StringView name, HashMap<FixedString, bg3se::ui::CustomPropert
 
     ClassDefinitionBuilder cls(clsName);
     for (auto const& prop : properties) {
-        if (!cls.AddProperty(prop.Key(), prop.Value().Type)) {
+        if (!cls.AddProperty(prop.Key(), prop.Value().Type, prop.Value().Notify)) {
             return false;
         }
     }

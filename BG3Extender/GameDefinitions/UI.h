@@ -688,6 +688,7 @@ struct CustomPropertyDefn
 {
     STDString Name;
     FixedString Type;
+    bool Notify{ true };
     lua::RegistryEntry Default;
 };
 

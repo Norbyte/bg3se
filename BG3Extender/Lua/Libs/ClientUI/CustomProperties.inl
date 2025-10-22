@@ -55,6 +55,33 @@ private:
     PropertyChangedEventHandler propertyChanged_;
 };
 
+template <class T>
+class TypePropertyOffsetNotifies : public TypePropertyOffset<T>
+{
+public:
+    TypePropertyOffsetNotifies(Symbol name, uint32_t offset)
+        : TypePropertyOffset<T>(name, offset)
+    {}
+
+    void SetComponent(void* ptr, BaseComponent* value) const override
+    {
+        if (this->GetComponent(ptr).GetPtr() != value) {
+            TypePropertyOffset<T>::SetComponent(ptr, value);
+            auto ctx = reinterpret_cast<NsCustomDataContext*>(ptr);
+            ctx->PropertyChanged().Invoke(ctx, PropertyChangedEventArgs(this->GetName()));
+        }
+    }
+
+    void Set(void* ptr, const void* value) const override
+    {
+        if (*reinterpret_cast<T const*>(this->Get(ptr)) != *reinterpret_cast<T const*>(value)) {
+            TypePropertyOffset<T>::Set(ptr, value);
+            auto ctx = reinterpret_cast<NsCustomDataContext*>(ptr);
+            ctx->PropertyChanged().Invoke(ctx, PropertyChangedEventArgs(this->GetName()));
+        }
+    }
+};
+
 END_BARE_NS()
 
 
@@ -74,7 +101,7 @@ public:
     virtual uint32_t GetAlignment() = 0;
     virtual void ConstructProperty(void* object, uint32_t offset) = 0;
     virtual void DestroyProperty(void* object, uint32_t offset) = 0;
-    virtual Noesis::TypeProperty* CreateTypeProperty(Symbol name, uint32_t offset) = 0;
+    virtual Noesis::TypeProperty* CreateTypeProperty(Symbol name, uint32_t offset, bool notifies) = 0;
 };
 
 template <class T>
@@ -108,9 +135,13 @@ template <class T>
 class DynamicPropertyTypeImplRW : public DynamicPropertyTypeImpl<T>
 {
 public:
-    Noesis::TypeProperty* CreateTypeProperty(Symbol name, uint32_t offset) override
+    Noesis::TypeProperty* CreateTypeProperty(Symbol name, uint32_t offset, bool notifies) override
     {
-        return GameAlloc<Noesis::TypePropertyOffset<T>>(name, offset);
+        if (notifies) {
+            return GameAlloc<Noesis::TypePropertyOffsetNotifies<T>>(name, offset);
+        } else {
+            return GameAlloc<Noesis::TypePropertyOffset<T>>(name, offset);
+        }
     }
 };
 
@@ -126,9 +157,10 @@ public:
         new (v) T(new TE());
     }
 
-    Noesis::TypeProperty* CreateTypeProperty(Symbol name, uint32_t offset) override
+    Noesis::TypeProperty* CreateTypeProperty(Symbol name, uint32_t offset, bool notifies) override
     {
-        return GameAlloc<Noesis::TypePropertyOffset<T>>(name, offset);
+        // Property is read-only, no property change notification will be sent
+        return GameAlloc<Noesis::TypePropertyOffset<const T>>(name, offset);
     }
 };
 
@@ -228,7 +260,7 @@ public:
         gDynamicClasses.set(FixedString(name_.Str()), dynamicCls_);
     }
 
-    bool AddProperty(FixedString const& name, FixedString const& typeName)
+    bool AddProperty(FixedString const& name, FixedString const& typeName, bool notifies)
     {
         auto nameSym = Noesis::MakeDynamicSymbol(STDString(name.GetStringView()));
 
@@ -248,7 +280,7 @@ public:
             .Offset = lastOffset_
         });
 
-        auto prop = (*type)->CreateTypeProperty(nameSym, lastOffset_);
+        auto prop = (*type)->CreateTypeProperty(nameSym, lastOffset_, notifies);
         type_->AddProperty(prop);
 
         lastOffset_ += (*type)->GetSize();
