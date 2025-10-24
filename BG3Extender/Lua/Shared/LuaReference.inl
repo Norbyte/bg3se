@@ -66,6 +66,13 @@ void GlobalRefManager::Push(lua_State* L, int32_t i)
     lua_rawgeti(L, LUA_REGISTRYINDEX, ref_[i].Index);
 }
 
+int32_t GlobalRefManager::GetGlobalIndex(int32_t i)
+{
+    se_assert(i >= 0 && i < ref_.size());
+    se_assert(ref_[i].RefCount > 0);
+    return ref_[i].Index;
+}
+
 RegistryEntry::RegistryEntry()
     : manager_(nullptr), global_(-1)
 {}
@@ -157,25 +164,30 @@ void RegistryEntry::Reset()
 
 
 PersistentRegistryEntry::PersistentRegistryEntry()
-    : L_(nullptr), generationId_(0), ref_(-1)
+    : manager_(nullptr), generationId_(0), global_(-1)
 {}
 
 PersistentRegistryEntry::PersistentRegistryEntry(lua_State * L, int index)
-    : L_(L), generationId_(get_generation_id(L))
+    : manager_(&State::FromLua(L)->GetGlobals()),
+    generationId_(get_generation_id(L))
 {
+    EnterVMCheck(L);
     lua_pushvalue(L, index);
-    ref_ = luaL_ref(L, LUA_REGISTRYINDEX);
+    auto ref = luaL_ref(L, LUA_REGISTRYINDEX);
+    global_ = manager_->AddGlobalIndex(L, ref);
 }
 
 PersistentRegistryEntry::PersistentRegistryEntry(lua_State* L, Ref const& local)
-    : L_(L), generationId_(get_generation_id(L))
+    : manager_(&State::FromLua(L)->GetGlobals()),
+    generationId_(get_generation_id(L))
 {
     if ((bool)local) {
-        EnterVMCheck(L);
         local.Push(L);
-        ref_ = luaL_ref(L, LUA_REGISTRYINDEX);
+        EnterVMCheck(L);
+        auto ref = luaL_ref(L, LUA_REGISTRYINDEX);
+        global_ = manager_->AddGlobalIndex(L, ref);
     } else {
-        ref_ = -1;
+        global_ = -1;
     }
 }
 
@@ -184,60 +196,80 @@ PersistentRegistryEntry::~PersistentRegistryEntry()
     Release();
 }
 
-PersistentRegistryEntry::PersistentRegistryEntry(PersistentRegistryEntry&& other)
-    : L_(other.L_), generationId_(other.generationId_), ref_(other.ref_)
+PersistentRegistryEntry::PersistentRegistryEntry(PersistentRegistryEntry const& other)
+    : manager_(other.manager_), generationId_(other.generationId_), global_(other.global_)
 {
-    other.ref_ = -1;
+    if (global_ != -1) {
+        manager_->IncRef(global_);
+    }
+}
+
+PersistentRegistryEntry::PersistentRegistryEntry(PersistentRegistryEntry&& other) noexcept
+    : manager_(other.manager_), generationId_(other.generationId_), global_(other.global_)
+{
+    other.global_ = -1;
+}
+
+PersistentRegistryEntry& PersistentRegistryEntry::operator = (PersistentRegistryEntry const& other)
+{
+    Release();
+
+    manager_ = other.manager_;
+    generationId_ = other.generationId_;
+    global_ = other.global_;
+
+    if (global_ != -1) {
+        manager_->IncRef(global_);
+    }
+
+    return *this;
 }
 
 PersistentRegistryEntry& PersistentRegistryEntry::operator = (PersistentRegistryEntry&& other)
 {
     Release();
 
-    L_ = other.L_;
+    manager_ = other.manager_;
     generationId_ = other.generationId_;
-    ref_ = other.ref_;
-    other.ref_ = -1;
+    global_ = other.global_;
+    other.global_ = -1;
     return *this;
 }
 
 void PersistentRegistryEntry::Release()
 {
-    if (ref_ != -1) {
+    if (global_ != -1) {
         auto state = gExtender->GetCurrentExtensionState()->GetLua();
         if (state && state->GetGenerationId() == generationId_) {
-            auto L = state->GetState();
-            EnterVMCheck(L);
-            luaL_unref(L, LUA_REGISTRYINDEX, ref_);
+            manager_->DecRef(global_);
         }
 
-        ref_ = -1;
+        global_ = -1;
     }
 }
 
 void PersistentRegistryEntry::Release(lua_State* L)
 {
-    if (ref_ != -1) {
+    if (global_ != -1) {
         if (State::FromLua(L)->GetGenerationId() == generationId_) {
-            EnterVMCheck(L);
-            luaL_unref(L, LUA_REGISTRYINDEX, ref_);
+            manager_->DecRef(global_);
         }
 
-        ref_ = -1;
+        global_ = -1;
     }
 }
 
 bool PersistentRegistryEntry::IsValid(lua_State* L) const
 {
     return L != nullptr 
-        && ref_ != -1
+        && global_ != -1
         && State::FromLua(L)->GetGenerationId() == generationId_;
 }
 
 bool PersistentRegistryEntry::TryPush(lua_State* L) const
 {
     if (IsValid(L)) {
-        lua_rawgeti(L, LUA_REGISTRYINDEX, ref_);
+        manager_->Push(L, global_);
         return true;
     } else {
         return false;
@@ -247,7 +279,7 @@ bool PersistentRegistryEntry::TryPush(lua_State* L) const
 Ref PersistentRegistryEntry::ToRef(lua_State* L) const
 {
     if (IsValid(L)) {
-        return Ref(L, RefType::Registry, ref_);
+        return Ref(L, RefType::Registry, manager_->GetGlobalIndex(global_));
     } else {
         return Ref();
     }
@@ -257,14 +289,15 @@ void PersistentRegistryEntry::Bind(lua_State* L, Ref const& ref)
 {
     Release(L);
 
-    L_ = L;
+    manager_ = &State::FromLua(L)->GetGlobals();
     generationId_ = get_generation_id(L);
     if (ref) {
         EnterVMCheck(L);
         ref.Push(L);
-        ref_ = luaL_ref(L, LUA_REGISTRYINDEX);
+        auto ref = luaL_ref(L, LUA_REGISTRYINDEX);
+        global_ = manager_->AddGlobalIndex(L, ref);
     } else {
-        ref_ = -1;
+        global_ = -1;
     }
 }
 

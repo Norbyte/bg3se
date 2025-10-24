@@ -18,6 +18,7 @@ public:
     void IncRef(int32_t i);
     void DecRef(int32_t i);
     void Push(lua_State* L, int32_t i);
+    int32_t GetGlobalIndex(int32_t i);
 
 private:
     struct GlobalEntry
@@ -83,10 +84,10 @@ public:
     PersistentRegistryEntry(lua_State * L, Ref const& local);
     ~PersistentRegistryEntry();
 
-    PersistentRegistryEntry(PersistentRegistryEntry const &) = delete;
-    PersistentRegistryEntry(PersistentRegistryEntry&&);
+    PersistentRegistryEntry(PersistentRegistryEntry const &);
+    PersistentRegistryEntry(PersistentRegistryEntry&&) noexcept;
 
-    PersistentRegistryEntry& operator = (PersistentRegistryEntry const &) = delete;
+    PersistentRegistryEntry& operator = (PersistentRegistryEntry const &);
     PersistentRegistryEntry& operator = (PersistentRegistryEntry&&);
 
     bool IsValid(lua_State* L) const;
@@ -96,24 +97,24 @@ public:
 
     explicit inline operator bool() const
     {
-        return ref_ != -1;
+        return global_ != -1;
     }
 
-    inline int GetRef() const
+    inline int GetGlobalId() const
     {
-        return ref_;
+        return global_;
     }
 
     inline void ResetWithoutUnbind()
     {
-        L_ = nullptr;
-        ref_ = -1;
+        manager_ = nullptr;
+        global_ = -1;
     }
 
 private:
-    lua_State * L_;
+    GlobalRefManager* manager_;
     uint32_t generationId_;
-    int ref_;
+    int global_;
 
     void Release();
     void Release(lua_State* L);
