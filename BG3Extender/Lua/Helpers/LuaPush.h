@@ -150,7 +150,6 @@ void push(lua_State* L, glm::mat3x4 const& m);
 void push(lua_State* L, glm::mat4x3 const& m);
 void push(lua_State* L, glm::mat4 const& m);
 void push(lua_State* L, Ref const& v);
-void push(lua_State* L, PersistentRef const& v);
 void push(lua_State* L, RegistryEntry const& v);
 void push(lua_State* L, PersistentRegistryEntry const& v);
 void push(lua_State* L, RawComponentRef const& v);

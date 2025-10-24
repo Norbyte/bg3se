@@ -311,11 +311,6 @@ RegistryEntry do_get(lua_State* L, int index, Overload<RegistryEntry>)
     return RegistryEntry(L, index);
 }
 
-PersistentRef do_get(lua_State* L, int index, Overload<PersistentRef>)
-{
-    return PersistentRef(L, index);
-}
-
 PersistentRegistryEntry do_get(lua_State* L, int index, Overload<PersistentRegistryEntry>)
 {
     return PersistentRegistryEntry(L, index);

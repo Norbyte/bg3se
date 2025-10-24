@@ -170,11 +170,6 @@ void push(lua_State* L, Ref const& v)
     v.Push(L);
 }
 
-void push(lua_State* L, PersistentRef const& v)
-{
-    v.Push(L);
-}
-
 void push(lua_State* L, RegistryEntry const& v)
 {
     if (v) {

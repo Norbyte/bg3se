@@ -139,7 +139,6 @@ typename std::enable_if_t<std::is_enum_v<T>, T> do_get(lua_State * L, int index,
 
 Ref do_get(lua_State* L, int index, Overload<Ref>);
 RegistryEntry do_get(lua_State* L, int index, Overload<RegistryEntry>);
-PersistentRef do_get(lua_State* L, int index, Overload<PersistentRef>);
 PersistentRegistryEntry do_get(lua_State* L, int index, Overload<PersistentRegistryEntry>);
 
 template <class T>

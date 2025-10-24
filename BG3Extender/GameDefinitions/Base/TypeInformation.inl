@@ -217,7 +217,6 @@ void TypeInformationRepository::Initialize()
     RegisterStaticType<lua::AnyUserdataRef>("AnyUserdataRef", LuaTypeId::Object);
     RegisterStaticType<lua::FunctionRef>("FunctionRef", LuaTypeId::Function);
     RegisterStaticType<lua::RegistryEntry>("RegistryEntry", LuaTypeId::Any);
-    RegisterStaticType<lua::PersistentRef>("PersistentRef", LuaTypeId::Any);
     RegisterStaticType<lua::PersistentRegistryEntry>("PersistentRegistryEntry", LuaTypeId::Any);
     RegisterStaticType<UserReturn>("UserReturn", LuaTypeId::Any);
     RegisterStaticType<lua::ImguiHandle>("ImguiHandle", LuaTypeId::Object);

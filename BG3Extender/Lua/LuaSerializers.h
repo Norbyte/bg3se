@@ -137,7 +137,6 @@ namespace bg3se::lua
 
     inline LuaSerializer& serialize(LuaSerializer& s, Ref& v) { return s.Visit(v); }
     inline LuaSerializer& serialize(LuaSerializer& s, RegistryEntry& v) { return s.Visit(v); }
-    inline LuaSerializer& serialize(LuaSerializer& s, PersistentRef& v) { return s.Visit(v); }
     inline LuaSerializer& serialize(LuaSerializer& s, PersistentRegistryEntry& v) { return s.Visit(v); }
 
     template <class T>

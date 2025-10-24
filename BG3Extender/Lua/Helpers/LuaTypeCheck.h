@@ -116,11 +116,6 @@ inline bool do_typecheck(lua_State* L, int index, Overload<RegistryEntry>)
     return true;
 }
 
-inline bool do_typecheck(lua_State* L, int index, Overload<PersistentRef>)
-{
-    return true;
-}
-
 inline bool do_typecheck(lua_State* L, int index, Overload<PersistentRegistryEntry>)
 {
     return true;
