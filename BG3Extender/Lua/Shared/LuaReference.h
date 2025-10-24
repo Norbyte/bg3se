@@ -94,6 +94,11 @@ public:
     Ref ToRef(lua_State* L) const;
     void Bind(lua_State* L, Ref const& ref);
 
+    explicit inline operator bool() const
+    {
+        return ref_ != -1;
+    }
+
     inline int GetRef() const
     {
         return ref_;
