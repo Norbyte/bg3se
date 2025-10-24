@@ -120,4 +120,49 @@ void UIEventHooks::EventFired(SubscriptionIndex index, Noesis::BaseComponent* ta
     lua_pop(L, 1);
 }
 
+
+
+
+DeferredUIEvents::DeferredUIEvents(ClientState& state)
+    : state_(state)
+{}
+
+void DeferredUIEvents::PostUpdate()
+{
+    Array<DeferredCommand> commands;
+    Array<DeferredPropertyChange> propertyChanges;
+    // Avoid corruption if commands/prop changes are queued during update
+    std::swap(commands, commands_);
+    std::swap(propertyChanges, propertyChanges_);
+
+    auto L = state_.GetState();
+    for (auto const& command : commands) {
+        LuaDelegate<void(Noesis::BaseCommand*, Noesis::BaseComponent*)> handler(L, command.Handler.ToRef(L));
+        handler.Call(L, { command.Command.GetPtr(), command.Parameter.GetPtr() });
+    }
+
+    for (auto const& change : propertyChanges) {
+        LuaDelegate<void(Noesis::BaseComponent*, Noesis::Symbol)> handler(L, change.Handler.ToRef(L));
+        handler.Call(L, { change.Object.GetPtr(), change.Property });
+    }
+}
+
+void DeferredUIEvents::OnCommand(lua::PersistentRegistryEntry const& handler, Noesis::BaseCommand* command, Noesis::BaseComponent* parameter)
+{
+    commands_.push_back(DeferredCommand{
+        .Handler = handler,
+        .Command = Noesis::Ptr(command),
+        .Parameter = Noesis::Ptr(parameter)
+    });
+}
+
+void DeferredUIEvents::OnPropertyChanged(lua::PersistentRegistryEntry const& handler, Noesis::BaseComponent* object, Noesis::Symbol property)
+{
+    propertyChanges_.push_back(DeferredPropertyChange{
+        .Handler = handler,
+        .Object = Noesis::Ptr(object),
+        .Property = property
+    });
+}
+
 END_NS()

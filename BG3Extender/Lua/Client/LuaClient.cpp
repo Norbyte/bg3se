@@ -56,7 +56,8 @@ ClientState* ClientState::FromLua(lua_State* L)
 ClientState::ClientState(ExtensionState& state, uint32_t generationId)
     : State(state, generationId, false),
     replicationHooks_(*this),
-    uiEvents_(*this)
+    uiEvents_(*this),
+    deferredUIEvents_(*this)
 {}
 
 ClientState::~ClientState()
@@ -102,6 +103,7 @@ void ClientState::OnUpdate(GameTime const& time)
 {
     State::OnUpdate(time);
     replicationHooks_.PostUpdate();
+    deferredUIEvents_.PostUpdate();
 }
 
 

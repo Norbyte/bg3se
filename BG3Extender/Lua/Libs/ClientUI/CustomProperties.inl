@@ -109,13 +109,10 @@ public:
             }
 
             if (writeCallback_) {
-                // TODO - defer event
                 ContextGuardAnyThread ctx(ContextType::Client);
                 ecl::LuaClientPin pin(ecl::ExtensionState::Get());
                 if (pin && writeCallback_.IsValid(pin->GetState())) {
-                    auto L = pin->GetState();
-                    lua::LuaDelegate<void(BaseComponent*, Symbol)> handler(L, writeCallback_.ToRef(L));
-                    handler.Call(L, { reinterpret_cast<BaseComponent*>(ptr), this->GetName()});
+                    pin->GetDeferredUIEvents().OnPropertyChanged(writeCallback_, reinterpret_cast<BaseComponent*>(ptr), this->GetName());
                 }
             }
         }
@@ -135,13 +132,10 @@ public:
             }
 
             if (writeCallback_) {
-                // TODO - defer event
                 ContextGuardAnyThread ctx(ContextType::Client);
                 ecl::LuaClientPin pin(ecl::ExtensionState::Get());
                 if (pin && writeCallback_.IsValid(pin->GetState())) {
-                    auto L = pin->GetState();
-                    lua::LuaDelegate<void(BaseComponent*, Symbol)> handler(L, writeCallback_.ToRef(L));
-                    handler.Call(L, { reinterpret_cast<BaseComponent*>(ptr), this->GetName() });
+                    pin->GetDeferredUIEvents().OnPropertyChanged(writeCallback_, reinterpret_cast<BaseComponent*>(ptr), this->GetName());
                 }
             }
         }

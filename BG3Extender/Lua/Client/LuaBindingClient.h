@@ -51,12 +51,18 @@ public:
         return uiEvents_;
     }
 
+    DeferredUIEvents& GetDeferredUIEvents()
+    {
+        return deferredUIEvents_;
+    }
+
     extui::IMGUIObjectManager& IMGUI();
 
 private:
     ExtensionLibraryClient library_;
     ClientEntityReplicationEventHooks replicationHooks_;
     UIEventHooks uiEvents_;
+    DeferredUIEvents deferredUIEvents_;
     extui::IMGUIObjectManager* imgui_{ nullptr };
 };
 

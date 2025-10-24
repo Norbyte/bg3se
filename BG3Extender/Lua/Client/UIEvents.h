@@ -45,4 +45,34 @@ private:
     SaltedPool<EventHandler> subscriptions_;
 };
 
+class DeferredUIEvents
+{
+public:
+    DeferredUIEvents(ClientState& state);
+
+    void PostUpdate();
+
+    void OnCommand(lua::PersistentRegistryEntry const& handler, Noesis::BaseCommand* command, Noesis::BaseComponent* parameter);
+    void OnPropertyChanged(lua::PersistentRegistryEntry const& handler, Noesis::BaseComponent* object, Noesis::Symbol property);
+
+private:
+    struct DeferredCommand
+    {
+        lua::PersistentRegistryEntry Handler;
+        Ptr<Noesis::BaseCommand> Command;
+        Ptr<Noesis::BaseComponent> Parameter;
+    };
+    
+    struct DeferredPropertyChange
+    {
+        lua::PersistentRegistryEntry Handler;
+        Ptr<Noesis::BaseComponent> Object;
+        Noesis::Symbol Property;
+    };
+
+    ClientState& state_;
+    Array<DeferredCommand> commands_;
+    Array<DeferredPropertyChange> propertyChanges_;
+};
+
 END_SE()

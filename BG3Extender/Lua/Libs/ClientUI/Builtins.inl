@@ -673,9 +673,7 @@ void BaseCommand::Execute(BaseComponent* param) const
 
 bool LuaDelegateCommand::CanExecute(BaseComponent* param) const
 {
-    ContextGuardAnyThread ctx(ContextType::Client);
-    ecl::LuaClientPin pin(ecl::ExtensionState::Get());
-    return pin && handler_.IsValid(pin->GetState());
+    return (bool)handler_;
 }
 
 void LuaDelegateCommand::Execute(BaseComponent* param) const
@@ -683,9 +681,7 @@ void LuaDelegateCommand::Execute(BaseComponent* param) const
     ContextGuardAnyThread ctx(ContextType::Client);
     ecl::LuaClientPin pin(ecl::ExtensionState::Get());
     if (pin && handler_.IsValid(pin->GetState())) {
-        auto L = pin->GetState();
-        lua::LuaDelegate<void(BaseComponent*)> handler(L, handler_.ToRef(L));
-        handler.Call(L, { param });
+        pin->GetDeferredUIEvents().OnCommand(handler_, const_cast<LuaDelegateCommand*>(this), param);
     }
 }
 
