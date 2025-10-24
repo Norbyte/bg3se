@@ -253,7 +253,7 @@ BEGIN_CLS(ui::CustomPropertyDefn)
 P(Name)
 P(Type)
 P(Notify)
-P(Default)
+P(WriteCallback)
 END_CLS()
 
 

@@ -689,7 +689,7 @@ struct CustomPropertyDefn
     STDString Name;
     FixedString Type;
     bool Notify{ true };
-    lua::RegistryEntry Default;
+    lua::PersistentRegistryEntry WriteCallback;
 };
 
 END_NS()

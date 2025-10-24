@@ -86,31 +86,80 @@ private:
     }
 };
 
+// TypeProperty with INotifyPropertyChanged and Lua write callback support
 template <class T>
-class TypePropertyOffsetNotifies : public TypePropertyOffset<T>
+class TypePropertyOffsetSE : public TypePropertyOffset<T>
 {
 public:
-    TypePropertyOffsetNotifies(Symbol name, uint32_t offset)
+    TypePropertyOffsetSE(Symbol name, uint32_t offset)
         : TypePropertyOffset<T>(name, offset)
     {}
-
+    
     void SetComponent(void* ptr, BaseComponent* value) const override
     {
-        if (this->GetComponent(ptr).GetPtr() != value) {
+        // Fast-path when no special features are enabled
+        if (!notify_ && !writeCallback_) {
             TypePropertyOffset<T>::SetComponent(ptr, value);
-            auto ctx = reinterpret_cast<NsCustomDataContext*>(ptr);
-            ctx->PropertyChanged().Invoke(ctx, PropertyChangedEventArgs(this->GetName()));
+        } else if (this->GetComponent(ptr).GetPtr() != value) {
+            TypePropertyOffset<T>::SetComponent(ptr, value);
+
+            if (notify_) {
+                auto ctx = reinterpret_cast<NsCustomDataContext*>(ptr);
+                ctx->PropertyChanged().Invoke(ctx, PropertyChangedEventArgs(this->GetName()));
+            }
+
+            if (writeCallback_) {
+                // TODO - defer event
+                ContextGuardAnyThread ctx(ContextType::Client);
+                ecl::LuaClientPin pin(ecl::ExtensionState::Get());
+                if (pin && writeCallback_.IsValid(pin->GetState())) {
+                    auto L = pin->GetState();
+                    lua::LuaDelegate<void(BaseComponent*, Symbol)> handler(L, writeCallback_.ToRef(L));
+                    handler.Call(L, { reinterpret_cast<BaseComponent*>(ptr), this->GetName()});
+                }
+            }
         }
     }
 
     void Set(void* ptr, const void* value) const override
     {
-        if (*reinterpret_cast<T const*>(this->Get(ptr)) != *reinterpret_cast<T const*>(value)) {
+        // Fast-path when no special features are enabled
+        if (!notify_ && !writeCallback_) {
             TypePropertyOffset<T>::Set(ptr, value);
-            auto ctx = reinterpret_cast<NsCustomDataContext*>(ptr);
-            ctx->PropertyChanged().Invoke(ctx, PropertyChangedEventArgs(this->GetName()));
+        } else if (*reinterpret_cast<T const*>(this->Get(ptr)) != *reinterpret_cast<T const*>(value)) {
+            TypePropertyOffset<T>::Set(ptr, value);
+
+            if (notify_) {
+                auto ctx = reinterpret_cast<NsCustomDataContext*>(ptr);
+                ctx->PropertyChanged().Invoke(ctx, PropertyChangedEventArgs(this->GetName()));
+            }
+
+            if (writeCallback_) {
+                // TODO - defer event
+                ContextGuardAnyThread ctx(ContextType::Client);
+                ecl::LuaClientPin pin(ecl::ExtensionState::Get());
+                if (pin && writeCallback_.IsValid(pin->GetState())) {
+                    auto L = pin->GetState();
+                    lua::LuaDelegate<void(BaseComponent*, Symbol)> handler(L, writeCallback_.ToRef(L));
+                    handler.Call(L, { reinterpret_cast<BaseComponent*>(ptr), this->GetName() });
+                }
+            }
         }
     }
+
+    void EnablePropertyChangedNotification(bool notify)
+    {
+        notify_ = notify;
+    }
+
+    void SetWriteCallback(lua::PersistentRegistryEntry&& writeCallback)
+    {
+        writeCallback_ = std::move(writeCallback);
+    }
+
+private:
+    bool notify_{ false };
+    bg3se::lua::PersistentRegistryEntry writeCallback_;
 };
 
 
@@ -185,7 +234,7 @@ public:
     virtual uint32_t GetAlignment() = 0;
     virtual void ConstructProperty(void* object, uint32_t offset) = 0;
     virtual void DestroyProperty(void* object, uint32_t offset) = 0;
-    virtual Noesis::TypeProperty* CreateTypeProperty(Symbol name, uint32_t offset, bool notifies) = 0;
+    virtual Noesis::TypeProperty* CreateTypeProperty(Symbol name, uint32_t offset, bool notifies, lua::PersistentRegistryEntry&& writeCallback) = 0;
 };
 
 template <class T>
@@ -219,13 +268,12 @@ template <class T>
 class DynamicPropertyTypeImplRW : public DynamicPropertyTypeImpl<T>
 {
 public:
-    Noesis::TypeProperty* CreateTypeProperty(Symbol name, uint32_t offset, bool notifies) override
+    Noesis::TypeProperty* CreateTypeProperty(Symbol name, uint32_t offset, bool notifies, lua::PersistentRegistryEntry&& writeCallback) override
     {
-        if (notifies) {
-            return GameAlloc<Noesis::TypePropertyOffsetNotifies<T>>(name, offset);
-        } else {
-            return GameAlloc<Noesis::TypePropertyOffset<T>>(name, offset);
-        }
+        auto prop = GameAlloc<Noesis::TypePropertyOffsetSE<T>>(name, offset);
+        prop->EnablePropertyChangedNotification(notifies);
+        prop->SetWriteCallback(std::move(writeCallback));
+        return prop;
     }
 };
 
@@ -241,7 +289,7 @@ public:
         new (v) T(new TE());
     }
 
-    Noesis::TypeProperty* CreateTypeProperty(Symbol name, uint32_t offset, bool notifies) override
+    Noesis::TypeProperty* CreateTypeProperty(Symbol name, uint32_t offset, bool notifies, lua::PersistentRegistryEntry&& writeCallback) override
     {
         // Property is read-only, no property change notification will be sent
         return GameAlloc<Noesis::TypePropertyOffset<const T>>(name, offset);
