@@ -109,34 +109,36 @@ bool RegisterType(lua_State* L, StringView name, HashMap<FixedString, bg3se::ui:
     Noesis::gStaticSymbols.Initialize();
     auto clsName = ClassDefinitionBuilder::MakeFullName(name);
 
+    // Fixup names
+    for (auto& prop : properties) {
+        prop.Value().Name = prop.Key();
+    }
+
+    // Name conflicts with an existing Noesis type?
     if (Noesis::Reflection::GetType(clsName) != nullptr) {
+        
+        auto dynClass = gDynamicClasses.try_get(FixedString(clsName.Str()));
+        if (!dynClass) {
+            // Not an SE type, cannot replace
+            luaL_error(L, "A Noesis type already exists with this name: %s", name.data());
+            return false;
+        }
+
+        // If the definition didn't change, just replace the handlers without modifying the class defn
+        if ((*dynClass)->MatchesDefinition(properties, wrappedContextType)) {
+            (*dynClass)->UpdateHandlers(properties);
+            return true;
+        }
+
         if (gExtender->GetConfig().DeveloperMode) {
-            WARN("Registering Noesis type '%s' when it already exists - this is only supported in developer mode!", name.data());
+            WARN("Re-registering Noesis type '%s' with different definition - this is only supported in developer mode!", clsName.Str());
         } else {
-            // FIXME - support this if definition is unchanged
-            luaL_error(L, "Attempted to register Noesis type multiple times: %s", name.data());
+            luaL_error(L, "Attempted to re-register Noesis type '%s' with different definition", clsName.Str());
             return false;
         }
     }
 
-    ClassDefinitionBuilder cls(clsName);
-    for (auto const& prop : properties) {
-        if (!cls.AddProperty(prop.Key(), prop.Value().Type, prop.Value().Notify)) {
-            luaL_error(L, "Incorrect definition for property '%s'", prop.Key().GetString());
-            return false;
-        }
-    }
-
-    if (wrappedContextType) {
-        if (!cls.SetWrappedContext(Noesis::Symbol(wrappedContextType->data()))) {
-            luaL_error(L, "Invalid wrapped context type '%s'", wrappedContextType->data());
-            return false;
-        }
-    }
-
-    cls.Register();
-
-    return true;
+    return ClassDefinitionBuilder::RegisterNew(L, clsName, properties, wrappedContextType);
 }
 
 Noesis::BaseComponent* Instantiate(lua_State* L, FixedString name, std::optional<Noesis::BaseComponent*> wrappedContext)

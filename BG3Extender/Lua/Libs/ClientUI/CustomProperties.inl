@@ -299,7 +299,11 @@ public:
 struct DynamicPropertyDefinition
 {
     DynamicPropertyType* Type;
+    TypeProperty* Property;
     uint32_t Offset;
+    // Copy of original definition for tracking changes on re-registration
+    FixedString Name;
+    FixedString OriginalType;
 };
 
 struct DynamicClassType
@@ -309,6 +313,46 @@ struct DynamicClassType
     Array<DynamicPropertyDefinition> Properties;
     uint32_t Size{ 0 };
     Symbol Name;
+
+    bool MatchesDefinition(HashMap<FixedString, bg3se::ui::CustomPropertyDefn> const& properties,
+        std::optional<StringView> wrappedContextType)
+    {
+        if (properties.size() != Properties.size()) {
+            return false;
+        }
+
+        for (auto const& prop : Properties) {
+            auto defnProp = properties.try_get(prop.Name);
+            if (defnProp == nullptr) {
+                return false;
+            }
+
+            if (prop.OriginalType != defnProp->Type) {
+                return false;
+            }
+        }
+
+        auto wrappedContext = wrappedContextType ? Noesis::Reflection::GetType(Noesis::Symbol(wrappedContextType->data())) : nullptr;
+        if (wrappedContext != WrappedContextType) {
+            return false;
+        }
+
+        return true;
+    }
+
+    // Note: Assumes that the property map matches the internal property list
+    void UpdateHandlers(HashMap<FixedString, bg3se::ui::CustomPropertyDefn>& properties)
+    {
+        for (auto const& prop : Properties) {
+            auto defnProp = properties.try_get(prop.Name);
+            if (defnProp) {
+                // TODO - jank cast, fix later
+                auto typeProp = static_cast<Noesis::TypePropertyOffsetSE<bool>*>(prop.Property);
+                typeProp->EnablePropertyChangedNotification(defnProp->Notify);
+                typeProp->SetWriteCallback(std::move(defnProp->WriteCallback));
+            }
+        }
+    }
 
     bool ValidateWrappedContext(Noesis::BaseComponent*& wrappedContext)
     {
@@ -419,6 +463,28 @@ public:
         InitializeDynamicPropertyTypes();
     }
 
+    static bool RegisterNew(lua_State* L, Noesis::Symbol clsName, HashMap<FixedString, bg3se::ui::CustomPropertyDefn>& properties,
+        std::optional<StringView> wrappedContextType)
+    {
+        ClassDefinitionBuilder cls(clsName);
+        for (auto& prop : properties) {
+            if (!cls.AddProperty(prop.Value())) {
+                luaL_error(L, "Incorrect definition for property '%s'", prop.Key().GetString());
+                return false;
+            }
+        }
+
+        if (wrappedContextType) {
+            if (!cls.SetWrappedContext(Noesis::Symbol(wrappedContextType->data()))) {
+                luaL_error(L, "Invalid wrapped context type '%s'", wrappedContextType->data());
+                return false;
+            }
+        }
+
+        cls.Register();
+        return true;
+    }
+
     void Register()
     {
         dynamicCls_->Size = lastOffset_;
@@ -433,13 +499,13 @@ public:
         gDynamicClasses.set(FixedString(name_.Str()), dynamicCls_);
     }
 
-    bool AddProperty(FixedString const& name, FixedString const& typeName, bool notifies)
+    bool AddProperty(bg3se::ui::CustomPropertyDefn& defn)
     {
-        auto nameSym = Noesis::Symbol(name.GetString());
+        auto nameSym = Noesis::Symbol(defn.Name.GetString());
 
-        auto type = gDynamicPropertyTypes.try_get(typeName);
+        auto type = gDynamicPropertyTypes.try_get(defn.Type);
         if (!type) {
-            ERR("Property type not supported: '%s'", typeName.GetString());
+            ERR("Property type not supported: '%s'", defn.Type.GetString());
             return false;
         }
 
@@ -448,12 +514,15 @@ public:
             lastOffset_ += alignment - (lastOffset_ % alignment);
         }
 
+        auto prop = (*type)->CreateTypeProperty(nameSym, lastOffset_, defn.Notify, std::move(defn.WriteCallback));
         dynamicCls_->Properties.push_back(DynamicPropertyDefinition{
             .Type = *type,
-            .Offset = lastOffset_
+            .Property = prop,
+            .Offset = lastOffset_,
+            .Name = defn.Name,
+            .OriginalType = defn.Type
         });
 
-        auto prop = (*type)->CreateTypeProperty(nameSym, lastOffset_, notifies);
         type_->AddProperty(prop);
 
         lastOffset_ += (*type)->GetSize();

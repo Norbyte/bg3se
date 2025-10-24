@@ -686,7 +686,7 @@ struct DCWidget : public ViewModel
 
 struct CustomPropertyDefn
 {
-    STDString Name;
+    FixedString Name;
     FixedString Type;
     bool Notify{ true };
     lua::PersistentRegistryEntry WriteCallback;
