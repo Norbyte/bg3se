@@ -229,6 +229,7 @@ public:
     virtual void ConstructProperty(void* object, uint32_t offset) = 0;
     virtual void DestroyProperty(void* object, uint32_t offset) = 0;
     virtual Noesis::TypeProperty* CreateTypeProperty(Symbol name, uint32_t offset, bool notifies, lua::PersistentRegistryEntry&& writeCallback) = 0;
+    virtual bool SupportsNotifications() const = 0;
 };
 
 template <class T>
@@ -269,6 +270,11 @@ public:
         prop->SetWriteCallback(std::move(writeCallback));
         return prop;
     }
+
+    bool SupportsNotifications() const override
+    {
+        return true;
+    }
 };
 
 template <class TE>
@@ -287,6 +293,11 @@ public:
     {
         // Property is read-only, no property change notification will be sent
         return GameAlloc<Noesis::TypePropertyOffset<const T>>(name, offset);
+    }
+
+    bool SupportsNotifications() const override
+    {
+        return false;
     }
 };
 
@@ -339,7 +350,7 @@ struct DynamicClassType
     {
         for (auto const& prop : Properties) {
             auto defnProp = properties.try_get(prop.Name);
-            if (defnProp) {
+            if (defnProp && prop.Type->SupportsNotifications()) {
                 // TODO - jank cast, fix later
                 auto typeProp = static_cast<Noesis::TypePropertyOffsetSE<bool>*>(prop.Property);
                 typeProp->EnablePropertyChangedNotification(defnProp->Notify);

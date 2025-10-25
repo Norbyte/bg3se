@@ -192,7 +192,7 @@ ecl::PlayerDragData* GetDragDrop(uint16_t playerId)
 
 void NoesisErrorHandler(const char* file, uint32_t line, const char* message, bool fatal)
 {
-    ERR("[Noesis] (%s:%d) %s", file, line, message);
+    ERR("[Noesis] %s", message);
 }
 
 void EnableErrorReporting(bool enable)
