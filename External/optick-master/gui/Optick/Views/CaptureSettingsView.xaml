@@ -1,0 +1,94 @@
+﻿<UserControl x:Class="Profiler.Views.CaptureSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:MahApps="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:models="clr-namespace:Profiler.ViewModels"
+             xmlns:profiler="clr-namespace:Profiler"
+             xmlns:Controls="clr-namespace:Profiler.Controls;assembly=Profiler.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" Width="200">
+    <UserControl.Resources>
+        <models:SamplingFrequencyConverter x:Key="SamplingFrequencyConverter" />
+        <Controls:DisplayNameConverter x:Key="DisplayNameConverter" />
+        <Controls:DisplayDescriptionConverter x:Key="DisplayDescriptionConverter" />
+        <Controls:StringToResource x:Key="StringToResource" />
+    </UserControl.Resources>
+    <StackPanel Orientation="Vertical">
+
+        <GroupBox MahApps:ControlsHelper.ContentCharacterCasing="Normal" Header="Capture Mode" Margin="0,0,0,2">
+            <ItemsControl ItemsSource="{Binding FlagSettings}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox IsChecked="{Binding IsEnabled}" />
+                            <TextBlock Grid.Column="1" Text="{Binding Name}" ToolTip="{Binding Description}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </GroupBox>
+
+        <GroupBox MahApps:ControlsHelper.ContentCharacterCasing="Normal" Header="Sampling Frequency (Hz)" Margin="0,0,0,2">
+            <StackPanel Orientation="Vertical" Margin="1">
+                <ComboBox ItemsSource="{Binding SamplingFrequencyList, Mode=OneTime}" SelectedItem="{Binding SamplingFrequencyHz}" ToolTip="Collect callstacks at specified frequency">
+                    <ComboBox.Resources>
+                        <sys:Double x:Key="FloatingWatermarkFontSize">12</sys:Double>
+                    </ComboBox.Resources>
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="{Binding}" Margin="0" FontWeight="Bold" Width="45" />
+                                <Label Content="{Binding Converter={StaticResource SamplingFrequencyConverter}}" Margin="4,0" Opacity="0.5" HorizontalContentAlignment="Right" Width="55" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox MahApps:ControlsHelper.ContentCharacterCasing="Normal" Header="Capture Limits" Margin="0,0,0,2">
+            <ItemsControl ItemsSource="{Binding CaptureLimits}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Vertical" Margin="1" ToolTip="{Binding Description}">
+                            <TextBlock Grid.Column="0" Text="{Binding Name}" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                            <MahApps:NumericUpDown Grid.Column="1" MahApps:TextBoxHelper.Watermark="{Binding Name}" Value="{Binding Value}" Minimum="0" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </GroupBox>
+
+        <GroupBox MahApps:ControlsHelper.ContentCharacterCasing="Normal" Header="Timeline Settings" Margin="0,0,0,2">
+            <StackPanel Orientation="Vertical" Margin="1">
+                <ItemsControl ItemsSource="{Binding TimelineSettings}" >
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Vertical" Margin="1" ToolTip="{Binding Description}">
+                                <TextBlock Grid.Column="0" Text="{Binding Name}" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                                <MahApps:NumericUpDown Grid.Column="1" MahApps:TextBoxHelper.Watermark="{Binding Name}" Value="{Binding Value}" Minimum="1" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <TextBlock Grid.Column="0" Text="Thread Expand Mode" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                <ComboBox ItemsSource="{Binding ExpandModeList, Mode=OneTime}" SelectedItem="{Binding ExpandMode}" ToolTip="Collect callstacks at specified frequency">
+                    <ComboBox.Resources>
+                        <sys:Double x:Key="FloatingWatermarkFontSize">12</sys:Double>
+                    </ComboBox.Resources>
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="{Binding Converter={StaticResource DisplayNameConverter}}" ToolTip="{Binding Converter={StaticResource DisplayDescriptionConverter}}" Margin="0" />
+                                <!--<Label Content="{Binding Converter={StaticResource SamplingFrequencyConverter}}" Margin="4,0" Opacity="0.5" HorizontalContentAlignment="Right" Width="55" />-->
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
+        </GroupBox>
+    </StackPanel>
+</UserControl>

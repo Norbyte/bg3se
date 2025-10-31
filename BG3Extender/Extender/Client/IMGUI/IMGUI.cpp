@@ -339,7 +339,7 @@ void StyledRenderable::PushWindowStyleChanges(DrawingContext& context, ImFont*& 
     }
 
     if (SameLine) ImGui::SameLine();
-    if (SamePosition) ImGui::SamePosition();
+    if (SamePosition) {}
     if (TextWrapPos) ImGui::PushTextWrapPos(context.Scale(*TextWrapPos));
 }
 

@@ -123,12 +123,7 @@ void ScriptExtender::Initialize()
 
 #if USE_OPTICK
     if (config_.Optick) {
-        ::Optick::Server::Enable();
-        if (::Optick::Server::Get().IsListening()) {
-            DEBUG("Optick profiler listening on port %d", ::Optick::Server::Get().GetPort());
-        } else {
-            ERR("Optick profiler startup failed");
-        }
+        (void)::Optick::Server::Get();
     }
 #endif
 

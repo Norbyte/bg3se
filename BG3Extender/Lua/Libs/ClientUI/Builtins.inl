@@ -171,19 +171,23 @@ void* BaseObject::operator new(unsigned __int64 sz)
     return GameAllocRaw(sz);
 }
 
-void* BaseObject::operator new(unsigned __int64 sz, void* ptr)
-{
-    return ptr;
-}
+ #if 0
+ void* BaseObject::operator new(unsigned __int64 sz, void* ptr)
+ {
+     return ptr;
+ }
+ #endif
 
 void BaseObject::operator delete(void* ptr)
 {
     GameFree(ptr);
 }
 
-void BaseObject::operator delete(void* ptr, void* place)
-{
-}
+ #if 0
+ void BaseObject::operator delete(void* ptr, void* place)
+ {
+ }
+ #endif
 
 BaseObject::BaseObject() {}
 BaseObject::~BaseObject() {}

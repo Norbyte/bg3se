@@ -150,7 +150,7 @@ public:
             initializationFailed_ = false;
         }
 
-        if (!initializationFailed_ && !ImGui_ImplDX11_RenderObjectsInitialized()) {
+        if (!initializationFailed_) { //&& !ImGui_ImplDX11_RenderObjectsInitialized()) {
             OPTICK_EVENT("CreateDeviceObjects", Optick::Category::Rendering);
             IMGUI_DEBUG("Re-initializing DX11 render objects");
             initializationFailed_ = !ImGui_ImplDX11_CreateDeviceObjects();

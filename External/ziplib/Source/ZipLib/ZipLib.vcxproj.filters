@@ -1,0 +1,243 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\compression">
+      <UniqueIdentifier>{c5ae2b37-da95-4e93-8930-d4904de67e58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\streams">
+      <UniqueIdentifier>{8d36501c-2a0c-493e-839a-a4dbb4b13854}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\compression\deflate">
+      <UniqueIdentifier>{9b9acd63-f31e-4cb5-909f-aebfe102951f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\compression\lzma">
+      <UniqueIdentifier>{d4c8cff5-e22e-45fd-8273-a61104dbc01f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\streams\streambuffs">
+      <UniqueIdentifier>{893f10de-143e-4d88-9a4e-691eb8b10c3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\compression\lzma\detail">
+      <UniqueIdentifier>{cb5f7d4e-815f-4713-8a1b-e6af9c7b16dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\utils">
+      <UniqueIdentifier>{3b08c920-2447-4e03-b415-76ef3accef84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\compression\store">
+      <UniqueIdentifier>{bb096c7e-a948-4f55-93fb-34258db3c16a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\methods">
+      <UniqueIdentifier>{37ed4c7a-fa7b-48dc-bf69-0a5557809dd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\detail">
+      <UniqueIdentifier>{11bb81d5-086d-420f-83c5-c6c559267e0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\detail">
+      <UniqueIdentifier>{380a885f-3111-4777-a9f2-e6ced1c8b912}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\compression\bzip2">
+      <UniqueIdentifier>{97bbccd3-0914-492c-94c1-20dfd544f0fd}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ZipFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZipArchiveEntry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZipArchive.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="compression\deflate\deflate_decoder.h">
+      <Filter>Header Files\compression\deflate</Filter>
+    </ClInclude>
+    <ClInclude Include="compression\deflate\deflate_decoder_properties.h">
+      <Filter>Header Files\compression\deflate</Filter>
+    </ClInclude>
+    <ClInclude Include="compression\deflate\deflate_encoder.h">
+      <Filter>Header Files\compression\deflate</Filter>
+    </ClInclude>
+    <ClInclude Include="compression\deflate\deflate_encoder_properties.h">
+      <Filter>Header Files\compression\deflate</Filter>
+    </ClInclude>
+    <ClInclude Include="compression\lzma\detail\lzma_alloc.h">
+      <Filter>Header Files\compression\lzma\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="compression\lzma\detail\lzma_handle.h">
+      <Filter>Header Files\compression\lzma\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="compression\lzma\detail\lzma_header.h">
+      <Filter>Header Files\compression\lzma\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="compression\lzma\detail\lzma_in_stream.h">
+      <Filter>Header Files\compression\lzma\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="compression\lzma\detail\lzma_out_stream.h">
+      <Filter>Header Files\compression\lzma\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="compression\lzma\lzma_decoder.h">
+      <Filter>Header Files\compression\lzma</Filter>
+    </ClInclude>
+    <ClInclude Include="compression\lzma\lzma_decoder_properties.h">
+      <Filter>Header Files\compression\lzma</Filter>
+    </ClInclude>
+    <ClInclude Include="compression\lzma\lzma_encoder.h">
+      <Filter>Header Files\compression\lzma</Filter>
+    </ClInclude>
+    <ClInclude Include="compression\lzma\lzma_encoder_properties.h">
+      <Filter>Header Files\compression\lzma</Filter>
+    </ClInclude>
+    <ClInclude Include="streams\compression_decoder_stream.h">
+      <Filter>Header Files\streams</Filter>
+    </ClInclude>
+    <ClInclude Include="streams\compression_encoder_stream.h">
+      <Filter>Header Files\streams</Filter>
+    </ClInclude>
+    <ClInclude Include="streams\crc32stream.h">
+      <Filter>Header Files\streams</Filter>
+    </ClInclude>
+    <ClInclude Include="streams\memstream.h">
+      <Filter>Header Files\streams</Filter>
+    </ClInclude>
+    <ClInclude Include="streams\serialization.h">
+      <Filter>Header Files\streams</Filter>
+    </ClInclude>
+    <ClInclude Include="streams\substream.h">
+      <Filter>Header Files\streams</Filter>
+    </ClInclude>
+    <ClInclude Include="streams\teestream.h">
+      <Filter>Header Files\streams</Filter>
+    </ClInclude>
+    <ClInclude Include="streams\zip_cryptostream.h">
+      <Filter>Header Files\streams</Filter>
+    </ClInclude>
+    <ClInclude Include="streams\streambuffs\compression_decoder_streambuf.h">
+      <Filter>Header Files\streams\streambuffs</Filter>
+    </ClInclude>
+    <ClInclude Include="streams\streambuffs\compression_encoder_streambuf.h">
+      <Filter>Header Files\streams\streambuffs</Filter>
+    </ClInclude>
+    <ClInclude Include="streams\streambuffs\crc32_streambuf.h">
+      <Filter>Header Files\streams\streambuffs</Filter>
+    </ClInclude>
+    <ClInclude Include="streams\streambuffs\mem_streambuf.h">
+      <Filter>Header Files\streams\streambuffs</Filter>
+    </ClInclude>
+    <ClInclude Include="streams\streambuffs\sub_streambuf.h">
+      <Filter>Header Files\streams\streambuffs</Filter>
+    </ClInclude>
+    <ClInclude Include="streams\streambuffs\tee_streambuff.h">
+      <Filter>Header Files\streams\streambuffs</Filter>
+    </ClInclude>
+    <ClInclude Include="streams\streambuffs\zip_crypto_streambuf.h">
+      <Filter>Header Files\streams\streambuffs</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\enum_utils.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="compression\store\store_encoder.h">
+      <Filter>Header Files\compression\store</Filter>
+    </ClInclude>
+    <ClInclude Include="compression\store\store_decoder.h">
+      <Filter>Header Files\compression\store</Filter>
+    </ClInclude>
+    <ClInclude Include="compression\store\store_encoder_properties.h">
+      <Filter>Header Files\compression\store</Filter>
+    </ClInclude>
+    <ClInclude Include="compression\store\store_decoder_properties.h">
+      <Filter>Header Files\compression\store</Filter>
+    </ClInclude>
+    <ClInclude Include="methods\DeflateMethod.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="methods\LzmaMethod.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="methods\StoreMethod.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="methods\ZipMethodResolver.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="detail\ZipLocalFileHeader.h">
+      <Filter>Header Files\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="detail\EndOfCentralDirectoryBlock.h">
+      <Filter>Header Files\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="detail\ZipCentralDirectoryFileHeader.h">
+      <Filter>Header Files\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="detail\ZipGenericExtraField.h">
+      <Filter>Header Files\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\stream_utils.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\time_utils.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="methods\ICompressionMethod.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="compression\compression_interface.h">
+      <Filter>Header Files\compression</Filter>
+    </ClInclude>
+    <ClInclude Include="compression\bzip2\bzip2_encoder.h">
+      <Filter>Header Files\compression\bzip2</Filter>
+    </ClInclude>
+    <ClInclude Include="compression\bzip2\bzip2_decoder.h">
+      <Filter>Header Files\compression\bzip2</Filter>
+    </ClInclude>
+    <ClInclude Include="compression\bzip2\bzip2_encoder_properties.h">
+      <Filter>Header Files\compression\bzip2</Filter>
+    </ClInclude>
+    <ClInclude Include="compression\bzip2\bzip2_decoder_properties.h">
+      <Filter>Header Files\compression\bzip2</Filter>
+    </ClInclude>
+    <ClInclude Include="methods\Bzip2Method.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="streams\streambuffs\null_streambuf.h">
+      <Filter>Header Files\streams\streambuffs</Filter>
+    </ClInclude>
+    <ClInclude Include="streams\nullstream.h">
+      <Filter>Header Files\streams</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ZipFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ZipArchiveEntry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ZipArchive.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="detail\EndOfCentralDirectoryBlock.cpp">
+      <Filter>Source Files\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="detail\ZipCentralDirectoryFileHeader.cpp">
+      <Filter>Source Files\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="detail\ZipGenericExtraField.cpp">
+      <Filter>Source Files\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="detail\ZipLocalFileHeader.cpp">
+      <Filter>Source Files\detail</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

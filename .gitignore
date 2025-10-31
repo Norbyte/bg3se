@@ -322,9 +322,6 @@ ASALocalRun/
 # MSBuild Binary and Structured Log
 *.binlog
 
-# Ignore externals
-External/
-
 # Ignore JsonCpp library
 jsoncpp-build/
 jsoncpp-master/
@@ -347,3 +344,9 @@ TestModule/Mods/BG3Ext_Testsuite/.vscode/settings.json
 BG3Extender/Lua.bundle
 BG3Extender/LuaScripts/.vscode
 BG3Extender/GameDefinitions/Generated
+
+
+# Allow External subtree (override the ignores above)
+!External/**
+!External/jsoncpp-build/**
+!External/jsoncpp-master/**

@@ -1,0 +1,176 @@
+name: Build Extender (no deploy)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+        with:
+          msbuild-architecture: x64
+
+      - name: Setup MSVC Dev Environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Verify External libraries exist
+        shell: pwsh
+        run: |
+          $paths = @(
+            'External/SDL2/lib/x64/SDL2.lib',
+            'External/SDL2-2.30.1/lib/x64/SDL2.lib',
+            'External/jsoncpp-build/src/lib_json/Release/jsoncpp.lib',
+            'External/protobuf/tools/protobuf/protoc.exe'
+          )
+          $missing = @()
+          foreach ($p in $paths) { if (-not (Test-Path $p)) { $missing += $p } }
+          if ($missing.Count -gt 0) {
+            Write-Host 'Missing required External files:'
+            $missing | ForEach-Object { Write-Host " - $_" }
+            Write-Host 'If using Git LFS, ensure release assets are pushed and LFS is enabled.'
+            exit 1
+          }
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
+
+      - name: Restore NuGet packages
+        shell: pwsh
+        run: nuget restore .\BG3Tools.sln
+
+      - name: Generate property maps
+        shell: pwsh
+        run: .\generate-property-maps.bat
+
+      - name: Generate proto
+        shell: pwsh
+        run: .\generate-proto.bat
+
+      - name: Build ZipLib (Release x64)
+        shell: pwsh
+        run: >
+          msbuild ".\External\ziplib\ZipLib.sln"
+          "/p:Configuration=Release"
+          "/p:Platform=x64"
+          /t:ZipLib:Rebuild
+          /m
+          /nologo
+          /verbosity:quiet
+          /consoleloggerparameters:summary
+
+      - name: Build SymbolTableGenerator.vcxproj (Release x64)
+        shell: pwsh
+        run: >
+          msbuild ".\SymbolTableGenerator\SymbolTableGenerator.vcxproj"
+          "/p:Configuration=Release"
+          "/p:Platform=x64"
+          /t:Build
+          /m
+          /nologo
+          /verbosity:quiet
+          /consoleloggerparameters:summary
+
+      - name: Build BG3Tools.sln (Release)
+        shell: pwsh
+        run: >
+          msbuild ".\BG3Tools.sln"
+          "/p:Configuration=Release"
+          "/p:Platform=x64"
+          /t:Clean,Build
+          /m
+          /nologo
+          /verbosity:quiet
+          /consoleloggerparameters:summary
+
+      - name: Bundle LuaScripts (generate Lua.bundle)
+        shell: pwsh
+        run: >
+          & ".\x64\Release\ResourceBundler.exe" "BG3Extender\LuaScripts" "BG3Extender\Lua.bundle"
+
+      - name: Build BG3Extender.vcxproj (Game Release x64)
+        shell: pwsh
+        run: >
+          msbuild ".\BG3Tools.sln"
+          "/p:Configuration=Game Release"
+          "/p:Platform=x64"
+          "/p:PreBuildEventUseInBuild=false"
+          /t:BG3Extender
+          /m
+          /nologo
+          /verbosity:quiet
+          /consoleloggerparameters:summary
+
+      - name: Register DIA msdia140.dll
+        shell: pwsh
+        run: |
+          $msdia = $null
+          if ($env:VSINSTALLDIR) {
+            $cand = Join-Path $env:VSINSTALLDIR 'DIA SDK\bin\amd64\msdia140.dll'
+            if (Test-Path $cand) { $msdia = $cand }
+          }
+          if (-not $msdia) {
+            $found = Get-ChildItem 'C:\Program Files\Microsoft Visual Studio\2022' -Recurse -Filter msdia140.dll -ErrorAction SilentlyContinue |
+              Where-Object { $_.FullName -match '\\DIA SDK\\bin\\amd64\\' } |
+              Select-Object -First 1
+            if ($found) { $msdia = $found.FullName }
+          }
+          if (-not $msdia) { Write-Error 'msdia140.dll not found in VS install'; exit 1 }
+          & "$Env:SystemRoot\System32\regsvr32.exe" /s "`"$msdia`""
+
+      - name: Run SymbolTableGenerator
+        shell: pwsh
+        run: >
+          & ".\x64\Release\SymbolTableGenerator.exe"
+          ".\x64\Game Release\BG3ScriptExtender.pdb"
+          ".\BG3Extender\GameHooks\BG3ScriptExtender.symtab"
+
+      - name: Upload extender artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: BG3ScriptExtender-x64-GameRelease
+          if-no-files-found: error
+          retention-days: 7
+          path: |
+            x64/Game Release/BG3ScriptExtender.dll
+            x64/Game Release/BG3ScriptExtender.pdb
+            BG3Extender/GameHooks/BG3ScriptExtender.symtab
+
+      - name: Publish BG3ScriptExtender.dll to GitHub Release (latest)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_SHA: ${{ github.sha }}
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $repo = $env:GITHUB_REPOSITORY
+          $dll = 'x64/Game Release/BG3ScriptExtender.dll'
+          if (-not (Test-Path $dll)) { Write-Error "DLL not found at $dll"; exit 1 }
+          gh release view latest --repo $repo *> $null
+          if ($LASTEXITCODE -ne 0) {
+            gh release create latest --repo $repo --title "Latest" --notes "Automated build from $env:GITHUB_SHA" --target $env:GITHUB_SHA
+          } else {
+            gh release edit latest --repo $repo --title "Latest" --latest
+          }
+          gh release upload latest "$dll" --repo $repo --clobber

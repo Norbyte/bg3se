@@ -8,6 +8,61 @@
 #include <imgui.h>
 #include <backends/imgui_impl_vulkan.h>
 #include <imgui_internal.h>
+#include <unordered_map>
+
+#ifndef NVSDK_CONV
+#ifdef __GNUC__
+#define NVSDK_CONV
+#else
+#define NVSDK_CONV __cdecl
+#endif
+#endif
+
+extern "C" {
+    typedef void (NVSDK_CONV *PFN_NVSDK_NGX_ProgressCallback_C)(float, bool*);
+}
+
+struct NVSDK_NGX_Handle { unsigned int Id; };
+
+enum NVSDK_NGX_Result {
+    NVSDK_NGX_Result_Success = 0x1,
+    NVSDK_NGX_Result_Fail = 0xBAD00000
+};
+
+#ifndef NVSDK_NGX_Parameter_Output
+#define NVSDK_NGX_Parameter_Output "Output"
+#endif
+
+struct NVSDK_NGX_Parameter;
+typedef NVSDK_NGX_Result (NVSDK_CONV *PFN_NVSDK_NGX_Parameter_GetVoidPointer)(NVSDK_NGX_Parameter*, const char*, void**);
+
+enum NVSDK_NGX_Resource_VK_Type {
+    NVSDK_NGX_RESOURCE_VK_TYPE_VK_IMAGEVIEW,
+    NVSDK_NGX_RESOURCE_VK_TYPE_VK_BUFFER
+};
+
+struct NVSDK_NGX_ImageViewInfo_VK {
+    VkImageView ImageView;
+    VkImage Image;
+    VkImageSubresourceRange SubresourceRange;
+    VkFormat Format;
+    unsigned int Width;
+    unsigned int Height;
+};
+
+struct NVSDK_NGX_BufferInfo_VK {
+    VkBuffer Buffer;
+    unsigned int SizeInBytes;
+};
+
+struct NVSDK_NGX_Resource_VK {
+    union {
+        NVSDK_NGX_ImageViewInfo_VK ImageViewInfo;
+        NVSDK_NGX_BufferInfo_VK BufferInfo;
+    } Resource;
+    NVSDK_NGX_Resource_VK_Type Type;
+    bool ReadWrite;
+};
 
 BEGIN_SE()
 
@@ -22,6 +77,10 @@ VK_HOOK(CreatePipelineCache)
 VK_HOOK(CreateSwapchainKHR)
 VK_HOOK(DestroySwapchainKHR)
 VK_HOOK(QueuePresentKHR)
+
+enum class NgxEvaluateFeatureCHookTag {};
+using NgxEvaluateFeatureCHookType = WrappableFunction<NgxEvaluateFeatureCHookTag, NVSDK_NGX_Result(VkCommandBuffer, const NVSDK_NGX_Handle*, const NVSDK_NGX_Parameter*, PFN_NVSDK_NGX_ProgressCallback_C)>;
+template<> NgxEvaluateFeatureCHookType* NgxEvaluateFeatureCHookType::gHook = nullptr;
 
 END_SE()
 
@@ -72,6 +131,15 @@ public:
         CreateSwapchainKHRHook_.SetPostHook(&VulkanBackend::vkCreateSwapchainKHRHooked, this);
         DestroySwapchainKHRHook_.SetPreHook(&VulkanBackend::vkDestroySwapchainKHRHooked, this);
         QueuePresentKHRHook_.SetPreHook(&VulkanBackend::vkQueuePresentKHRHooked, this);
+        LoadLibraryW(L"upscaler.dll");
+        sl_ = GetModuleHandleW(L"sl.interposer.dll");
+        if (!sl_) { sl_ = LoadLibraryW(L"sl.interposer.dll"); }
+        if (sl_) {
+            dlssgPresentFunction_ = reinterpret_cast<PFN_vkQueuePresentKHR>(
+                GetProcAddress(sl_, "vkQueuePresentKHR"));
+            dlssgCreateSwapchainKHR_ = reinterpret_cast<PFN_vkCreateSwapchainKHR>(
+                GetProcAddress(sl_, "vkCreateSwapchainKHR"));
+        }
     }
 
     void DisableHooks() override
@@ -89,6 +157,9 @@ public:
         CreateSwapchainKHRHook_.Unwrap();
         DestroySwapchainKHRHook_.Unwrap();
         QueuePresentKHRHook_.Unwrap();
+        if (ngxEvaluateFeatureHook_.IsWrapped()) {
+            ngxEvaluateFeatureHook_.Unwrap();
+        }
         DetourTransactionCommit();
     }
 
@@ -184,7 +255,7 @@ public:
         // Speculative check to avoid unnecessary locking
         if (!initialized_) return;
 
-        OPTICK_EVENT(Optick::Category::Rendering);
+        //OPTICK_EVENT(Optick::Category::Rendering);
         std::lock_guard _(globalResourceLock_);
 
         // Locked check (at this point we're certain noone is manipulating the initialized flag)
@@ -199,8 +270,9 @@ public:
             requestReloadFonts_ = false;
         }
 
+        tryInstallNgxEvaluateFeatureHook();
         ImGui_ImplVulkan_NewFrame();
-        IMGUI_FRAME_DEBUG("VK: NewFrame");
+        //IMGUI_FRAME_DEBUG("VK: NewFrame");
     }
 
     void FinishFrame() override
@@ -208,7 +280,7 @@ public:
         // Speculative check to avoid unnecessary locking
         if (!initialized_) return;
 
-        OPTICK_EVENT(Optick::Category::Rendering);
+        //OPTICK_EVENT(Optick::Category::Rendering);
         std::lock_guard _(globalResourceLock_);
 
         // Locked check (at this point we're certain noone is manipulating the initialized flag)
@@ -232,7 +304,8 @@ public:
         }
 
         drawViewport_ = curViewport_;
-        IMGUI_FRAME_DEBUG("VK: FinishFrame");
+        menuVisible_ = (vp.DrawDataP.CmdLists.Size > 0);
+        //IMGUI_FRAME_DEBUG("VK: FinishFrame");
     }
 
     void ClearFrame() override
@@ -424,10 +497,17 @@ private:
 
         IMGUI_DEBUG("Detected graphics queue family %d, %p", queueFamily, queue);
 
-        auto createPipelineCache = (PFN_vkCreatePipelineCache*)vkGetDeviceProcAddr(*pDevice, "vkCreatePipelineCache");
-        auto createSwapchainKHR = (PFN_vkCreatePipelineCache*)vkGetDeviceProcAddr(*pDevice, "vkCreateSwapchainKHR");
-        auto destroySwapchainKHR = (PFN_vkCreatePipelineCache*)vkGetDeviceProcAddr(*pDevice, "vkDestroySwapchainKHR");
-        auto queuePresentKHR = (PFN_vkQueuePresentKHR*)vkGetDeviceProcAddr(*pDevice, "vkQueuePresentKHR");
+        PFN_vkCreatePipelineCache createPipelineCache = reinterpret_cast<PFN_vkCreatePipelineCache>(
+            vkGetDeviceProcAddr(*pDevice, "vkCreatePipelineCache"));
+        PFN_vkCreateSwapchainKHR gameCreateSwapchainKHR = reinterpret_cast<PFN_vkCreateSwapchainKHR>(
+            vkGetDeviceProcAddr(*pDevice, "vkCreateSwapchainKHR"));
+        PFN_vkDestroySwapchainKHR destroySwapchainKHR = reinterpret_cast<PFN_vkDestroySwapchainKHR>(
+            vkGetDeviceProcAddr(*pDevice, "vkDestroySwapchainKHR"));
+        PFN_vkQueuePresentKHR gameQueuePresentKHR = reinterpret_cast<PFN_vkQueuePresentKHR>(
+            vkGetDeviceProcAddr(*pDevice, "vkQueuePresentKHR"));
+
+        PFN_vkQueuePresentKHR nextPresent = dlssgPresentFunction_ ? dlssgPresentFunction_ : gameQueuePresentKHR;
+        PFN_vkCreateSwapchainKHR nextCreateSwapchain = dlssgCreateSwapchainKHR_ ? dlssgCreateSwapchainKHR_ : gameCreateSwapchainKHR;
 
         if (!CreatePipelineCacheHook_.IsWrapped()) {
             IMGUI_DEBUG("Hooking CreatePipelineCache()");
@@ -435,9 +515,9 @@ private:
             DetourTransactionBegin();
             DetourUpdateThread(GetCurrentThread());
             CreatePipelineCacheHook_.Wrap(ResolveFunctionTrampoline(createPipelineCache));
-            CreateSwapchainKHRHook_.Wrap(ResolveFunctionTrampoline(createSwapchainKHR));
+            CreateSwapchainKHRHook_.Wrap(ResolveFunctionTrampoline(nextCreateSwapchain));
             DestroySwapchainKHRHook_.Wrap(ResolveFunctionTrampoline(destroySwapchainKHR));
-            QueuePresentKHRHook_.Wrap(ResolveFunctionTrampoline(queuePresentKHR));
+            QueuePresentKHRHook_.Wrap(ResolveFunctionTrampoline(nextPresent));
             DetourTransactionCommit();
         }
     }
@@ -682,7 +762,7 @@ private:
         if (!vp.DrawDataP.Valid) return;
 
         auto& image = swapchain_.images_[pPresentInfo->pImageIndices[0]];
-        IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Swap chain image #%d (%p)", pPresentInfo->pImageIndices[0], image.image);
+        //IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Swap chain image #%d (%p)", pPresentInfo->pImageIndices[0], image.image);
 
         // wait for this command buffer to be free
         // If this ring has never been used the fence is signalled on creation.
@@ -789,10 +869,10 @@ private:
     {
         if (pPresentInfo->swapchainCount != 1
             || pPresentInfo->pSwapchains[0] != swapChain_) {
-            IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Bad swapchain (%d: %p vs. %p)",
-                pPresentInfo->swapchainCount, 
-                pPresentInfo->swapchainCount ? pPresentInfo->pSwapchains[0] : nullptr,
-                swapChain_);
+            //IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Bad swapchain (%d: %p vs. %p)",
+                //pPresentInfo->swapchainCount, 
+                //pPresentInfo->swapchainCount ? pPresentInfo->pSwapchains[0] : nullptr,
+                //swapChain_);
             frameNo_++;
             return;
         }
@@ -821,11 +901,193 @@ private:
         if (initialized_ && drawViewport_ != -1) {
             presentPreHook(const_cast<VkPresentInfoKHR*>(pPresentInfo));
         } else {
-            IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Cannot append command buffer - initialized %d, drawViewport %d",
-                initialized_ ? 1 : 0, drawViewport_);
+            //IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Cannot append command buffer - initialized %d, drawViewport %d",
+                //initialized_ ? 1 : 0, drawViewport_);
         }
 
         frameNo_++;
+    }
+    NVSDK_NGX_Result ngxEvaluateFeatureCHook(
+        NgxEvaluateFeatureCHookType::BaseFuncType* orig,
+        VkCommandBuffer InCmdList,
+        const NVSDK_NGX_Handle* InFeatureHandle,
+        const NVSDK_NGX_Parameter* InParameters,
+        PFN_NVSDK_NGX_ProgressCallback_C InCallback)
+    {
+        // Call original first so NGX completes its work and final image state
+        NVSDK_NGX_Result evalRes = orig(InCmdList, InFeatureHandle, InParameters, InCallback);
+
+        if (!initialized_ || !menuVisible_ || evalRes != NVSDK_NGX_Result_Success || !InCmdList || !InParameters)
+            return evalRes;
+
+        // Extract NGX output resource as a Vulkan image view
+        void* outPtr = nullptr;
+        static PFN_NVSDK_NGX_Parameter_GetVoidPointer pGetVoidPtr = []() -> PFN_NVSDK_NGX_Parameter_GetVoidPointer {
+            HMODULE mod = GetModuleHandleW(L"sl.interposer.dll");
+            if (!mod) mod = GetModuleHandleW(L"nvngx_dlss.dll");
+            if (!mod) mod = GetModuleHandleW(L"nvngx.dll");
+            if (!mod) return nullptr;
+            return reinterpret_cast<PFN_NVSDK_NGX_Parameter_GetVoidPointer>(GetProcAddress(mod, "NVSDK_NGX_Parameter_GetVoidPointer"));
+        }();
+        if (!pGetVoidPtr || pGetVoidPtr(const_cast<NVSDK_NGX_Parameter*>(InParameters), NVSDK_NGX_Parameter_Output, &outPtr) != NVSDK_NGX_Result_Success || !outPtr)
+            return evalRes;
+
+        auto* outResVK = reinterpret_cast<NVSDK_NGX_Resource_VK*>(outPtr);
+        const NVSDK_NGX_ImageViewInfo_VK& iv = outResVK->Resource.ImageViewInfo;
+        VkImageView  targetView   = iv.ImageView;
+        VkImage      targetImage  = iv.Image;
+        VkFormat     targetFormat = iv.Format;
+        uint32_t     targetW      = iv.Width;
+        uint32_t     targetH      = iv.Height;
+        VkImageSubresourceRange range = iv.SubresourceRange;
+        if (range.aspectMask == 0)  range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        if (range.levelCount == 0)  range.levelCount = 1;
+        if (range.layerCount == 0)  range.layerCount = 1;
+
+        if (targetView == VK_NULL_HANDLE || targetImage == VK_NULL_HANDLE || targetFormat == VK_FORMAT_UNDEFINED)
+            return evalRes;
+
+        // Get/create a render pass for this format
+        auto getOrCreateRenderPass = [&](VkFormat fmt) -> VkRenderPass {
+            auto it = formatToRenderPass_.find(fmt);
+            if (it != formatToRenderPass_.end()) return it->second;
+
+            VkAttachmentDescription attDesc{};
+            attDesc.format         = fmt;
+            attDesc.samples        = VK_SAMPLE_COUNT_1_BIT;
+            attDesc.loadOp         = VK_ATTACHMENT_LOAD_OP_LOAD;   // preserve NGX output
+            attDesc.storeOp        = VK_ATTACHMENT_STORE_OP_STORE;
+            attDesc.stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+            attDesc.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+            attDesc.initialLayout  = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+            attDesc.finalLayout    = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+            VkAttachmentReference colorRef{};
+            colorRef.attachment = 0;
+            colorRef.layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+            VkSubpassDescription sub{};
+            sub.pipelineBindPoint    = VK_PIPELINE_BIND_POINT_GRAPHICS;
+            sub.colorAttachmentCount = 1;
+            sub.pColorAttachments    = &colorRef;
+
+            VkRenderPassCreateInfo rpInfo{ VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO };
+            rpInfo.attachmentCount = 1;
+            rpInfo.pAttachments    = &attDesc;
+            rpInfo.subpassCount    = 1;
+            rpInfo.pSubpasses      = &sub;
+
+            VkRenderPass rp = VK_NULL_HANDLE;
+            VK_CHECK(vkCreateRenderPass(device_, &rpInfo, nullptr, &rp));
+            formatToRenderPass_[fmt] = rp;
+            return rp;
+        };
+
+        VkRenderPass rp = getOrCreateRenderPass(targetFormat);
+        if (rp == VK_NULL_HANDLE)
+            return evalRes;
+
+        // Get/create framebuffer for this view
+        VkFramebuffer fb = VK_NULL_HANDLE;
+        auto itFB = viewToFramebuffer_.find(targetView);
+        if (itFB != viewToFramebuffer_.end()) {
+            fb = itFB->second;
+        } else {
+            VkImageView attachments[1] = { targetView };
+            VkFramebufferCreateInfo fbInfo{ VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO };
+            fbInfo.renderPass = rp;
+            fbInfo.attachmentCount = 1;
+            fbInfo.pAttachments = attachments;
+            fbInfo.width  = targetW;
+            fbInfo.height = targetH;
+            fbInfo.layers = 1;
+            VK_CHECK(vkCreateFramebuffer(device_, &fbInfo, nullptr, &fb));
+            viewToFramebuffer_[targetView] = fb;
+        }
+
+        if (fb == VK_NULL_HANDLE)
+            return evalRes;
+
+        // Transition NGX output to COLOR_ATTACHMENT for overlay
+        VkImageMemoryBarrier toColor{ VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER };
+        toColor.srcAccessMask = VK_ACCESS_MEMORY_WRITE_BIT | VK_ACCESS_SHADER_WRITE_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_TRANSFER_WRITE_BIT;
+        toColor.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        toColor.oldLayout     = VK_IMAGE_LAYOUT_GENERAL;
+        toColor.newLayout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        toColor.image         = targetImage;
+        toColor.subresourceRange = range;
+
+        vkCmdPipelineBarrier(
+            InCmdList,
+            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+            0,
+            0, nullptr,
+            0, nullptr,
+            1, &toColor);
+
+        // Begin render pass and draw ImGui
+        VkRenderPassBeginInfo rpBegin{ VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO };
+        rpBegin.renderPass  = rp;
+        rpBegin.framebuffer = fb;
+        rpBegin.renderArea.offset = { 0, 0 };
+        rpBegin.renderArea.extent = { targetW, targetH };
+
+        vkCmdBeginRenderPass(InCmdList, &rpBegin, VK_SUBPASS_CONTENTS_INLINE);
+        (void)injectImGuiIntoCommandBuffer(InCmdList);
+        vkCmdEndRenderPass(InCmdList);
+
+        // Transition back to GENERAL so downstream consumers can read
+        VkImageMemoryBarrier toGeneral = toColor;
+        toGeneral.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        toGeneral.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT | VK_ACCESS_SHADER_READ_BIT;
+        toGeneral.oldLayout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        toGeneral.newLayout     = VK_IMAGE_LAYOUT_GENERAL;
+
+        vkCmdPipelineBarrier(
+            InCmdList,
+            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+            0,
+            0, nullptr,
+            0, nullptr,
+            1, &toGeneral);
+
+        return evalRes;
+    }
+
+    bool injectImGuiIntoCommandBuffer(VkCommandBuffer cmd)
+    {
+        if (!initialized_ || drawViewport_ < 0 || !cmd)
+            return false;
+        auto& vp = viewports_[drawViewport_].Viewport;
+        if (!vp.DrawDataP.Valid || vp.DrawDataP.CmdListsCount == 0)
+            return false;
+        ImGui_ImplVulkan_RenderDrawData(&vp.DrawDataP, cmd);
+        return true;
+    }
+
+    void tryInstallNgxEvaluateFeatureHook()
+    {
+        if (ngxEvaluateFeatureHook_.IsWrapped()) return;
+
+        auto tryInstallFrom = [&](LPCWSTR modName) -> bool {
+            HMODULE mod = GetModuleHandleW(modName);
+            if (!mod) return false;
+            auto pC = reinterpret_cast<NgxEvaluateFeatureCHookType::BaseFuncType*>(
+                GetProcAddress(mod, "NVSDK_NGX_VULKAN_EvaluateFeature_C"));
+            if (!pC) return false;
+            DetourTransactionBegin();
+            DetourUpdateThread(GetCurrentThread());
+            ngxEvaluateFeatureHook_.Wrap(ResolveFunctionTrampoline(pC));
+            DetourTransactionCommit();
+            ngxEvaluateFeatureHook_.SetWrapper(&VulkanBackend::ngxEvaluateFeatureCHook, this);
+            return true;
+        };
+
+        if (tryInstallFrom(L"sl.interposer.dll")) return;
+        if (tryInstallFrom(L"nvngx_dlss.dll")) return;
+        if (tryInstallFrom(L"nvngx.dll")) return;
     }
 
     IMGUIManager& ui_;
@@ -846,10 +1108,13 @@ private:
 
     bool initialized_{ false };
     bool uiFrameworkStarted_{ false };
+    bool menuVisible_{ false };
     bool requestReloadFonts_{ false };
     std::mutex globalResourceLock_;
 
     HashMap<VkImageView, VkDescriptorSet> textureDescriptors_;
+    std::unordered_map<VkFormat, VkRenderPass> formatToRenderPass_;
+    std::unordered_map<VkImageView, VkFramebuffer> viewToFramebuffer_;
 
     VkCreateInstanceHookType CreateInstanceHook_;
     VkCreateDeviceHookType CreateDeviceHook_;
@@ -858,6 +1123,11 @@ private:
     VkCreateSwapchainKHRHookType CreateSwapchainKHRHook_;
     VkDestroySwapchainKHRHookType DestroySwapchainKHRHook_;
     VkQueuePresentKHRHookType QueuePresentKHRHook_;
+    NgxEvaluateFeatureCHookType ngxEvaluateFeatureHook_;
+
+    HMODULE sl_{ nullptr };
+    PFN_vkQueuePresentKHR dlssgPresentFunction_{ nullptr };
+    PFN_vkCreateSwapchainKHR dlssgCreateSwapchainKHR_{ nullptr };
 
     SwapchainInfo swapchain_;
     uint32_t textures_{ 0 };

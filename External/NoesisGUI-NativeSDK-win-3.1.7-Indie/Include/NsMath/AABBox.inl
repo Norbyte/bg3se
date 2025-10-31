@@ -1,0 +1,226 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// NoesisGUI - http://www.noesisengine.com
+// Copyright (c) 2013 Noesis Technologies S.L. All Rights Reserved.
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+#include <NsCore/Error.h>
+
+#include <float.h>
+
+
+namespace Noesis
+{
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline AABBox2::AABBox2(): mMin(FLT_MAX, FLT_MAX), mMax(-FLT_MAX, -FLT_MAX)
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline AABBox2::AABBox2(float minX, float minY, float maxX, float maxY):  mMin(minX, minY), 
+    mMax(maxX, maxY)
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline AABBox2::AABBox2(const Vector2& min, const Vector2& max): mMin(min), mMax(max)
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline AABBox2::AABBox2(const Vector2& center, float halfSide)
+{
+    NS_ASSERT(halfSide > 0.0f);
+    mMin = center - Vector2(halfSide, halfSide);
+    mMax = center + Vector2(halfSide, halfSide);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline void AABBox2::Reset()
+{
+    mMin = Vector2(FLT_MAX, FLT_MAX);
+    mMax = Vector2(-FLT_MAX, -FLT_MAX);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline Vector2 AABBox2::operator[](uint32_t i) const
+{
+    NS_ASSERT(i < 4);
+    return Vector2(i & 1 ? mMax[0] : mMin[0], i & 2 ? mMax[1] : mMin[1]);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline Vector2& AABBox2::Min()
+{
+    return mMin;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline const Vector2& AABBox2::Min() const
+{
+    return mMin;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline Vector2& AABBox2::Max()
+{
+    return mMax;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline const Vector2& AABBox2::Max() const
+{
+    return mMax;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline Vector2 AABBox2::Center() const
+{
+    return 0.5f * (mMin + mMax);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline Vector2 AABBox2::Diagonal() const
+{
+    return mMax - mMin;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline AABBox2& AABBox2::operator+=(const AABBox2& box)
+{
+    mMin[0] = Noesis::Min(box.mMin[0], mMin[0]);
+    mMin[1] = Noesis::Min(box.mMin[1], mMin[1]);
+    mMax[0] = Noesis::Max(box.mMax[0], mMax[0]);
+    mMax[1] = Noesis::Max(box.mMax[1], mMax[1]);
+    return *this;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline AABBox2& AABBox2::operator+=(const Vector2& point)
+{
+    mMin[0] = Noesis::Min(point[0], mMin[0]);
+    mMin[1] = Noesis::Min(point[1], mMin[1]);
+    mMax[0] = Noesis::Max(point[0], mMax[0]);
+    mMax[1] = Noesis::Max(point[1], mMax[1]);
+    return *this;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline AABBox2& AABBox2::Scale(float s)
+{
+    Vector2 center = Center();
+    mMin = (mMin - center) * s + center;
+    mMax = (mMax - center) * s + center;
+    return *this;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline bool AABBox2::operator==(const AABBox2& box) const
+{
+    return mMin == box.mMin && mMax == box.mMax;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline bool AABBox2::operator!=(const AABBox2& box) const
+{
+    return !(*this == box);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline bool AABBox2::Empty() const
+{
+    return mMax[0] < mMin[0] || mMax[1] < mMin[1];
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline const AABBox2 operator+(const AABBox2& box0, const AABBox2& box1)
+{
+    AABBox2 ret(box0);
+    return ret += box1;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline const AABBox2 operator+(const AABBox2& box, const Vector2& point)
+{
+    AABBox2 ret(box);
+    return ret += point;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline const AABBox2 operator+(const Vector2& point, const AABBox2& box)
+{
+    AABBox2 ret(box);
+    return ret += point;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline const AABBox2 operator*(const AABBox2& box, const Transform2& mtx)
+{
+    if (box.Empty()) return box;
+    
+    AABBox2 ret(mtx[2], mtx[2]);
+   
+    for (uint32_t i = 0; i < 2; i++)
+    {
+        for (uint32_t j = 0; j < 2; j++)
+        {
+            float a = mtx[j][i] * box.Min()[j];
+            float b = mtx[j][i] * box.Max()[j];
+
+            ret.Min()[i] += a < b ? a : b;
+            ret.Max()[i] += a < b ? b : a;
+        }
+    }
+
+    return ret;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline const AABBox2 operator*(const AABBox2& box, float s)
+{
+    AABBox2 ret(box);
+    ret.Scale(s);
+    return ret;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline const AABBox2 operator*(float s, const AABBox2& box)
+{
+    AABBox2 ret(box);
+    ret.Scale(s);
+    return ret;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline bool Inside(const AABBox2& box, const Vector2& p)
+{
+    return (p[0] > box.Min()[0] && p[1] > box.Min()[1] && p[0] < box.Max()[0]
+        && p[1] < box.Max()[1]);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline bool BoxInside(const AABBox2& b0, const AABBox2& b1)
+{
+    return b0.Min()[0] >= b1.Min()[0] && b0.Max()[0] <= b1.Max()[0] &&
+        b0.Min()[1] >= b1.Min()[1] && b0.Max()[1] <= b1.Max()[1];
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline bool BoxesIntersect(const AABBox2& box0, const AABBox2& box1)
+{
+    return (box0.Min()[0] < box1.Max()[0] && box0.Min()[1] < box1.Max()[1] &&
+        box0.Max()[0] > box1.Min()[0] && box0.Max()[1] > box1.Min()[1]);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+inline AABBox2 Intersect(const AABBox2& b0, const AABBox2& b1)
+{
+    return AABBox2
+    (
+        Max(b0.Min()[0], b1.Min()[0]), Max(b0.Min()[1], b1.Min()[1]),
+        Min(b0.Max()[0], b1.Max()[0]), Min(b0.Max()[1], b1.Max()[1])
+    );
+}
+
+}
