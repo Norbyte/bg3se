@@ -359,8 +359,8 @@ void ScriptExtender::ResetLuaState()
             if (state && (state == GameState::Paused || state == GameState::Running)) {
                 ext->OnGameSessionLoading();
                 ext->OnGameSessionLoaded();
-                ext->OnResetCompleted();
             }
+            ext->OnResetCompleted();
         });
         ext->RequestLuaReset(true);
     }
