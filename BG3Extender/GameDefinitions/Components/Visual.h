@@ -817,6 +817,46 @@ struct CharacterManager : public BaseSystem
     uint8_t ColorBlindMode;
 };
 
+struct CharacterLightDesc
+{
+    EntityHandle Entity;
+    TLAutomatedLight* TimelineLight;
+};
+
+struct CharacterLightComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(CharacterLight, "ecl::CharacterLightComponent")
+
+    bool Enabled;
+    uint8_t LightChannel;
+    uint8_t field_2;
+    uint8_t field_3;
+    uint8_t field_4;
+    uint8_t field_5;
+    uint8_t field_6;
+    uint8_t field_7;
+    Array<HashMap<Guid, Array<CharacterLightDesc>>> Lights;
+};
+
+struct CharacterLightViewData
+{
+    float SwapTime;
+    float field_4;
+    float Time;
+    float field_C;
+    Guid TargetAtmosphere;
+    Guid PreviousAtmosphere;
+};
+
+struct CharacterLightSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(CharacterLightSingleton, "ecl::CharacterLightSingletonComponent")
+
+    std::array<CharacterLightViewData, 2> Views;
+    [[bg3::hidden]] void* Scene; // TLScene*
+};
+
+
 END_NS()
 
 BEGIN_NS(ecl::equipment)

@@ -2,6 +2,25 @@
 
 BEGIN_SE()
 
+struct TLAutomatedLight
+{
+    uint8_t TypeId;
+    Guid ID;
+    STDString Name;
+    FixedString AttachBone;
+    bool IsDarkVisionLight;
+    LightDesc* LightDesc;
+};
+
+struct TLAutomatedLightSetup
+{
+    uint8_t TypeId;
+    Guid ID;
+    STDString Name;
+    Array<TLAutomatedLight*> Lights;
+};
+
+
 struct TimelineActorDataComponent : public BaseComponent
 {
     DEFINE_COMPONENT(TimelineActorData, "eoc::TimelineActorDataComponent")
