@@ -524,6 +524,15 @@ public:
         return Values;
     }
 
+    void reserve(uint32_t size)
+    {
+        assert(size < this->Keys.size());
+        if (size > this->Keys.capacity()) {
+            this->Keys.reserve(size);
+            Values.resize(size, this->Keys.size(), this->Keys.size());
+        }
+    }
+
     void clear()
     {
         Values.clear(this->Keys.size());
