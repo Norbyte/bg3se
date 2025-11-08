@@ -141,17 +141,21 @@ bool RegisterType(lua_State* L, StringView name, HashMap<FixedString, bg3se::ui:
     return ClassDefinitionBuilder::RegisterNew(L, clsName, properties, wrappedContextType);
 }
 
-Noesis::BaseComponent* Instantiate(lua_State* L, FixedString name, std::optional<Noesis::BaseComponent*> wrappedContext)
+Noesis::BaseComponent* Instantiate(lua_State* L, STDString name, std::optional<Noesis::BaseComponent*> wrappedContext)
 {
-    auto cls = gDynamicClasses.try_get(name);
+    if (name.substr(0, 4) != "se::") {
+        name = "se::" + name;
+    }
+
+    auto cls = gDynamicClasses.try_get(FixedString(name));
     if (!cls) {
-        luaL_error(L, "No custom class found with name '%s'", name.GetString());
+        luaL_error(L, "No custom class found with name '%s'", name.c_str());
         return nullptr;
     }
 
     auto inst = (*cls)->Construct(wrappedContext.value_or(nullptr));
     if (!inst) {
-        luaL_error(L, "Unable to construct data context '%s' - invalid parameters", name.GetString());
+        luaL_error(L, "Unable to construct data context '%s' - invalid parameters", name.c_str());
         return nullptr;
     }
 

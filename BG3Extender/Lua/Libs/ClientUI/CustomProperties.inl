@@ -363,7 +363,7 @@ struct DynamicClassType
     {
         if (WrappedContextType == nullptr) {
             if (wrappedContext != nullptr) {
-                ERR("Passing wrapped context to type '%s' that doesn't support wrapped contexts", Name.Str());
+                ERR("Instantiating type '%s': A wrapped context was provided, but the type doesn't support wrapped contexts", Name.Str());
                 return false;
             }
 
@@ -371,7 +371,7 @@ struct DynamicClassType
         }
 
         if (wrappedContext == nullptr) {
-            ERR("Context '%s' requires a wrapped context", Name.Str());
+            ERR("Instantiating type '%s' requires a wrapped context, but none was provided", Name.Str());
             return false;
         }
 
@@ -385,7 +385,7 @@ struct DynamicClassType
                 }
             }
 
-            ERR("Context '%s' requires a wrapped context of type '%s', got '%s'", Name.Str(),
+            ERR("Instantiating type '%s' requires a wrapped context of type '%s', got '%s'", Name.Str(),
                 WrappedContextType->GetName(), wrappedContext->GetClassType()->GetName());
             return false;
         }
