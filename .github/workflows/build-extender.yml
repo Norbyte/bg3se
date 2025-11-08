@@ -125,8 +125,15 @@ jobs:
         shell: pwsh
         run: |
           $msdia = $null
-          if ($env:VSINSTALLDIR) {
-            $cand = Join-Path $env:VSINSTALLDIR 'DIA SDK\bin\amd64\msdia140.dll'
+          $vsInstall = $env:VSINSTALLDIR
+          if (-not $vsInstall) {
+            $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+            if (Test-Path $vswhere) {
+              $vsInstall = & $vswhere -latest -property installationPath
+            }
+          }
+          if ($vsInstall) {
+            $cand = Join-Path $vsInstall 'DIA SDK\bin\amd64\msdia140.dll'
             if (Test-Path $cand) { $msdia = $cand }
           }
           if (-not $msdia) {
