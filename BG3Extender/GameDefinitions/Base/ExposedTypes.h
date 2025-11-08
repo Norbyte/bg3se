@@ -65,10 +65,10 @@ struct DamagePair
 
 struct RollDefinition
 {
-    DiceSizeId DiceValue;
-    uint8_t AmountOfDices;
-    int DiceAdditionalValue;
-    [[bg3::legacy(field_8)]] bool DiceNegative;
+    DiceSizeId DiceValue{ DiceSizeId::D6 };
+    uint8_t AmountOfDices{ 0 };
+    int DiceAdditionalValue{ 0 };
+    [[bg3::legacy(field_8)]] bool DiceNegative{ false };
 };
 
 struct BoostParameters
@@ -95,17 +95,17 @@ struct BoostDescription
 struct ResourceRollDefinition
 {
     Guid field_0;
-    uint8_t field_10;
+    uint8_t field_10{ 0 };
 };
 
 struct PathSettings
 {
-    uint8_t PathClimbingMode;
-    uint8_t PathDroppingMode;
+    uint8_t PathClimbingMode{ 0 };
+    uint8_t PathDroppingMode{ 0 };
     std::variant<uint8_t, float> Speed;
-    bool HasSmoothingNodes;
-    bool HasSpliningNodes;
-    bool HasTurningNodes;
+    bool HasSmoothingNodes{ false };
+    bool HasSpliningNodes{ false };
+    bool HasTurningNodes{ false };
 };
 
 struct TextLine : TranslatedString
@@ -116,7 +116,7 @@ struct TextLine : TranslatedString
 struct TemplateInfo
 {
     FixedString TemplateId;
-    uint8_t TemplateType;
+    uint8_t TemplateType{ 0 };
 };
 
 END_SE()
@@ -180,7 +180,7 @@ struct PathMover : public Settings
     float InterpolateValue;
     std::array<float, 32> ComputedTrajectoryValues;
     Array<glm::vec3> ComputedVelocityValues;
-    bool Initialized;
+    bool Initialized{ false };
 };
 
 END_NS()

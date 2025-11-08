@@ -133,7 +133,7 @@ private:
         auto oldResources = bank_->Resources.raw_values().raw_buf();
         T* newResources = GameMemoryAllocator::NewRaw<T>(curSize);
         for (uint32_t i = 0; i < curSize; i++) {
-            new (oldResources + i) T(newResources[i]);
+            new (newResources + i) T(oldResources[i]);
         }
 
         bank_->Resources.raw_values().unsafe_swap_buffer(newResources);
