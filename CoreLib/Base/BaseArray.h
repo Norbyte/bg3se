@@ -456,11 +456,6 @@ public:
     using size_type = uint32_t;
 
     inline UninitializedStaticArray() {}
-    
-    UninitializedStaticArray(size_type size)
-    {
-        resize(size);
-    }
 
     UninitializedStaticArray(UninitializedStaticArray const& a) = delete;
 
@@ -586,6 +581,11 @@ public:
         }
     }
 
+    void unsafe_swap_buffer(T* buf)
+    {
+        buf_ = buf;
+    }
+
 private:
     T* buf_{ nullptr };
     size_type size_{ 0 };
@@ -698,6 +698,13 @@ public:
         }
 
         size_ = 0;
+    }
+
+    void reserve(size_type newCapacity)
+    {
+        if (newCapacity > capacity_) {
+            reallocate(newCapacity);
+        }
     }
 
     void resize(size_type newSize)

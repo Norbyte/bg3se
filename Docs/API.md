@@ -1,7 +1,7 @@
 
-### BG3SE Lua API v11 Documentation
+### BG3SE Lua API v22 Documentation
 
-### Table of Contents  
+### Table of Contents
  - [Getting Started](#getting-started)
     - [Bootstrap Scripts](#bootstrap-scripts)
  - [Client / Server States](#client-server)
@@ -28,16 +28,17 @@
  - [Stats](#stats)
  - [ECS](#ecs)
  - [Networking](#networking)
-    * [Sending NetMessages](#net-send)
-    * [Listening for NetMessages](#net-receive)
+    * [NetChannel API](#net-channel-api)
+    * [NetChannel Examples](#net-channel-examples)
     * [Utility functions](#net-utils)
- - [Custom Variables](#custom-variables)
+ - [Noesis UI](#noesis-ui)
+    * [Custom ViewModels](#noesis-viewmodels)
+ - [User Variables](#user-variables)
  - [Utility functions](#ext-utility)
  - [JSON Support](#json-support)
  - [Mod Info](#mod-info)
  - [Math Library](#math)
  - [Engine Events](#engine-events)
-
 
 <a id="getting-started"></a>
 ## Getting Started
@@ -760,11 +761,12 @@ Ext.Utils.Print(Ext.Stats.ExtraData.WisdomTierHigh)
 
 
 ## ECS
-
 ### TODO - WIP
 
-<a id="networking"></a>
 ## Networking
+<details>
+<summary><b>Deprecated: NetMessages API</b></summary>
+
 To exchange data between the server and client(s), we use NetMessages. These can be sent and received from either context to facilitate communication. This allows us to share data between the server and the client(s) and vice versa.
 
 <a id="net-send"></a>
@@ -853,6 +855,129 @@ Ext.Events.NetMessage:Subscribe(function(data)
  end  
 end)
 ```
+</details>
+
+<a id="net-channel-api"></a>
+
+## NetChannel API
+
+> This section documents the new **NetChannel API**, which supersedes the legacy/deprecated NetMessage approach.
+
+The NetChannel API provides a small, structured abstraction for request/response and message broadcasting and handling between server/client peers. It makes asynchronous requests easier to write and reason about, and can attach message handlers directly to the named channels.
+
+### Why NetChannel is better than the legacy approach
+
+NetChannel improves ergonomics and safety compared to the deprecated NetMessage API:
+
+- **Structured request/reply semantics** - instead of manually correlating messages and replies with NetMessage subscriptions, `RequestTo*` can accept a callback & receive the reply asynchronously right where you define the request.
+- **Handler attachment per-channel** - handlers are registered per channel and are explicit; there are no loose handlers floating around subscriptions.
+- **Faster local client requests** - old NetMessages were delayed by 1 frame even if the target was the local client (e.g. in single-player).
+
+
+### Quick concepts
+
+* **Channel**: a named communication channel (string identifier).
+* **Request / reply**: send a request and receive a response via a callback.
+* **Message**: a one-way transmission of payload data to the other context (fire-and-forget).
+* **Handlers** assign a *message handler* or *request handler* to a channel; these run when a message/request arrives.
+* **Request callbacks** when you `RequestTo*`, you can pass a callback to receive the reply asynchronously.
+
+---
+
+### API type annotation reference
+
+```lua
+--- Sets a handler for incoming messages (fire-and-forget)
+---@param callback fun(data:table, user:any)
+function NetChannel:SetHandler(callback) end
+
+--- Sets a handler for incoming requests; return a table as the reply
+---@param callback fun(data:table, user:any):table
+function NetChannel:SetRequestHandler(callback) end
+
+--- Send a request to the server; reply arrives via `replyCallback`
+---@param data table
+---@param replyCallback fun(data:table)
+function NetChannel:RequestToServer(data, replyCallback) end
+
+--- Send a request to a client; optionally specify a user and reply callback
+---@param data table
+---@param user integer|Guid
+---@param replyCallback fun(data:table)
+function NetChannel:RequestToClient(data, user, replyCallback) end
+```
+
+<a id="net-channel-examples"></a>
+### Usage patterns and examples
+
+This section provides some pseudo-code examples of how to use the NetChannel API under different scenarios.
+
+#### 1) Server-side handler that calls Osiris using data from the payload
+
+```lua
+-- Server side: handle requests
+Channels = {}
+Channels.TemplateAddTo = Net.CreateChannel(ModuleUUID, "TemplateAddTo")
+
+-- Using SetHandler: note there's no reply callback
+Channels.TemplateAddTo:SetHandler(function(data, user)
+    for _, v in pairs(data.Items) do
+        local template, amount = table.unpack(v)
+        _P("Adding " .. template .. " to " .. data.Target .. " with amount " .. amount)
+        Osi.TemplateAddTo(template, data.Target, amount or 1)
+    end
+end)
+
+-- Client side: send message to server
+Channels.TemplateAddTo:SendToServer({
+    Items = { {"item-template-guid-1", 1}, {"item-template-guid-2", 2} },
+    Target = someEntityId
+})
+```
+
+#### 2) Request / reply (client requests some data from the server)
+
+```lua
+-- Server side: handle requests
+Channels.CanItemBeMoved:SetRequestHandler(function(data, user)
+    local item = Ext.Entity.Get(data.Target)
+    return { Result = item.ServerItem.CanBeMoved }
+end)
+
+-- Client side: send to server and handle reply in the same spot (async)
+local itemUuid = ...
+Channels.CanItemBeMoved:RequestToServer({ Target = itemUuid }, function(response)
+    Log("CanItemBeMoved reply", itemUuid, response.Result)
+end)
+```
+
+This pattern allows the caller to perform work after the reply arrives without storing temporary state elsewhere, or defining multiple NetMessage channels (old API).
+
+#### 3) Broadcast & sync (server pushes global state)
+
+```lua
+-- Client side: message handler for SyncSettings
+Channels.SyncSettings = Net.CreateChannel(ModuleUUID, "SyncSettings")
+Channels.SyncSettings:SetHandler(function(data, user)
+    ModSettings = data.Settings
+    _P("Received mod settings sync from server")
+end)
+
+-- Server side: push current data to all connected clients
+Channels.SyncSettings:Broadcast({ Settings = MCM.GetCurrentSettings() })
+```
+
+#### 4) Targeted messages (server → specific client)
+
+```lua
+-- Server side: send data to a specific client (determined by clientId)
+Channels.ChangeAppearance = Net.CreateChannel(ModuleUUID, "ChangeAppearance")
+local clientId = ...
+Channels.ChangeAppearance:SendToClient({ CCAData = {...} }, clientId)
+```
+
+Only the client of id `clientId` will receive the message.
+
 
 <a id="net-utils"></a>
 ### Utility functions 
@@ -971,8 +1096,107 @@ Returns the entity index of the entity handle.
 (For development purposes only.)
 
 
-<a id="custom-variables"></a>
-## Custom variables
+<a id="noesis-ui"></a>
+## Noesis UI
+
+
+<a id="noesis-viewmodels"></a>
+### Custom ViewModels
+
+SE supports the creation and modification of Noesis viewmodels. These objects can be bound to UI elements as a DataContext and can participate in data binding.
+
+For details on how Noesis (WPF) data bindings work see: [docs](https://learn.microsoft.com/en-us/dotnet/desktop/wpf/data/)
+
+#### Registering a ViewModel type
+
+To create a new viewmodel, the structure of the viewmodel must be first registered with Noesis. This only needs to be done once (typically during script bootstrapping) and the type can be instantiated any number of times afterwards. Once registered, a type cannot be changed.
+
+
+To register a type, call the `Ext.UI.RegisterType(typeName, {property1 = {...}, property2 = {...}, ...}, [wrappedTypeName])` function.
+
+Example:
+```lua
+local changeCallback = function (context, value)
+    print("Value changed: ", value)
+end
+
+Ext.UI.RegisterType("PREFIX_YourTypeName", {
+    MyStringProperty = {Type = "String", WriteCallback = changeCallback},
+    CommandName1 = {Type = "Command"},
+    SomeCollection = {Type = "Collection"}
+})
+```
+
+The type name must be unique system-wide, so it's recommended to prefix the type name with the abbreviation of your mods name. When `RegisterType` is called with an already existing type name (eg. on a Lua reset), only changes to the `WriteCallback` property are applied; changes to fields, type names and the parent viewmodel type are not allowed.
+
+*Note 1:* Registered types persist until the application is restarted; the registration does not go away on a Lua reset.
+*Note 2:* To aid development, re-registering a type with different properties is allowed in Devel builds.
+
+Property definitions support the following parameters:
+
+- `Type`: Noesis type name; must always be specified
+- `Notify`: Determines whether property change notifications are sent when the field is written; this allows Noesis to automatically detect changes to the property and update the UI accordingly
+- `WriteCallback`: Function called when the value of the property is updated; this is useful for two-way data bindings when script needs to detect when the value of a UI field was updated.
+
+*Note 1:* Properties can't distinguish between writes from script and writes from Noesis UI; the `WriteCallback` will be called for both cases.
+*Note 2:* The `WriteCallback` is not called when the property is updated with the same value that it currently holds
+
+The supported property types are the following:
+
+- `Bool`: equivalent to the Lua `boolean` type
+- `Int8`, `Int16`, `Int32`, `Int64`, `UInt8`, `UInt16`, `UInt32`, `UInt64`: integer types with varying sizes; maps to the Lua `integer` (number) type
+- `Single`, `Double`: single-width and double-width floating point value; maps to the Lua `number` type
+- `String`: equivalent to the Lua `string` type
+- `Collection`: an array of Noesis objects; supports all classic Lua table operations (`__index`, `__newindex`, iteration, etc.)
+- `Command`: a command that can be invoked by Noesis UI elements; use `command:SetHandler(func)` to set a Lua callback to handle the command
+- `Object`: a reference to any Noesis object (either UI object or a viewmodel)
+- `Color`, `Vector2`, `Vector3`, `Point`, `Rect`: vector types with varying sizes
+
+The third (optional) parameter contains the type name of the viewmodel your type is wrapping; `nil` means that no viewmodel is being wrapped. When wrapping a viewmodel, all reads and writes to properties of the wrapped type are transparently forwarded to the underlying viewmodel object. This functionality exists to support extending the DataContext of existing UI widgets.
+
+#### Instantiating a ViewModel
+
+The `Ext.UI.Instantiate(type, [wrappedViewModel])` call constructs a new instance of the specified type.
+
+For types without a wrapped viewmodel the second parameter should be omitted:
+```lua
+local vm = Ext.UI.Instantiate("PREFIX_YourTypeName")
+vm.MyStringProperty = "whatever"
+```
+
+For types that wrap an existing DataContext, the wrapped object should be passed in the second parameter when constructing; the new object can be used to replace the existing DataContext on the widget:
+```lua
+local vm = Ext.UI.Instantiate("se::PREFIX_YourTypeName", mainMenu.DataContext)
+mainMenu.DataContext = vm
+```
+
+
+#### Example
+
+Example for replacing the main menu start game action:
+```lua
+-- Register a wrapper type for the main menu DataContext
+Ext.UI.RegisterType("SAMPLE_MainMenuCtx", {
+    StartGameCommand = {Type = "Command"} -- builtin command to start game
+}, "gui::DCMainMenu") -- gui::DCMainMenu is the name of the ingame main menu DataContext
+
+-- Jank sample code for getting a widget, DON'T DO IT LIKE THIS!
+local mainMenu = Ext.UI.GetRoot():Find("ContentRoot"):VisualChild(1)
+
+-- Create a wrapper around the original main menu DataContext
+local ctx = Ext.UI.Instantiate("se::SAMPLE_MainMenuCtx", mainMenu.DataContext)
+ctx.StartGameCommand:SetHandler(function () 
+    print("do stuff")
+end)
+
+-- Overwrite datacontext with our wrapper
+mainMenu.DataContext = ctx
+```
+
+
+
+<a id="user-variables"></a>
+## User variables
 
 v10 adds support for attaching custom properties to entities. These properties support automatic network synchronization between server and clients as well as savegame persistence.
 

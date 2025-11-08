@@ -760,6 +760,41 @@ struct InstancingObject : public RenderableObject
     Array<CullableInstance*> Instances;
 };
 
+struct LightDesc
+{
+    FixedString LightCookieTexture;
+    glm::vec3 Position;
+    glm::vec3 Color;
+    glm::vec3 Rotation;
+    float SpotLightInnerAngle;
+    int field_2C;
+    glm::vec3 DirectionLightDimensions;
+    float DirectionLightAttenuationStart;
+    float DirectionLightAttenuationEnd;
+    float DirectionLightAttenuationSide;
+    float Kelvin;
+    float Radius;
+    float Intensity;
+    float ScatteringIntensityScale;
+    float Gain;
+    float Speed;
+    float Amount;
+    float MovementSpeed;
+    float MovementAmount;
+    bool UseTemperature;
+    bool IsFlickering;
+    bool IsMoving;
+    bool Shadow;
+    bool VolumetricShadow;
+    bool Enabled;
+    bool PreExpose;
+    bool FlatFalloff;
+    uint8_t LightType;
+    uint8_t LightChannelFlag;
+    uint8_t DirectionLightAttenuationFunction;
+};
+
+
 struct [[bg3::component]] LightComponent : public MoveableObject
 {
     static constexpr uint32_t StaticRTTI = 0x10001;

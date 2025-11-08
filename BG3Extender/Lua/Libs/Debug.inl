@@ -264,20 +264,24 @@ void SetEntityRuntimeCheckLevel(int level)
     }
 }
 
-void Reset()
+void Reset(std::optional<bool> server, std::optional<bool> client)
 {
     if (!gExtender->GetConfig().DeveloperMode) {
         ERR("Reset() only available in developer mode");
         return;
     }
 
-    gExtender->GetServer().EnqueueTask([]() {
-        gExtender->GetServer().ResetLuaState();
-    });
+    if (server.value_or(true)) {
+        gExtender->GetServer().EnqueueTask([] () {
+            gExtender->GetServer().ResetLuaState();
+        });
+    }
 
-    gExtender->GetClient().EnqueueTask([]() {
-        gExtender->GetClient().ResetLuaState();
-    });
+    if (client.value_or(true)) {
+        gExtender->GetClient().EnqueueTask([] () {
+            gExtender->GetClient().ResetLuaState();
+        });
+    }
 }
 
 void RegisterDebugLib()

@@ -9,7 +9,7 @@ class GuidResourceBankHelperBase
 {
 public:
     virtual bool Push(lua_State* L, Guid resourceGuid) = 0;
-    virtual bool Create(lua_State* L, std::optional<Guid> resourceGuid) = 0;
+    virtual bool Create(lua_State* L, std::optional<Guid> resourceGuid, bool allowUnsafeExpansion) = 0;
     virtual Array<Guid> GetAll() = 0;
     virtual HashMap<Guid, Array<Guid>>* GetSources() = 0;
     virtual Array<Guid>* GetByModId(Guid modGuid) = 0;
@@ -23,7 +23,7 @@ public:
         return false;
     }
     
-    bool Create(lua_State* L, std::optional<Guid> resourceGuid) override
+    bool Create(lua_State* L, std::optional<Guid> resourceGuid, bool allowUnsafeExpansion) override
     {
         return false;
     }
@@ -67,7 +67,7 @@ public:
         }
     }
 
-    bool Create(lua_State* L, std::optional<Guid> resourceGuid) override
+    bool Create(lua_State* L, std::optional<Guid> resourceGuid, bool allowUnsafeExpansion) override
     {
         // We need at least one resource to copy the VMT pointer
         if (bank_->Resources.empty()) {
@@ -77,8 +77,12 @@ public:
         
         // It's unsafe to add new resources (for now) if we reach internal array size
         if (bank_->Resources.raw_values().size() == bank_->Resources.keys().size()) {
-            LuaError("Unable to create resource - no space left in resource bank");
-            return false;
+            if (allowUnsafeExpansion) {
+                Grow();
+            } else {
+                LuaError("Unable to create resource - no space left in resource bank");
+                return false;
+            }
         }
 
         Guid guid;
@@ -119,6 +123,25 @@ public:
 
 private:
     GuidResourceBank<T>* bank_;
+
+    void Grow()
+    {
+        WARN("Growing resource bank %s - this may break resource references!", EnumInfo<ExtResourceManagerType>::Find(T::ResourceManagerType).GetString());
+        // The game may still reference the old resources, so ensure that a copy is kept of the old buffer
+        // (This leaks memory!)
+        auto curSize = bank_->Resources.keys().size();
+        auto oldResources = bank_->Resources.raw_values().raw_buf();
+        T* newResources = GameMemoryAllocator::NewRaw<T>(curSize);
+        for (uint32_t i = 0; i < curSize; i++) {
+            new (oldResources + i) T(newResources[i]);
+        }
+
+        bank_->Resources.raw_values().unsafe_swap_buffer(newResources);
+
+        // Use a more aggressive grow size to ensure we don't need to reallocate too frequently
+        auto newCapacity = std::max(curSize, 200u) * 2;
+        bank_->Resources.reserve(newCapacity);
+    }
 };
 
 #define FOR_RESOURCE_TYPE(ty) case ty::ResourceManagerType: return MakeHelper<ty>(type);
@@ -194,7 +217,7 @@ Array<Guid>* GetGuidResourcesByModId(lua_State* L, ExtResourceManagerType type, 
 
 UserReturn CreateGuidResource(lua_State* L, ExtResourceManagerType type, std::optional<Guid> resourceGuid)
 {
-    if (!gGuidResourceHelpers.Get(type)->Create(L, resourceGuid)) {
+    if (!gGuidResourceHelpers.Get(type)->Create(L, resourceGuid, true)) {
         push(L, nullptr);
     }
 
