@@ -131,8 +131,6 @@ bool TimerManager::Pause(TimerHandle handle)
     if (timer) {
         if (!timer->Paused) {
             timer->Pause(lastUpdate_);
-        } else {
-            WARN("Tried to pause timer '%ld' that is already paused!", handle);
         }
         return true;
     } else {
@@ -153,13 +151,23 @@ bool TimerManager::Resume(TimerHandle handle)
         if (timer->Paused) {
             timer->Resume(lastUpdate_);
             QueueTimer(handle, *timer);
-        } else {
-            WARN("Tried to resume timer '%ld' that is not paused!", handle);
         }
         return true;
     } else {
         return false;
     }
+}
+
+bool TimerManager::IsPaused(TimerHandle handle)
+{
+    BaseTimer* timer{ nullptr };
+    if (handle & PersistentFlag) {
+        timer = persistentTimers_.Find((uint32_t)handle);
+    } else {
+        timer = ephemeralTimers_.Find((uint32_t)handle);
+    }
+
+    return timer && timer->Paused;
 }
 
 void TimerManager::Update(double time)
@@ -306,6 +314,15 @@ bool TimerSystem::Resume(TimerHandle handle)
     }
 }
 
+bool TimerSystem::IsPaused(TimerHandle handle)
+{
+    if (handle & TimerManager::RealtimeFlag) {
+        return realtime_.IsPaused(handle);
+    } else {
+        return game_.IsPaused(handle);
+    }
+}
+
 void TimerSystem::SavegameVisit(ObjectVisitor* visitor)
 {
     if (visitor->EnterNode(GFS.strPersistentTimers, GFS.strEmpty)) {
@@ -368,6 +385,11 @@ bool Resume(lua_State* L, TimerHandle handle)
     return State::FromLua(L)->GetTimers().Resume(handle);
 }
 
+bool IsPaused(lua_State* L, TimerHandle handle)
+{
+    return State::FromLua(L)->GetTimers().IsPaused(handle);
+}
+
 bool Cancel(lua_State* L, TimerHandle handle)
 {
     return State::FromLua(L)->GetTimers().Cancel(handle);
@@ -428,6 +450,7 @@ void RegisterTimerLib()
     MODULE_FUNCTION(RegisterPersistentHandler)
     MODULE_FUNCTION(Pause)
     MODULE_FUNCTION(Resume)
+    MODULE_FUNCTION(IsPaused)
     MODULE_FUNCTION(Cancel)
     END_MODULE()
 }
