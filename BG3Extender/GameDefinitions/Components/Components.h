@@ -397,7 +397,7 @@ struct DataComponent : public BaseComponent
 {
     DEFINE_COMPONENT(SightData, "eoc::sight::DataComponent")
 
-    Guid field_0;
+    [[bg3::legacy(field_0)]] Guid SightUuid;
     [[bg3::legacy(field_10)]] float DarkvisionRange;
     [[bg3::legacy(field_14)]] float FOV;
     [[bg3::legacy(field_18)]] float VerticalFOV;
@@ -411,7 +411,7 @@ struct EntityViewshedComponent : public BaseComponent
 {
     DEFINE_COMPONENT(SightEntityViewshed, "eoc::sight::EntityViewshedComponent")
 
-    HashSet<Guid> field_0;
+    [[bg3::legacy(field_0)]] HashSet<Guid> Viewshed;
 };
 
 struct IgnoreSurfacesComponent : public BaseComponent
@@ -421,6 +421,126 @@ struct IgnoreSurfacesComponent : public BaseComponent
     HashSet<SurfaceType> SurfaceTypes;
 };
 
+END_NS()
+
+
+BEGIN_NS(esv::sight)
+
+struct EntityData
+{
+    EntityHandle Entity;
+    bool IsCharacter;
+    bool field_9;
+    Guid EntityUuid;
+};
+
+struct EntityLosCheck
+{
+    EntityHandle Observer;
+    EntityHandle Target;
+    int32_t field_10;
+    std::optional<bool> Result;
+    bool IsCharacter;
+    bool field_17;
+};
+
+struct RecomputeEntry
+{
+    HashSet<EntityHandle> Viewshed;
+    int field_30;
+    uint8_t field_34;
+};
+
+
+struct AggregatedDataComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerSightAggregatedData, "esv::sight::AggregatedDataComponent")
+
+    HashMap<EntityHandle, Guid> EntitySightData;
+    HashMap<EntityHandle, Guid> RemovedEntitySightData;
+    HashMap<Guid, EntityData> Entities;
+    HashMap<Guid, EntityData> RemovedEntities;
+    HashMap<float, int32_t> SightRanges;
+    float MaxSightRange;
+    int field_144;
+    Array<EntityLosCheck> LosChecks;
+    Array<EntityHandle> LosCheckQueues;
+};
+
+struct EntityLosCheckQueueComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerSightEntityLosCheckQueue, "esv::sight::EntityLosCheckQueueComponent")
+
+    HashSet<EntityLosCheck> LosCheck;
+    HashMap<EntityHandle, Array<EntityLosCheck>> Entities;
+};
+
+struct RemovedSightUuid
+{
+    Guid SightUuid;
+    float DarkvisionRange;
+    float Sight;
+};
+
+struct ViewshedSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerSightViewshed, "esv::sight::ViewshedSystem")
+
+    [[bg3::hidden]] void* ViewshedSystemHelper;
+    [[bg3::hidden]] void* LevelManager;
+    [[bg3::hidden]] UnknownFunction SignalCollection;
+    HashMap<EntityHandle, RemovedSightUuid> ViewshedRemovals;
+    HashSet<EntityHandle> ViewshedClears;
+    HashMap<Guid, Array<HashSet<EntityHandle>>> ViewshedParticipantRemovals;
+    HashMap<EntityHandle, HashSet<EntityHandle>> ViewshedParticipantUpdates;
+};
+
+struct RemovedData
+{
+    Guid Entity;
+    bool IsCharacter;
+};
+
+struct AddedData
+{
+    bool IsCharacter;
+};
+
+struct EntityViewshedContentsChangedEventOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(ServerSightEntityViewshedContentsChanged, "esv::sight::EntityViewshedContentsChangedEventOneFrameComponent")
+
+    bool Added;
+    bool Removed;
+    HashMap<EntityHandle, AddedData> Additions;
+    HashMap<EntityHandle, RemovedData> Removals;
+};
+
+struct SightRangeChangedEventOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(ServerSightRangeChanged, "esv::sight::SightRangeChangedEventOneFrameComponent")
+
+    float SightRange;
+};
+
+struct DarkvisionRangeChangedEventOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(ServerDarkvisionRangeChanged, "esv::sight::DarkvisionRangeChangedEventOneFrameComponent")
+
+    float DarkvisionRange;
+};
+
+struct StealthRollRequestOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(ServerStealthRollRequest, "esv::sight::StealthRollRequestOneFrameComponent")
+
+    HashSet<EntityHandle> field_0;
+};
+
+
+DEFINE_TAG_COMPONENT(esv::sight, EventsEnabledComponent, ServerSightEventsEnabled)
+DEFINE_ONEFRAME_TAG_COMPONENT(esv::sight, IgnoreSurfacesChangedEventOneFrameComponent, ServerSightIgnoreSurfacesChanged)
+DEFINE_ONEFRAME_TAG_COMPONENT(esv::sight, StealthRollCancelOneFrameComponent, ServerStealthRollCancel)
 
 END_NS()
 
