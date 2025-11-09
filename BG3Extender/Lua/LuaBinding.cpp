@@ -92,6 +92,11 @@ void push(lua_State* L, stats::ConditionId const& h)
     }
 }
 
+void push(lua_State* L, StatsExpressionRef const& c)
+{
+    MakeObjectRef(L, c.Get());
+}
+
 void push(lua_State* L, ImguiHandle const& h)
 {
     if (h) {

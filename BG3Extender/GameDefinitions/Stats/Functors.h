@@ -262,7 +262,7 @@ struct ApplyStatusFunctor : public Functor
     int StatusSpecificParam2{ -1 }; // Arg5
     int StatusSpecificParam3{ -1 }; // Arg6
     bool RequiresConcentration{ false };
-    [[bg3::hidden]] StatsExpressionParam* DurationLuaExpression{ nullptr }; // Arg3
+    StatsExpressionRef Duration; // Arg3
     [[bg3::legacy(HasParam6)]] bool KeepAlive{ false };
 };
 
@@ -314,7 +314,7 @@ struct ForceFunctor : public Functor
     FixedString Distance; // Arg0
     ForceFunctorOrigin Origin{ ForceFunctorOrigin::OriginToEntity }; // Arg1
     ForceFunctorAggression Aggression{ ForceFunctorAggression::Aggressive }; // Arg2
-    StatsExpressionParamEx* DistanceExpression{ nullptr };
+    StatsExpressionRef DistanceExpression;
     bool ControlArc{ false };
     bool PullToOrigin{ false };
 };
@@ -389,7 +389,7 @@ struct DealDamageFunctor : public Functor
     DealDamageWeaponType WeaponType{ DealDamageWeaponType::None }; // Arg1
     DealDamageWeaponType WeaponTypeOverride{ DealDamageWeaponType::None };
     DealDamageWeaponDamageType WeaponDamageType{ DealDamageWeaponDamageType::None }; // Arg2
-    StatsExpressionParam* Damage{ nullptr }; // Arg1
+    StatsExpressionRef Damage; // Arg1
     int CoinMultiplier{ 0 };
     bool Nonlethal{ false }; // Arg4
     bool Magical{ false }; // Arg3
@@ -410,7 +410,7 @@ struct RegainHitPointsFunctor : public Functor
 {
     DEFN_FUNCTOR(RegainHitPoints)
 
-    StatsExpressionParam* HitPoints{ nullptr };
+    StatsExpressionRef HitPoints;
     TargetTypeFlags HealingType{ TargetTypeFlags::Living };
 };
 
@@ -487,7 +487,7 @@ struct RestoreResourceFunctor : public Functor
 
     Guid ActionResource; // Arg0
     [[bg3::legacy(Hex)]] int Level{ 0 }; // Arg2
-    StatsExpressionParam* LuaAmount{ nullptr }; // Arg1
+    StatsExpressionRef AmountExpression; // Arg1
     double Amount{ 0.0 }; // Arg1
     RestoreResourceAmountType AmountType{ RestoreResourceAmountType::None };
 };
@@ -590,7 +590,7 @@ struct GainTemporaryHitPointsFunctor : public Functor
 {
     DEFN_FUNCTOR(GainTemporaryHitPoints)
 
-    StatsExpressionParam* HitPointsExpression;
+    StatsExpressionRef HitPoints;
 };
 
 struct FireProjectileFunctor : public Functor
@@ -627,7 +627,7 @@ struct RegainTemporaryHitPointsFunctor : public Functor
 {
     DEFN_FUNCTOR(RegainTemporaryHitPoints)
 
-    StatsExpressionParam* HitPoints;
+    StatsExpressionRef HitPoints;
 };
 
 struct RemoveStatusByLevelFunctor : public Functor
@@ -665,7 +665,7 @@ struct AdjustRollFunctor : public Functor
 {
     DEFN_FUNCTOR(AdjustRoll)
 
-    StatsExpressionParam* Expression; // Arg1
+    StatsExpressionRef Expression; // Arg1
     RollAdjustmentType Type; // Arg2
     DamageType DamageType; // Arg2
 };

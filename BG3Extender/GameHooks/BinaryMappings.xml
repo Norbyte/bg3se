@@ -747,6 +747,18 @@
       <Target Type="Indirect" Offset="@ref1" Symbol="ls__gTextureAtlasMap" />
     </Mapping>
 
+    <Mapping Name="eoc::gDynamicStatsExpressionManager">
+      0f 57 c0 // xorps   xmm0, xmm0
+      f3 0f 2c c0 // cvttss2si eax, xmm0
+      eb 02 // jmp     short loc_1437515C6
+      8b c6 // mov     eax, esi
+      88 85 ?? ?? 00 00 // mov     byte ptr [rbp+560h+var_368], al
+      @ref1 48 8b 3d ?? ?? ?? ?? // mov     rdi, cs:eoc__gDynamicStatsExpressionManager
+      @str1 48 8d 0d ?? ?? ?? ?? // lea     rcx, a1d4; "1d4"
+      <Condition Type="String" Offset="@str1" Value="1d4" />
+      <Target Type="Indirect" Offset="@ref1" Symbol="eoc__DynamicStatsExpressionManager" />
+    </Mapping>
+
     <Mapping Name="esv::OsirisVariableHelper::SavegameVisit">
       48 89 5c 24 08 // mov     [rsp+arg_0], rbx
       55 // push    rbp

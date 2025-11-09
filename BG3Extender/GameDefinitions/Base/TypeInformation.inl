@@ -256,6 +256,7 @@ void TypeInformationRepository::Initialize()
     nsCollection.ElementType = GetStaticTypeInfo(Overload<Noesis::BaseObject>{});
 
     RegisterStaticType<stats::ConditionId>("stats::ConditionId", LuaTypeId::String);
+    RegisterStaticType<StatsExpressionRef>("StatsExpressionRef", LuaTypeId::String);
 
     RegisterObjectProxyTypeInformation();
 

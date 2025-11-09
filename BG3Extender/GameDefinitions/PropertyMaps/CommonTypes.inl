@@ -47,19 +47,19 @@ P_FUN(Get, TranslatedFSString::Get)
 END_CLS()
 
 
-BEGIN_CLS(StatsExpressionParam)
+BEGIN_CLS(StatsExpressionInternal)
 P(Params)
 P(Code)
 END_CLS()
 
 
-BEGIN_CLS(StatsExpressionParamEx)
-INHERIT(StatsExpressionParam)
+BEGIN_CLS(StatsExpressionPooled)
+INHERIT(StatsExpressionInternal)
 END_CLS()
 
 
 BEGIN_CLS(StatsExpressionWithMetadata)
-INHERIT(StatsExpressionParam)
+INHERIT(StatsExpressionInternal)
 P(field_28)
 P(Cause)
 P(field_48)

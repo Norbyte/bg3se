@@ -54,7 +54,7 @@ DEFN_BOOST(Ability, Ability, {
 
 DEFN_BOOST(RollBonus, RollBonus, {
     stats::RollType RollType;
-    StatsExpressionParam Amount;
+    StatsExpressionInternal Amount;
     AbilityId Ability;
     SkillId Skill;
 })
@@ -95,7 +95,7 @@ DEFN_BOOST(WeaponDamageResistance, WeaponDamageResistance, {
 })
 
 DEFN_BOOST(ProficiencyBonusOverride, ProficiencyBonusOverride, {
-    StatsExpressionParam Value;
+    StatsExpressionInternal Value;
 })
 
 DEFN_BOOST(JumpMaxDistanceMultiplier, JumpMaxDistanceMultiplier, {
@@ -133,7 +133,7 @@ struct IncreaseMaxHPComponent : public BaseComponent
 {
     DEFINE_COMPONENT(IncreaseMaxHPBoost, "eoc::IncreaseMaxHPBoostComponent")
 
-    std::variant<int32_t, StatsExpressionParam> Amount;
+    std::variant<int32_t, StatsExpressionInternal> Amount;
     int32_t field_30;
 };
 
@@ -159,7 +159,7 @@ DEFN_BOOST(CannotHarmCauseEntity, CannotHarmCauseEntity, {
 })
 
 DEFN_BOOST(TemporaryHP, TemporaryHP, {
-    StatsExpressionParam HP;
+    StatsExpressionInternal HP;
 })
 
 DEFN_BOOST(Weight, Weight, {
@@ -213,12 +213,12 @@ DEFN_BOOST(IgnoreDamageThresholdMin, IgnoreDamageThreshold, {
 
 DEFN_BOOST(Skill, Skill, {
     SkillId Skill;
-    StatsExpressionParam Amount;
+    StatsExpressionInternal Amount;
 })
 
 DEFN_BOOST(WeaponDamage, WeaponDamage, {
     DamageType DamageType;
-    StatsExpressionParam Amount;
+    StatsExpressionInternal Amount;
     bool field_30;
 })
 
@@ -271,7 +271,7 @@ DEFN_BOOST(MinimumRollResult, MinimumRollResult, {
 })
 
 DEFN_BOOST(CharacterWeaponDamage, CharacterWeaponDamage, {
-    StatsExpressionParam Amount;
+    StatsExpressionInternal Amount;
     DamageType DamageType;
 })
 
@@ -366,7 +366,7 @@ struct DamageReductionBoostComponent : public BaseComponent
     static constexpr auto BoostType = BoostType::DamageReduction;
 
     DamageType DamageType;
-    std::variant<int32_t, StatsExpressionParam> Amount;
+    std::variant<int32_t, StatsExpressionInternal> Amount;
     bool Flat;
     bool Half;
 };
@@ -413,7 +413,7 @@ DEFN_BOOST(MaximizeHealing, MaximizeHealing, {
 })
 
 DEFN_BOOST(DamageBonus, DamageBonus, {
-    StatsExpressionParam Amount;
+    StatsExpressionInternal Amount;
     DamageType DamageType;
     uint8_t field_31;
 })
@@ -428,7 +428,7 @@ DEFN_BOOST(SpellResistance, SpellResistance, {
 })
 
 DEFN_BOOST(WeaponAttackRollBonus, WeaponAttackRollBonus, {
-    StatsExpressionParam Amount;
+    StatsExpressionInternal Amount;
 })
 
 DEFN_BOOST(SpellSaveDC, SpellSaveDC, {
@@ -463,7 +463,7 @@ DEFN_BOOST(HorizontalFOVOverride, HorizontalFOVOverride, {
 })
 
 DEFN_BOOST(CharacterUnarmedDamage, CharacterUnarmedDamage, {
-    StatsExpressionParam Amount;
+    StatsExpressionInternal Amount;
     DamageType DamageType;
 })
 
@@ -551,7 +551,7 @@ DEFN_BOOST(ProficiencyBonusIncrease, ProficiencyBonusIncrease, {
 })
 
 DEFN_BOOST(DamageTakenBonus, DamageTakenBonus, {
-    StatsExpressionParam Amount;
+    StatsExpressionInternal Amount;
     DamageType DamageType;
     bool Arg3;
 })

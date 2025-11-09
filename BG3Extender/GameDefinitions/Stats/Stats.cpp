@@ -6,6 +6,7 @@
 #include <Extender/ScriptExtender.h>
 
 #include <GameDefinitions/Stats/Functors.inl>
+#include <GameDefinitions/Stats/Expression.inl>
 
 BEGIN_NS(stats)
 

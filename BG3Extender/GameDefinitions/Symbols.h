@@ -87,6 +87,8 @@ namespace bg3se
         stats::InterruptPrototypeManager** eoc__InterruptPrototypeManager{ nullptr };
         stats::InterruptPrototype::InitProc* eoc__InterruptPrototype__Init{ nullptr };
 
+        DynamicStatsExpressionManager** eoc__DynamicStatsExpressionManager{ nullptr };
+
         stats::ParseStaticBoostsProc* eoc__ParseStaticBoosts{ nullptr };
 
         esv::OsirisVariableHelper__SavegameVisitProc* esv__OsirisVariableHelper__SavegameVisit{ nullptr };

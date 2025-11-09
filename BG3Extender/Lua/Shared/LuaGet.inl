@@ -301,6 +301,22 @@ stats::ConditionId do_get(lua_State* L, int index, Overload<stats::ConditionId>)
     return {};
 }
 
+StatsExpressionRef do_get(lua_State* L, int index, Overload<StatsExpressionRef>)
+{
+    // If it's a string, parse through the dynamic expression manager
+    auto str = get<std::optional<StringView>>(L, index);
+    if (str) {
+        auto manager = GetStaticSymbols().eoc__DynamicStatsExpressionManager;
+        Guid hash;
+        MurmurHash3_x64_128(str->data(), (int)str->size(), 0, &hash);
+        return (*manager)->CreateStatsExpression(hash, *str);
+    }
+
+    // If it's a refcounted stats expression, reference it directly
+    auto expr = get<StatsExpressionPooled*>(L, index);
+    return StatsExpressionRef(expr);
+}
+
 Ref do_get(lua_State* L, int index, Overload<Ref>)
 {
     return Ref(L, index);

@@ -161,7 +161,7 @@ struct StatusDowned : public StatusIncapacitated
     int NumStableSuccess;
     int NumStableFailed;
     int StableRollDC;
-    StatsExpressionParam* StableRoll;
+    StatsExpressionRef StableRoll;
     stats::Functors* OnRollsFailed;
     stats::Functors* OnSuccess;
     [[bg3::hidden]] UnknownFunction RollSignals;

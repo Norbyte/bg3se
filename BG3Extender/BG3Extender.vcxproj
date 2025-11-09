@@ -468,6 +468,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="GameDefinitions\PropertyMaps\UI.inl" />
     <None Include="GameDefinitions\Render.inl" />
     <None Include="GameDefinitions\RootTemplates.inl" />
+    <None Include="GameDefinitions\Stats\Expression.inl" />
     <None Include="GameDefinitions\Stats\Functors.inl" />
     <None Include="GameDefinitions\Status.inl" />
     <None Include="GameHooks\EngineHooks.inl" />

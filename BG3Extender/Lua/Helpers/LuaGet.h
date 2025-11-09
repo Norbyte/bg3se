@@ -223,6 +223,7 @@ glm::mat4 do_get(lua_State* L, int index, Overload<glm::mat4>);
 MathParam do_get(lua_State* L, int index, Overload<MathParam>);
 EntityHelper do_get(lua_State* L, int index, Overload<EntityHelper>);
 stats::ConditionId do_get(lua_State* L, int index, Overload<stats::ConditionId>);
+StatsExpressionRef do_get(lua_State* L, int index, Overload<StatsExpressionRef>);
 // Jank, but we can't put it anywhere else for now :(
 LuaSoundObjectId do_get(lua_State* L, int index, Overload<LuaSoundObjectId>);
 
