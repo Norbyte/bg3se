@@ -88,6 +88,12 @@ struct AiTilePos
     }
 };
 
+struct AiTileCell
+{
+    int16_t X;
+    int16_t Y;
+};
+
 inline constexpr uint64_t Hash(AiTilePos const& v)
 {
     return v.X | ((uint64_t)v.Y << 16) | ((uint64_t)v.SubgridId << 32);

@@ -430,7 +430,6 @@ struct EntityData
 {
     EntityHandle Entity;
     bool IsCharacter;
-    bool field_9;
     Guid EntityUuid;
 };
 
@@ -441,7 +440,13 @@ struct EntityLosCheck
     int32_t field_10;
     std::optional<bool> Result;
     bool IsCharacter;
-    bool field_17;
+    uint8_t field_17;
+
+    inline bool operator == (EntityLosCheck const& o) const
+    {
+        return Observer == o.Observer
+            && Target == o.Target;
+    }
 };
 
 struct RecomputeEntry
@@ -451,6 +456,53 @@ struct RecomputeEntry
     uint8_t field_34;
 };
 
+struct RemovedSightUuid
+{
+    Guid SightUuid;
+    float DarkvisionRange;
+    float Sight;
+};
+
+struct LightLosCheck
+{
+    EntityHandle Entity;
+    int32_t Time;
+    HashMap<AiTilePos, bool> Tiles;
+    uint8_t field_50;
+    bool field_51;
+};
+
+struct LightLosCheckQueue
+{
+    HashMap<EntityHandle, LightLosCheck> Checks;
+    HashMap<EntityHandle, LightLosCheck> Checks2;
+    HashMap<EntityHandle, int32_t> RemovedEntities;
+};
+
+struct RemovedData
+{
+    Guid Entity;
+    bool IsCharacter;
+};
+
+struct AddedData
+{
+    bool IsCharacter;
+};
+
+END_NS()
+
+BEGIN_SE()
+
+template <>
+inline uint64_t HashMapHash<esv::sight::EntityLosCheck>(esv::sight::EntityLosCheck const& v)
+{
+    return HashMulti(v.Observer, v.Target);
+}
+
+END_SE()
+
+BEGIN_NS(esv::sight)
 
 struct AggregatedDataComponent : public BaseComponent
 {
@@ -475,11 +527,31 @@ struct EntityLosCheckQueueComponent : public BaseComponent
     HashMap<EntityHandle, Array<EntityLosCheck>> Entities;
 };
 
-struct RemovedSightUuid
+struct AiGridViewshedComponent : public BaseComponent
 {
-    Guid SightUuid;
-    float DarkvisionRange;
-    float Sight;
+    DEFINE_COMPONENT(ServerAiGridViewshed, "esv::sight::AiGridViewshedComponent")
+
+    HashMap<AiSubgridId, HashMap<int16_t, Array<AiTileCell>>> Viewshed;
+    uint32_t Count;
+};
+
+struct LightLosCheckQueueComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerLightLosCheckQueue, "esv::sight::LightLosCheckQueueComponent")
+
+    Array<LightLosCheck> Checks;
+    Array<LightLosCheck> Checks2;
+};
+
+struct AggregatedGameplayLightDataComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerAggregatedGameplayLightData, "esv::sight::AggregatedGameplayLightDataComponent")
+
+    HashMap<float, int32_t> Ranges;
+    HashMap<EntityHandle, glm::vec3> MovedViewsheds;
+    float MaxRange;
+    LightLosCheckQueue LosCheckQueue;
+    Array<EntityHandle> LightLosCheckQueues;
 };
 
 struct ViewshedSystem : public BaseSystem
@@ -493,17 +565,6 @@ struct ViewshedSystem : public BaseSystem
     HashSet<EntityHandle> ViewshedClears;
     HashMap<Guid, Array<HashSet<EntityHandle>>> ViewshedParticipantRemovals;
     HashMap<EntityHandle, HashSet<EntityHandle>> ViewshedParticipantUpdates;
-};
-
-struct RemovedData
-{
-    Guid Entity;
-    bool IsCharacter;
-};
-
-struct AddedData
-{
-    bool IsCharacter;
 };
 
 struct EntityViewshedContentsChangedEventOneFrameComponent : public BaseComponent

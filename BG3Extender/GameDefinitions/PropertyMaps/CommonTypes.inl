@@ -99,6 +99,12 @@ P(SubgridId)
 END_CLS()
 
 
+BEGIN_CLS(AiTileCell)
+P(X)
+P(Y)
+END_CLS()
+
+
 BEGIN_CLS(SurfacePathInfluence)
 P(SurfaceType)
 P(IsCloud)
