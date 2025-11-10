@@ -513,6 +513,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="Lua\Libs\Net.inl" />
     <None Include="Lua\Libs\ServerNet.inl" />
     <None Include="Lua\Libs\ServerTemplate.inl" />
+    <None Include="Lua\Libs\StatFunctors.inl" />
     <None Include="Lua\Libs\StaticData.inl" />
     <None Include="Lua\Libs\Stats.inl" />
     <None Include="Lua\Libs\Table.inl" />
@@ -529,7 +530,6 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="Lua\Server\ServerEntityReplicationEvents.inl" />
     <None Include="Lua\Server\FunctorEvents.inl" />
     <None Include="Lua\Osiris\FunctionProxy.inl" />
-    <None Include="Lua\Server\ServerFunctors.inl" />
     <None Include="Lua\Shared\EntityComponentEvents.inl" />
     <None Include="Lua\Shared\EntityEventHelpersClient.inl" />
     <None Include="Lua\Shared\EntityEventHelpersServer.inl" />

@@ -218,25 +218,11 @@ struct Functors : public stats::CNamedElementManager<Functor>
 
     // Lua getter helpers
     Array<Functor*>* LuaGetFunctorList() const;
+    Functor* AddNew(FunctorId action);
     //# P_GETTER(FunctorList, LuaGetFunctorList)
+    //# P_FUN(AddNew, stats::Functors::AddNew)
 };
 
-
-// FIXME - use custom implementation of base VMT or use base VMT?
-struct StatsFunctorSetImpl : public Functors
-{
-    /*~StatsFunctorSetImpl() override;
-    void ClearNextIndex() override;
-    void Clear() override;
-    void AddOrUpdate(Functor*) override;
-    Functor* GetByIndex(int64_t) override;
-    Functor* GetByName(FixedString const&) override;
-    void Unknown_30() override;
-    int64_t GetSize() override;
-    Functor* GetByIndex2(int64_t) override;
-    Functor* GetByIndex3(int64_t) override;
-    void UpdateNameMap() override;*/
-};
 
 #define DEFN_FUNCTOR(ty) \
     static constexpr auto FunctorType = FunctorId::ty; \

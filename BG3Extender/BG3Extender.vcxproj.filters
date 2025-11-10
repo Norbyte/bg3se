@@ -572,9 +572,6 @@
     <None Include="Lua\Server\FunctorEvents.inl">
       <Filter>Lua\Server</Filter>
     </None>
-    <None Include="Lua\Server\ServerFunctors.inl">
-      <Filter>Lua\Server</Filter>
-    </None>
     <None Include="GameDefinitions\PropertyMaps\SurfaceActions.inl">
       <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
@@ -783,6 +780,7 @@
     <None Include="Lua\Libs\ClientUI\Builtins.inl" />
     <None Include="Lua\Libs\ClientUI\CustomProperties.inl" />
     <None Include="GameDefinitions\Stats\Expression.inl" />
+    <None Include="Lua\Libs\StatFunctors.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">
