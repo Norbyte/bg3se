@@ -58,6 +58,7 @@ BEGIN_ENUM(ExtSystemType, uint32_t)
     E(ServerParty)
     E(ServerAi)
     E(ServerSightViewshed)
+    E(ServerRollSave)
 
     E(ClientEquipmentVisuals)
     E(ClientVisual)
@@ -1133,6 +1134,7 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
     E(ServerRollInProgress)
     E(ServerRollStartRequest)
     E(ServerRollStartSpellRequest)
+    E(ServerRollStreams)
 
     // Boost components
     E(ArmorClassBoost)

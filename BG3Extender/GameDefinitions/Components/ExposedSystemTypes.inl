@@ -54,6 +54,7 @@ T(esv::attitude::UpdateSystem)
 T(esv::party::PartySystem)
 T(esv::AiHelpers)
 T(esv::sight::ViewshedSystem)
+T(esv::roll::stream::SaveSystem)
 
 T(ecl::EquipmentVisualsSystem)
 T(ecl::VisualSystem)
