@@ -34,15 +34,15 @@ struct Modification
 
     struct ModifySpellFlags
     {
-        uint8_t SpellFlags{ 0 };
-        uint8_t field_1{ 0 };
+        SpellModificationSpellFlags SpellFlags{ 0 };
+        [[bg3::legacy(field_1)]] bool Value{ 0 };
     };
 
     struct ModifySpellRoll
     {
-        STDString Conditions;
-        STDString Conditions2;
-        int field_30{ 0 };
+        [[bg3::legacy(Conditions)]] STDString ReplaceFrom;
+        [[bg3::legacy(Conditions2)]] STDString ReplaceTo;
+        [[bg3::legacy(field_30)]] int Priority{ 0 };
     };
 
     struct ModifyStatusDuration
@@ -95,7 +95,7 @@ struct Modification
 
     using Variant = std::variant<ModifyAreaRadius, ModifyMaximumTargets, ModifyNumberOfTargets, ModifySavingThrowDisadvantage, ModifySpellFlags, ModifySpellRoll, ModifyStatusDuration, ModifySummonDuration, ModifySurfaceDuration, ModifyTargetRadius, ModifyUseCosts, ModifyVisuals, ModifyIconGlow, ModifyTooltipDescription>;
 
-    uint8_t field_0{ 0 };
+    [[bg3::legacy(field_0)]] SpellModificationSource Source{ SpellModificationSource::Boost };
     FixedString Source;
     Variant Modification;
     HashSet<SpellId> Spells;
@@ -126,7 +126,7 @@ struct PlayerPrepareSpellComponent : public BaseComponent
     DEFINE_COMPONENT(PlayerPrepareSpell, "eoc::spell::PlayerPrepareSpellComponent")
 
     Array<SpellMetaId> Spells;
-    uint8_t field_30;
+    [[bg3::legacy(field_30)]] bool CharacterCreationPrepared;
 };
 
 struct CCPrepareSpellComponent : public BaseComponent
@@ -168,9 +168,9 @@ struct CooldownData
 {
     SpellId SpellId;
     SpellCooldownType CooldownType{ SpellCooldownType::Default };
-    uint8_t field_29{ 0 };
+    [[bg3::legacy(field_29)]] SpellCooldownType CooldownType2{ SpellCooldownType::Default };
     float Cooldown;
-    Guid field_30;
+    [[bg3::legacy(field_30)]] Guid SpellCastGuid;
 };
 
 struct SpellBookCooldownsComponent : public BaseComponent
@@ -218,7 +218,7 @@ struct BookComponent : public BaseComponent
 {
     DEFINE_COMPONENT(SpellBook, "eoc::spell::BookComponent")
 
-    EntityHandle field_0;
+    [[bg3::legacy(field_0)]] EntityHandle Entity;
     Array<SpellData> Spells;
 };
 
@@ -227,8 +227,8 @@ struct BookPreparesComponent : public BaseComponent
     DEFINE_COMPONENT(SpellBookPrepares, "eoc::spell::BookPreparesComponent")
 
     Array<SpellMetaId> PreparedSpells;
-    HashMap<Guid, int> field_30;
-    HashMap<Guid, int> field_88;
+    [[bg3::legacy(field_30)]] HashMap<Guid, int> ClassPreparedSpellCount;
+    [[bg3::legacy(field_88)]] HashMap<Guid, int> ClassFallbackPreparedSpellCount;
 };
 
 END_NS()
@@ -321,7 +321,7 @@ struct SpellCooldownSystem : public BaseSystem
 {
     DEFINE_SYSTEM(ServerSpellCooldown, "esv::SpellCooldownSystem")
 
-    [[bg3::hidden]] UnknownFunction field_10;
+    [[bg3::hidden]] UnknownFunction SignalCollection;
     [[bg3::hidden]] void* CharacterManager;
     [[bg3::hidden]] void* SpellPrototypeManager;
     [[bg3::hidden]] void* RollManager;
@@ -330,7 +330,7 @@ struct SpellCooldownSystem : public BaseSystem
     HashMap<EntityHandle, float> UpdateCooldown;
     HashSet<EntityHandle> ResetAllCooldowns;
     HashSet<EntityHandle> RoundCooldowns;
-    HashMap<EntityHandle, bool> RechargeSpells_EH_bool;
+    [[bg3::legacy(RechargeSpells_EH_bool)]] HashMap<EntityHandle, bool> RechargeSpells;
     HashMap<EntityHandle, Array<SpellId>> UseRechargeSpell;
 };
 

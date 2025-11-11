@@ -520,6 +520,14 @@ BEGIN_ENUM(SpellModificationValueType, uint8_t)
     EV(Override, 3)
 END_ENUM()
 
+BEGIN_BITMASK(SpellModificationSpellFlags, uint8_t)
+    EV(Somatic, 2)
+    EV(Verbal, 4)
+    EV(Stealth, 8)
+    EV(Melee, 16)
+    EV(Invisible, 32)
+END_ENUM()
+
 BEGIN_ENUM(SourceAdvantageType, uint8_t)
     EV(None, 0)
     EV(SourceAdvantageOnAttack, 1)
@@ -1284,25 +1292,40 @@ BEGIN_ENUM(SpellSourceType, uint8_t)
     EV(ProgressionRace, 0x2)
     EV(Boost, 0x3)
     EV(Shapeshift, 0x4)
-    EV(SpellSet2, 0x5)
+    EV(SpellSet2, 0x5) // Legacy name
+    EV(Template, 0x5)
     EV(SpellSet, 0x6)
-    EV(WeaponAttack, 0x7)
-    EV(UnarmedAttack, 0x8)
+    EV(WeaponAttack, 0x7) // Legacy name
+    EV(WeaponSpell, 0x7)
+    EV(UnarmedAttack, 0x8) // Legacy name
+    EV(Guaranteed, 0x8)
     EV(Osiris, 0x9)
     EV(Anubis, 0xA)
     EV(Behavior, 0xB)
     EV(Debug, 0xC)
-    EV(EquippedItem, 0xD)
-    EV(GameActionCreateSurface, 0xE)
+    EV(EquippedItem, 0xD) // Legacy name
+    EV(UseAction, 0xD)
+    EV(GameActionCreateSurface, 0xE) // Legacy name
+    EV(StormAction, 0xE)
     EV(Functor, 0xF)
-    EV(CreateExplosion, 0x10)
+    EV(CreateExplosion, 0x10) // Legacy name
+    EV(Explosion, 0x10) // Legacy name
     EV(AiTest, 0x11)
     EV(Learned, 0x12)
-    EV(Boost2, 0x13)
-    EV(Progression, 0x14)
+    EV(Boost2, 0x13) // Legacy name
+    EV(Feat, 0x13)
+    EV(Progression, 0x14) // Legacy name
+    EV(BaseStats, 0x14)
     EV(RandomCast, 0x15)
     EV(TadpoleTree, 0x16)
     EV(Sentinel, 0x17)
+END_ENUM()
+
+BEGIN_ENUM(SpellModificationSource, uint8_t)
+    EV(Passive, 0x0)
+    EV(MetaMagic, 0x1)
+    EV(Status, 0x2)
+    EV(Boost, 0x3)
 END_ENUM()
 
 BEGIN_ENUM(ProgressionType, uint8_t)
