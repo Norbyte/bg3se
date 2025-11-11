@@ -221,6 +221,7 @@ struct Functors : public stats::CNamedElementManager<Functor>
     Functor* AddNew(FunctorId action);
     //# P_GETTER(FunctorList, LuaGetFunctorList)
     //# P_FUN(AddNew, stats::Functors::AddNew)
+    //# P_FUN(Remove, stats::Functors::Remove)
 };
 
 
