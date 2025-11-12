@@ -95,7 +95,7 @@ struct Modification
 
     using Variant = std::variant<ModifyAreaRadius, ModifyMaximumTargets, ModifyNumberOfTargets, ModifySavingThrowDisadvantage, ModifySpellFlags, ModifySpellRoll, ModifyStatusDuration, ModifySummonDuration, ModifySurfaceDuration, ModifyTargetRadius, ModifyUseCosts, ModifyVisuals, ModifyIconGlow, ModifyTooltipDescription>;
 
-    [[bg3::legacy(field_0)]] SpellModificationSource Source{ SpellModificationSource::Boost };
+    [[bg3::legacy(field_0)]] SpellModificationSource SourceType{ SpellModificationSource::Boost };
     FixedString Source;
     Variant Modification;
     HashSet<SpellId> Spells;

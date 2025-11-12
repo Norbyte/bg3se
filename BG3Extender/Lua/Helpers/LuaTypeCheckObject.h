@@ -2,18 +2,16 @@
 
 BEGIN_NS(lua)
 
-template <class... Args>
-typename bool do_typecheck(lua_State* L, int index, Overload<std::variant<Args...>>)
-{
-    // FIXME!
-    return false;
-}
-
 template <class T>
 typename std::enable_if_t<!IsByVal<T> && !std::is_pointer_v<T>, bool> do_typecheck(lua_State* L, int index, Overload<T>)
 {
-    return lua_typecheck_cppvalue(L, index, MetatableTag::ObjectRef, StructID<T>::ID)
-        || (lua_type(L, index) == LUA_TTABLE && lua_typecheck_struct(L, index, StructID<T>::ID));
+    if constexpr (IsArrayLike<T>::Value || IsSetLike<T>::Value || IsMapLike<T>::Value) {
+        // TODO - currently no typechecking supported for cppobject assignment or contents of variant array/set types
+        return lua_type(L, index) == LUA_TTABLE;
+    } else {
+        return lua_typecheck_cppvalue(L, index, MetatableTag::ObjectRef, StructID<T>::ID)
+            || (lua_type(L, index) == LUA_TTABLE && lua_typecheck_struct(L, index, StructID<T>::ID));
+    }
 }
 
 template <class T>

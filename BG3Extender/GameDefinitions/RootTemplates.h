@@ -6,7 +6,7 @@ BEGIN_SE()
 
 struct TemplateTagContainer;
 
-struct GameObjectTemplate
+struct GameObjectTemplate : public ProtectedGameObject<GameObjectTemplate>
 {
     virtual ~GameObjectTemplate() = 0;
     virtual void* GetName(void*) const = 0;
@@ -68,6 +68,14 @@ struct GameObjectTemplate
     OverrideableProperty<RenderChannel> RenderChannel;
     OverrideableProperty<uint8_t> ParentTemplateFlags;
     STDString FileName;
+};
+
+struct GlobalConfigParameter
+{
+    using ValueType = std::variant<STDString, int, double, bool, glm::vec3>;
+
+    STDString Name;
+    std::variant<Array<ValueType>, ValueType> Value;
 };
 
 
@@ -135,8 +143,7 @@ struct SceneryTemplate : public EoCGameObjectTemplate
 
 struct CombatComponentTemplate : public ProtectedGameObject<CombatComponentTemplate>
 {
-    [[bg3::hidden]]
-    void* VMT;
+    [[bg3::hidden]] void* VMT;
     OverrideableProperty<FixedString> Archetype;
     OverrideableProperty<FixedString> SwarmGroup;
     OverrideableProperty<Guid> Faction;
@@ -199,11 +206,22 @@ struct CharacterSpellData
     AiActionConditions Conditions;
 };
 
+struct FootStepInfo
+{
+    FixedString Name;
+    FixedString FootPrintEffectName;
+    FixedString FootSmearEffectName;
+    FixedString FootSlideEffectName;
+    FixedString FootHearingEffectName;
+    FixedString FootBoneName;
+    FixedString FootSoundEventName;
+};
+
+
 struct CharacterTemplate : public EoCGameObjectTemplate
 {
     CombatComponentTemplate CombatComponent;
-    [[bg3::hidden]]
-    OverrideableProperty<Array<void*>> ScriptConfigGlobalParameters;
+    OverrideableProperty<Array<GlobalConfigParameter>> ScriptConfigGlobalParameters;
     OverrideableProperty<FixedString> Icon;
     OverrideableProperty<FixedString> Stats;
     OverrideableProperty<FixedString> SpellSet;
@@ -309,8 +327,7 @@ struct CharacterTemplate : public EoCGameObjectTemplate
     OverrideableProperty<LegacyRefMap<FixedString, FixedString>> PickingPhysicsTemplates;
     OverrideableProperty<FixedString> SoftBodyCollisionTemplate;
     OverrideableProperty<FixedString> RagdollTemplate;
-    [[bg3::hidden]]
-    OverrideableProperty<Array<void*>> FootStepInfos;
+    OverrideableProperty<Array<FootStepInfo>> FootStepInfos;
     OverrideableProperty<CharacterState> DefaultState;
     OverrideableProperty<bool> IsLootable;
     OverrideableProperty<bool> IsEquipmentLootable;
@@ -430,9 +447,9 @@ struct ItemTemplate : public SceneryTemplate
     [[bg3::hidden]] OverrideableProperty<Array<void*>> Scripts;
     [[bg3::hidden]] OverrideableProperty<HashMap<FixedString, void*>> ScriptOverrides;
     OverrideableProperty<FixedString> AnubisConfigName;
-    [[bg3::hidden]] OverrideableProperty<Array<void*>> ScriptConfigGlobalParameters;
+    OverrideableProperty<Array<GlobalConfigParameter>> ScriptConfigGlobalParameters;
     OverrideableProperty<FixedString> ConstellationConfigName;
-    [[bg3::hidden]] OverrideableProperty<Array<void*>> ConstellationConfigGlobalParameters;
+    OverrideableProperty<Array<GlobalConfigParameter>> ConstellationConfigGlobalParameters;
     OverrideableProperty<Array<InventoryItemData>> ItemList;
     OverrideableProperty<Array<FixedString>> StatusList;
     OverrideableProperty<FixedString> DefaultState;
@@ -868,23 +885,80 @@ struct TriggerTemplate : public GameObjectTemplate
     OverrideableProperty<bool> UsingGizmoColorOverride;
     OverrideableProperty<bool> HasCustomPoint;
     OverrideableProperty<bg3se::Transform> CustomPointTransform;
-    [[bg3::hidden]] OverrideableProperty<Array<void*>> ConstellationConfigGlobalParameters;
+    OverrideableProperty<Array<GlobalConfigParameter>> ConstellationConfigGlobalParameters;
     OverrideableProperty<FixedString> ConstellationConfigName;
     OverrideableProperty<uint8_t> EventSendingMode;
     OverrideableProperty<bool> OnlyCharacterEvents;
 };
 
+struct LevelTemplate : public GameObjectTemplate
+{
+    OverrideableProperty<FixedString> SubLevelName;
+    OverrideableProperty<uint8_t> LevelTemplateType;
+    OverrideableProperty<bool> IsStartingLoaded;
+    OverrideableProperty<bool> IsMovablePlatform;
+    OverrideableProperty<bool> IsCinematic;
+    OverrideableProperty<FixedString> MovablePlatformStartSound;
+    OverrideableProperty<FixedString> MovablePlatformStopSound;
+    OverrideableProperty<float> SoundActivationRange;
+    OverrideableProperty<bool> UseSoundOcclusion;
+    OverrideableProperty<bool> IsScrollingObject;
+    OverrideableProperty<bool> IsDynamicLayer;
+    OverrideableProperty<glm::vec3> ScrollingOrigin;
+    OverrideableProperty<glm::vec3> ScrollingDirection;
+    OverrideableProperty<float> ScrollingSpeed;
+    OverrideableProperty<float> ScrollingDistance;
+    OverrideableProperty<float> ScrollingOffset;
+    OverrideableProperty<FixedString> TemplateAfterDestruction;
+    OverrideableProperty<FixedString> ConstellationConfigName;
+    OverrideableProperty<Array<GlobalConfigParameter>> ConstellationConfigGlobalParameters;
+};
+
+struct DecalTemplate : public GameObjectTemplate
+{
+    OverrideableProperty<FixedString> MaterialUUID;
+    OverrideableProperty<glm::vec2> Tiling;
+    OverrideableProperty<glm::vec2> Offset;
+    OverrideableProperty<glm::vec3> Dimensions;
+    OverrideableProperty<float> NormalBlendingFactor;
+    OverrideableProperty<float> AngleCutoff;
+    OverrideableProperty<uint32_t> Layer;
+    OverrideableProperty<float> Opacity;
+};
+
+struct PrefabTemplate : public GameObjectTemplate
+{
+    OverrideableProperty<Array<FixedString>> Children;
+    OverrideableProperty<Array<bg3se::Transform>> ChildrenTransforms;
+};
+
+struct InterEntityConnection
+{
+    Guid OutputEntityUUID;
+    FixedString OutputSocketExt;
+    Guid InputEntityUUID;
+    FixedString InputSocketExt;
+};
+
+struct ConstellationTemplate : public GameObjectTemplate
+{
+    OverrideableProperty<Guid> SchematicId;
+    OverrideableProperty<FixedString> ConstellationConfigName;
+    OverrideableProperty<Array<GlobalConfigParameter>> ConstellationConfigGlobalParameters;
+    OverrideableProperty<Array<Guid>> Objects;
+    Array<InterEntityConnection> Connections;
+};
 
 struct [[bg3::hidden]] GlobalTemplateBank
 {
     void* VMT;
     LegacyMap<FixedString, GameObjectTemplate*> Templates;
-    Array<void*> field_20;
-    Array<void*> field_30;
-    Array<void*> field_40;
-    Array<void*> field_50;
-    int field_60;
-    int field_64;
+    Array<GameObjectTemplate*> RootTemplates;
+    Array<void*> RootTemplateMap;
+    Array<void*> GlobalTemplateMap;
+    Array<void*> TemplateTypes;
+    uint32_t NextRootTemplateHandle;
+    uint32_t NextGlobalTemplateHandle;
     FixedString field_68;
 };
 
