@@ -2,6 +2,27 @@
 
 BEGIN_NS(lua)
 
+template <class TV, unsigned N>
+bool do_typecheck_variant(lua_State* L, int index)
+{
+    if constexpr (N < std::variant_size_v<TV>) {
+        using T = std::variant_alternative_t<N, TV>;
+        if (do_typecheck(L, index, Overload<T>{})) {
+            return true;
+        } else {
+            return do_typecheck_variant<TV, N + 1>(L, index);
+        }
+    } else {
+        return false;
+    }
+}
+
+template <class... Args>
+typename bool do_typecheck(lua_State* L, int index, Overload<std::variant<Args...>>)
+{
+    return do_typecheck_variant<std::variant<Args...>, 0>(L, index);
+}
+
 template <class T>
 typename std::enable_if_t<!IsByVal<T> && !std::is_pointer_v<T>, bool> do_typecheck(lua_State* L, int index, Overload<T>)
 {
