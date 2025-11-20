@@ -155,23 +155,23 @@
     </Mapping>
 
     <!-- Sig: reference to strings "gr2", "lsm" -->
-    <Mapping Name="EoCServerUpdateProcs" Critical="true">
+    <Mapping Name="ecl::EoCClient::Update" Critical="true">
       @ref1 48 8b 3d ?? ?? ?? ?? // mov     rdi, cs:ecl__gEocClient
       48 8b d3 // mov     rdx, rbx
       48 8b 8f 98 00 00 00 // mov     rcx, [rdi+98h]
-      e8 ?? ?? ?? ?? // call    sub_141668CD0
+      e8 ?? ?? ?? ?? // call    sub_1417FCCA0
       48 8b d3 // mov     rdx, rbx
-      48 8b 8f 90 01 00 00 // mov     rcx, [rdi+190h]
+      48 8b 8f a8 01 00 00 // mov     rcx, [rdi+1A8h]
       @ref2 e8 ?? ?? ?? ?? // call    ecs__EntityWorld__PreUpdate
       48 8b d3 // mov     rdx, rbx
       48 8b 8f 90 00 00 00 // mov     rcx, [rdi+90h]
       @ref3 e8 ?? ?? ?? ?? // call    ecl__GameStateMachine__Update
       48 8b d3 // mov     rdx, rbx
-      48 8b 8f 90 01 00 00 // mov     rcx, [rdi+190h]
+      48 8b 8f a8 01 00 00 // mov     rcx, [rdi+1A8h]
       @ref4 e8 ?? ?? ?? ?? // call    ecs__EntityWorld__PostUpdate
       48 8b 8f a8 00 00 00 // mov     rcx, [rdi+0A8h]
       48 85 c9 // test    rcx, rcx
-      74 0c // jz      short loc_140520D46
+      74 0c // jz      short loc_140585FA5
       48 8b 01 // mov     rax, [rcx]
       48 8b d3 // mov     rdx, rbx
       ff 90 f0 00 00 00 // call    qword ptr [rax+0F0h]
@@ -742,7 +742,7 @@
       48 8b 43 18 // mov     rax, [rbx+18h]
       @ref1 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:ls__gTextureAtlasMap
       48 8b 50 10 // mov     rdx, [rax+10h]
-      48 8b 92 28 01 00 00 // mov     rdx, [rdx+128h]
+      48 8b 92 40 01 00 00 // mov     rdx, [rdx+140h]
       e8 ?? ?? ?? ?? // call    ls__TextureAtlasMap__Load
       <Target Type="Indirect" Offset="@ref1" Symbol="ls__gTextureAtlasMap" />
     </Mapping>
@@ -1040,18 +1040,17 @@
 
     <!-- Sig: "ls.thoth.client.condition" -->
     <Mapping Name="ecl::EocClient::Init">
-      49 8b 8e 90 01 00 00 // mov     rcx, [r14+190h]
+      49 8b 8e a8 01 00 00 // mov     rcx, [r14+1A8h]
       @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ls__gDragDropManager
       48 89 88 e0 00 00 00 // mov     [rax+0E0h], rcx
       0f 57 c0 // xorps   xmm0, xmm0
-      0f 11 45 50 // movups  xmmword ptr [rbp+100h+a2], xmm0
+      0f 11 45 50 // movups  [rbp+100h+var_B0], xmm0
       33 db // xor     ebx, ebx
       89 5d 60 // mov     [rbp+100h+var_A0], ebx
       c7 45 64 0f 00 00 00 // mov     [rbp+100h+var_9C], 0Fh
-      88 5d 50 // mov     byte ptr [rbp+100h+a2], bl
-      44 8d 43 19 // lea     r8d, [rbx+19h]; Size
+      88 5d 50 // mov     byte ptr [rbp+100h+var_B0], bl
+      44 8d 43 19 // lea     r8d, [rbx+19h]
       @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, aLsThothClientC; "ls.thoth.client.condition"
-      48 8d 4d 50 // lea     rcx, [rbp+100h+a2]; void *
       <Condition Type="String" Offset="@str1" Value="ls.thoth.client.condition" />
       <Target Type="Indirect" Offset="@ref1" Symbol="ls__gDragDropManager" />
     </Mapping>
