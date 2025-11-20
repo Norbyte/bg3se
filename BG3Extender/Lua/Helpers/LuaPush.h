@@ -195,6 +195,16 @@ inline void push(lua_State* L, Noesis::Rect const& v)
     push(L, glm::vec4(v.x, v.y, v.width, v.height));
 }
 
+inline void push(lua_State* L, Noesis::Recti const& v)
+{
+    push(L, glm::ivec4(v.x, v.y, (int)v.width, (int)v.height));
+}
+
+inline void push(lua_State* L, Noesis::Thickness const& v)
+{
+    push(L, glm::vec4(v.left, v.top, v.right, v.bottom));
+}
+
 inline void push(lua_State* L, Noesis::Vector2 const& v)
 {
     push(L, glm::vec2(v.x, v.y));

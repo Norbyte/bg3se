@@ -149,6 +149,14 @@ PN(Y, y)
 END_CLS()
 
 
+BEGIN_CLS(Noesis::Thickness)
+PN(Left, left)
+PN(Top, top)
+PN(Right, right)
+PN(Bottom, bottom)
+END_CLS()
+
+
 BEGIN_CLS(ui::UIWidget)
 INHERIT(Noesis::FrameworkElement)
 P(WidgetData)

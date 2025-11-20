@@ -114,7 +114,6 @@ struct EnumInfoStoreBase
             Labels.resize(index + 1);
         }
 
-        se_assert(!Labels[index]);
         Labels[index] = fs;
 
         se_assert(Values.find(fs) == Values.end());

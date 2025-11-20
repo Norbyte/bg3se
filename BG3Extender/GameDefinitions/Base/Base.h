@@ -21,6 +21,7 @@ END_SE()
 #include <NsDrawing/Color.h>
 #include <NsDrawing/Point.h>
 #include <NsDrawing/Rect.h>
+#include <NsDrawing/Thickness.h>
 #include <NsGui/BaseCollection.h>
 
 #include <Extender/Client/IMGUI/IMGUI.h>

@@ -320,6 +320,8 @@ void StoredValueHelpers::PushValue(lua_State* L, Type const* type, void* val, Ty
         PushRawValue<double>(L, type, val);
     } else if (type == types.Bool.Type) {
         PushRawValue<bool>(L, type, val);
+    } else if (type == types.Symbol.Type) {
+        PushPtrValue<Symbol>(L, type, val);
     } else if (type == types.Color.Type) {
         PushPtrValue<Color>(L, type, val);
     } else if (type == types.Vector2.Type) {
@@ -330,6 +332,10 @@ void StoredValueHelpers::PushValue(lua_State* L, Type const* type, void* val, Ty
         PushRawValue<Point>(L, type, val);
     } else if (type == types.Rect.Type) {
         PushPtrValue<Rect>(L, type, val);
+    } else if (type == types.Int32Rect.Type) {
+        PushPtrValue<Recti>(L, type, val);
+    } else if (type == types.Thickness.Type) {
+        PushPtrValue<Thickness>(L, type, val);
     } else if (type == types.String.Type) {
         PushPtrValue<String>(L, type, val);
     } else if (type == types.Uri.Type) {
@@ -466,6 +472,8 @@ void StoredValueHelpers::PushProperty(lua_State* L, BaseObject const* obj, TypeC
             PushTyped<double>(L, prop, obj);
         } else if (type == types.Bool.Type) {
             PushTyped<bool>(L, prop, obj);
+        } else if (type == types.Symbol.Type) {
+            PushTyped<Symbol>(L, prop, obj);
         } else if (type == types.Color.Type) {
             PushTypedRef<Color>(L, prop, obj);
         } else if (type == types.Vector2.Type) {
@@ -476,6 +484,10 @@ void StoredValueHelpers::PushProperty(lua_State* L, BaseObject const* obj, TypeC
             PushTypedRef<Point>(L, prop, obj);
         } else if (type == types.Rect.Type) {
             PushTypedRef<Rect>(L, prop, obj);
+        } else if (type == types.Int32Rect.Type) {
+            PushTypedRef<Recti>(L, prop, obj);
+        } else if (type == types.Thickness.Type) {
+            PushTypedRef<Thickness>(L, prop, obj);
         } else if (type == types.String.Type) {
             auto value = reinterpret_cast<String const*>(prop->Get(obj));
             lua::push(L, *value);
@@ -555,6 +567,8 @@ std::optional<StoredValueHolder> StoredValueHelpers::GetValue(lua_State* L, Type
         return GetRawValue<double>(L, type, value);
     } else if (type == types.Bool.Type) {
         return GetRawValue<bool>(L, type, value);
+    } else if (type == types.Symbol.Type) {
+        return GetRawValue<Symbol>(L, type, value);
     } else if (type == types.Color.Type) {
         return GetRawValue<glm::vec4>(L, type, value);
     } else if (type == types.Vector2.Type) {
@@ -564,6 +578,10 @@ std::optional<StoredValueHolder> StoredValueHelpers::GetValue(lua_State* L, Type
     } else if (type == types.Point.Type) {
         return GetRawValue<glm::vec2>(L, type, value);
     } else if (type == types.Rect.Type) {
+        return GetRawValue<glm::vec4>(L, type, value);
+    } else if (type == types.Int32Rect.Type) {
+        return GetRawValue<glm::ivec4>(L, type, value);
+    } else if (type == types.Thickness.Type) {
         return GetRawValue<glm::vec4>(L, type, value);
     } else if (type == types.String.Type) {
         return GameAlloc<String>(lua::get<char const*>(L, value.Index));
