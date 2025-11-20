@@ -301,7 +301,7 @@ namespace bg3se
         // Update reference to new string
         *tskRef = LSStringView(str->data(), str->size());
 
-        GetStaticSymbols().ecl__EoCClient__HandleError(*GetStaticSymbols().ecl__EoCClient, ts, exitGame, ts);
+        GetStaticSymbols().ecl__EoCClient__HandleError(*GetStaticSymbols().ecl__EoCClient, ts, exitGame, ts, 0);
     }
 
     bool LibraryManager::CanShowMessages()
