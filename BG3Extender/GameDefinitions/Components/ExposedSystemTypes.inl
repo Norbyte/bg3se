@@ -1,3 +1,4 @@
+T(AnimationSetSystem)
 T(esv::ActionResourceSystem)
 T(esv::boost::BoostSystem)
 T(esv::combat::System)

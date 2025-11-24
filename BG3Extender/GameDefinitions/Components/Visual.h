@@ -209,6 +209,61 @@ struct TemplateAnimationSetOverrideComponent : public BaseComponent
     Array<AnimationWaterfallElement> Overrides;
 };
 
+struct LoadAnimationFromVisualRequestData
+{
+    FixedString VisualResource;
+    FixedString Type;
+    FixedString SkeletonSlot;
+    uint8_t field_C;
+};
+
+struct RemoveAnimationSetsRequestOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(RemoveAnimationSetsRequest, "ls::animation::RemoveAnimationSetsRequestOneFrameComponent")
+
+    HashSet<FixedString> AnimationSets;
+};
+
+struct RemoveAnimationSetsGameplayRequestOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(RemoveAnimationSetsGameplayRequest, "ls::animation::RemoveAnimationSetsGameplayRequestOneFrameComponent")
+
+    HashSet<FixedString> AnimationSets;
+};
+
+struct LoadAnimationSetRequestOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(LoadAnimationSetRequest, "ls::animation::LoadAnimationSetRequestOneFrameComponent")
+
+    Array<LoadAnimationFromVisualRequestData> Animations;
+};
+
+struct LoadAnimationSetGameplayRequestOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(LoadAnimationSetGameplayRequest, "ls::animation::LoadAnimationSetGameplayRequestOneFrameComponent")
+
+    Array<LoadAnimationFromVisualRequestData> Animations;
+};
+
+DEFINE_ONEFRAME_TAG_COMPONENT(ls::animation, AnimationSetUpdateRequestComponent, AnimationSetUpdateRequest)
+
+struct AnimationSetSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(AnimationSet, "ls::AnimationSetSystem")
+
+    [[bg3::hidden]] void* AnimationSetSystemHelper;
+    [[bg3::hidden]] void* AnimationBlueprintSystem;
+    [[bg3::hidden]] void* VisualSystem;
+    bool field_28;
+    HashMap<EntityHandle, Array<LoadAnimationFromVisualRequestData>> LoadAnimationSets;
+    HashSet<EntityHandle> AnimationSetUpdates;
+    HashMap<EntityHandle, Array<FixedString>> RemoveAnimationSets;
+    [[bg3::hidden]] UnknownSignalSubscriber DynamicAnimationTagsSignal;
+    [[bg3::hidden]] UnknownSignalSubscriber TemplateAnimationSetOverrideSignal;
+};
+
+
+
 struct EffectComponent : public BaseProxyComponent
 {
     DEFINE_COMPONENT(Effect, "ls::EffectComponent")
@@ -402,6 +457,7 @@ struct TriggeredEventsOneFrameComponent : public BaseComponent
 
     HashMap<EntityHandle, Array<FixedString>> Events;
 };
+
 
 END_NS()
 
