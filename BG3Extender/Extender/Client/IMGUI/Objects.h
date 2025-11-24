@@ -774,8 +774,7 @@ struct InputText : public StyledRenderable
 public:
     DECL_UI_TYPE(InputText)
 
-    static constexpr unsigned GrowSize = 512;
-    static constexpr unsigned MaxSize = 0x10000;
+    static constexpr unsigned MaxSize = 0x100000;
 
     InputText();
     void StyledRender(DrawingContext& context) override;
