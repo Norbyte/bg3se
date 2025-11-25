@@ -170,6 +170,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="GameDefinitions\CharacterCreation.h" />
     <ClInclude Include="GameDefinitions\Components\ActionResources.h" />
     <ClInclude Include="GameDefinitions\Components\Death.h" />
+    <ClInclude Include="GameDefinitions\Components\Effect.h" />
     <ClInclude Include="GameDefinitions\Components\Sound.h" />
     <ClInclude Include="GameDefinitions\Components\SpellCast.h" />
     <ClInclude Include="GameDefinitions\Components\SpellCastShared.h" />

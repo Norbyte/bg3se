@@ -3,6 +3,8 @@ BEGIN_ENUM(ExtSystemType, uint32_t)
     E(ServerDialog)
     E(AnimationBlueprint)
     E(AnimationSet)
+    E(Effect)
+
     E(ServerShapeshift)
     E(ServerCastRequest)
     E(ServerSpell)

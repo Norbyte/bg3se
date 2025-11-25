@@ -263,31 +263,6 @@ struct AnimationSetSystem : public BaseSystem
 };
 
 
-
-struct EffectComponent : public BaseProxyComponent
-{
-    DEFINE_COMPONENT(Effect, "ls::EffectComponent")
-
-    [[bg3::hidden]] void* VMT;
-    [[bg3::hidden]] void* WorkerThreadJob;
-    EntityHandle Entity;
-    resource::EffectResource* EffectResource;
-    aspk::EffectTimeline* Timeline;
-    bool Initialized;
-    bool OverridingFadeOpacity;
-    EffectFlags Flags;
-    FixedString EffectName;
-    FixedString AnimationName;
-    bool UpdateQueued;
-    EntityHandle SoundEntity;
-    [[bg3::legacy(field_48)]] EntityHandle Parent;
-    std::array<float, 2> OverrideFadeCapacity;
-    std::array<bool, 2> OverrideFadeShadowEnabled;
-    [[bg3::hidden]] void* ConstructionJob;
-    [[bg3::readonly]] uint16_t ConstructFlags;
-    [[bg3::hidden]] uint64_t _Pad;
-};
-
 struct DecalComponent : public BaseProxyComponent
 {
     DEFINE_COMPONENT(Decal, "ls::DecalComponent")

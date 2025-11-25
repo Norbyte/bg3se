@@ -521,6 +521,7 @@
     <ClInclude Include="GameDefinitions\Thoth.h" />
     <ClInclude Include="Extender\Client\VisualHelpers.h" />
     <ClInclude Include="Extender\Shared\Optick.h" />
+    <ClInclude Include="GameDefinitions\Components\Effect.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

@@ -1,4 +1,6 @@
 T(AnimationSetSystem)
+T(EffectsManager)
+
 T(esv::ActionResourceSystem)
 T(esv::boost::BoostSystem)
 T(esv::combat::System)

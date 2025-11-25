@@ -22,6 +22,7 @@
 #include <GameDefinitions/Components/SpellCast.h>
 #include <GameDefinitions/Components/Interrupt.h>
 #include <GameDefinitions/Components/Tadpole.h>
+#include <GameDefinitions/Components/Effect.h>
 #include <GameDefinitions/Components/Visual.h>
 #include <GameDefinitions/Components/Projectile.h>
 #include <GameDefinitions/Components/Progression.h>
