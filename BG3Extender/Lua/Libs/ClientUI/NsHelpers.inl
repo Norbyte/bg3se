@@ -321,7 +321,7 @@ void StoredValueHelpers::PushValue(lua_State* L, Type const* type, void* val, Ty
     } else if (type == types.Bool.Type) {
         PushRawValue<bool>(L, type, val);
     } else if (type == types.Symbol.Type) {
-        PushPtrValue<Symbol>(L, type, val);
+        PushRawValue<Symbol>(L, type, val);
     } else if (type == types.Color.Type) {
         PushPtrValue<Color>(L, type, val);
     } else if (type == types.Vector2.Type) {
