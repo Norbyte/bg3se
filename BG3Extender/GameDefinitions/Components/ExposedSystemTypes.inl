@@ -1,5 +1,8 @@
 T(AnimationSetSystem)
 T(EffectsManager)
+T(VisualChangeRequestSystem)
+T(VisualChangedSystem)
+T(VisualSystem)
 
 T(esv::ActionResourceSystem)
 T(esv::boost::BoostSystem)

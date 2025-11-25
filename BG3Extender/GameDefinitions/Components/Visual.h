@@ -262,6 +262,182 @@ struct AnimationSetSystem : public BaseSystem
     [[bg3::hidden]] UnknownSignalSubscriber TemplateAnimationSetOverrideSignal;
 };
 
+struct MaterialParameterFloat
+{
+    FixedString Parameter;
+    float Value;
+    bool Override{ false };
+    uint8_t field_9{ 0 };
+    bool Preset{ false };
+};
+
+struct MaterialParameterVec2
+{
+    FixedString Parameter;
+    glm::vec2 Value;
+    bool Override{ false };
+    uint8_t field_9{ 0 };
+    bool Preset{ false };
+};
+
+struct MaterialParameterVec3
+{
+    FixedString Parameter;
+    glm::vec3 Value;
+    bool Override{ false };
+    uint8_t field_9{ 0 };
+    bool Preset{ false };
+};
+
+struct MaterialParameterVec4
+{
+    FixedString Parameter;
+    glm::aligned_highp_vec4 Value;
+    bool Override{ false };
+    uint8_t field_9{ 0 };
+    bool Preset{ false };
+};
+
+struct MaterialParameterTexture
+{
+    FixedString Parameter;
+    FixedString Value;
+    bool Override{ false };
+    uint8_t field_9{ 0 };
+    bool Preset{ false };
+};
+
+struct MaterialParameterPresetSlot
+{
+    FixedString GroupName;
+    FixedString CCPreset;
+    uint32_t field_8;
+};
+
+struct MaterialParameterPresetsContainer
+{
+    Array<MaterialParameterFloat> FloatOverrides;
+    Array<MaterialParameterVec2> Vec2Overrides;
+    Array<MaterialParameterVec3> Vec3Overrides;
+    Array<MaterialParameterVec4> Vec4Overrides;
+    Array<MaterialParameterTexture> TextureOverrides;
+    Array<MaterialParameterTexture> VirtualTextureOverrides;
+    FixedString field_60;
+    HashMap<FixedString, MaterialParameterPresetSlot> Presets;
+};
+
+struct VisualLocatorAttachment
+{
+    FixedString DisplayName;
+    FixedString LocatorName;
+};
+
+struct VisualSetSlot
+{
+    FixedString Slot;
+    FixedString Visual;
+    FixedString field_8;
+};
+
+struct VisualSetSlots
+{
+    // Editor only
+    // FixedString StatsColorPresetResource;
+    FixedString BodySetVisual;
+    Array<VisualSetSlot> VisualSlots;
+    Array<VisualLocatorAttachment> LocatorAttachments;
+    MaterialParameterPresetsContainer MaterialParameters;
+    LegacyMap<FixedString, MaterialParameterPresetsContainer> Materials;
+    HashMap<FixedString, FixedString> MaterialOverrides;
+    HashMap<FixedString, FixedString> MaterialRemaps;
+    FixedString VisualSet;
+    bool ShowEquipmentVisuals;
+};
+
+struct VisualSetSlotsWrapper
+{
+    VisualSetSlots Slots;
+    bool Managed;
+};
+
+struct VisualChangeRequest
+{
+    EntityHandle Entity;
+    FixedString Visual;
+    VisualLoadFlags Flags;
+};
+
+struct VisualChangeRequestSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(VisualChange, "ls::VisualChangeRequestSystem")
+
+    // TODO - Not supported yet!
+    [[bg3::hidden]] MPMCQueueBounded<VisualChangeRequest> Requests;
+};
+
+
+struct VisualChangedSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(VisualChanged, "ls::VisualChangedSystem")
+
+    HashSet<EntityHandle> VisualChanges;
+    uint32_t FrameNo;
+};
+
+struct SwapVisualRequest
+{
+    Visual* From;
+    Visual* To;
+};
+
+struct VisualSetSlotsPreAllocatedVisual
+{
+    EntityHandle Entity;
+    Visual* Visual;
+};
+
+struct DeferredLoadRequest : ProtectedGameObject<DeferredLoadRequest>
+{
+    [[bg3::hidden]] void* Callback_pInternalCallback{ nullptr };
+    Visual* Visual;
+    resource::AnimationBlueprintResource* Blueprint;
+    gn::GenomeBlueprintInstance* BlueprintInstance;
+    EntityHandle Entity;
+    VisualSetSlotsWrapper Slots;
+    HashMap<FixedString, Array<VisualSetSlotsPreAllocatedVisual>> PreAllocatedEntities;
+    uint32_t RequestId;
+    VisualLoadFlags LoadFlags;
+    uint8_t field_7E;
+    FixedString BlueprintOverride;
+    uint32_t field_80;
+    uint32_t RefCount;
+};
+
+struct VisualSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(Visual, "ls::VisualSystem")
+
+    [[bg3::hidden]] UnknownSignal VisualLoadedSignal;
+    [[bg3::hidden]] UnknownSignal VisualUnloadedSignal;
+    [[bg3::hidden]] UnknownSignal VisualSwappedSignal;
+    HashMap<EntityHandle, SwapVisualRequest> SwapVisuals;
+    HashMap<EntityHandle, FixedString> RemoveAnimationSetRequests;
+    HashMap<EntityHandle, Array<LoadAnimationFromVisualRequestData>> LoadAnimationRequests;
+    [[bg3::hidden]] VisualChangedSystem* VisualChangedSystem;
+    HashMap<EntityHandle, DeferredLoadRequest*> LoadRequests;
+    [[bg3::hidden]] CRITICAL_SECTION VisualSetSlotUpdatesCS;
+    [[bg3::hidden]] Array<void*> VisualSetSlotUpdates; // some kind of hashmap?
+    [[bg3::hidden]] SRWLOCK DeferredLoadRequestsLock;
+    // TODO - Not supported yet!
+    [[bg3::hidden]] MPMCQueueBounded<DeferredLoadRequest*> DeferredLoadRequests;
+    [[bg3::hidden]] SRWLOCK UnloadRequestsLock;
+    // TODO - Not supported yet!
+    [[bg3::hidden]] MPMCQueueBounded<Visual*> UnloadRequests;
+    [[bg3::hidden]] void* UnloadWorkerThreadBatch;
+    [[bg3::hidden]] void* UnloadWorkerThreadJob;
+    [[bg3::hidden]] void* GenomeManager;
+};
+
 
 struct DecalComponent : public BaseProxyComponent
 {
@@ -638,99 +814,6 @@ struct VisualSystem : public BaseSystem
     [[bg3::hidden]] void* LevelManager;
     [[bg3::hidden]] void* GlobalTemplateManager;
     [[bg3::hidden]] void* ResourceManager;
-};
-
-
-struct MaterialParameterFloat
-{
-    FixedString Parameter;
-    float Value;
-    bool Override{ false };
-    uint8_t field_9{ 0 };
-    bool Preset{ false };
-};
-
-struct MaterialParameterVec2
-{
-    FixedString Parameter;
-    glm::vec2 Value;
-    bool Override{ false };
-    uint8_t field_9{ 0 };
-    bool Preset{ false };
-};
-
-struct MaterialParameterVec3
-{
-    FixedString Parameter;
-    glm::vec3 Value;
-    bool Override{ false };
-    uint8_t field_9{ 0 };
-    bool Preset{ false };
-};
-
-struct MaterialParameterVec4
-{
-    FixedString Parameter;
-    glm::aligned_highp_vec4 Value;
-    bool Override{ false };
-    uint8_t field_9{ 0 };
-    bool Preset{ false };
-};
-
-struct MaterialParameterTexture
-{
-    FixedString Parameter;
-    FixedString Value;
-    bool Override{ false };
-    uint8_t field_9{ 0 };
-    bool Preset{ false };
-};
-
-struct MaterialParameterPresetSlot
-{
-    FixedString GroupName;
-    FixedString CCPreset;
-    uint32_t field_8;
-};
-
-struct MaterialParameterPresetsContainer
-{
-    Array<MaterialParameterFloat> FloatOverrides;
-    Array<MaterialParameterVec2> Vec2Overrides;
-    Array<MaterialParameterVec3> Vec3Overrides;
-    Array<MaterialParameterVec4> Vec4Overrides;
-    Array<MaterialParameterTexture> TextureOverrides;
-    Array<MaterialParameterTexture> VirtualTextureOverrides;
-    FixedString field_60;
-    HashMap<FixedString, MaterialParameterPresetSlot> Presets;
-};
-
-struct VisualLocatorAttachment
-{
-    FixedString DisplayName;
-    FixedString LocatorName;
-};
-
-struct VisualSetSlot
-{
-    FixedString Slot;
-    FixedString Visual;
-    FixedString field_8;
-};
-
-struct VisualSetSlots
-{
-    // Editor only
-    // FixedString StatsColorPresetResource;
-    FixedString BodySetVisual;
-    Array<VisualSetSlot> VisualSlots;
-    Array<VisualLocatorAttachment> LocatorAttachments;
-    MaterialParameterPresetsContainer MaterialParameters;
-    LegacyMap<FixedString, MaterialParameterPresetsContainer> Materials;
-    HashMap<FixedString, FixedString> MaterialOverrides;
-    HashMap<FixedString, FixedString> MaterialRemaps;
-    FixedString VisualSet;
-    bool ShowEquipmentVisuals;
 };
 
 

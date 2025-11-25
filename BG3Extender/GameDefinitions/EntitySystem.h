@@ -86,15 +86,22 @@ inline uint64_t HashMapHash<ecs::ComponentTypeIndex>(ecs::ComponentTypeIndex con
 }
 
 template <class T>
+struct alignas(64) MPMCQueueSlot
+{
+    std::atomic<uint64_t> NextAndFlags;
+    T Value;
+};
+
+template <class T>
 struct alignas(64) MPMCQueueBounded : public ProtectedGameObject<MPMCQueueBounded<T>>
 {
     uint64_t Capacity;
-    T* Slots;
+    MPMCQueueSlot<T>* Slots;
     struct alignas(64) {
-        uint64_t SomeIndex;
+        uint64_t WriteIndex;
     };
     struct alignas(64) {
-        uint64_t Position;
+        uint64_t ReadIndex;
     };
 };
 

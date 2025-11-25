@@ -144,7 +144,7 @@ private:
     }
 };
 
-#define FOR_RESOURCE_TYPE(ty) case ty::ResourceManagerType: return MakeHelper<ty>(type);
+#define FOR_RESOURCE_TYPE(ty) case resource::ty::ResourceManagerType: return MakeHelper<resource::ty>(type);
 
 class GuidResourceHelpers
 {
