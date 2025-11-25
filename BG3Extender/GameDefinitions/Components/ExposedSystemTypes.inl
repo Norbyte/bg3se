@@ -3,6 +3,7 @@ T(EffectsManager)
 T(VisualChangeRequestSystem)
 T(VisualChangedSystem)
 T(VisualSystem)
+T(LightSystem)
 
 T(esv::ActionResourceSystem)
 T(esv::boost::BoostSystem)

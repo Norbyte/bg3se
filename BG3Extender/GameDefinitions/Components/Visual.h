@@ -85,7 +85,7 @@ struct GameplayLightComponent : public BaseComponent
     [[bg3::legacy(field_8)]] float EdgeSharpening;
     [[bg3::legacy(field_C)]] float SpotlightAngle;
     [[bg3::legacy(field_10)]] glm::vec3 DirectionalDimensions;
-    [[bg3::legacy(field_1C)]] uint8_t LightType;
+    [[bg3::legacy(field_1C)]] LightType LightType;
     [[bg3::legacy(field_1D)]] bool IsHalfLit;
     [[bg3::legacy(field_1E)]] bool Sunlight;
     [[bg3::legacy(field_20)]] glm::vec3 AttachAt;

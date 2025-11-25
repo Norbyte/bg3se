@@ -7,6 +7,7 @@ BEGIN_ENUM(ExtSystemType, uint32_t)
     E(VisualChange)
     E(VisualChanged)
     E(Visual)
+    E(Light)
 
     E(ServerShapeshift)
     E(ServerCastRequest)

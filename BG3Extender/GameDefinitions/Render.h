@@ -789,7 +789,7 @@ struct LightDesc
     bool Enabled;
     bool PreExpose;
     bool FlatFalloff;
-    uint8_t LightType;
+    LightType LightType;
     uint8_t LightChannelFlag;
     uint8_t DirectionLightAttenuationFunction;
 };
@@ -812,22 +812,44 @@ struct [[bg3::component]] LightComponent : public MoveableObject
     float Kelvin;
     float Radius;
     float Intensity;
-    uint32_t field_C0;
+    [[bg3::legacy(field_C0)]] float IntensityOffset;
     float ScatteringIntensityScale;
     float Gain;
     float EdgeSharpening;
     uint8_t DirectionLightAttenuationFunction;
-    uint8_t Flags;
+    LightFlags Flags;
     uint8_t LightChannelFlag;
-    uint8_t LightType;
+    LightType LightType;
     glm::vec3 Blackbody;
-    glm::vec3 field_E0;
+    [[bg3::legacy(field_E0)]] glm::vec3 PositionOffset;
+    uint8_t OwnerFlags;
     [[bg3::hidden]] void* LightCookieTexture;
     LightTemplate* Template;
     EntityHandle AssociatedScene;
     uint16_t CullFlags;
     FixedString UUID;
     [[bg3::hidden]] void* _PAD;
+};
+
+struct LightUpdateFadeRequest
+{
+    float field_0;
+    float field_4;
+    float Max;
+    float Current;
+};
+
+struct LightSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(Light, "ls::LightSystem")
+
+    HashMap<EntityHandle, LightUpdateFadeRequest> FadeEdgeSharpening;
+    HashMap<EntityHandle, LightUpdateFadeRequest> FadeRadius;
+    HashMap<EntityHandle, LightUpdateFadeRequest> FadeIntensity;
+    HashMap<EntityHandle, LightUpdateFadeRequest> FadeIntensityOffset;
+    HashSet<EntityHandle> ExplicitUpdateTransform;
+    HashSet<EntityHandle> CheckFlickering;
+    HashSet<EntityHandle> CheckMoving;
 };
 
 
