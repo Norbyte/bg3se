@@ -205,6 +205,13 @@ inline void push(lua_State* L, Noesis::Thickness const& v)
     push(L, glm::vec4(v.left, v.top, v.right, v.bottom));
 }
 
+inline void push(lua_State* L, Noesis::CornerRadius const& v)
+{
+    push(L, glm::vec4(v.topLeft, v.topRight, v.bottomRight, v.bottomLeft));
+}
+
+void push(lua_State* L, Noesis::GridLengthHelper const& v);
+
 inline void push(lua_State* L, Noesis::Vector2 const& v)
 {
     push(L, glm::vec2(v.x, v.y));

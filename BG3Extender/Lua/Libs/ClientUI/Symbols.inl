@@ -49,7 +49,12 @@ struct StaticTypes
     TypeInfo Rect;
     TypeInfo Int32Rect;
     TypeInfo Thickness;
+    TypeInfo CornerRadius;
+    TypeInfo GridLength;
     TypeInfo LocaString;
+    TypeInfo ICommand;
+    TypeInfo IValueConverter;
+    TypeInfo IMultiValueConverter;
     TypeInfo TypeConst;
     TypeInfo TypePointer;
     TypeInfo TypePtr;
@@ -79,7 +84,12 @@ struct StaticTypes
         Rect.Setup("Rect");
         Int32Rect.Setup("Int32Rect");
         Thickness.Setup("Thickness");
+        CornerRadius.Setup("CornerRadius");
+        GridLength.Setup("GridLength");
         LocaString.Setup("ls.LocaString");
+        ICommand.Setup("ICommand");
+        IValueConverter.Setup("IValueConverter");
+        IMultiValueConverter.Setup("IMultiValueConverter");
         TypeConst.Setup("TypeConst");
         TypePointer.Setup("TypePointer");
         TypePtr.Setup("TypePtr");

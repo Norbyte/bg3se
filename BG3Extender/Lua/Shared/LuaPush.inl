@@ -191,6 +191,11 @@ void push(lua_State* L, RawComponentRef const& v)
     v.Push(L);
 }
 
+void push(lua_State* L, Noesis::GridLengthHelper const& v)
+{
+    Serialize(L, &v);
+}
+
 void assign(lua_State* L, int idx, glm::vec2 const& v)
 {
     auto tab = lua_get_array_n(L, idx, 2);

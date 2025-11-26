@@ -4,6 +4,7 @@
 
 #include <NsCore/BaseComponent.h>
 #include <NsCore/TypeClass.h>
+#include <NsGui/GridLength.h>
 #include <NsGui/BaseCommand.h>
 #include <NsGui/DependencyData.h>
 #include <NsGui/DependencyObjectValueData.h>
@@ -19,6 +20,13 @@
 BEGIN_BARE_NS(Noesis)
 
 using namespace bg3se;
+
+// Equivalent to Noesis GridLength
+struct GridLengthHelper
+{
+    GridUnitType GridUnitType;
+    float Value;
+};
 
 using LoadXamlProc = Ptr<BaseComponent>* (Ptr<BaseComponent>& ret, char const* path);
 
@@ -190,6 +198,8 @@ struct CommandHelpers
 {
     static bool CanExecute(lua_State* L, BaseCommand const* o, std::optional<BaseComponent*> arg);
     static void Execute(lua_State* L, BaseCommand const* o, std::optional<BaseComponent*> arg);
+    static bool InterfaceCanExecute(lua_State* L, ICommand const* o, std::optional<BaseComponent*> arg);
+    static void InterfaceExecute(lua_State* L, ICommand const* o, std::optional<BaseComponent*> arg);
 };
 
 struct VisualHelpers

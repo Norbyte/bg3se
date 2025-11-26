@@ -43,7 +43,9 @@ BEGIN_SE()
 #define END_ENUM_NS()
 #define END_ENUM()
 #include <GameDefinitions/Generated/Enumerations.inl>
+#if !defined(EXCLUDE_EXTERNALS)
 #include <GameDefinitions/Generated/ExternalEnumerations.inl>
+#endif
 #undef BEGIN_BITMASK_NS
 #undef BEGIN_ENUM_NS
 #undef BEGIN_BITMASK
@@ -70,7 +72,9 @@ void InitializeEnumerations();
 #define END_ENUM_NS()
 #define END_ENUM()
 #include <GameDefinitions/Generated/Enumerations.inl>
+#if !defined(EXCLUDE_EXTERNALS)
 #include <GameDefinitions/Generated/ExternalEnumerations.inl>
+#endif
 #undef BEGIN_BITMASK_NS
 #undef BEGIN_ENUM_NS
 #undef BEGIN_BITMASK

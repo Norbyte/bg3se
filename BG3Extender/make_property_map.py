@@ -62,7 +62,7 @@ def make_struct_forward_decl(name: str, id: int):
             parent_ns = ns
 
         if parent_ns == "Noesis":
-            if name.endswith("Args") or name == "Noesis::Point" or name == "Noesis::Thickness":
+            if name.endswith("Args") or name == "Noesis::Point" or name == "Noesis::Thickness" or name == "Noesis::GridLengthHelper" or name == "Noesis::ICommand" or name == "Noesis::CornerRadius":
                 return 'DECLARE_STRUCT_BARE_NS_FWD(' + str(id) + ', ' + name[0:pos] + ', ' + name[pos+2:] + ')'
             else:
                 return 'DECLARE_CLS_BARE_NS_FWD(' + str(id) + ', ' + name[0:pos] + ', ' + name[pos+2:] + ')'
