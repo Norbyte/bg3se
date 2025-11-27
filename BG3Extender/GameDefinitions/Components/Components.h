@@ -332,7 +332,106 @@ struct LevelComponent : public BaseComponent
     EntityHandle field_0;
     FixedString LevelName;
 };
-    
+
+struct LevelRootComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(LevelRoot, "ls::LevelRootComponent")
+
+    FixedString LevelName;
+};
+
+struct LevelInstanceComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(LevelInstance, "ls::LevelInstanceComponent")
+
+    FixedString LevelInstanceID;
+    FixedString LevelName;
+    FixedString LevelInstanceTemplate;
+    uint8_t LevelType;
+    bool Active;
+    bool Platform;
+    bool MovingPlatform;
+    bool DynamicLayer;
+    bool NeedsPhysics;
+    uint8_t field_12;
+    uint8_t field_13;
+    uint8_t field_14;
+    uint8_t field_15;
+    uint64_t qword18;
+    int dword20;
+    int field_24;
+    int field_28;
+    int field_2C;
+    int field_30;
+    float field_34;
+    float field_38;
+    float field_3C;
+};
+
+struct LevelInstanceStateComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(LevelInstanceState, "ls::LevelInstanceStateComponent")
+
+    HashSet<EntityHandle> field_0;
+    HashSet<EntityHandle> field_30;
+    int32_t field_60;
+    AABound LocalBound;
+    AABound WorldBound;
+    FixedString MergedLevelTemplateUUID;
+    FixedString LevelInstanceID;
+    FixedString LevelName;
+    FixedString LevelName2;
+    bool Destroyed;
+    bool MovingPlatform;
+    uint8_t field_A6;
+    float field_A8;
+    float field_AC;
+    float field_B0;
+    float field_B4;
+    float field_B8;
+    float field_BC;
+    float field_C0;
+    float field_C4;
+    float field_C8;
+    float field_CC;
+};
+
+struct LevelInstanceTempDestroyedComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(LevelInstanceTempDestroyed, "ls::level::LevelInstanceTempDestroyedComponent")
+
+    EntityHandle Level;
+};
+
+struct LevelUnloadEventComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(LevelUnloadEvent, "ls::LevelUnloadEventComponent")
+
+    FixedString Level;
+};
+
+struct LevelPrepareUnloadEventComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(LevelPrepareUnloadEvent, "ls::LevelPrepareUnloadEventComponent")
+
+    FixedString Level;
+};
+
+struct LevelUnloadedOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(LevelUnloaded, "ls::LevelUnloadedOneFrameComponent")
+
+    FixedString Level;
+};
+
+DEFINE_TAG_COMPONENT(ls, LevelIsOwnerComponent, LevelIsOwner)
+DEFINE_TAG_COMPONENT(ls, LevelPrepareUnloadBusyComponent, LevelPrepareUnloadBusy)
+DEFINE_TAG_COMPONENT(ls, LevelUnloadBusyComponent, LevelUnloadBusy)
+DEFINE_TAG_COMPONENT(ls::level, LevelInstanceUnloadingComponent, LevelInstanceUnloading)
+DEFINE_ONEFRAME_TAG_COMPONENT(ls, LevelInstanceUnloadedOneFrameComponent, LevelInstanceUnloaded)
+DEFINE_ONEFRAME_TAG_COMPONENT(ls, LevelInstanceLoadedOneFrameComponent, LevelInstanceLoaded)
+
+
 struct TransformComponent : public BaseComponent
 {
     DEFINE_COMPONENT(Transform, "ls::TransformComponent")
