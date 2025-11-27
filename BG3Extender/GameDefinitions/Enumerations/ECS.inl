@@ -72,6 +72,7 @@ BEGIN_ENUM(ExtSystemType, uint32_t)
     E(ClientCharacterIconRender)
     E(ClientCharacterManager)
     E(ClientVisualsVisibilityState)
+    E(ClientEffectHandler)
 
     E(SoundRouting)
     E(Max)
@@ -325,6 +326,12 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 
     // Effects
     E(Effect)
+    E(EffectCreate)
+    E(AlwaysUpdateEffect)
+    E(GameplayEffectSetTimeFactorRequests)
+    E(GameplayVFXSetPlayTimeRequests)
+    E(GameplayVFX)
+    E(ClientEffectHandler)
     E(Decal)
 
     // Passives

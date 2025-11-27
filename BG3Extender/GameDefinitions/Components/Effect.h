@@ -26,6 +26,43 @@ struct EffectComponent : public BaseProxyComponent
     [[bg3::hidden]] uint64_t _Pad;
 };
 
+DEFINE_ONEFRAME_TAG_COMPONENT(ls, EffectCreateOneFrameComponent, EffectCreate);
+DEFINE_TAG_COMPONENT(ls, AlwaysUpdateEffectComponent, AlwaysUpdateEffect);
+
+struct GameplayEffectSetTimeFactorRequestsSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(GameplayEffectSetTimeFactorRequests, "ls::GameplayEffectSetTimeFactorRequestsSingletonComponent")
+
+    HashMap<EntityHandle, float> SetTimeFactor;
+};
+
+struct VFXSetPlayTimeRequest
+{
+    uint64_t field_0;
+    float Time;
+};
+
+struct GameplayVFXSetPlayTimeRequestsSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(GameplayVFXSetPlayTimeRequests, "ls::GameplayVFXSetPlayTimeRequestsSingletonComponent")
+
+    HashMap<EntityHandle, VFXSetPlayTimeRequest> SetPlayTime;
+};
+
+struct GameplayVFXInfo
+{
+    FixedString VFX;
+    glm::vec3 Position;
+};
+
+struct GameplayVFXSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(GameplayVFX, "ls::GameplayVFXSingletonComponent")
+
+    Array<GameplayVFXInfo> VFX;
+};
+
+
 #pragma pack(push, 4)
 
 struct EffectCreateInvoke {};
@@ -228,8 +265,9 @@ struct EffectsManager : public BaseSystem
     [[bg3::hidden]] CRITICAL_SECTION InvokesCS;
     HashMap<EntityHandle, EffectSoundObjectInfo> SoundObjectsOnLevel;
     [[bg3::hidden]] Array<void*> Listeners; // IEffectsManagerListener*
-    TrackedCompactSet<Path> UnloadEffects;
-    uint8_t field_E8;
+    // Editor only?
+    // TrackedCompactSet<Path> UnloadEffects;
+    // uint8_t field_E8;
     [[bg3::hidden]] CRITICAL_SECTION RCB_CS;
     [[bg3::hidden]] void* RCB; // rf::RendererCommandBuffer*
     [[bg3::hidden]] std::array<void*, 3> GPUFences;
@@ -246,3 +284,41 @@ struct EffectsManager : public BaseSystem
 };
 
 END_SE()
+
+BEGIN_NS(ecl::effect)
+
+struct HandlerComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClientEffectHandler, "ecl::effect::HandlerComponent")
+
+    EffectHandler* Handler{ nullptr };
+};
+
+struct [[bg3::hidden]] HandlerComponentView
+{
+    HandlerComponent* EffectHandler;
+    uint64_t* MutationData{ nullptr };
+    void* field_10{ nullptr };
+    EntityHandle Entity;
+    uint32_t ComponentIndex{ 0 };
+    uint8_t field_24{ 0 };
+};
+
+struct [[bg3::hidden]] HandlerSystemHelper
+{
+    virtual ~HandlerSystemHelper() = 0;
+    virtual void InitMultiEffect(HandlerComponentView const& entity, struct ecl::EffectHandlerInitInfo const& info, Scene* scene) const = 0;
+    virtual void UpdateMultiEffect(HandlerComponentView const& entity) const = 0;
+    virtual void DestroyMultiEffect(HandlerComponentView const& entity) const = 0;
+    virtual void HideMultiEffect(HandlerComponentView const& entity) const = 0;
+    virtual void UnhideMultiEffect(HandlerComponentView const& entity) const = 0;
+};
+
+struct HandlerSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ClientEffectHandler, "ecl::effect::HandlerSystem")
+
+    [[bg3::hidden]] HandlerSystemHelper* Helper;
+};
+
+END_NS()

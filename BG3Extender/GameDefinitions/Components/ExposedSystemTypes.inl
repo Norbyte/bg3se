@@ -68,5 +68,6 @@ T(ecl::VisualSystem)
 T(ecl::CharacterIconRenderSystem)
 T(ecl::CharacterManager)
 T(ecl::equipment::VisualsVisibilityStateSystem)
+T(ecl::effect::HandlerSystem)
 
 T(SoundRoutingSystem)
