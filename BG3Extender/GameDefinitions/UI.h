@@ -86,7 +86,13 @@ inline SymbolManagerInternals* GetSymbolManager()
 
 inline char const* SymbolManager::GetString(uint32_t index)
 {
-    return GetSymbolManager()->Strings[index];
+    auto syms = GetSymbolManager();
+    // Handle possibly corrupted symbol ptrs
+    if (index < syms->Strings.Size()) {
+        return syms->Strings[index];
+    } else {
+        return "";
+    }
 }
 
 inline const Type* Reflection::GetType(Symbol name)
