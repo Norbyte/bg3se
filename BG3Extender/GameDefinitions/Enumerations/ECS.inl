@@ -964,7 +964,6 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
     E(FleeCapability)
     E(IsInTurnBasedMode)
     E(ItemBoosts)
-    E(Visual)
     E(ClientPaperdoll)
     E(TLPreviewDummy)
     E(TimelineActorData)
@@ -1032,6 +1031,15 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
     E(Sound)
     E(PauseExcluded)
     E(Pause)
+
+    // Visuals
+    E(Visual)
+    E(VisualLoadDescription)
+    E(VisualLoadRequests)
+    E(VisualChangeRequest)
+    E(VisualAttachRequest)
+    E(VisualLoaded)
+    E(VisualChangedEvent)
 
     E(BackgroundGoals)
 

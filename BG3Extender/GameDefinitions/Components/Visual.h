@@ -115,9 +115,9 @@ struct PhysicsComponent : public BaseComponent
     uint32_t PhysicsGroup;
     uint32_t CollidesWith;
     uint32_t ExtraFlags;
-    uint8_t field_14;
+    [[bg3::legacy(field_14)]] bool HasPhysics;
     uint8_t field_15;
-    uint8_t field_16;
+    [[bg3::legacy(field_16)]] bool IsClustered;
 };
 
 struct CharacterCreationAppearanceComponent : public BaseComponent
@@ -383,6 +383,42 @@ struct VisualChangedSystem : public BaseSystem
     HashSet<EntityHandle> VisualChanges;
     uint32_t FrameNo;
 };
+
+struct VisualLoadDesciptionComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(VisualLoadDescription, "ls::VisualLoadDesciptionComponent")
+
+    FixedString VisualTemplate;
+    uint16_t RenderFlags;
+    uint8_t RenderChannel;
+};
+
+struct VisualLoadRequestsSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(VisualLoadRequests, "ls::VisualLoadRequestsSingletonComponent")
+
+    HashMap<EntityHandle, bool> Requests;
+};
+
+struct VisualChangeRequestOneFrameComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(VisualChangeRequest, "ls::VisualChangeRequestOneFrameComponent")
+
+    FixedString VisualTemplate;
+    uint16_t RenderFlags;
+};
+
+struct VisualAttachRequestOneFrameComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(VisualAttachRequest, "ls::VisualAttachRequestOneFrameComponent")
+
+    EntityHandle Entity;
+    int field_8;
+};
+
+
+DEFINE_TAG_COMPONENT(ls, VisualLoadedComponent, VisualLoaded)
+DEFINE_ONEFRAME_TAG_COMPONENT(ls, VisualChangedEventOneFrameComponent, VisualChangedEvent)
 
 struct SwapVisualRequest
 {
