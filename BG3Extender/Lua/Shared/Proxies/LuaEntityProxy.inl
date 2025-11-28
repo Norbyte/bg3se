@@ -207,10 +207,10 @@ void EnumerateComponents(ecs::EntitySystemHelpersBase* ecs, EntityHandle entity,
     if (change) {
         for (uint32_t i = 0; i < change->Store.size(); i++) {
             auto const& comp = change->Store[i];
-            if (comp.PoolIndex) {
+            if (comp.Index) {
                 auto extType = ecs->GetComponentType(comp.ComponentTypeId);
                 if (extType) {
-                    auto component = changes->GetComponentChange(comp.ComponentTypeId, comp.PoolIndex);
+                    auto component = changes->GetComponentChange(comp.ComponentTypeId, comp.Index);
                     if (component) {
                         f(*extType, component);
                     }

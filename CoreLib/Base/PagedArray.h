@@ -111,6 +111,11 @@ public:
     // Can't copy these for now
     PagedArray(PagedArray const&) = delete;
 
+    inline TAllocator& allocator()
+    {
+        return *this;
+    }
+
     inline uint32_t size() const
     {
         return size_;
@@ -216,27 +221,48 @@ struct PagedBitSet
 template <class TKey, class TValue, class TAllocator = DefaultPagedAllocator>
 struct DoubleIndexedPagedArray
 {
+    static constexpr uint16_t InvalidIndex = 0xffff;
+
     PagedBitSet<TAllocator> Bitmap;
     PagedArray<uint16_t, DefaultPagedAllocator> LookupTable;
     PagedArray<TKey, TAllocator> Keys;
     PagedArray<TValue, TAllocator> Values;
 
-    int FindIndex(TKey const& key) const
+    uint16_t FindIndex(TKey const& key) const
     {
         auto hash = (uint32_t)SparseHashMapHash(key);
-        if (!Bitmap[hash]) return -1;
+        if (!Bitmap[hash]) return InvalidIndex;
 
         auto keyIndex = LookupTable[hash];
-        if (keyIndex == 0xFFFF || Keys[keyIndex] != key) return -1;
+        if (keyIndex == InvalidIndex || Keys[keyIndex] != key) return InvalidIndex;
         return keyIndex;
     }
 
     TValue const* Find(TKey const& key) const
     {
         auto index = FindIndex(key);
-        if (index < 0) return nullptr;
+        if (index == InvalidIndex) return nullptr;
 
         return &Values[index];
+    }
+
+    TValue* Find(TKey const& key)
+    {
+        auto index = FindIndex(key);
+        if (index == InvalidIndex) return nullptr;
+
+        return &Values[index];
+    }
+
+    template <class... Args>
+    TValue* Add(TKey const& key, Args... args)
+    {
+        auto hash = (uint32_t)SparseHashMapHash(key);
+        Bitmap.set(hash);
+        auto nextIndex = (uint16_t)Keys.size();
+        LookupTable[hash] = nextIndex;
+        new (Keys.add_uninitialized()) TKey(key);
+        return new (Values.add_uninitialized()) TValue(std::forward<Args>(args)...);
     }
 };
 

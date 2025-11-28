@@ -463,6 +463,19 @@ struct EntityStorageComponentPage
 
     std::array<ComponentInfo, 256> Components;
 };
+
+struct ComponentFrameStorageIndex
+{
+    static constexpr uint16_t InvalidIndex = 0xffffu;
+
+    uint16_t PageIndex{ InvalidIndex };
+    uint16_t EntryIndex{ InvalidIndex };
+
+    inline operator bool() const
+    {
+        return PageIndex != InvalidIndex;
+    }
+};
         
 struct EntityStorageData : public ProtectedGameObject<EntityStorageData>
 {
@@ -475,17 +488,6 @@ struct EntityStorageData : public ProtectedGameObject<EntityStorageData>
         bool QueryFlag1;
         bool QueryFlag3;
         void* DtorProc;
-    };
-            
-    struct EntityStorageIndex
-    {
-        uint16_t PageIndex{ 0xffff };
-        uint16_t EntryIndex{ 0xffff };
-
-        inline operator bool() const
-        {
-            return PageIndex != 0xffff;
-        }
     };
 
     struct HandlePage
@@ -518,7 +520,7 @@ struct EntityStorageData : public ProtectedGameObject<EntityStorageData>
     int16_t SmallPageIndex;
     Array<uint16_t> PageToComponentPoolIndex;
     HashMap<ComponentTypeIndex, uint8_t> ComponentTypeToIndex;
-    HashMap<EntityHandle, EntityStorageIndex> InstanceToPageMap;
+    HashMap<EntityHandle, ComponentFrameStorageIndex> InstanceToPageMap;
     HashMap<uint64_t, uint16_t> AddedComponentFrameStorageIDs;
     HashMap<uint64_t, uint16_t> RemovedComponentFrameStorageIDs2;
     Array<Array<EntityHandle>> ComponentAddedEntityMap;
@@ -535,8 +537,8 @@ struct EntityStorageData : public ProtectedGameObject<EntityStorageData>
 
     void* GetComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const;
     void* GetOneFrameComponent(EntityHandle entityHandle, ComponentTypeIndex type) const;
-    void* GetComponent(EntityStorageIndex const& entityPtr, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const;
-    void* GetComponent(EntityStorageIndex const& entityPtr, uint8_t componentSlot, std::size_t componentSize, bool isProxy) const;
+    void* GetComponent(ComponentFrameStorageIndex const& entityPtr, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const;
+    void* GetComponent(ComponentFrameStorageIndex const& entityPtr, uint8_t componentSlot, std::size_t componentSize, bool isProxy) const;
 
     inline bool HasComponent(ComponentTypeIndex type) const
     {
@@ -616,8 +618,8 @@ struct ComponentCallbackRegistry : public ProtectedGameObject<ComponentCallbackR
 struct ECBEntityComponentChange
 {
     // -1 = removed
-    EntityStorageData::EntityStorageIndex PoolIndex;
-    uint16_t field_4;
+    ComponentFrameStorageIndex Index;
+    uint16_t field_4{ 0 };
     ComponentTypeIndex ComponentTypeId;
 };
 
@@ -646,12 +648,21 @@ struct ComponentFrameStorage
     ComponentTypeIndex ComponentTypeId{ 0 };
     void* DestructorProc{ nullptr };
 
-    inline void* GetComponent(EntityStorageData::EntityStorageIndex const& index) const
+    void* Allocate(ComponentFrameStorageIndex& index);
+    uint32_t Capacity() const;
+
+    inline void* GetComponent(ComponentFrameStorageIndex const& index) const
     {
         se_assert(index.PageIndex < Pages.size());
         auto page = Pages[index.PageIndex];
         return reinterpret_cast<uint8_t*>(page) + (index.EntryIndex * ComponentSizeInBytes);
     }
+
+private:
+    void Grow();
+
+    uint32_t ComponentSizeBucket() const;
+    uint16_t ComponentsOnPage(uint32_t page) const;
 };
 
 struct ImmediateWorldCache : public ProtectedGameObject<ImmediateWorldCache>
@@ -659,7 +670,7 @@ struct ImmediateWorldCache : public ProtectedGameObject<ImmediateWorldCache>
     struct ComponentChange
     {
         void* Ptr{ nullptr };
-        EntityStorageData::EntityStorageIndex StorageIndex;
+        ComponentFrameStorageIndex StorageIndex;
     };
 
     struct ComponentChanges
@@ -717,7 +728,8 @@ struct EntityCommandBuffer : public ProtectedGameObject<EntityCommandBuffer>
     EntityHandle CreateEntity();
     EntityHandle CreateEntityImmediate();
     bool DestroyEntity(EntityHandle entity);
-    void* GetComponentChange(ComponentTypeIndex type, EntityStorageData::EntityStorageIndex const& index) const;
+    void* GetComponentChange(ComponentTypeIndex type, ComponentFrameStorageIndex const& index) const;
+    void* CreateComponent(EntityHandle entity, ComponentTypeIndex type, uint16_t componentSize, ComponentFrameStorageIndex& index);
 };
 
 struct GroupAllocator : public ProtectedGameObject<GroupAllocator>

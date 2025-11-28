@@ -17,6 +17,52 @@
 
 BEGIN_NS(ecs)
 
+const unsigned ComponentSizeBuckets[65] = {
+    0, 
+    0, 1, 2, 2, 3, 3, 3, 3,
+    4, 4, 4, 4, 5, 5, 5, 5,
+    6, 6, 6, 6, 7, 7, 7, 7,
+    8, 8, 8, 8, 9, 9, 9, 9,
+    10, 10, 10, 10, 10, 10, 10, 10,
+    11, 11, 11, 11, 11, 11, 11, 11,
+    12, 12, 12, 12, 12, 12, 12, 12,
+    13, 13, 13, 13, 13, 13, 13, 13
+};
+
+const unsigned FrameAllocatorComponentsPerPage[14][9] = {
+    { 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40 },
+    { 0x20, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40 },
+    { 0x10, 0x20, 0x30, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40 },
+    { 0x08, 0x10, 0x18, 0x28, 0x40, 0x40, 0x40, 0x40, 0x40 },
+    { 0x05, 0x0A, 0x10, 0x1A, 0x2A, 0x40, 0x40, 0x40, 0x40 },
+    { 0x04, 0x08, 0x0C, 0x14, 0x20, 0x34, 0x40, 0x40, 0x40 },
+    { 0x03, 0x06, 0x09, 0x10, 0x19, 0x29, 0x40, 0x40, 0x40 },
+    { 0x02, 0x05, 0x08, 0x0D, 0x15, 0x22, 0x38, 0x40, 0x40 },
+    { 0x02, 0x04, 0x06, 0x0B, 0x12, 0x1D, 0x30, 0x40, 0x40 },
+    { 0x02, 0x04, 0x06, 0x0A, 0x10, 0x1A, 0x2A, 0x40, 0x40 },
+    { 0x01, 0x03, 0x04, 0x08, 0x0C, 0x14, 0x21, 0x36, 0x40 },
+    { 0x01, 0x02, 0x04, 0x06, 0x0A, 0x11, 0x1C, 0x2D, 0x40 },
+    { 0x01, 0x02, 0x03, 0x05, 0x09, 0x0E, 0x18, 0x26, 0x40 },
+    { 0x01, 0x02, 0x03, 0x05, 0x08, 0x0D, 0x15, 0x22, 0x40 }
+};
+
+const unsigned FrameAllocatorComponentsAggregate[14][9] = {
+    { 0x40, 0x80, 0xC0, 0x100, 0x140, 0x180, 0x1C0, 0x200, 0x240 },
+    { 0x20, 0x60, 0xA0, 0xE0,  0x120, 0x160, 0x1A0, 0x1E0, 0x220 },
+    { 0x10, 0x30, 0x60, 0xA0,  0xE0,  0x120, 0x160, 0x1A0, 0x1E0 },
+    { 0x08, 0x18, 0x30, 0x58,  0x98,  0xD8,  0x118, 0x158, 0x198 },
+    { 0x05, 0x0F, 0x1F, 0x39,  0x63,  0xA3,  0xE3,  0x123, 0x163 },
+    { 0x04, 0x0C, 0x18, 0x2C,  0x4C,  0x80,  0xC0,  0x100, 0x140 },
+    { 0x03, 0x09, 0x12, 0x22,  0x3B,  0x64,  0xA4,  0xE4,  0x124 },
+    { 0x02, 0x07, 0x0F, 0x1C,  0x31,  0x53,  0x8B,  0xCB,  0x10B },
+    { 0x02, 0x06, 0x0C, 0x17,  0x29,  0x46,  0x76,  0xB6,  0xF6 },
+    { 0x02, 0x06, 0x0C, 0x16,  0x26,  0x40,  0x6A,  0xAA,  0xEA },
+    { 0x01, 0x04, 0x08, 0x10,  0x1C,  0x30,  0x51,  0x87,  0xC7 },
+    { 0x01, 0x03, 0x07, 0x0D,  0x17,  0x28,  0x44,  0x71,  0xB1 },
+    { 0x01, 0x03, 0x06, 0x0B,  0x14,  0x22,  0x3A,  0x60,  0xA0 },
+    { 0x01, 0x03, 0x06, 0x0B,  0x13,  0x20,  0x37,  0x57,  0x98 }
+};
+
 void* QueryDescription::GetFirstMatchingComponent(std::size_t componentSize, bool isProxy)
 {
     for (auto const& cls : EntityStorages.values()) {
@@ -89,54 +135,6 @@ ComponentCallbacks* ComponentCallbackRegistry::Get(ComponentTypeIndex index)
     }
 }
 
-/*
-uint64_t NewEntityPool::Add()
-{
-    if (NumFreeSlots < (1u << FreePool.BitsPerBucket) / 2) {
-        Grow();
-    }
-
-    NumFreeSlots--;
-    auto index = NextFreeSlotIndex & ((1 << FreePool.BitsPerBucket) - 1);
-    auto& bucket = FreePool.Buckets[NextFreeSlotIndex >> FreePool.BitsPerBucket];
-    auto prevFreeSlot = NextFreeSlotIndex;
-    NextFreeSlotIndex = (uint32_t)(bucket[index] & 0xffffffffull);
-    bucket[index] = (bucket[index] & 0xffffffff00000000ull) | prevFreeSlot;
-    return bucket[index];
-}
-
-void NewEntityPool::Grow()
-{
-    auto newSize = FreePool.Used + (1 << FreePool.BitsPerBucket);
-    if (((uint32_t)FreePool.NumBuckets << FreePool.BitsPerBucket) < newSize) {
-        FreePool.Resize(newSize);
-    }
-
-    for (auto i = 0; i < (1 << FreePool.BitsPerBucket); i++) {
-        auto entityIndex = FreePool.Used;
-        FreePool[FreePool.Used++] = entityIndex | 0x100000000ull;
-
-        if (NumFreeSlots > 0) {
-            auto highestIndex = HighestIndex;
-            FreePool[HighestIndex] = (FreePool[HighestIndex] & 0xffffffff00000000ull) | entityIndex;
-        }
-
-        FreePool[entityIndex] = entityIndex | 0x100000000ull;
-        NumFreeSlots = this->NumFreeSlots;
-        HighestIndex = entityIndex;
-        if (NumFreeSlots == 0) {
-            NextFreeSlotIndex = entityIndex;
-        }
-
-        NumFreeSlots++;
-    }
-}
-
-EntityHandle NewEntityPools::Add(uint32_t classIndex)
-{
-    auto index = Pools[classIndex].Add();
-    return EntityHandle(classIndex, index);
-}*/
 
 FieldTracker::~FieldTracker() {}
 
@@ -169,6 +167,53 @@ FrameAllocator::FrameBuffer* FrameAllocator::AllocPage()
     auto page = GameAllocRaw(PageSize);
     FrameBuffers[0].push_back(page);
     return static_cast<FrameBuffer*>(page);
+}
+
+void* ComponentFrameStorage::Allocate(ComponentFrameStorageIndex& index)
+{
+    auto capacity = Capacity();
+    if (Capacity() <= NumComponents) {
+        Grow();
+        capacity = Capacity();
+    }
+
+    auto freeComponents = capacity - NumComponents;
+    index.PageIndex = (uint16_t)(Pages.size() - 1);
+    index.EntryIndex = ComponentsOnPage(Pages.size() - 1) - (uint16_t)freeComponents;
+    NumComponents++;
+    return (uint8_t*)Pages[index.PageIndex] + index.EntryIndex * ComponentSizeInBytes;
+}
+
+void ComponentFrameStorage::Grow()
+{
+    auto allocSize = ComponentsOnPage(Pages.size());
+    auto page = Pages.allocator().alloc(ComponentSizeInBytes * allocSize);
+    *Pages.add() = page;
+}
+
+uint32_t ComponentFrameStorage::ComponentSizeBucket() const
+{
+    auto cappedSize = std::min<uint16_t>(ComponentSizeInBytes, 0x40);
+    return ComponentSizeBuckets[cappedSize];
+}
+
+uint16_t ComponentFrameStorage::ComponentsOnPage(uint32_t page) const
+{
+    auto sizeBucket = ComponentSizeBucket();
+    auto cappedPages = std::min<uint32_t>(page, 8);
+    return FrameAllocatorComponentsPerPage[sizeBucket][cappedPages];
+}
+
+uint32_t ComponentFrameStorage::Capacity() const
+{
+    if (Pages.size() > 0) {
+        auto sizeBucket = ComponentSizeBucket();
+        auto cappedPages = std::min<uint32_t>(Pages.size() - 1, 8);
+        return FrameAllocatorComponentsAggregate[sizeBucket][cappedPages]
+            + FrameAllocatorComponentsPerPage[sizeBucket][8] * (Pages.size() - cappedPages - 1);
+    } else {
+        return 0;
+    }
 }
 
 void FrameAllocator::Free(void* ptr)
@@ -252,7 +297,7 @@ void* EntityStorageData::GetOneFrameComponent(EntityHandle entityHandle, Compone
     return nullptr;
 }
 
-void* EntityStorageData::GetComponent(EntityStorageIndex const& entityPtr, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const
+void* EntityStorageData::GetComponent(ComponentFrameStorageIndex const& entityPtr, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const
 {
     auto compIndex = ComponentTypeToIndex.try_get(type);
     if (compIndex) {
@@ -262,7 +307,7 @@ void* EntityStorageData::GetComponent(EntityStorageIndex const& entityPtr, Compo
     }
 }
 
-void* EntityStorageData::GetComponent(EntityStorageIndex const& entityPtr, uint8_t componentSlot, std::size_t componentSize, bool isProxy) const
+void* EntityStorageData::GetComponent(ComponentFrameStorageIndex const& entityPtr, uint8_t componentSlot, std::size_t componentSize, bool isProxy) const
 {
     auto& page = Components[entityPtr.PageIndex]->Components[componentSlot];
     auto buf = (uint8_t*)page.ComponentBuffer;
@@ -444,7 +489,7 @@ bool EntityCommandBuffer::DestroyEntity(EntityHandle entity)
     return false;
 }
 
-void* EntityCommandBuffer::GetComponentChange(ComponentTypeIndex type, EntityStorageData::EntityStorageIndex const& index) const
+void* EntityCommandBuffer::GetComponentChange(ComponentTypeIndex type, ComponentFrameStorageIndex const& index) const
 {
     auto pool = Data.ComponentPools.Find(type);
     if (index && pool) {
@@ -452,6 +497,26 @@ void* EntityCommandBuffer::GetComponentChange(ComponentTypeIndex type, EntitySto
     }
 
     return nullptr;
+}
+
+void* EntityCommandBuffer::CreateComponent(EntityHandle entity, ComponentTypeIndex type, uint16_t componentSize, ComponentFrameStorageIndex& index)
+{
+    auto storage = Data.ComponentPools.Find(type);
+    if (!storage) {
+        storage = Data.ComponentPools.Add(type, Allocator);
+        storage->ComponentSizeInBytes = componentSize;
+        storage->ComponentTypeId = type;
+        // TODO - bind dtor
+        storage->DestructorProc = nullptr;
+    }
+
+    auto component = storage->Allocate(index);
+    auto changes = Data.EntityChanges.add(entity, Allocator);
+    auto change = changes->Store.add();
+    change->Index = index;
+    change->ComponentTypeId = type;
+
+    return component;
 }
 
 void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy)
@@ -1078,7 +1143,7 @@ void EntitySystemHelpersBase::DebugLogECBFlushChanges()
                 auto const& upd = entityChanges.Store[j];
 
                 log_.AddComponentChange(world, entityHandle, upd.ComponentTypeId, 
-                    (upd.PoolIndex.PageIndex != 0xffff) ? ComponentChangeFlags::Create : ComponentChangeFlags::Destroy);
+                    upd.Index ? ComponentChangeFlags::Create : ComponentChangeFlags::Destroy);
             }
         }
     }
@@ -1100,7 +1165,7 @@ void EntitySystemHelpersBase::ThrowECBFlushEvents()
 
             for (unsigned j = 0; j < entityChanges.Store.size(); j++) {
                 auto const& upd = entityChanges.Store[j];
-                if (upd.PoolIndex.PageIndex != 0xffff) {
+                if (upd.Index) {
                     auto typeInfo = GetComponentMeta(upd.ComponentTypeId);
                     if (typeInfo && typeInfo->OneFrame) {
                         hooks.OnEntityEvent(*world, entity, upd.ComponentTypeId, lua::EntityComponentEvent::Create, nullptr);
@@ -1215,13 +1280,13 @@ void EntitySystemHelpersBase::ValidateECBFlushChanges()
             for (unsigned j = 0; j < entityChanges.Store.size(); j++) {
                 auto const& change = entityChanges.Store[j];
 
-                if (change.PoolIndex.PageIndex != 0xffff) {
+                if (change.Index) {
                     auto componentType = GetComponentType(change.ComponentTypeId);
                     if (componentType) {
                         auto const& meta = GetComponentMeta(*componentType);
                         auto pm = GetPropertyMap(*componentType);
                         if (pm != nullptr) {
-                            auto component = ecb.GetComponentChange(change.ComponentTypeId, change.PoolIndex);
+                            auto component = ecb.GetComponentChange(change.ComponentTypeId, change.Index);
                             if (component) {
                                 if (meta.IsProxy) {
                                     pm->ValidateObject(*(void**)component);
