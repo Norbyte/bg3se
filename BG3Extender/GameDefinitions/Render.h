@@ -112,18 +112,20 @@ struct SceneObjects
 };
 
 
-struct [[bg3::hidden]] Scene : public ProtectedGameObject<Scene>
+struct Scene : public ProtectedGameObject<Scene>
 {
     EntityHandle field_0;
-    bool Active;
-    void* SceneViewMode;
-    CRITICAL_SECTION DirtyListCS;
-    Array<MoveableObject*> DirtyList;
-    LevelBase* Level;
-    bool CullRegions;
-    SRWLOCK SRWLock;
-    std::array<SceneObjects, 11> ObjectsByType;
-    Array<MoveableObject*> DistantLightProbes;
+    [[bg3::readonly]] bool Active;
+    // Editor only
+    // [[bg3::hidden]] void* SceneViewMode;
+    [[bg3::hidden]] CRITICAL_SECTION DirtyListCS;
+    [[bg3::hidden]] Array<MoveableObject*> DirtyList;
+    [[bg3::hidden]] LevelBase* Level;
+    [[bg3::hidden]] bool CullRegions;
+    [[bg3::hidden]] SRWLOCK SRWLock;
+    [[bg3::hidden]] std::array<SceneObjects, 11> ObjectsByType;
+    [[bg3::hidden]] Array<MoveableObject*> DistantLightProbes;
+    [[bg3::hidden]] HashSet<MoveableObject*> field_11A8;
 };
 
 struct ShaderParamBinding
@@ -329,6 +331,8 @@ struct MaterialRenderingData
     [[bg3::hidden]] uint64_t MaterialCBBufferSize;
 
     template <class T>
+    std::optional<T> GetUniformParam(Material& instance, UniformBindingData const& binding);
+    template <class T>
     void SetUniformParam(Material& instance, UniformBindingData const& binding, T value);
     bool CheckConstantBuffer(Material& instance);
 };
@@ -402,6 +406,15 @@ struct AppliedMaterial
     glm::vec4 DynamicParameter;
     AppliedMaterialParameters* Parameters;
 
+    //# P_FUN(GetScalar, AppliedMaterial::GetScalar)
+    //# P_FUN(GetVector2, AppliedMaterial::GetVector2)
+    //# P_FUN(GetVector3, AppliedMaterial::GetVector3)
+    //# P_FUN(GetVector4, AppliedMaterial::GetVector4)
+    std::optional<float> GetScalar(FixedString const& param);
+    std::optional<glm::vec2> GetVector2(FixedString const& param);
+    std::optional<glm::vec3> GetVector3(FixedString const& param);
+    std::optional<glm::vec4> GetVector4(FixedString const& param);
+
     //# P_FUN(SetScalar, AppliedMaterial::SetScalar)
     //# P_FUN(SetVector2, AppliedMaterial::SetVector2)
     //# P_FUN(SetVector3, AppliedMaterial::SetVector3)
@@ -411,6 +424,8 @@ struct AppliedMaterial
     bool SetVector3(FixedString const& param, glm::vec3 value);
     bool SetVector4(FixedString const& param, glm::vec4 value);
 
+    template <class T>
+    std::optional<T> GetUniformParam(UniformBindingData const& binding);
     template <class T>
     void SetUniformParam(UniformBindingData const& binding, T value);
 };

@@ -424,6 +424,12 @@ struct LevelUnloadedOneFrameComponent : public BaseComponent
     FixedString Level;
 };
 
+struct [[bg3::component]] SceneComponent : public Scene
+{
+    DEFINE_PROXY_COMPONENT(Scene, "ls::Scene")
+};
+
+DEFINE_TAG_COMPONENT(ls, SceneRootComponent, SceneRoot)
 DEFINE_TAG_COMPONENT(ls, LevelIsOwnerComponent, LevelIsOwner)
 DEFINE_TAG_COMPONENT(ls, LevelPrepareUnloadBusyComponent, LevelPrepareUnloadBusy)
 DEFINE_TAG_COMPONENT(ls, LevelUnloadBusyComponent, LevelUnloadBusy)

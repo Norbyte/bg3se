@@ -743,6 +743,7 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 
     auto const& symbolMaps = GetStaticSymbols().IndexSymbolToNameMaps;
     for (auto const& mapping : symbolMaps) {
+        auto s = STDString(mapping.second.name);
         auto name = SimplifyComponentName(mapping.second.name);
         if (name.starts_with("ecs::query::spec::Spec<")) {
             // Queries ignored
@@ -904,6 +905,28 @@ void* EntitySystemHelpersBase::GetRawSingleton(ExtComponentType type)
 
     auto page = storage.Storage->InstanceToPageMap.values()[0];
     return storage.Storage->GetComponent(page, storage.GetComponentIndex(0), meta.Size, meta.IsProxy);
+}
+
+EntityHandle EntitySystemHelpersBase::GetSingletonEntity(ExtComponentType type)
+{
+    auto& meta = GetComponentMeta(type);
+    if (meta.SingleComponentQuery == ecs::UndefinedQuery) {
+        WARN("No query defined for singleton %s?", GetComponentName(meta.ComponentIndex)->c_str());
+        return {};
+    }
+
+    auto world = GetEntityWorld();
+    auto const& query = world->Queries.Queries[(unsigned)meta.SingleComponentQuery];
+    if (query.EntityStorages.empty()) {
+        return {};
+    }
+
+    auto const& storage = query.EntityStorages.values()[0];
+    if (storage.Storage->InstanceToPageMap.empty()) {
+        return {};
+    }
+
+    return storage.Storage->InstanceToPageMap.keys()[0];
 }
 
 SystemTypeEntry* EntitySystemHelpersBase::GetSystemEntry(ExtSystemType type)

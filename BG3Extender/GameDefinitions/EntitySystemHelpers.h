@@ -212,6 +212,17 @@ public:
     }
 
     template <class T>
+    ComponentOps* GetComponentOps()
+    {
+        auto const& meta = GetComponentMeta(T::ComponentType);
+        if (meta.ComponentIndex != UndefinedComponent) {
+            return GetEntityWorld()->ComponentOps.Get(meta.ComponentIndex);
+        } else {
+            return nullptr;
+        }
+    }
+
+    template <class T>
     T* GetSystem()
     {
         return reinterpret_cast<T*>(GetRawSystem(T::SystemType));
@@ -254,6 +265,7 @@ public:
 
     void* GetRawComponent(EntityHandle entityHandle, ExtComponentType type);
     void* GetRawSingleton(ExtComponentType type);
+    EntityHandle GetSingletonEntity(ExtComponentType type);
     ecs::SystemTypeEntry* GetSystemEntry(ExtSystemType type);
     void* GetRawSystem(ExtSystemType type);
     EntityHandle GetEntityHandle(FixedString const& guidString);
@@ -268,6 +280,12 @@ public:
         } else {
             return nullptr;
         }
+    }
+    
+    template <class T>
+    inline EntityHandle GetSingletonEntity()
+    {
+        return GetSingletonEntity(T::ComponentType);
     }
 
     void Update();

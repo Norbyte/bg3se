@@ -815,6 +815,16 @@ bool MaterialRenderingData::CheckConstantBuffer(Material& instance)
 }
 
 template <class T>
+std::optional<T> MaterialRenderingData::GetUniformParam(Material& instance, UniformBindingData const& binding)
+{
+    if (MaterialCB != nullptr && binding.PerShaderCBOffsets[ShaderIndex] != -1) {
+        return *(T*)((uint8_t*)MaterialCB + binding.PerShaderCBOffsets[ShaderIndex]);
+    } else {
+        return {};
+    }
+}
+
+template <class T>
 void MaterialRenderingData::SetUniformParam(Material& instance, UniformBindingData const& binding, T value)
 {
     if (!CheckConstantBuffer(instance)) return;
@@ -824,6 +834,26 @@ void MaterialRenderingData::SetUniformParam(Material& instance, UniformBindingDa
         // FIXME - VERY JANKY
         InstancingHash += rand();
     }
+}
+
+template <class T>
+std::optional<T> AppliedMaterial::GetUniformParam(UniformBindingData const& binding)
+{
+    if (PrimaryRenderingData != nullptr) {
+        auto val = PrimaryRenderingData->GetUniformParam<T>(*Material, binding);
+        if (val) {
+            return val;
+        }
+    }
+
+    for (auto i = 0; i < std::size(RenderingData); i++) {
+        auto val = RenderingData[i].GetUniformParam<T>(*Material, binding);
+        if (val) {
+            return val;
+        }
+    }
+
+    return {};
 }
 
 template <class T>
@@ -838,6 +868,74 @@ void AppliedMaterial::SetUniformParam(UniformBindingData const& binding, T value
     }
 }
 
+std::optional<float> AppliedMaterial::GetScalar(FixedString const& paramName)
+{
+    for (auto const& param : Material->Parameters.ScalarParameters) {
+        if (param.ParameterName == paramName) {
+            auto value = GetUniformParam<float>(param.Binding);
+            if (value) {
+                return value;
+            } else {
+                return param.Value;
+            }
+        }
+    }
+
+    ERR("Material has no float parameter named '%s'", paramName.GetString());
+    return {};
+}
+
+std::optional<glm::vec2> AppliedMaterial::GetVector2(FixedString const& paramName)
+{
+    for (auto const& param : Material->Parameters.Vector2Parameters) {
+        if (param.ParameterName == paramName) {
+            auto value = GetUniformParam<glm::vec2>(param.Binding);
+            if (value) {
+                return value;
+            } else {
+                return param.Value;
+            }
+        }
+    }
+
+    ERR("Material has no vec2 parameter named '%s'", paramName.GetString());
+    return {};
+}
+
+std::optional<glm::vec3> AppliedMaterial::GetVector3(FixedString const& paramName)
+{
+    for (auto const& param : Material->Parameters.Vector3Parameters) {
+        if (param.ParameterName == paramName) {
+            auto value = GetUniformParam<glm::vec3>(param.Binding);
+            if (value) {
+                return value;
+            } else {
+                return param.Value;
+            }
+        }
+    }
+
+    ERR("Material has no vec3 parameter named '%s'", paramName.GetString());
+    return {};
+}
+
+std::optional<glm::vec4> AppliedMaterial::GetVector4(FixedString const& paramName)
+{
+    for (auto const& param : Material->Parameters.VectorParameters) {
+        if (param.ParameterName == paramName) {
+            auto value = GetUniformParam<glm::vec4>(param.Binding);
+            if (value) {
+                return value;
+            } else {
+                return param.Value;
+            }
+        }
+    }
+
+    ERR("Material has no vec4 parameter named '%s'", paramName.GetString());
+    return {};
+}
+
 bool AppliedMaterial::SetScalar(FixedString const& paramName, float value)
 {
     for (auto const& param : Material->Parameters.ScalarParameters) {
@@ -847,7 +945,7 @@ bool AppliedMaterial::SetScalar(FixedString const& paramName, float value)
         }
     }
 
-    ERR("Material binding has no float parameter named '%s'", paramName.GetString());
+    ERR("Material has no float parameter named '%s'", paramName.GetString());
     return false;
 }
 
@@ -860,7 +958,7 @@ bool AppliedMaterial::SetVector2(FixedString const& paramName, glm::vec2 value)
         }
     }
 
-    ERR("Material binding has no vec2 parameter named '%s'", paramName.GetString());
+    ERR("Material has no vec2 parameter named '%s'", paramName.GetString());
     return false;
 }
 
@@ -873,7 +971,7 @@ bool AppliedMaterial::SetVector3(FixedString const& paramName, glm::vec3 value)
         }
     }
 
-    ERR("Material binding has no vec3 parameter named '%s'", paramName.GetString());
+    ERR("Material has no vec3 parameter named '%s'", paramName.GetString());
     return false;
 }
 
@@ -886,7 +984,7 @@ bool AppliedMaterial::SetVector4(FixedString const& paramName, glm::vec4 value)
         }
     }
 
-    ERR("Material binding has no vec4 parameter named '%s'", paramName.GetString());
+    ERR("Material has no vec4 parameter named '%s'", paramName.GetString());
     return false;
 }
 

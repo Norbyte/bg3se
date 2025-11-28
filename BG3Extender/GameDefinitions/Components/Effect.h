@@ -225,17 +225,17 @@ struct MaterialInfo : ProtectedGameObject<MaterialInfo>
     MaterialInfoFlags Flags;
 };
 
-struct OverlayMaterialRequest : ProtectedGameObject<OverlayMaterialRequest>
+struct OverlayMaterialRequest
 {
-    MaterialInfo** Material{ nullptr };
-    bool* CompletionFlag{ nullptr };
-    float FadingParam;
+    [[bg3::hidden]] MaterialInfo** Material{ nullptr };
+    [[bg3::hidden]] bool* CompletionFlag{ nullptr };
+    float FadingParam{ .0f };
     EntityHandle Entity;
     FixedString MaterialID;
-    float OverlayOffset;
-    OverlayMaterialApplyFlags ApplyFlags;
-    ApplyMaterialMapFlags MapFlags;
-    OverlayMaterialRequestFlags Flags;
+    float OverlayOffset{ .0f };
+    OverlayMaterialApplyFlags ApplyFlags{ 0 };
+    ApplyMaterialMapFlags MapFlags{ 0 };
+    OverlayMaterialRequestFlags Flags{ 0 };
     [[bg3::hidden]] UnknownFunction Callback;
 };
 
@@ -260,7 +260,6 @@ struct EffectsManager : public BaseSystem
     bool CanUpdate;
     [[bg3::readonly]] uint32_t FxCreateThreadId;
     Array<DestroyEffectStruct> DestroyEffectData;
-    // FIXME - implement proper Queue grow support!
     [[bg3::hidden]] Queue<EffectInvoke> Invokes;
     [[bg3::hidden]] CRITICAL_SECTION InvokesCS;
     HashMap<EntityHandle, EffectSoundObjectInfo> SoundObjectsOnLevel;
@@ -273,14 +272,19 @@ struct EffectsManager : public BaseSystem
     [[bg3::hidden]] std::array<void*, 3> GPUFences;
     [[bg3::hidden]] Array<void*> RCBs; // rf::RendererCommandBuffer*
     [[bg3::hidden]] CRITICAL_SECTION AddOverlayMaterialRequestsCS;
-    Array<OverlayMaterialRequest> OverlayMaterialRequests;
+    [[bg3::hidden]] Array<OverlayMaterialRequest> OverlayMaterialRequests;
     [[bg3::hidden]] CRITICAL_SECTION NonConstructedEffectsCS;
-    HashSet<EntityHandle> NonConstructedEffects;
+    [[bg3::hidden]] HashSet<EntityHandle> NonConstructedEffects;
     [[bg3::hidden]] void* RenderBatchesGlobalVB;
     [[bg3::hidden]] void* qword1E0;
     [[bg3::hidden]] void* RibbonGlobalVB;
     [[bg3::hidden]] void* VisualSystem;
     [[bg3::hidden]] void* VisualChangedSystem;
+
+    //# P_FUN(Invoke, EffectsManager::Invoke)
+    //# P_FUN(AddMaterial, EffectsManager::AddMaterial)
+    void Invoke(EffectInvoke invoke);
+    void AddMaterial(OverlayMaterialRequest material);
 };
 
 END_SE()
@@ -296,7 +300,10 @@ struct HandlerComponent : public BaseComponent
 
 struct [[bg3::hidden]] HandlerComponentView
 {
-    HandlerComponent* EffectHandler;
+    inline HandlerComponentView() {}
+    HandlerComponentView(EntityHandle entity);
+
+    HandlerComponent* EffectHandler{ nullptr };
     uint64_t* MutationData{ nullptr };
     void* field_10{ nullptr };
     EntityHandle Entity;
@@ -307,7 +314,7 @@ struct [[bg3::hidden]] HandlerComponentView
 struct [[bg3::hidden]] HandlerSystemHelper
 {
     virtual ~HandlerSystemHelper() = 0;
-    virtual void InitMultiEffect(HandlerComponentView const& entity, struct ecl::EffectHandlerInitInfo const& info, Scene* scene) const = 0;
+    virtual void InitMultiEffect(HandlerComponentView const& entity, EffectHandlerInitInfo const& info, Scene* scene) const = 0;
     virtual void UpdateMultiEffect(HandlerComponentView const& entity) const = 0;
     virtual void DestroyMultiEffect(HandlerComponentView const& entity) const = 0;
     virtual void HideMultiEffect(HandlerComponentView const& entity) const = 0;
@@ -319,6 +326,17 @@ struct HandlerSystem : public BaseSystem
     DEFINE_SYSTEM(ClientEffectHandler, "ecl::effect::HandlerSystem")
 
     [[bg3::hidden]] HandlerSystemHelper* Helper;
+
+    //# P_FUN(InitMultiEffect, ecl::effect::HandlerSystem::InitMultiEffect)
+    //# P_FUN(UpdateMultiEffect, ecl::effect::HandlerSystem::UpdateMultiEffect)
+    //# P_FUN(DestroyMultiEffect, ecl::effect::HandlerSystem::DestroyMultiEffect)
+    //# P_FUN(HideMultiEffect, ecl::effect::HandlerSystem::HideMultiEffect)
+    //# P_FUN(UnhideMultiEffect, ecl::effect::HandlerSystem::UnhideMultiEffect)
+    EntityHandle InitMultiEffect(EffectHandlerInitInfo info);
+    bool UpdateMultiEffect(EntityHandle effect);
+    bool DestroyMultiEffect(EntityHandle effect);
+    bool HideMultiEffect(EntityHandle effect);
+    bool UnhideMultiEffect(EntityHandle effect);
 };
 
 END_NS()

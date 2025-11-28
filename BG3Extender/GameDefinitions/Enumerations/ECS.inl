@@ -256,6 +256,9 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
     E(Clock)
     E(SpatialGrid)
 
+    E(Scene)
+    E(SceneRoot)
+
     // Level
     E(Level)
     E(LevelRoot)

@@ -782,6 +782,7 @@
     <None Include="Lua\Libs\ClientUI\CustomProperties.inl" />
     <None Include="GameDefinitions\Stats\Expression.inl" />
     <None Include="Lua\Libs\StatFunctors.inl" />
+    <None Include="GameDefinitions\Components\Effect.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">
