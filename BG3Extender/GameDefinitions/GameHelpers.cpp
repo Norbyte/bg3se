@@ -681,7 +681,7 @@ END_NS()
 BEGIN_SE()
 
 template <class T>
-void Material::SetUniformParam(Material::UniformBindingData const& binding, T value)
+void Material::SetUniformParam(UniformBindingData const& binding, T value)
 {
     for (unsigned i = 0; i < std::size(ShaderDescriptions); i++) {
         if (binding.PerShaderCBOffsets[i] != -1 && ShaderDescriptions[i].MaterialCBSize > 0 && MaterialCBs[i].MaterialCB != nullptr) {
@@ -750,9 +750,22 @@ void* Material::GetOrCreateConstantBuffer(uint8_t shaderIndex)
 {
     se_assert(shaderIndex < std::size(ShaderDescriptions));
 
+    // Fast-path for already allocated CB
     if (MaterialCBs[shaderIndex].MaterialCB != nullptr) {
         return MaterialCBs[shaderIndex].MaterialCB;
     }
+
+    AcquireSRWLockShared(&MaterialCBLock);
+    // Re-check when we have a reader lock
+    if (MaterialCBs[shaderIndex].MaterialCB != nullptr) {
+        // Concurrent thread allocated the CB
+        ReleaseSRWLockShared(&MaterialCBLock);
+        return MaterialCBs[shaderIndex].MaterialCB;
+    }
+
+    // No CB, we need to build it ourself
+    ReleaseSRWLockShared(&MaterialCBLock);
+    AcquireSRWLockExclusive(&MaterialCBLock);
 
     auto size = ShaderDescriptions[shaderIndex].MaterialCBSize;
     auto cb = (uint8_t *)GameAllocRaw(size);
@@ -784,12 +797,14 @@ void* Material::GetOrCreateConstantBuffer(uint8_t shaderIndex)
 
     MaterialCBs[shaderIndex].MaterialCB = cb;
     MaterialCBs[shaderIndex].MaterialCBSize = size;
+
+    ReleaseSRWLockExclusive(&MaterialCBLock);
     return cb;
 }
 
 bool MaterialRenderingData::CheckConstantBuffer(Material& instance)
 {
-    if (MaterialCB == nullptr && MaterialCBSize > 0 && MaterialVkDescriptorSet != -1) {
+    if (MaterialCB == nullptr && MaterialCBSize > 0 && MaterialBinding.VkDescriptorSet != -1) {
         auto cb = instance.GetOrCreateConstantBuffer(ShaderIndex);
         MaterialCB = GameAllocRaw(MaterialCBSize);
         memcpy(MaterialCB, cb, MaterialCBSize);
@@ -800,7 +815,7 @@ bool MaterialRenderingData::CheckConstantBuffer(Material& instance)
 }
 
 template <class T>
-void MaterialRenderingData::SetUniformParam(Material& instance, Material::UniformBindingData const& binding, T value)
+void MaterialRenderingData::SetUniformParam(Material& instance, UniformBindingData const& binding, T value)
 {
     if (!CheckConstantBuffer(instance)) return;
 
@@ -812,7 +827,7 @@ void MaterialRenderingData::SetUniformParam(Material& instance, Material::Unifor
 }
 
 template <class T>
-void AppliedMaterial::SetUniformParam(Material::UniformBindingData const& binding, T value)
+void AppliedMaterial::SetUniformParam(UniformBindingData const& binding, T value)
 {
     if (PrimaryRenderingData != nullptr) {
         PrimaryRenderingData->SetUniformParam(*Material, binding, value);

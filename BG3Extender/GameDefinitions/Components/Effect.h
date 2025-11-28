@@ -38,7 +38,7 @@ struct GameplayEffectSetTimeFactorRequestsSingletonComponent : public BaseCompon
 
 struct VFXSetPlayTimeRequest
 {
-    uint64_t field_0;
+    uint64_t Phase;
     float Time;
 };
 
@@ -217,25 +217,25 @@ struct EffectInvoke
 struct MaterialInfo : ProtectedGameObject<MaterialInfo>
 {
     [[bg3::hidden]] void* VMT;
-    EntityHandle field_8;
-    FixedString field_10;
-    float field_14;
-    uint8_t field_18;
-    uint32_t ApplyMaterialMapFlags;
-    uint8_t Flags;
+    EntityHandle Entity;
+    FixedString MaterialID;
+    float OverlayOffset;
+    OverlayMaterialApplyFlags ApplyFlags;
+    ApplyMaterialMapFlags MapFlags;
+    MaterialInfoFlags Flags;
 };
 
 struct OverlayMaterialRequest : ProtectedGameObject<OverlayMaterialRequest>
 {
     MaterialInfo** Material{ nullptr };
-    bool* field_8{ nullptr };
-    float field_10;
-    EntityHandle field_18;
-    FixedString field_20;
-    float field_24;
-    uint8_t field_28;
-    uint32_t ApplyMaterialMapFlags;
-    uint8_t Flags;
+    bool* CompletionFlag{ nullptr };
+    float FadingParam;
+    EntityHandle Entity;
+    FixedString MaterialID;
+    float OverlayOffset;
+    OverlayMaterialApplyFlags ApplyFlags;
+    ApplyMaterialMapFlags MapFlags;
+    OverlayMaterialRequestFlags Flags;
     [[bg3::hidden]] UnknownFunction Callback;
 };
 
