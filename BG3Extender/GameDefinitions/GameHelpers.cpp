@@ -839,6 +839,10 @@ void MaterialRenderingData::SetUniformParam(Material& instance, UniformBindingDa
 template <class T>
 std::optional<T> AppliedMaterial::GetUniformParam(UniformBindingData const& binding)
 {
+    if ((bool)(Flags & AppliedMaterialFlags::Queued)) {
+        return {};
+    }
+
     if (PrimaryRenderingData != nullptr) {
         auto val = PrimaryRenderingData->GetUniformParam<T>(*Material, binding);
         if (val) {
@@ -859,6 +863,10 @@ std::optional<T> AppliedMaterial::GetUniformParam(UniformBindingData const& bind
 template <class T>
 void AppliedMaterial::SetUniformParam(UniformBindingData const& binding, T value)
 {
+    if ((bool)(Flags & AppliedMaterialFlags::Queued)) {
+        return;
+    }
+
     if (PrimaryRenderingData != nullptr) {
         PrimaryRenderingData->SetUniformParam(*Material, binding, value);
     }
@@ -938,54 +946,86 @@ std::optional<glm::vec4> AppliedMaterial::GetVector4(FixedString const& paramNam
 
 bool AppliedMaterial::SetScalar(FixedString const& paramName, float value)
 {
-    for (auto const& param : Material->Parameters.ScalarParameters) {
-        if (param.ParameterName == paramName) {
-            SetUniformParam(param.Binding, value);
-            return true;
+    if ((bool)(Flags & AppliedMaterialFlags::Queued)) {
+        ScalarParameter param;
+        param.ParameterName = paramName;
+        param.Value = value;
+        QueuedParameters->ScalarParameters.push_back(param);
+        return true;
+    } else {
+        for (auto const& param : Material->Parameters.ScalarParameters) {
+            if (param.ParameterName == paramName) {
+                SetUniformParam(param.Binding, value);
+                return true;
+            }
         }
-    }
 
-    ERR("Material has no float parameter named '%s'", paramName.GetString());
-    return false;
+        ERR("Material has no float parameter named '%s'", paramName.GetString());
+        return false;
+    }
 }
 
 bool AppliedMaterial::SetVector2(FixedString const& paramName, glm::vec2 value)
 {
-    for (auto const& param : Material->Parameters.Vector2Parameters) {
-        if (param.ParameterName == paramName) {
-            SetUniformParam(param.Binding, value);
-            return true;
+    if ((bool)(Flags & AppliedMaterialFlags::Queued)) {
+        Vector2Parameter param;
+        param.ParameterName = paramName;
+        param.Value = value;
+        QueuedParameters->Vector2Parameters.push_back(param);
+        return true;
+    } else {
+        for (auto const& param : Material->Parameters.Vector2Parameters) {
+            if (param.ParameterName == paramName) {
+                SetUniformParam(param.Binding, value);
+                return true;
+            }
         }
-    }
 
-    ERR("Material has no vec2 parameter named '%s'", paramName.GetString());
-    return false;
+        ERR("Material has no vec2 parameter named '%s'", paramName.GetString());
+        return false;
+    }
 }
 
 bool AppliedMaterial::SetVector3(FixedString const& paramName, glm::vec3 value)
 {
-    for (auto const& param : Material->Parameters.Vector3Parameters) {
-        if (param.ParameterName == paramName) {
-            SetUniformParam(param.Binding, value);
-            return true;
+    if ((bool)(Flags & AppliedMaterialFlags::Queued)) {
+        Vector3Parameter param;
+        param.ParameterName = paramName;
+        param.Value = value;
+        QueuedParameters->Vector3Parameters.push_back(param);
+        return true;
+    } else {
+        for (auto const& param : Material->Parameters.Vector3Parameters) {
+            if (param.ParameterName == paramName) {
+                SetUniformParam(param.Binding, value);
+                return true;
+            }
         }
-    }
 
-    ERR("Material has no vec3 parameter named '%s'", paramName.GetString());
-    return false;
+        ERR("Material has no vec3 parameter named '%s'", paramName.GetString());
+        return false;
+    }
 }
 
 bool AppliedMaterial::SetVector4(FixedString const& paramName, glm::vec4 value)
 {
-    for (auto const& param : Material->Parameters.VectorParameters) {
-        if (param.ParameterName == paramName) {
-            SetUniformParam(param.Binding, value);
-            return true;
+    if ((bool)(Flags & AppliedMaterialFlags::Queued)) {
+        Vector4Parameter param;
+        param.ParameterName = paramName;
+        param.Value = value;
+        QueuedParameters->VectorParameters.push_back(param);
+        return true;
+    } else {
+        for (auto const& param : Material->Parameters.VectorParameters) {
+            if (param.ParameterName == paramName) {
+                SetUniformParam(param.Binding, value);
+                return true;
+            }
         }
-    }
 
-    ERR("Material has no vec4 parameter named '%s'", paramName.GetString());
-    return false;
+        ERR("Material has no vec4 parameter named '%s'", paramName.GetString());
+        return false;
+    }
 }
 
 void SRWSpinLock::ReadLock()

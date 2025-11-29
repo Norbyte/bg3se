@@ -352,7 +352,7 @@ struct [[bg3::hidden]] QueuedRawTextures
     void* Texture; // rf::Texture*
 };
 
-struct AppliedMaterialParameters : public MaterialParameters
+struct AppliedMaterialQueuedParametersContainer : public MaterialParameters
 {
     [[bg3::hidden]] Array<QueuedRawTextures> QueuedTextures;
 };
@@ -404,7 +404,7 @@ struct AppliedMaterial
     uint8_t AlphaChannel;
     glm::vec4 MeshVertexColor;
     glm::vec4 DynamicParameter;
-    AppliedMaterialParameters* Parameters;
+    AppliedMaterialQueuedParametersContainer* QueuedParameters;
 
     //# P_FUN(GetScalar, AppliedMaterial::GetScalar)
     //# P_FUN(GetVector2, AppliedMaterial::GetVector2)

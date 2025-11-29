@@ -231,7 +231,7 @@ BEGIN_BITMASK(AppliedMaterialDirtyFlags, uint8_t)
 END_ENUM()
 
 BEGIN_BITMASK(AppliedMaterialFlags, uint8_t)
-    EV(Instantiated, 1)
+    EV(Queued, 1)
     EV(HasMaterial, 2)
     EV(IsOverlay, 4)
     EV(OverlayOriginalMapsSet, 8)

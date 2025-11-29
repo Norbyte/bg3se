@@ -894,35 +894,35 @@ struct MaterialResource : public TwoStepLoadableResource
     struct Parameter
     {
         FixedString ParameterName;
-        bool Enabled;
+        bool Enabled{ true };
     };
     
     struct ScalarParameter : public Parameter
     {
-        float Value;
-        float BaseValue;
+        float Value{ .0f };
+        float BaseValue{ .0f };
     };
 
     struct Vector2Parameter : public Parameter
     {
-        glm::fvec2 Value;
-        glm::fvec2 BaseValue;
+        glm::fvec2 Value{ .0f };
+        glm::fvec2 BaseValue{ .0f };
     };
 
     struct Vector3Parameter : public Parameter
     {
-        glm::fvec3 Value;
-        glm::fvec3 BaseValue;
-        bool IsColor;
+        glm::fvec3 Value{ .0f };
+        glm::fvec3 BaseValue{ .0f };
+        bool IsColor{ false };
     };
 
     // alignas(16)
     struct Vector4Parameter : public Parameter
     {
         [[bg3::hidden]] __int64 field_8; // Padding
-        glm::fvec4 Value;
-        glm::fvec4 BaseValue;
-        bool IsColor;
+        glm::fvec4 Value{ .0f };
+        glm::fvec4 BaseValue{ .0f };
+        bool IsColor{ false };
         [[bg3::hidden]] __int64 field_38; // Padding
     };
 
@@ -933,7 +933,7 @@ struct MaterialResource : public TwoStepLoadableResource
 
     struct VirtualTextureParameter : public Parameter
     {
-        int32_t Index;
+        int32_t Index{ 0 };
         FixedString ID;
     };
 
