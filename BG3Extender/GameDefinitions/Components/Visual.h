@@ -715,21 +715,21 @@ END_NS()
 BEGIN_NS(ecl)
 
 
-struct EquipmentVisualData
+struct EquipmentVisualRequest
 {
     Array<FixedString> VisualTemplates;
     [[bg3::legacy(BoneSheathed)]] FixedString Bone;
     [[bg3::legacy(SourceBoneSheathed)]] FixedString SourceBone;
-    FixedString field_18;
-    uint32_t AttachFlags;
-    EntityHandle field_20;
+    FixedString Level;
+    VisualAttachmentFlags AttachFlags;
+    EntityHandle Parent;
     Array<resource::PresetData::ScalarParameter> ScalarParameters;
     Array<resource::PresetData::Vector3Parameter> Vector3Parameters;
     EntityHandle Item;
-    uint16_t VisualFlags;
+    VisualLoadFlags VisualFlags;
     uint8_t HairType;
-    uint8_t Flags_63;
-    uint32_t SlotAndFlags;
+    VisualRequestFlags RequestFlags;
+    ItemSlot Slot;
 };
 
 
@@ -742,21 +742,21 @@ struct EquipmentSubVisualRequest
 };
 
 
-struct EquipmentVisualRequest
+struct EquipmentVisualSlotRequest
 {
     Array<EntityHandle> Item;
     Array<EquipmentSubVisualRequest> SubRequests;
-    EquipmentVisualData Data;
+    EquipmentVisualRequest Data;
     EntityHandle field_90;
 };
 
-struct EquipmentVisual
+struct EquipmentVisualSlot
 {
     EntityHandle Item;
     Array<EntityHandle> SubVisuals;
-    EquipmentVisualRequest* VisualRequest;
-    std::optional<EquipmentVisualData> VisualData;
-    bool field_20;
+    EquipmentVisualSlotRequest* VisualRequest;
+    std::optional<EquipmentVisualRequest> VisualData;
+    [[bg3::legacy(field_20)]] bool Loaded;
 };
 
 struct EquipmentVisualsComponent : public BaseComponent
@@ -764,7 +764,7 @@ struct EquipmentVisualsComponent : public BaseComponent
     DEFINE_COMPONENT(ClientEquipmentVisuals, "ecl::EquipmentVisualsComponent")
 
     EntityHandle Entity;
-    HashMap<ItemSlot, EquipmentVisual> Equipment;
+    HashMap<ItemSlot, EquipmentVisualSlot> Equipment;
 };
 
 struct PaperdollComponent : public BaseComponent
@@ -1031,7 +1031,7 @@ struct VisualsDesiredStateComponent : public BaseComponent
 {
     DEFINE_COMPONENT(ClientVisualsDesiredState, "ecl::equipment::VisualsDesiredStateComponent")
 
-    HashMap<ItemSlot, EquipmentVisualData> Slots;
+    HashMap<ItemSlot, EquipmentVisualRequest> Slots;
 };
 
 struct VisualsVisibilityStateSystem : public BaseSystem
