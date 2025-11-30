@@ -807,11 +807,11 @@ bool MaterialRenderingData::CheckConstantBuffer(Material& instance)
     if (MaterialCB == nullptr && MaterialCBSize > 0 && MaterialBinding.VkDescriptorSet != -1) {
         auto cb = instance.GetOrCreateConstantBuffer(ShaderIndex);
         MaterialCB = GameAllocRaw(MaterialCBSize);
+        MaterialCBBufferSize = MaterialCBSize;
         memcpy(MaterialCB, cb, MaterialCBSize);
     }
 
     return MaterialCB != nullptr;
-
 }
 
 template <class T>
