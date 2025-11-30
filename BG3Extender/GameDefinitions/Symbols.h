@@ -142,6 +142,8 @@ namespace bg3se
 
         AppliedMaterial::LoadTextureProc* ls__AppliedMaterial__LoadTexture{ nullptr };
         TextureManager::UnloadTextureProc* ls__TextureManager__UnloadTexture{ nullptr };
+        AppliedMaterial::LoadVirtualTextureProc* ls__AppliedMaterial__LoadVirtualTexture{ nullptr };
+        AppliedMaterial::TryOverrideTexture2DParameterProc* ls__AppliedMaterial__TryOverrideTexture2DParameter{ nullptr };
 
         Visual::UpdateBlendshapeWeightsFromSkeletonProc* ls__Visual__UpdateBlendshapeWeightsFromSkeleton{ nullptr };
 

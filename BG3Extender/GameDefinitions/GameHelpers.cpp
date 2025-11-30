@@ -1028,6 +1028,41 @@ bool AppliedMaterial::SetVector4(FixedString const& paramName, glm::vec4 value)
     }
 }
 
+bool AppliedMaterial::SetTexture2D(FixedString const& param, FixedString const& texture)
+{
+    auto setter = GetStaticSymbols().ls__AppliedMaterial__TryOverrideTexture2DParameter;
+    return setter(this, param, texture);
+}
+
+bool AppliedMaterial::SetVirtualTexture(FixedString const& paramName, FixedString const& texture)
+{
+    if ((bool)(Flags & AppliedMaterialFlags::Queued)) {
+        VirtualTextureParameter param;
+        param.ParameterName = paramName;
+        param.ID = texture;
+        QueuedParameters->VirtualTextureParameters.push_back(param);
+        return true;
+    } else {
+        for (auto& param : VirtualTextureParams) {
+            if (param.ParameterName == paramName) {
+                auto loader = GetStaticSymbols().ls__AppliedMaterial__LoadVirtualTexture;
+                auto vt = loader(this, texture);
+                if (vt == nullptr) {
+                    ERR("Failed to load virtual texture '%s' when binding material parameter '%s'", texture.GetString(), paramName.GetString());
+                    return false;
+                }
+
+                param.ID = texture;
+                param.VirtualTextureResource = vt;
+                return true;
+            }
+        }
+
+        ERR("Material has no VT parameter named '%s'", paramName.GetString());
+        return false;
+    }
+}
+
 void SRWSpinLock::ReadLock()
 {
     if (OwningThreadId == 0xffffffffu || OwningThreadId != GetCurrentThreadId()) {

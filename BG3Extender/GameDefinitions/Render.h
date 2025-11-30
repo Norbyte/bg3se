@@ -361,6 +361,8 @@ struct AppliedMaterialQueuedParametersContainer : public MaterialParameters
 struct AppliedMaterial
 {
     using LoadTextureProc = TextureDescriptor * (void* self, FixedString const& textureGuid);
+    using LoadVirtualTextureProc = void* (void* self, FixedString const& textureGuid);
+    using TryOverrideTexture2DParameterProc = bool (void* self, FixedString const& param, FixedString const& textureGuid);
 
     struct Texture2DParam
     {
@@ -419,10 +421,14 @@ struct AppliedMaterial
     //# P_FUN(SetVector2, AppliedMaterial::SetVector2)
     //# P_FUN(SetVector3, AppliedMaterial::SetVector3)
     //# P_FUN(SetVector4, AppliedMaterial::SetVector4)
+    //# P_FUN(SetTexture2D, AppliedMaterial::SetTexture2D)
+    //# P_FUN(SetVirtualTexture, AppliedMaterial::SetVirtualTexture)
     bool SetScalar(FixedString const& param, float value);
     bool SetVector2(FixedString const& param, glm::vec2 value);
     bool SetVector3(FixedString const& param, glm::vec3 value);
     bool SetVector4(FixedString const& param, glm::vec4 value);
+    bool SetTexture2D(FixedString const& param, FixedString const& texture);
+    bool SetVirtualTexture(FixedString const& param, FixedString const& texture);
 
     template <class T>
     std::optional<T> GetUniformParam(UniformBindingData const& binding);

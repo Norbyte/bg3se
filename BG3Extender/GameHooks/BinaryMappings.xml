@@ -621,7 +621,7 @@
         5B // pop     rbx
         E9 ?? ?? ?? ?? // jmp     esv__StatusMachine__ApplyStatus
       </Mapping>
-      
+
         <Mapping Name="esv::SurfaceActionFactory::AddSurfaceAction" Scope="Custom">
             <Target Type="Indirect" Offset="6" Symbol="esv__SurfaceManager__AddAction" />
             49 8B D6 //  mov     rdx, r14
@@ -652,6 +652,31 @@
             48 8B 15 ?? ?? ?? ?? // mov     rdx, cs:eoc__gResourceManager
         </Mapping>
         -->
+
+    <Mapping Name="ls::AppliedMaterial::TryOverrideTexture2DParameter">
+      3b 08 // cmp     ecx, [rax]
+      75 29 // jnz     short loc_141D36326
+      4c 8b c6 // mov     r8, rsi
+      @str1 48 8b 15 ?? ?? ?? ?? // mov     rdx, cs:fs_NM
+      49 8b ce // mov     rcx, r14
+      @ref2 e8 ?? ?? ?? ?? // call    ls__AppliedMaterial__TryOverrideTexture2DParameter
+      4c 8b c6 // mov     r8, rsi
+      <Condition Type="FixedStringIndirect" Offset="@str1" Value="NM" />
+      <Target Type="Indirect" Offset="@ref2" Symbol="ls__AppliedMaterial__TryOverrideTexture2DParameter" />
+    </Mapping>
+
+    <Mapping Name="ls::AppliedMaterial::LoadVirtualTexture">
+      48 89 5c 24 20 // mov     [rsp+arg_18], rbx
+      48 89 4c 24 08 // mov     [rsp+arg_0], rcx
+      57 // push    rdi
+      48 83 ec 20 // sub     rsp, 20h
+      65 48 8b 04 25 58 00 00 00 // mov     rax, gs:58h
+      48 8b 3d ?? ?? ?? ?? // mov     rdi, cs:ls__gGlobalResourceManager
+      41 b8 d8 05 00 00 // mov     r8d, 5D8h
+      48 8b 08 // mov     rcx, [rax]
+      49 0f be 04 08 // movsx   rax, byte ptr [r8+rcx]                                                                           |
+      <Target Type="Absolute" Offset="0" Symbol="ls__AppliedMaterial__LoadVirtualTexture" />
+    </Mapping>
 
     <Mapping Name="ls::AppliedMaterial::LoadTexture">
       48 89 5c 24 10              // mov qword ptr ss:[rsp+10],rbx                                                                             |

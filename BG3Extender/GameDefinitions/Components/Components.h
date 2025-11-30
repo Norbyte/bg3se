@@ -427,6 +427,8 @@ struct LevelUnloadedOneFrameComponent : public BaseComponent
 struct [[bg3::component]] SceneComponent : public Scene
 {
     DEFINE_PROXY_COMPONENT(Scene, "ls::Scene")
+
+    [[bg3::hidden]] void* _PAD;
 };
 
 DEFINE_TAG_COMPONENT(ls, SceneRootComponent, SceneRoot)
