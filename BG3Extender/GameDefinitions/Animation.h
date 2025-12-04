@@ -349,6 +349,12 @@ struct AnimationReceivedTextKeyEvent
     [[bg3::hidden]] void* Skeleton;
 };
 
+struct AnimationReceivedRootMotionEvent
+{
+    EntityHandle Entity;
+    float LocalPose[7];
+};
+
 struct [[bg3::hidden]] AnimationBlueprintSystem : public BaseSystem
 {
     DEFINE_SYSTEM(AnimationBlueprint, "ls::AnimationBlueprintSystem")
@@ -366,13 +372,13 @@ struct [[bg3::hidden]] AnimationBlueprintSystem : public BaseSystem
     // Editor only 
     // Queue<AnimationReceivedTextKeyEvent> TextKeyEventsToGenome;
     // CRITICAL_SECTION TextKeyEventsToGenomeLock;
-    HashSet<EntityHandle> field_158;
+    HashSet<EntityHandle> LoadedBlueprints;
     GameTime Time;
     bool IsInterestedInVisuals;
     void* Batch1;
     void* Batch2;
     void* ThreadTicket;
-    Queue<void*> RootMotion;
+    Queue<AnimationReceivedRootMotionEvent> RootMotion;
     CRITICAL_SECTION RootMotionLock;
     Queue<AnimationReceivedGameplayEvent> GenomeGameplayEvents;
     CRITICAL_SECTION GenomeGameplayEventsLock;
@@ -385,7 +391,7 @@ struct [[bg3::hidden]] AnimationBlueprintSystem : public BaseSystem
     gn::GenomeManager* GenomeManager;
     int32_t NextInstanceId;
     HashMap<EntityHandle, Array<uint8_t>> AnimationInstanceChanges;
-    Array<EntityHandle> field_2E8;
+    Array<EntityHandle> LinkedEntities;
     // Editor only 
     // void* AnimationDebugWorker;
     // void* AnimationDebugThread;

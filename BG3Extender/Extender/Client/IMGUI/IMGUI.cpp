@@ -1449,10 +1449,20 @@ void RadioButton::StyledRender(DrawingContext& context)
 
 
 InputText::InputText()
-{
-    Text.reserve(GrowSize);
-}
+{}
 
+
+int InputTextCallback(ImGuiInputTextCallbackData* data)
+{
+    auto input = reinterpret_cast<InputText*>(data->UserData);
+    if (data->EventFlag == ImGuiInputTextFlags_CallbackResize) {
+        input->Text.resize(std::min(data->BufTextLen, (int)InputText::MaxSize));
+        data->Buf = input->Text.data();
+        data->BufSize = input->Text.capacity() + 1;
+    }
+
+    return 0;
+}
 
 void InputText::StyledRender(DrawingContext& context)
 {
@@ -1465,13 +1475,9 @@ void InputText::StyledRender(DrawingContext& context)
         reloadText_ = false;
     }
 
-    if (ImGui::InputTextEx(Label.c_str(), Hint ? Hint->c_str() : nullptr, Text.data(), Text.capacity(), context.Scale(ToImVec(SizeHint)), (ImGuiInputTextFlags)Flags, nullptr, nullptr)) {
-        Text.resize((uint32_t)strlen(Text.data()));
-
-        if (Text.size() + GrowSize - 64 > Text.capacity() && Text.capacity() < MaxSize) {
-            Text.reserve(std::min(MaxSize, Text.size() + GrowSize));
-            reloadText_ = true;
-        }
+    auto flags = (ImGuiInputTextFlags)Flags | ImGuiInputTextFlags_CallbackResize;
+    if (ImGui::InputTextEx(Label.c_str(), Hint ? Hint->c_str() : nullptr, Text.data(), Text.capacity(), context.Scale(ToImVec(SizeHint)), 
+        flags, &InputTextCallback, this)) {
 
         if (OnChange) {
             Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Text);
@@ -1487,7 +1493,6 @@ STDString InputText::GetText() const
 void InputText::SetText(STDString text)
 {
     Text = text;
-    Text.reserve(text.size() + GrowSize);
     reloadText_ = true;
 }
 

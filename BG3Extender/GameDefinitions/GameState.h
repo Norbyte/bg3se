@@ -157,7 +157,7 @@ struct GameStateMachine : public ProtectedGameObject<GameStateMachine>
 // Also update SimplifiedEoCClient in BG3Updater when changing this!
 struct EoCClient : public ProtectedGameObject<EoCClient>
 {
-    using HandleErrorProc = void (void* self, TranslatedString const& message, bool exitGame, TranslatedString const& a4);
+    using HandleErrorProc = void (void* self, TranslatedString const& message, bool exitGame, TranslatedString const& a4, uint8_t messageBoxLocalId);
 
     void* VMT_InputEventListener;
     void* VMT_NetEventListener;
@@ -172,29 +172,29 @@ struct EoCClient : public ProtectedGameObject<EoCClient>
     void* Eoc;
     GameStateMachine* GameStateMachine;
     net::GameClient* GameClient;
-    __int64 field_B0;
+    void* CommunityManager;
     void* LobbyLogicManager;
-    __int64 field_B8Y;
+    void* CrossSaveManager;
     void* UIManager;
-    __int64 field_B8W;
+    uint64_t CrossSaveConnectSignalId;
     FixedString FS1;
     FixedString LoadedLevel;
     FixedString GameId;
     FixedString CurrentGameSession;
+    uint64_t Unknown4[3];
     bool IsReturningToMainMenu;
     bool MainMenuEntered;
     bool GameStateInitDone;
     bool IsQuitting;
     Array<int16_t> GameInputDisabled;
-    uint8_t GameMode;
-    // void* ItemCombinationManager;
+    void* ItemCombinationManager;
     void* CastRequirementsManager;
     bool UsingTempScratchString;
     ScratchString TempScratchString;
     ModManager* ModManager;
-    __int64 field_128;
+    void* ChatManager;
     TranslatedString LastError;
-    bool HasErrorMessage;
+    uint8_t LastMessageBoxLocalId;
     Array<void*> field_170;
     Array<int> field_180;
     Array<void*> field_190; // EMessageBoxLocalId

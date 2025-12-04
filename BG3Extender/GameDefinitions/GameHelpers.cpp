@@ -681,7 +681,7 @@ END_NS()
 BEGIN_SE()
 
 template <class T>
-void Material::SetUniformParam(Material::UniformBindingData const& binding, T value)
+void Material::SetUniformParam(UniformBindingData const& binding, T value)
 {
     for (unsigned i = 0; i < std::size(ShaderDescriptions); i++) {
         if (binding.PerShaderCBOffsets[i] != -1 && ShaderDescriptions[i].MaterialCBSize > 0 && MaterialCBs[i].MaterialCB != nullptr) {
@@ -750,9 +750,22 @@ void* Material::GetOrCreateConstantBuffer(uint8_t shaderIndex)
 {
     se_assert(shaderIndex < std::size(ShaderDescriptions));
 
+    // Fast-path for already allocated CB
     if (MaterialCBs[shaderIndex].MaterialCB != nullptr) {
         return MaterialCBs[shaderIndex].MaterialCB;
     }
+
+    AcquireSRWLockShared(&MaterialCBLock);
+    // Re-check when we have a reader lock
+    if (MaterialCBs[shaderIndex].MaterialCB != nullptr) {
+        // Concurrent thread allocated the CB
+        ReleaseSRWLockShared(&MaterialCBLock);
+        return MaterialCBs[shaderIndex].MaterialCB;
+    }
+
+    // No CB, we need to build it ourself
+    ReleaseSRWLockShared(&MaterialCBLock);
+    AcquireSRWLockExclusive(&MaterialCBLock);
 
     auto size = ShaderDescriptions[shaderIndex].MaterialCBSize;
     auto cb = (uint8_t *)GameAllocRaw(size);
@@ -784,23 +797,35 @@ void* Material::GetOrCreateConstantBuffer(uint8_t shaderIndex)
 
     MaterialCBs[shaderIndex].MaterialCB = cb;
     MaterialCBs[shaderIndex].MaterialCBSize = size;
+
+    ReleaseSRWLockExclusive(&MaterialCBLock);
     return cb;
 }
 
 bool MaterialRenderingData::CheckConstantBuffer(Material& instance)
 {
-    if (MaterialCB == nullptr && MaterialCBSize > 0 && MaterialVkDescriptorSet != -1) {
+    if (MaterialCB == nullptr && MaterialCBSize > 0 && MaterialBinding.VkDescriptorSet != -1) {
         auto cb = instance.GetOrCreateConstantBuffer(ShaderIndex);
         MaterialCB = GameAllocRaw(MaterialCBSize);
+        MaterialCBBufferSize = MaterialCBSize;
         memcpy(MaterialCB, cb, MaterialCBSize);
     }
 
     return MaterialCB != nullptr;
-
 }
 
 template <class T>
-void MaterialRenderingData::SetUniformParam(Material& instance, Material::UniformBindingData const& binding, T value)
+std::optional<T> MaterialRenderingData::GetUniformParam(Material& instance, UniformBindingData const& binding)
+{
+    if (MaterialCB != nullptr && binding.PerShaderCBOffsets[ShaderIndex] != -1) {
+        return *(T*)((uint8_t*)MaterialCB + binding.PerShaderCBOffsets[ShaderIndex]);
+    } else {
+        return {};
+    }
+}
+
+template <class T>
+void MaterialRenderingData::SetUniformParam(Material& instance, UniformBindingData const& binding, T value)
 {
     if (!CheckConstantBuffer(instance)) return;
 
@@ -812,8 +837,36 @@ void MaterialRenderingData::SetUniformParam(Material& instance, Material::Unifor
 }
 
 template <class T>
-void AppliedMaterial::SetUniformParam(Material::UniformBindingData const& binding, T value)
+std::optional<T> AppliedMaterial::GetUniformParam(UniformBindingData const& binding)
 {
+    if ((bool)(Flags & AppliedMaterialFlags::Queued)) {
+        return {};
+    }
+
+    if (PrimaryRenderingData != nullptr) {
+        auto val = PrimaryRenderingData->GetUniformParam<T>(*Material, binding);
+        if (val) {
+            return val;
+        }
+    }
+
+    for (auto i = 0; i < std::size(RenderingData); i++) {
+        auto val = RenderingData[i].GetUniformParam<T>(*Material, binding);
+        if (val) {
+            return val;
+        }
+    }
+
+    return {};
+}
+
+template <class T>
+void AppliedMaterial::SetUniformParam(UniformBindingData const& binding, T value)
+{
+    if ((bool)(Flags & AppliedMaterialFlags::Queued)) {
+        return;
+    }
+
     if (PrimaryRenderingData != nullptr) {
         PrimaryRenderingData->SetUniformParam(*Material, binding, value);
     }
@@ -823,56 +876,191 @@ void AppliedMaterial::SetUniformParam(Material::UniformBindingData const& bindin
     }
 }
 
-bool AppliedMaterial::SetScalar(FixedString const& paramName, float value)
+std::optional<float> AppliedMaterial::GetScalar(FixedString const& paramName)
 {
     for (auto const& param : Material->Parameters.ScalarParameters) {
         if (param.ParameterName == paramName) {
-            SetUniformParam(param.Binding, value);
-            return true;
+            auto value = GetUniformParam<float>(param.Binding);
+            if (value) {
+                return value;
+            } else {
+                return param.Value;
+            }
         }
     }
 
-    ERR("Material binding has no float parameter named '%s'", paramName.GetString());
-    return false;
+    ERR("Material has no float parameter named '%s'", paramName.GetString());
+    return {};
+}
+
+std::optional<glm::vec2> AppliedMaterial::GetVector2(FixedString const& paramName)
+{
+    for (auto const& param : Material->Parameters.Vector2Parameters) {
+        if (param.ParameterName == paramName) {
+            auto value = GetUniformParam<glm::vec2>(param.Binding);
+            if (value) {
+                return value;
+            } else {
+                return param.Value;
+            }
+        }
+    }
+
+    ERR("Material has no vec2 parameter named '%s'", paramName.GetString());
+    return {};
+}
+
+std::optional<glm::vec3> AppliedMaterial::GetVector3(FixedString const& paramName)
+{
+    for (auto const& param : Material->Parameters.Vector3Parameters) {
+        if (param.ParameterName == paramName) {
+            auto value = GetUniformParam<glm::vec3>(param.Binding);
+            if (value) {
+                return value;
+            } else {
+                return param.Value;
+            }
+        }
+    }
+
+    ERR("Material has no vec3 parameter named '%s'", paramName.GetString());
+    return {};
+}
+
+std::optional<glm::vec4> AppliedMaterial::GetVector4(FixedString const& paramName)
+{
+    for (auto const& param : Material->Parameters.VectorParameters) {
+        if (param.ParameterName == paramName) {
+            auto value = GetUniformParam<glm::vec4>(param.Binding);
+            if (value) {
+                return value;
+            } else {
+                return param.Value;
+            }
+        }
+    }
+
+    ERR("Material has no vec4 parameter named '%s'", paramName.GetString());
+    return {};
+}
+
+bool AppliedMaterial::SetScalar(FixedString const& paramName, float value)
+{
+    if ((bool)(Flags & AppliedMaterialFlags::Queued)) {
+        ScalarParameter param;
+        param.ParameterName = paramName;
+        param.Value = value;
+        QueuedParameters->ScalarParameters.push_back(param);
+        return true;
+    } else {
+        for (auto const& param : Material->Parameters.ScalarParameters) {
+            if (param.ParameterName == paramName) {
+                SetUniformParam(param.Binding, value);
+                return true;
+            }
+        }
+
+        ERR("Material has no float parameter named '%s'", paramName.GetString());
+        return false;
+    }
 }
 
 bool AppliedMaterial::SetVector2(FixedString const& paramName, glm::vec2 value)
 {
-    for (auto const& param : Material->Parameters.Vector2Parameters) {
-        if (param.ParameterName == paramName) {
-            SetUniformParam(param.Binding, value);
-            return true;
+    if ((bool)(Flags & AppliedMaterialFlags::Queued)) {
+        Vector2Parameter param;
+        param.ParameterName = paramName;
+        param.Value = value;
+        QueuedParameters->Vector2Parameters.push_back(param);
+        return true;
+    } else {
+        for (auto const& param : Material->Parameters.Vector2Parameters) {
+            if (param.ParameterName == paramName) {
+                SetUniformParam(param.Binding, value);
+                return true;
+            }
         }
-    }
 
-    ERR("Material binding has no vec2 parameter named '%s'", paramName.GetString());
-    return false;
+        ERR("Material has no vec2 parameter named '%s'", paramName.GetString());
+        return false;
+    }
 }
 
 bool AppliedMaterial::SetVector3(FixedString const& paramName, glm::vec3 value)
 {
-    for (auto const& param : Material->Parameters.Vector3Parameters) {
-        if (param.ParameterName == paramName) {
-            SetUniformParam(param.Binding, value);
-            return true;
+    if ((bool)(Flags & AppliedMaterialFlags::Queued)) {
+        Vector3Parameter param;
+        param.ParameterName = paramName;
+        param.Value = value;
+        QueuedParameters->Vector3Parameters.push_back(param);
+        return true;
+    } else {
+        for (auto const& param : Material->Parameters.Vector3Parameters) {
+            if (param.ParameterName == paramName) {
+                SetUniformParam(param.Binding, value);
+                return true;
+            }
         }
-    }
 
-    ERR("Material binding has no vec3 parameter named '%s'", paramName.GetString());
-    return false;
+        ERR("Material has no vec3 parameter named '%s'", paramName.GetString());
+        return false;
+    }
 }
 
 bool AppliedMaterial::SetVector4(FixedString const& paramName, glm::vec4 value)
 {
-    for (auto const& param : Material->Parameters.VectorParameters) {
-        if (param.ParameterName == paramName) {
-            SetUniformParam(param.Binding, value);
-            return true;
+    if ((bool)(Flags & AppliedMaterialFlags::Queued)) {
+        Vector4Parameter param;
+        param.ParameterName = paramName;
+        param.Value = value;
+        QueuedParameters->VectorParameters.push_back(param);
+        return true;
+    } else {
+        for (auto const& param : Material->Parameters.VectorParameters) {
+            if (param.ParameterName == paramName) {
+                SetUniformParam(param.Binding, value);
+                return true;
+            }
         }
-    }
 
-    ERR("Material binding has no vec4 parameter named '%s'", paramName.GetString());
-    return false;
+        ERR("Material has no vec4 parameter named '%s'", paramName.GetString());
+        return false;
+    }
+}
+
+bool AppliedMaterial::SetTexture2D(FixedString const& param, FixedString const& texture)
+{
+    auto setter = GetStaticSymbols().ls__AppliedMaterial__TryOverrideTexture2DParameter;
+    return setter(this, param, texture);
+}
+
+bool AppliedMaterial::SetVirtualTexture(FixedString const& paramName, FixedString const& texture)
+{
+    if ((bool)(Flags & AppliedMaterialFlags::Queued)) {
+        VirtualTextureParameter param;
+        param.ParameterName = paramName;
+        param.ID = texture;
+        QueuedParameters->VirtualTextureParameters.push_back(param);
+        return true;
+    } else {
+        for (auto& param : VirtualTextureParams) {
+            if (param.ParameterName == paramName) {
+                auto loader = GetStaticSymbols().ls__AppliedMaterial__LoadVirtualTexture;
+                auto vt = loader(this, texture);
+                if (vt == nullptr) {
+                    ERR("Failed to load virtual texture '%s' when binding material parameter '%s'", texture.GetString(), paramName.GetString());
+                    return false;
+                }
+
+                param.ID = texture;
+                param.VirtualTextureResource = vt;
+                return true;
+            }
+        }
+
+        ERR("Material has no VT parameter named '%s'", paramName.GetString());
+        return false;
+    }
 }
 
 void SRWSpinLock::ReadLock()

@@ -87,7 +87,7 @@ struct StatsRoll
 
 struct StatsExpressionResolved
 {
-    [[bg3::hidden]] StatsExpressionParamEx* CachedStatExpression{ nullptr };
+    StatsExpressionRef Expression;
     STDString StatExpression;
     Array<int32_t> IntParams;
     Array<StatsRoll> RollParams;

@@ -172,6 +172,8 @@ namespace bg3se
         SYM_OFF(eoc__InterruptPrototypeManager);
         SYM_OFF(eoc__InterruptPrototype__Init);
 
+        SYM_OFF(eoc__DynamicStatsExpressionManager);
+
         SYM_OFF(eoc__ParseStaticBoosts);
 
         SYM_OFF(esv__OsirisVariableHelper__SavegameVisit);
@@ -234,6 +236,8 @@ namespace bg3se
         SYM_OFF(ls__gTextureAtlasMap);
         SYM_OFF(ls__AppliedMaterial__LoadTexture);
         SYM_OFF(ls__TextureManager__UnloadTexture);
+        SYM_OFF(ls__AppliedMaterial__LoadVirtualTexture);
+        SYM_OFF(ls__AppliedMaterial__TryOverrideTexture2DParameter);
 
         SYM_OFF(ls__Visual__UpdateBlendshapeWeightsFromSkeleton);
 

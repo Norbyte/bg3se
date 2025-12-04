@@ -2,9 +2,9 @@ import os, re
 
 ns_start_re = r'^BEGIN(_BARE)?_NS\(\s*(.*)\s*\)$'
 ns_end_re = r'^END(_BARE)?_NS\(\s*\)$'
-struct_re = r'^(struct|union|class)\s+(?P<attributes>\[\[(\s*[a-zA-Z0-9:_]+\s*(\([^)]*\))?\s*,?\s*)+\]\])?\s*(?P<class>[a-zA-Z0-9_]+)(\s*:(\s*public)?\s*(?P<baseclass>[a-zA-Z0-9_<>:]+))?$'
+struct_re = r'^(struct|union|class)\s+(?P<attributes>\[\[(\s*[a-zA-Z0-9:_]+\s*(\([^)]*\))?\s*,?\s*)+\]\])?\s*(?P<class>[a-zA-Z0-9_]+)(\s*:(\s*public)?\s*(?P<baseclass>[a-zA-Z0-9_<>:]+))?\s*(?P<start>{\s*(?P<end>\s*(};|}\)))?)?$'
 enum_re = r'^(enum|enum class)\s+(?P<enum>[a-zA-Z0-9_]+)(\s*:\s*(?P<base>[a-zA-Z0-9_<>:]+))?$'
-struct_start_re = r'^{$'
+struct_start_re = r'^{(?P<end>\s*(};|}\)))?$'
 struct_end_re = r'^(};|}\))$'
 static_property_re = r'^static\s+constexpr\s+(?P<type>.+)\s+(?P<name>.+)\s*=\s*(?P<value>.+)\s*;?$'
 typedef_re = r'^using\s+.*=.*;?$'
@@ -62,7 +62,7 @@ def make_struct_forward_decl(name: str, id: int):
             parent_ns = ns
 
         if parent_ns == "Noesis":
-            if name.endswith("Args") or name == "Noesis::Point":
+            if name.endswith("Args") or name == "Noesis::Point" or name == "Noesis::Thickness" or name == "Noesis::GridLengthHelper" or name == "Noesis::ICommand" or name == "Noesis::CornerRadius":
                 return 'DECLARE_STRUCT_BARE_NS_FWD(' + str(id) + ', ' + name[0:pos] + ', ' + name[pos+2:] + ')'
             else:
                 return 'DECLARE_CLS_BARE_NS_FWD(' + str(id) + ', ' + name[0:pos] + ', ' + name[pos+2:] + ')'
@@ -500,6 +500,11 @@ class DefinitionLoader:
             self.parse_attributes(match.group('attributes'))
             self.next_struct = match.group('class')
             self.next_struct_base = match.group('baseclass')
+
+            if match.group('start'):
+                self.enter_struct(self.next_struct, self.next_struct_base, self.next_attributes)
+                if match.group('end'):
+                    self.exit_struct()
             return
         
         match = re.match(enum_re, line)
@@ -509,8 +514,12 @@ class DefinitionLoader:
             self.next_struct_base = match.group('base')
             return
         
-        if self.next_struct is not None and re.match(struct_start_re, line) is not None:
-            self.enter_struct(self.next_struct, self.next_struct_base, self.next_attributes)
+        if self.next_struct is not None:
+            match = re.match(struct_start_re, line)
+            if match is not None:
+                self.enter_struct(self.next_struct, self.next_struct_base, self.next_attributes)
+                if match.group('end'):
+                    self.exit_struct()
             return
         
         if re.match(struct_end_re, line) is not None:
@@ -648,6 +657,7 @@ sources = [
     'GameDefinitions/Components/Data.h',
     'GameDefinitions/Components/Death.h',
     'GameDefinitions/Components/Dummy.h',
+    'GameDefinitions/Components/Effect.h',
     'GameDefinitions/Components/Events.h',
     'GameDefinitions/Components/Hit.h',
     'GameDefinitions/Components/Item.h',

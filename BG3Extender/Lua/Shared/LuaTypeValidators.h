@@ -599,6 +599,16 @@ bool ValidateRef(T const* v, Overload<T>)
     return GetStaticPropertyMap<T>().ValidateObject(v);
 }
 
+inline bool Validate(StatsExpressionRef const* s, Overload<StatsExpressionRef>)
+{
+    auto p = s->Get();
+    if (p) {
+        CHECK(ValidatePointer(p));
+        CHECK(ValidateRef(p, Overload<StatsExpressionPooled>{}));
+    }
+    return true;
+}
+
 template <class... Args>
 bool ValidateRef(std::variant<Args...> const* v, Overload<std::variant<Args...>>)
 {

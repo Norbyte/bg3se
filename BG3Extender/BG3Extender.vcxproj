@@ -164,6 +164,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="GameDefinitions\CharacterCreation.h" />
     <ClInclude Include="GameDefinitions\Components\ActionResources.h" />
     <ClInclude Include="GameDefinitions\Components\Death.h" />
+    <ClInclude Include="GameDefinitions\Components\Effect.h" />
     <ClInclude Include="GameDefinitions\Components\Sound.h" />
     <ClInclude Include="GameDefinitions\Components\SpellCast.h" />
     <ClInclude Include="GameDefinitions\Components\SpellCastShared.h" />
@@ -436,6 +437,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="GameDefinitions\Base\TypeInformation.inl" />
     <None Include="GameDefinitions\Components\AllComponentTypes.inl" />
     <None Include="GameDefinitions\Components\AllSystemTypes.inl" />
+    <None Include="GameDefinitions\Components\Effect.inl" />
     <None Include="GameDefinitions\Components\ExposedSystemTypes.inl" />
     <None Include="GameDefinitions\Components\Spell.inl" />
     <None Include="GameDefinitions\Controllers\Action.inl" />
@@ -462,6 +464,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="GameDefinitions\PropertyMaps\UI.inl" />
     <None Include="GameDefinitions\Render.inl" />
     <None Include="GameDefinitions\RootTemplates.inl" />
+    <None Include="GameDefinitions\Stats\Expression.inl" />
     <None Include="GameDefinitions\Stats\Functors.inl" />
     <None Include="GameDefinitions\Status.inl" />
     <None Include="GameHooks\EngineHooks.inl" />
@@ -506,6 +509,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="Lua\Libs\Net.inl" />
     <None Include="Lua\Libs\ServerNet.inl" />
     <None Include="Lua\Libs\ServerTemplate.inl" />
+    <None Include="Lua\Libs\StatFunctors.inl" />
     <None Include="Lua\Libs\StaticData.inl" />
     <None Include="Lua\Libs\Stats.inl" />
     <None Include="Lua\Libs\Table.inl" />
@@ -522,7 +526,6 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="Lua\Server\ServerEntityReplicationEvents.inl" />
     <None Include="Lua\Server\FunctorEvents.inl" />
     <None Include="Lua\Osiris\FunctionProxy.inl" />
-    <None Include="Lua\Server\ServerFunctors.inl" />
     <None Include="Lua\Shared\EntityComponentEvents.inl" />
     <None Include="Lua\Shared\EntityEventHelpersClient.inl" />
     <None Include="Lua\Shared\EntityEventHelpersServer.inl" />

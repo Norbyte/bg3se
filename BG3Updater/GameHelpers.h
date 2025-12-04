@@ -1,5 +1,6 @@
 #pragma once
 
+#define EXCLUDE_EXTERNALS
 #include <BG3Extender/GameDefinitions/Enumerations.h>
 
 #if defined(_DEBUG)

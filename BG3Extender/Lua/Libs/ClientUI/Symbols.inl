@@ -39,6 +39,7 @@ struct StaticTypes
     TypeInfo Single;
     TypeInfo Double;
     TypeInfo Bool;
+    TypeInfo Symbol;
     TypeInfo String;
     TypeInfo Uri;
     TypeInfo Color;
@@ -46,7 +47,14 @@ struct StaticTypes
     TypeInfo Vector3;
     TypeInfo Point;
     TypeInfo Rect;
+    TypeInfo Int32Rect;
+    TypeInfo Thickness;
+    TypeInfo CornerRadius;
+    TypeInfo GridLength;
     TypeInfo LocaString;
+    TypeInfo ICommand;
+    TypeInfo IValueConverter;
+    TypeInfo IMultiValueConverter;
     TypeInfo TypeConst;
     TypeInfo TypePointer;
     TypeInfo TypePtr;
@@ -66,6 +74,7 @@ struct StaticTypes
         Single.Setup("Single");
         Double.Setup("Double");
         Bool.Setup("Bool");
+        Symbol.Setup("Symbol");
         String.Setup("String");
         Uri.Setup("Uri");
         Color.Setup("Color");
@@ -73,7 +82,14 @@ struct StaticTypes
         Vector3.Setup("Vector3");
         Point.Setup("Point");
         Rect.Setup("Rect");
+        Int32Rect.Setup("Int32Rect");
+        Thickness.Setup("Thickness");
+        CornerRadius.Setup("CornerRadius");
+        GridLength.Setup("GridLength");
         LocaString.Setup("ls.LocaString");
+        ICommand.Setup("ICommand");
+        IValueConverter.Setup("IValueConverter");
+        IMultiValueConverter.Setup("IMultiValueConverter");
         TypeConst.Setup("TypeConst");
         TypePointer.Setup("TypePointer");
         TypePtr.Setup("TypePtr");

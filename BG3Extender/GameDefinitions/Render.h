@@ -112,166 +112,160 @@ struct SceneObjects
 };
 
 
-struct [[bg3::hidden]] Scene : public ProtectedGameObject<Scene>
+struct Scene : public ProtectedGameObject<Scene>
 {
     EntityHandle field_0;
-    bool Active;
-    void* SceneViewMode;
-    CRITICAL_SECTION DirtyListCS;
-    Array<MoveableObject*> DirtyList;
-    LevelBase* Level;
-    bool CullRegions;
-    SRWLOCK SRWLock;
-    std::array<SceneObjects, 11> ObjectsByType;
-    Array<MoveableObject*> DistantLightProbes;
+    [[bg3::readonly]] bool Active;
+    // Editor only
+    // [[bg3::hidden]] void* SceneViewMode;
+    [[bg3::hidden]] CRITICAL_SECTION DirtyListCS;
+    [[bg3::hidden]] Array<MoveableObject*> DirtyList;
+    [[bg3::hidden]] LevelBase* Level;
+    [[bg3::hidden]] bool CullRegions;
+    [[bg3::hidden]] SRWLOCK SRWLock;
+    [[bg3::hidden]] std::array<SceneObjects, 11> ObjectsByType;
+    [[bg3::hidden]] Array<MoveableObject*> DistantLightProbes;
+    [[bg3::hidden]] HashSet<MoveableObject*> field_11A8;
 };
 
+struct ShaderParamBinding
+{
+    int8_t DxVsIndex;
+    int8_t DxPsIndex;
+    int8_t VkDescriptorSet;
+    int8_t VkBindingIndex;
+};
+
+struct MaterialShaderDecalParameters
+{
+    int16_t DecalWorld;
+    int16_t DecalDimensions;
+    int16_t DecalTilingAndOffset;
+    int16_t DecalDeferredProperties;
+    int16_t InvWorldMatrix;
+    int16_t NormalMatrix;
+};
+
+struct MaterialShaderDesc
+{
+    MaterialShaderDescFlags EngineParamFlags;
+    uint16_t EngineCBSize;
+    uint16_t MaterialCBSize;
+    ShaderParamBinding EngineCBBinding;
+    ShaderParamBinding MaterialCBBinding;
+    int16_t WorldMatrixCurr;
+    int16_t WorldMatrixPrev;
+    int16_t WorldCurr;
+    int16_t WorldPrev;
+    int16_t TransformedVerticesOffsetCurr;
+    int16_t TransformedVerticesOffsetPrev;
+    int16_t MeshRandom;
+    int16_t WorldBoundsMinSubVisual;
+    int16_t WorldBoundsMinVisual;
+    int16_t WorldBoundsMinParent;
+    int16_t WorldBoundsMaxSubVisual;
+    int16_t WorldBoundsMaxVisual;
+    int16_t WorldBoundsMaxParent;
+    int16_t LocalBoundsMin;
+    int16_t LocalBoundsMax;
+    int16_t ReceiveDecal;
+    int16_t FadeOpacity;
+    int16_t LightChannel;
+    int16_t DiffusionProfileIndex;
+    int16_t VirtualTexture_TilesetDataIndex;
+    int16_t VirtualTexture_CB_Texture;
+    MaterialShaderDecalParameters* DecalParameters;
+};
+
+struct UniformBindingData
+{
+    FixedString UniformName;
+    std::array<int16_t, 15> PerShaderCBOffsets;
+};
+
+struct TextureBindingData
+{
+    FixedString UniformName;
+    std::array<ShaderParamBinding, 15> PerShaderBindings;
+};
+
+struct VirtualTextureShaderParamBinding
+{
+    ShaderParamBinding Cache;
+    ShaderParamBinding Cache1;
+    ShaderParamBinding Cache2;
+    ShaderParamBinding Cache3;
+};
+    
+struct VirtualTextureBindingData
+{
+    FixedString UniformName;
+    std::array<ShaderParamBinding, 15> PerShaderBindings;
+    std::array<VirtualTextureShaderParamBinding, 15> PerShaderVTBindings;
+};
+
+struct ScalarParameter : public resource::MaterialResource::ScalarParameter
+{
+    [[bg3::hidden]] UniformBindingData Binding;
+};
+
+struct Vector2Parameter : public resource::MaterialResource::Vector2Parameter
+{
+    [[bg3::hidden]] UniformBindingData Binding;
+};
+
+struct Vector3Parameter : public resource::MaterialResource::Vector3Parameter
+{
+    [[bg3::hidden]] UniformBindingData Binding;
+};
+
+struct Vector4Parameter : public resource::MaterialResource::Vector4Parameter
+{
+    [[bg3::hidden]] UniformBindingData Binding;
+    [[bg3::hidden]] uint64_t _Padding3;
+};
+
+struct Texture2DParameter : public resource::MaterialResource::Texture2DParameter
+{
+    [[bg3::hidden]] TextureBindingData Binding;
+};
+
+struct SamplerStateParameter : public resource::MaterialResource::Parameter
+{
+    uint8_t TextureFilterOverride;
+    uint8_t TextureAddressMode;
+    [[bg3::hidden]] TextureBindingData Binding;
+};
+
+struct VirtualTextureParameter : public resource::MaterialResource::VirtualTextureParameter
+{
+    [[bg3::hidden]] VirtualTextureBindingData Binding;
+};
+
+struct MaterialParameters
+{
+    Material* Material;
+    Array<ScalarParameter> ScalarParameters;
+    Array<Vector2Parameter> Vector2Parameters;
+    Array<Vector3Parameter> Vector3Parameters;
+    Array<Vector4Parameter> VectorParameters;
+    Array<Texture2DParameter> Texture2DParameters;
+    Array<SamplerStateParameter> SamplerStateParameters;
+    Array<VirtualTextureParameter> VirtualTextureParameters;
+};
 
 struct Material : public ProtectedGameObject<Material>
 {
-    struct ShaderParamBinding
-    {
-        int8_t DxVsIndex;
-        int8_t DxPsIndex;
-        int8_t VkDescriptorSet;
-        int8_t VkBindingIndex;
-    };
-
-
-    struct DecalParameters
-    {
-        int16_t DecalWorld;
-        int16_t DecalDimensions;
-        int16_t DecalTiling;
-        int16_t DecalDeferredProperties;
-        int16_t InvWorldMatrix;
-        int16_t NormalMatrix;
-    };
-
-
-    struct ShaderDescription
-    {
-        uint16_t EngineParamFlags;
-        uint16_t EngineCBSize;
-        uint16_t MaterialCBSize;
-        ShaderParamBinding EngineCBBinding;
-        ShaderParamBinding MaterialCBBinding;
-        int16_t WorldMatrixCurr;
-        int16_t WorldMatrixPrev;
-        int16_t TransformedVerticesOffsetCurr;
-        int16_t TransformedVerticesOffsetPrev;
-        int16_t MeshRandom;
-        int16_t WorldBoundsMinSubVisual;
-        int16_t WorldBoundsMinVisual;
-        int16_t WorldBoundsMinParent;
-        int16_t WorldBoundsMaxSubVisual;
-        int16_t WorldBoundsMaxVisual;
-        int16_t WorldBoundsMxaParent;
-        int16_t LocalBoundsMin;
-        int16_t LocalBoundsMax;
-        int16_t ReceiveDecal;
-        int16_t FadeOpacity;
-        int16_t LightChannel;
-        int16_t DiffusionProfileIndex;
-        int16_t VirtualTexture_TilesetDataIndex;
-        int16_t VirtualTexture_CB_Texture;
-        uint16_t field_34;
-        uint16_t field_36;
-        DecalParameters* DecalParameters;
-    };
-
-
     struct MaterialCB
     {
         [[bg3::hidden]] void* MaterialCB;
         uint64_t MaterialCBSize;
     };
 
-    struct UniformBindingData
-    {
-        FixedString UniformName;
-        std::array<int16_t, 15> PerShaderCBOffsets;
-    };
-
-    struct TextureBindingData
-    {
-        FixedString UniformName;
-        std::array<ShaderParamBinding, 15> PerShaderBindings;
-    };
-
-    struct VirtualTextureShaderParamBinding
-    {
-        ShaderParamBinding Cache;
-        ShaderParamBinding Cache1;
-        ShaderParamBinding Cache2;
-        ShaderParamBinding Cache3;
-    };
-    
-    struct VirtualTextureBindingData
-    {
-        FixedString UniformName;
-        std::array<ShaderParamBinding, 15> PerShaderBindings;
-        std::array<VirtualTextureShaderParamBinding, 15> PerShaderVTBindings;
-    };
-
-
-
-    struct ScalarParameter : public resource::MaterialResource::ScalarParameter
-    {
-        [[bg3::hidden]] UniformBindingData Binding;
-    };
-
-    struct Vector2Parameter : public resource::MaterialResource::Vector2Parameter
-    {
-        [[bg3::hidden]] UniformBindingData Binding;
-    };
-
-    struct Vector3Parameter : public resource::MaterialResource::Vector3Parameter
-    {
-        [[bg3::hidden]] UniformBindingData Binding;
-    };
-
-    struct Vector4Parameter : public resource::MaterialResource::Vector4Parameter
-    {
-        [[bg3::hidden]] UniformBindingData Binding;
-        [[bg3::hidden]] uint64_t _Padding3;
-    };
-
-    struct Texture2DParameter : public resource::MaterialResource::Texture2DParameter
-    {
-        [[bg3::hidden]] TextureBindingData Binding;
-    };
-
-    struct SamplerStateParameter : public resource::MaterialResource::Parameter
-    {
-        uint8_t TextureFilterOverride;
-        uint8_t TextureAddressMode;
-        [[bg3::hidden]] TextureBindingData Binding;
-    };
-
-    struct VirtualTextureParameter : public resource::MaterialResource::VirtualTextureParameter
-    {
-        [[bg3::hidden]] VirtualTextureBindingData Binding;
-    };
-
-    struct ParametersSet
-    {
-        Material* Material;
-        Array<ScalarParameter> ScalarParameters;
-        Array<Vector2Parameter> Vector2Parameters;
-        Array<Vector3Parameter> Vector3Parameters;
-        Array<Vector4Parameter> VectorParameters;
-        Array<Texture2DParameter> Texture2DParameters;
-        Array<SamplerStateParameter> SamplerStateParameters;
-        Array<VirtualTextureParameter> VirtualTextureParameters;
-    };
-
-
-
     [[bg3::hidden]] void* VMT;
     FixedString Name;
-    [[bg3::hidden]] std::array<ShaderDescription, 15> ShaderDescriptions;
-    [[bg3::hidden]] uint64_t FastLock;
+    [[bg3::hidden]] std::array<MaterialShaderDesc, 15> ShaderDescriptions;
+    [[bg3::hidden]] SRWLOCK MaterialCBLock;
     [[bg3::hidden]] std::array<MaterialCB, 15> MaterialCBs;
     std::array<FixedString, 15> Shaders;
     uint32_t ShadingModel;
@@ -279,17 +273,19 @@ struct Material : public ProtectedGameObject<Material>
     uint8_t BlendStateID;
     uint8_t RasterizerStateID;
     uint8_t DepthStateID;
-    uint32_t field_510;
+    uint32_t StencilRef;
     uint32_t UVCount;
-    uint32_t Flags;
-    uint32_t UsedWithFlags;
+    MaterialFlags Flags;
+    MaterialUsedWithFlags UsedWithFlags;
     uint8_t MaterialPassHint;
     MaterialType MaterialType;
     RenderChannel RenderChannel;
     uint8_t MaterialUsage;
     FixedString DiffusionProfileUUID;
-    ParametersSet Parameters;
+    MaterialParameters Parameters;
     Material* Parent;
+    // Editor only
+    // void* MaterialEditorHelperInternal;
     uint64_t Version64;
 
     //# P_FUN(SetScalar, Material::SetScalar)
@@ -307,39 +303,37 @@ struct Material : public ProtectedGameObject<Material>
     void* GetOrCreateConstantBuffer(uint8_t shaderIndex);
 };
 
+struct SBBinding
+{
+    uint8_t field_0;
+    uint8_t DxVsIndex;
+    uint8_t field_2;
+    uint8_t field_3;
+    uint8_t field_4;
+    uint8_t DxPsIndex;
+    uint8_t field_6;
+    uint8_t VkBindingIndex;
+    uint8_t VkDescriptorSet;
+};
 
 struct MaterialRenderingData
 {
     EntityHandle Handle;
-    EntityHandle field_8;
+    EntityHandle VertexFormat;
     uint64_t InstancingHash;
     uint8_t ShaderIndex;
     uint8_t field_19;
     uint16_t EngineCBSize;
     uint16_t MaterialCBSize;
-    uint8_t field_1E;
-    uint8_t EngineDxVsIndex;
-    uint8_t field_20;
-    uint8_t field_21;
-    uint8_t field_22;
-    uint8_t EngineDxPsIndex;
-    uint8_t field_24;
-    uint8_t EngineVkBindingIndex;
-    uint8_t EngineVkDescriptorSet;
-    uint8_t field_27;
-    uint8_t MaterialDxVsIndex;
-    uint8_t field_29;
-    uint8_t field_2A;
-    uint8_t field_2B;
-    uint8_t MaterialDxPsIndex;
-    uint8_t field_2D;
-    uint8_t MaterialVkBindingIndex;
-    uint8_t MaterialVkDescriptorSet;
+    SBBinding EngineBinding;
+    SBBinding MaterialBinding;
     [[bg3::hidden]] void* MaterialCB;
     [[bg3::hidden]] uint64_t MaterialCBBufferSize;
 
     template <class T>
-    void SetUniformParam(Material& instance, Material::UniformBindingData const& binding, T value);
+    std::optional<T> GetUniformParam(Material& instance, UniformBindingData const& binding);
+    template <class T>
+    void SetUniformParam(Material& instance, UniformBindingData const& binding, T value);
     bool CheckConstantBuffer(Material& instance);
 };
 
@@ -352,11 +346,23 @@ struct PrimaryMaterialRenderingData : public MaterialRenderingData
     __int64 field_58;
 };
 
+struct [[bg3::hidden]] QueuedRawTextures
+{
+    FixedString Param;
+    void* Texture; // rf::Texture*
+};
+
+struct AppliedMaterialQueuedParametersContainer : public MaterialParameters
+{
+    [[bg3::hidden]] Array<QueuedRawTextures> QueuedTextures;
+};
 
 
 struct AppliedMaterial
 {
     using LoadTextureProc = TextureDescriptor * (void* self, FixedString const& textureGuid);
+    using LoadVirtualTextureProc = void* (void* self, FixedString const& textureGuid);
+    using TryOverrideTexture2DParameterProc = bool (void* self, FixedString const& param, FixedString const& textureGuid);
 
     struct Texture2DParam
     {
@@ -385,11 +391,11 @@ struct AppliedMaterial
     Array<VirtualTextureParam> VirtualTextureParams;
     RenderableObject* RenderableObject;
     [[bg3::legacy(MaterialInstance)]] Material* Material;
-    [[bg3::hidden]] __int64 field_1E0;
-    [[bg3::hidden]] __int64 ShaderCallback;
+    [[bg3::hidden]] void* RenderStage;
+    [[bg3::hidden]] void* ShaderCallback;
     uint64_t Hash;
     [[bg3::hidden]] void* DiffusionProfile;
-    uint8_t DirtyFlags;
+    AppliedMaterialDirtyFlags DirtyFlags;
     uint8_t BlendStateID;
     uint8_t RasterizerStateID;
     uint8_t DebugMaterial;
@@ -400,19 +406,34 @@ struct AppliedMaterial
     uint8_t AlphaChannel;
     glm::vec4 MeshVertexColor;
     glm::vec4 DynamicParameter;
-    [[bg3::hidden]] void* field_208;
+    AppliedMaterialQueuedParametersContainer* QueuedParameters;
+
+    //# P_FUN(GetScalar, AppliedMaterial::GetScalar)
+    //# P_FUN(GetVector2, AppliedMaterial::GetVector2)
+    //# P_FUN(GetVector3, AppliedMaterial::GetVector3)
+    //# P_FUN(GetVector4, AppliedMaterial::GetVector4)
+    std::optional<float> GetScalar(FixedString const& param);
+    std::optional<glm::vec2> GetVector2(FixedString const& param);
+    std::optional<glm::vec3> GetVector3(FixedString const& param);
+    std::optional<glm::vec4> GetVector4(FixedString const& param);
 
     //# P_FUN(SetScalar, AppliedMaterial::SetScalar)
     //# P_FUN(SetVector2, AppliedMaterial::SetVector2)
     //# P_FUN(SetVector3, AppliedMaterial::SetVector3)
     //# P_FUN(SetVector4, AppliedMaterial::SetVector4)
+    //# P_FUN(SetTexture2D, AppliedMaterial::SetTexture2D)
+    //# P_FUN(SetVirtualTexture, AppliedMaterial::SetVirtualTexture)
     bool SetScalar(FixedString const& param, float value);
     bool SetVector2(FixedString const& param, glm::vec2 value);
     bool SetVector3(FixedString const& param, glm::vec3 value);
     bool SetVector4(FixedString const& param, glm::vec4 value);
+    bool SetTexture2D(FixedString const& param, FixedString const& texture);
+    bool SetVirtualTexture(FixedString const& param, FixedString const& texture);
 
     template <class T>
-    void SetUniformParam(Material::UniformBindingData const& binding, T value);
+    std::optional<T> GetUniformParam(UniformBindingData const& binding);
+    template <class T>
+    void SetUniformParam(UniformBindingData const& binding, T value);
 };
 
 
@@ -789,7 +810,7 @@ struct LightDesc
     bool Enabled;
     bool PreExpose;
     bool FlatFalloff;
-    uint8_t LightType;
+    LightType LightType;
     uint8_t LightChannelFlag;
     uint8_t DirectionLightAttenuationFunction;
 };
@@ -812,22 +833,44 @@ struct [[bg3::component]] LightComponent : public MoveableObject
     float Kelvin;
     float Radius;
     float Intensity;
-    uint32_t field_C0;
+    [[bg3::legacy(field_C0)]] float IntensityOffset;
     float ScatteringIntensityScale;
     float Gain;
     float EdgeSharpening;
     uint8_t DirectionLightAttenuationFunction;
-    uint8_t Flags;
+    LightFlags Flags;
     uint8_t LightChannelFlag;
-    uint8_t LightType;
+    LightType LightType;
     glm::vec3 Blackbody;
-    glm::vec3 field_E0;
+    [[bg3::legacy(field_E0)]] glm::vec3 PositionOffset;
+    uint8_t OwnerFlags;
     [[bg3::hidden]] void* LightCookieTexture;
     LightTemplate* Template;
     EntityHandle AssociatedScene;
     uint16_t CullFlags;
     FixedString UUID;
     [[bg3::hidden]] void* _PAD;
+};
+
+struct LightUpdateFadeRequest
+{
+    float field_0;
+    float field_4;
+    float Max;
+    float Current;
+};
+
+struct LightSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(Light, "ls::LightSystem")
+
+    HashMap<EntityHandle, LightUpdateFadeRequest> FadeEdgeSharpening;
+    HashMap<EntityHandle, LightUpdateFadeRequest> FadeRadius;
+    HashMap<EntityHandle, LightUpdateFadeRequest> FadeIntensity;
+    HashMap<EntityHandle, LightUpdateFadeRequest> FadeIntensityOffset;
+    HashSet<EntityHandle> ExplicitUpdateTransform;
+    HashSet<EntityHandle> CheckFlickering;
+    HashSet<EntityHandle> CheckMoving;
 };
 
 

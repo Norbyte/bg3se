@@ -17,6 +17,7 @@ namespace Noesis
     class UIElementCollection;
     struct ReflectionInternals;
     struct SymbolManagerInternals;
+    struct GridLengthHelper;
 }
 
 BEGIN_SE()

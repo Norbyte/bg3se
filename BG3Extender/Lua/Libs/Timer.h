@@ -67,6 +67,7 @@ public:
     void RegisterPersistentCallback(FixedString const& name, Ref callback);
     bool Pause(TimerHandle handle);
     bool Resume(TimerHandle handle);
+    bool IsPaused(TimerHandle handle);
     bool Cancel(TimerHandle handle);
     void Update(double time);
     void SavegameVisit(ObjectVisitor* visitor);
@@ -112,6 +113,7 @@ public:
     bool Cancel(TimerHandle handle);
     bool Pause(TimerHandle handle);
     bool Resume(TimerHandle handle);
+    bool IsPaused(TimerHandle handle);
     void SavegameVisit(ObjectVisitor* visitor);
 
 private:

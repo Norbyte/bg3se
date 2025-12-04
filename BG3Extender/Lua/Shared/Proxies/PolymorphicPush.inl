@@ -17,10 +17,10 @@ void LuaPolymorphic<GameObjectTemplate>::MakeRef(lua_State* L, GameObjectTemplat
     MAKE_REF(strtrigger, TriggerTemplate)
     MAKE_REF(strCombinedLight, CombinedLightTemplate)
     MAKE_REF(strTileConstruction, ConstructionTemplate)
-    // TODO - These mappings are disabled until they are updated
-    //MAKE_REF(strLevelTemplate, LevelTemplate)
-    //MAKE_REF(strdecal, DecalTemplate)
-    //MAKE_REF(strprefab, PrefabTemplate)
+    MAKE_REF(strLevelTemplate, LevelTemplate)
+    MAKE_REF(strdecal, DecalTemplate)
+    MAKE_REF(strprefab, PrefabTemplate)
+    MAKE_REF(strconstellation, ConstellationTemplate)
 
     if (!ShownTemplateTypeWarning) {
         ShownTemplateTypeWarning = true;

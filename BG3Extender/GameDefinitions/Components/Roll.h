@@ -273,5 +273,99 @@ struct RollSystem : public BaseSystem
     HashMap<EntityHandle, EntityHandle> EntityToRollEntity;
 };
 
+END_NS()
+
+
+BEGIN_NS(eoc::roll::stream)
+
+struct PRNGState
+{
+    uint64_t Frame;
+    float FailDebt;
+    float SuccessDebt;
+    uint64_t Seed;
+    uint64_t NumRolls;
+};
+
+struct Stream
+{
+    HashSet<EntityHandle> CombatParticipants;
+    FixedString RandomCastUuid;
+    Guid CombatGuid;
+    bool IsAlly;
+    FixedString PlayerUuid;
+    RollStreamType StreamType;
+    PRNGState State;
+};
+
+struct RollManager : public ProtectedGameObject<RollManager>
+{
+    [[bg3::hidden]] void* VMT;
+    Array<Stream> Streams;
+    uint64_t LastFrame;
+    uint64_t BaseSeed;
+    RollModeType RollModeType;
+    uint8_t CustomRollExpectedValue;
+    bool HasChanges;
+    stats::RPGStats* Stats;
+};
+
+struct RollModeTypeRequest
+{
+    uint8_t CustomRollExpectedValue;
+    RollModeType RollModeType;
+
+    inline bool operator == (RollModeTypeRequest const& o) const
+    {
+        return o.RollModeType == RollModeType;
+    }
+};
+
+END_NS()
+
+BEGIN_SE()
+
+template <>
+inline uint64_t HashMapHash<eoc::roll::stream::RollModeTypeRequest>(eoc::roll::stream::RollModeTypeRequest const& v)
+{
+    return (uint64_t)v.RollModeType;
+}
+
+END_SE()
+
+BEGIN_NS(esv::roll::stream)
+
+using namespace eoc::roll::stream;
+
+struct StreamsComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerRollStreams, "esv::roll::stream::StreamsComponent")
+
+    Array<Stream> Streams;
+    uint64_t LastFrame;
+    uint64_t BaseSeed;
+    RollModeType RollModeType;
+    uint8_t CustomRollExpectedValue;
+};
+
+struct CombatEventData
+{
+    Guid CombatGuid;
+    EntityHandle Entity;
+};
+
+struct SaveSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerRollSave, "esv::roll::stream::SaveSystem")
+
+    [[bg3::hidden]] void* VMT2;
+    RollManager* RollManager;
+    [[bg3::hidden]] void* CombatSystem;
+    Array<CombatEventData> CombatEvents;
+    HashSet<RollModeTypeRequest> RollModeTypeRequests;
+    [[bg3::hidden]] UnknownFunction SignalCollection;
+    bool RequestInitializeGlobals;
+    bool RequestClearStreams;
+};
 
 END_NS()

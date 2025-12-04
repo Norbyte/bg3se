@@ -93,6 +93,12 @@ P_FREE_GETTER(OwnerType, Noesis::RoutedEventHelpers::GetOwnerType)
 END_CLS()
 
 
+BEGIN_CLS(Noesis::ICommand)
+P_FUN(CanExecute, Noesis::CommandHelpers::InterfaceCanExecute)
+P_FUN(Execute, Noesis::CommandHelpers::InterfaceExecute)
+END_CLS()
+
+
 BEGIN_CLS(Noesis::BaseCommand)
 INHERIT(Noesis::BaseComponent)
 P_FUN(CanExecute, Noesis::CommandHelpers::CanExecute)
@@ -146,6 +152,28 @@ END_CLS()
 BEGIN_CLS(Noesis::Point)
 PN(X, x)
 PN(Y, y)
+END_CLS()
+
+
+BEGIN_CLS(Noesis::Thickness)
+PN(Left, left)
+PN(Top, top)
+PN(Right, right)
+PN(Bottom, bottom)
+END_CLS()
+
+
+BEGIN_CLS(Noesis::CornerRadius)
+PN(TopLeft, topLeft)
+PN(TopRight, topRight)
+PN(BottomRight, bottomRight)
+PN(BottomLeft, bottomLeft)
+END_CLS()
+
+
+BEGIN_CLS(Noesis::GridLengthHelper)
+P(GridUnitType)
+P(Value)
 END_CLS()
 
 

@@ -320,6 +320,8 @@ void StoredValueHelpers::PushValue(lua_State* L, Type const* type, void* val, Ty
         PushRawValue<double>(L, type, val);
     } else if (type == types.Bool.Type) {
         PushRawValue<bool>(L, type, val);
+    } else if (type == types.Symbol.Type) {
+        PushRawValue<Symbol>(L, type, val);
     } else if (type == types.Color.Type) {
         PushPtrValue<Color>(L, type, val);
     } else if (type == types.Vector2.Type) {
@@ -330,8 +332,22 @@ void StoredValueHelpers::PushValue(lua_State* L, Type const* type, void* val, Ty
         PushRawValue<Point>(L, type, val);
     } else if (type == types.Rect.Type) {
         PushPtrValue<Rect>(L, type, val);
+    } else if (type == types.Int32Rect.Type) {
+        PushPtrValue<Recti>(L, type, val);
+    } else if (type == types.Thickness.Type) {
+        PushPtrValue<Thickness>(L, type, val);
+    } else if (type == types.CornerRadius.Type) {
+        PushPtrValue<CornerRadius>(L, type, val);
+    } else if (type == types.GridLength.Type) {
+        PushRawValue<GridLengthHelper>(L, type, val);
     } else if (type == types.String.Type) {
         PushPtrValue<String>(L, type, val);
+    } else if (type == types.ICommand.Type) {
+        lua::MakeObjectRef(L, reinterpret_cast<ICommand*>(val));
+    } else if (type == types.IValueConverter.Type) {
+        lua::push(L, nullptr); // IValueConverter unsupported for now
+    } else if (type == types.IMultiValueConverter.Type) {
+        lua::push(L, nullptr); // IMultiValueConverter unsupported for now
     } else if (type == types.Uri.Type) {
         lua::push(L, reinterpret_cast<Uri*>(val)->mUri.Str());
 
@@ -466,6 +482,8 @@ void StoredValueHelpers::PushProperty(lua_State* L, BaseObject const* obj, TypeC
             PushTyped<double>(L, prop, obj);
         } else if (type == types.Bool.Type) {
             PushTyped<bool>(L, prop, obj);
+        } else if (type == types.Symbol.Type) {
+            PushTyped<Symbol>(L, prop, obj);
         } else if (type == types.Color.Type) {
             PushTypedRef<Color>(L, prop, obj);
         } else if (type == types.Vector2.Type) {
@@ -476,6 +494,20 @@ void StoredValueHelpers::PushProperty(lua_State* L, BaseObject const* obj, TypeC
             PushTypedRef<Point>(L, prop, obj);
         } else if (type == types.Rect.Type) {
             PushTypedRef<Rect>(L, prop, obj);
+        } else if (type == types.Int32Rect.Type) {
+            PushTypedRef<Recti>(L, prop, obj);
+        } else if (type == types.Thickness.Type) {
+            PushTypedRef<Thickness>(L, prop, obj);
+        } else if (type == types.CornerRadius.Type) {
+            PushTypedRef<CornerRadius>(L, prop, obj);
+        } else if (type == types.ICommand.Type) {
+            lua::MakeObjectRef(L, *reinterpret_cast<ICommand**>(const_cast<void*>(prop->Get(obj))));
+        } else if (type == types.IValueConverter.Type) {
+            lua::push(L, nullptr); // IValueConverter unsupported for now
+        } else if (type == types.IMultiValueConverter.Type) {
+            lua::push(L, nullptr); // IMultiValueConverter unsupported for now
+        } else if (type == types.GridLength.Type) {
+            PushTypedRef<GridLengthHelper>(L, prop, obj);
         } else if (type == types.String.Type) {
             auto value = reinterpret_cast<String const*>(prop->Get(obj));
             lua::push(L, *value);
@@ -555,6 +587,8 @@ std::optional<StoredValueHolder> StoredValueHelpers::GetValue(lua_State* L, Type
         return GetRawValue<double>(L, type, value);
     } else if (type == types.Bool.Type) {
         return GetRawValue<bool>(L, type, value);
+    } else if (type == types.Symbol.Type) {
+        return GetRawValue<Symbol>(L, type, value);
     } else if (type == types.Color.Type) {
         return GetRawValue<glm::vec4>(L, type, value);
     } else if (type == types.Vector2.Type) {
@@ -565,6 +599,21 @@ std::optional<StoredValueHolder> StoredValueHelpers::GetValue(lua_State* L, Type
         return GetRawValue<glm::vec2>(L, type, value);
     } else if (type == types.Rect.Type) {
         return GetRawValue<glm::vec4>(L, type, value);
+    } else if (type == types.Int32Rect.Type) {
+        return GetRawValue<glm::ivec4>(L, type, value);
+    } else if (type == types.Thickness.Type) {
+        return GetRawValue<glm::vec4>(L, type, value);
+    } else if (type == types.CornerRadius.Type) {
+        return GetRawValue<glm::vec4>(L, type, value);
+    } else if (type == types.GridLength.Type) {
+        return GetRawValue<GridLengthHelper>(L, type, value);
+    } else if (type == types.ICommand.Type) {
+        return GetRawValue<ICommand*>(L, type, value);
+    } else if (type == types.IValueConverter.Type) {
+        // IValueConverter unsupported for now
+    } else if (type == types.IMultiValueConverter.Type) {
+        // IMultiValueConverter unsupported for now
+        return {};
     } else if (type == types.String.Type) {
         return GameAlloc<String>(lua::get<char const*>(L, value.Index));
 
@@ -626,6 +675,16 @@ bool CommandHelpers::CanExecute(lua_State* L, BaseCommand const* o, std::optiona
 }
 
 void CommandHelpers::Execute(lua_State* L, BaseCommand const* o, std::optional<BaseComponent*> arg)
+{
+    o->Execute(arg ? *arg : nullptr);
+}
+
+bool CommandHelpers::InterfaceCanExecute(lua_State* L, ICommand const* o, std::optional<BaseComponent*> arg)
+{
+    return o->CanExecute(arg ? * arg : nullptr);
+}
+
+void CommandHelpers::InterfaceExecute(lua_State* L, ICommand const* o, std::optional<BaseComponent*> arg)
 {
     o->Execute(arg ? *arg : nullptr);
 }

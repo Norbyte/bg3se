@@ -5,6 +5,20 @@ Array<Functor*>* Functors::LuaGetFunctorList() const
     return const_cast<Array<Functor*>*>(&Values);
 }
 
+Functor* Functors::AddNew(FunctorId action)
+{
+    auto functor = GetStaticSymbols().GetStats()->ConstructFunctor(action);
+    if (functor) {
+        char name[50];
+        sprintf_s(name, "_%d", this->Values.size());
+        functor->UniqueName = FixedString(name);
+        this->Insert(functor);
+        return functor;
+    } else {
+        return nullptr;
+    }
+}
+
 Functor::~Functor()
 {}
 

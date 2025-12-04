@@ -1,6 +1,8 @@
 #pragma once
 
 #include <CoreLib/Base/Base.h>
+// Needed for enum definitions
+#include <NsGui/GridLength.h>
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/Base/ForwardDeclarations.h>
 
@@ -21,6 +23,8 @@ END_SE()
 #include <NsDrawing/Color.h>
 #include <NsDrawing/Point.h>
 #include <NsDrawing/Rect.h>
+#include <NsDrawing/Thickness.h>
+#include <NsDrawing/CornerRadius.h>
 #include <NsGui/BaseCollection.h>
 
 #include <Extender/Client/IMGUI/IMGUI.h>

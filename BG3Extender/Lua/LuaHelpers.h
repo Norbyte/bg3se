@@ -7,6 +7,7 @@
 #include <optional>
 
 #include <GameDefinitions/Base/Base.h>
+#include <GameDefinitions/Stats/Expression.h>
 
 BEGIN_NS(lua)
 

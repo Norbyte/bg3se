@@ -74,6 +74,14 @@ struct TurnBasedEntityInfo
     int32_t Initiative{ 0 };
 };
 
+struct EndTurnRequest
+{
+    Guid Team;
+    int Round;
+    bool field_14;
+    uint64_t field_18;
+};
+
 struct TurnBasedGroup
 {
     [[bg3::legacy(Handles)]] Array<TurnBasedEntityInfo> Members;
@@ -301,6 +309,48 @@ struct System : public BaseSystem
     HashSet<uint32_t> field_410_PeerId;
 };
 
+
+struct TurnOrderAssignEntityToUserRequestOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(TurnOrderAssignEntityToUserRequest, "esv::TurnOrderAssignEntityToUserRequestOneFrameComponent")
+
+    UserId UserID;
+    Guid field_8;
+};
+
+struct TurnEndedInfo
+{
+    int Round;
+    Guid Team;
+    float ActionPoints;
+    float BonusActionPoints;
+    float MovementPoints;
+    int field_24;
+};
+
+struct TurnStartedInfo
+{
+    Guid Team;
+    int Round;
+};
+
+struct TurnEndedEventOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(TurnEndedEvent, "esv::TurnEndedEventOneFrameComponent")
+
+    Array<TurnEndedInfo> TurnEnded;
+};
+
+struct TurnStartedEventOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(TurnStartedEvent, "esv::TurnStartedEventOneFrameComponent")
+
+    Array<TurnStartedInfo> TurnStarted;
+};
+
+DEFINE_TAG_COMPONENT(esv, TurnOrderSkippedComponent, TurnOrderSkipped)
+DEFINE_ONEFRAME_TAG_COMPONENT(esv, TurnOrderTimedOutOneFrameComponent, TurnOrderTimedOut)
+
 struct TurnActionCompletedRequest
 {
     EntityHandle Entity;
@@ -329,6 +379,27 @@ struct TurnOrderSystem : public BaseSystem
     [[bg3::hidden]] void* TurnOrderSystemHelper;
 };
 
+
+END_NS()
+
+BEGIN_NS(esv::turn)
+
+struct SurfaceTeamSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(TurnSurfaceTeamSingleton, "esv::turn::SurfaceTeamSingletonComponent")
+
+    HashSet<EntityHandle> EndRound;
+    HashMap<EntityHandle, Array<Guid>> EndTurn;
+};
+
+struct SurfaceTrackingComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(TurnSurfaceTracking, "esv::turn::SurfaceTrackingComponent")
+
+    HashSet<EntityHandle> Surfaces;
+};
+
+DEFINE_ONEFRAME_TAG_COMPONENT(esv::turn, RoundEndedEventOneFrameComponent, TurnRoundEndedEvent)
 
 END_NS()
 

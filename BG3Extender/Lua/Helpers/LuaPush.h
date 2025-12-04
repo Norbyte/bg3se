@@ -115,6 +115,7 @@ void push(lua_State* L, ComponentHandle const& h);
 void push(lua_State* L, ecs::EntityRef const& h);
 void push(lua_State* L, TypeInformationRef const& h);
 void push(lua_State* L, stats::ConditionId const& h);
+void push(lua_State* L, StatsExpressionRef const& h);
 void push(lua_State* L, ImguiHandle const& h);
 void push(lua_State* L, extui::Renderable* o);
 
@@ -193,6 +194,23 @@ inline void push(lua_State* L, Noesis::Rect const& v)
 {
     push(L, glm::vec4(v.x, v.y, v.width, v.height));
 }
+
+inline void push(lua_State* L, Noesis::Recti const& v)
+{
+    push(L, glm::ivec4(v.x, v.y, (int)v.width, (int)v.height));
+}
+
+inline void push(lua_State* L, Noesis::Thickness const& v)
+{
+    push(L, glm::vec4(v.left, v.top, v.right, v.bottom));
+}
+
+inline void push(lua_State* L, Noesis::CornerRadius const& v)
+{
+    push(L, glm::vec4(v.topLeft, v.topRight, v.bottomRight, v.bottomLeft));
+}
+
+void push(lua_State* L, Noesis::GridLengthHelper const& v);
 
 inline void push(lua_State* L, Noesis::Vector2 const& v)
 {

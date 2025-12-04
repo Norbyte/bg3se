@@ -6,6 +6,7 @@
 #include <Extender/ScriptExtender.h>
 
 #include <GameDefinitions/Stats/Functors.inl>
+#include <GameDefinitions/Stats/Expression.inl>
 
 BEGIN_NS(stats)
 
@@ -541,9 +542,6 @@ Functors* RPGStats::ConstructFunctorSet(FixedString const& propertyName)
 
 Functor* RPGStats::ConstructFunctor(FunctorId action)
 {
-    sVMTMappings.Update();
-    auto stats = GetStaticSymbols().GetStats();
-
 #define V(type) case type::FunctorType: \
     functor = GameAlloc<type>(); \
     break;
@@ -551,6 +549,8 @@ Functor* RPGStats::ConstructFunctor(FunctorId action)
     Functor* functor{ nullptr };
     switch (action) {
         V(CustomDescriptionFunctor)
+        V(ApplyStatusFunctor)
+        V(SurfaceChangeFunctor)
         V(ResurrectFunctor)
         V(SabotageFunctor)
         V(SummonFunctor)
@@ -561,33 +561,59 @@ Functor* RPGStats::ConstructFunctor(FunctorId action)
         V(CreateSurfaceFunctor)
         V(CreateConeSurfaceFunctor)
         V(RemoveStatusFunctor)
+        V(DealDamageFunctor)
         V(ExecuteWeaponFunctorsFunctor)
+        V(RegainHitPointsFunctor)
         V(TeleportSourceFunctor)
         V(SetStatusDurationFunctor)
+        V(UseSpellFunctor)
+        V(UseActionResourceFunctor)
         V(UseAttackFunctor)
+        V(CreateExplosionFunctor)
         V(BreakConcentrationFunctor)
+        V(ApplyEquipmentStatusFunctor)
         V(RestoreResourceFunctor)
         V(SpawnFunctor)
         V(StabilizeFunctor)
         V(UnlockFunctor)
         V(ResetCombatTurnFunctor)
         V(RemoveAuraByChildStatusFunctor)
-        V(ApplyStatusFunctor)
-        V(DealDamageFunctor)
-        V(UseActionResourceFunctor)
-        V(CreateExplosionFunctor)
-        V(SurfaceChangeFunctor)
-        V(ApplyEquipmentStatusFunctor)
-        V(RegainHitPointsFunctor)
-        V(UseSpellFunctor)
         V(SummonInInventoryFunctor)
         V(SpawnInInventoryFunctor)
         V(RemoveUniqueStatusFunctor)
         V(DisarmWeaponFunctor)
+        V(DisarmAndStealWeaponFunctor)
+        V(SwitchDeathTypeFunctor)
+        V(TriggerRandomCastFunctor)
+        V(GainTemporaryHitPointsFunctor)
+        V(FireProjectileFunctor)
+        V(ShortRestFunctor)
+        V(CreateZoneFunctor)
+        V(DoTeleportFunctor)
+        V(RegainTemporaryHitPointsFunctor)
+        V(RemoveStatusByLevelFunctor)
+        V(SurfaceClearLayerFunctor)
+        V(UnsummonFunctor)
+        V(CreateWallFunctor)
+        V(CounterspellFunctor)
+        V(AdjustRollFunctor)
+        V(SpawnExtraProjectilesFunctor)
+        V(KillFunctor)
+        V(TutorialEventFunctor)
+        V(DropFunctor)
+        V(ResetCooldownsFunctor)
+        V(SetRollFunctor)
+        V(SetDamageResistanceFunctor)
+        V(SetRerollFunctor)
+        V(SetAdvantageFunctor)
+        V(SetDisadvantageFunctor)
+        V(MaximizeRollFunctor)
+        V(CameraWaitFunctor)
+        V(ModifySpellCameraFocusFunctor)
         V(ExtenderFunctor)
 
     default:
-        OsiError("Unhandled stats functor action: " << (unsigned)action);
+        OsiError("Unhandled stats functor type: " << EnumInfo<FunctorId>::Find(action).GetString());
         return nullptr;
     }
 

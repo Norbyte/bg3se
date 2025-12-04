@@ -125,6 +125,18 @@ inline constexpr uint64_t Hash(uint64_t v)
     return v;
 }
 
+inline constexpr uint64_t Hash(float v)
+{
+    if (v >= 9.223372e18f) {
+        v -= 9.223372e18f;
+        if (v < 9.223372e18f) {
+            return 0x8000000000000000ull | (uint32_t)(int32_t)v;
+        }
+    }
+    
+    return (uint32_t)(int32_t)v;
+}
+
 template <class T>
 inline typename std::enable_if_t<std::is_enum_v<T>, uint64_t> Hash(T v)
 {

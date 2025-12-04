@@ -138,6 +138,7 @@ FS(trigger);
 FS(decal);
 FS(prefab);
 FS(light);
+FS(constellation);
 FS(CombinedLight);
 FS(TileConstruction);
 

@@ -161,7 +161,7 @@ struct StatusDowned : public StatusIncapacitated
     int NumStableSuccess;
     int NumStableFailed;
     int StableRollDC;
-    StatsExpressionParam* StableRoll;
+    StatsExpressionRef StableRoll;
     stats::Functors* OnRollsFailed;
     stats::Functors* OnSuccess;
     [[bg3::hidden]] UnknownFunction RollSignals;
@@ -461,21 +461,19 @@ struct StatusVFXBoostMaterialDefinition
 {
     uint32_t MaterialType;
     FixedString Material;
-    uint8_t ApplyFlags;
+    OverlayMaterialApplyFlags ApplyFlags;
     uint8_t ApplyNormalMap;
     float FadeAmount;
     float OverlayOffset;
     int field_14;
     Array<StatusMaterialParam> MaterialParams;
-    int field_28;
-    float field_2C;
-    int field_30;
+    glm::vec3 SourceDirection;
 };
 
 struct StatusVFXData
 {
     FixedString Material;
-    uint8_t ApplyFlags;
+    OverlayMaterialApplyFlags ApplyFlags;
     bool IsOverlayMaterial;
     bool Fading;
     bool ApplyNormalMap;

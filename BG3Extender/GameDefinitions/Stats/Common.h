@@ -146,6 +146,26 @@ public:
         }
     }
 
+    bool Remove(T* f)
+    {
+        auto it = Values.find(f);
+        if (it == Values.end()) {
+            return false;
+        }
+
+        auto idx = it - Values.begin();
+        Values.erase(it);
+
+        for (auto& h : NameToHandle.values()) {
+            if (h >= idx) {
+                h--;
+            }
+        }
+
+        NextHandle--;
+        return true;
+    }
+
     [[bg3::hidden]] Array<T*> Values;
     [[bg3::hidden]] HashMap<FixedString, int32_t> NameToHandle;
     [[bg3::hidden]] int32_t NextHandle{ 0 };

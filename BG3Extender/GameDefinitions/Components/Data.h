@@ -536,19 +536,6 @@ struct ActiveSkeletonSlotsComponent : public BaseComponent
     Array<FixedString> Slots;
 };
 
-struct SomeSharedServerClientObjId
-{
-    __int64 field_0;
-    int field_8;
-};
-
-
-struct SomeSharedServerClientObjId2 : public SomeSharedServerClientObjId
-{
-    __int64 field_10;
-    int field_18;
-};
-
 struct ApprovalRatingsComponent : public BaseComponent
 {
     DEFINE_COMPONENT(ApprovalRatings, "eoc::approval::RatingsComponent")

@@ -139,6 +139,12 @@ struct PagedHashMap : public PagedHashSet<TKey, TAllocator>
         auto index = this->insert(key);
         return Values.add_uninitialized();
     }
+
+    template <class... Args>
+    TValue* add(TKey const& key, Args... args)
+    {
+        return new (add_uninitialized(key)) TValue(std::forward<Args>(args)...);
+    }
 };
 
 END_SE()

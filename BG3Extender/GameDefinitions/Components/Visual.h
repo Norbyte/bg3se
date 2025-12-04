@@ -85,7 +85,7 @@ struct GameplayLightComponent : public BaseComponent
     [[bg3::legacy(field_8)]] float EdgeSharpening;
     [[bg3::legacy(field_C)]] float SpotlightAngle;
     [[bg3::legacy(field_10)]] glm::vec3 DirectionalDimensions;
-    [[bg3::legacy(field_1C)]] uint8_t LightType;
+    [[bg3::legacy(field_1C)]] LightType LightType;
     [[bg3::legacy(field_1D)]] bool IsHalfLit;
     [[bg3::legacy(field_1E)]] bool Sunlight;
     [[bg3::legacy(field_20)]] glm::vec3 AttachAt;
@@ -115,9 +115,9 @@ struct PhysicsComponent : public BaseComponent
     uint32_t PhysicsGroup;
     uint32_t CollidesWith;
     uint32_t ExtraFlags;
-    uint8_t field_14;
+    [[bg3::legacy(field_14)]] bool HasPhysics;
     uint8_t field_15;
-    uint8_t field_16;
+    [[bg3::legacy(field_16)]] bool IsClustered;
 };
 
 struct CharacterCreationAppearanceComponent : public BaseComponent
@@ -209,29 +209,271 @@ struct TemplateAnimationSetOverrideComponent : public BaseComponent
     Array<AnimationWaterfallElement> Overrides;
 };
 
-struct EffectComponent : public BaseProxyComponent
+struct LoadAnimationFromVisualRequestData
 {
-    DEFINE_COMPONENT(Effect, "ls::EffectComponent")
-
-    [[bg3::hidden]] void* VMT;
-    [[bg3::hidden]] void* WorkerThreadJob;
-    EntityHandle Entity;
-    resource::EffectResource* EffectResource;
-    aspk::EffectTimeline* Timeline;
-    bool Initialized;
-    bool OverridingFadeOpacity;
-    EffectFlags Flags;
-    FixedString EffectName;
-    FixedString AnimationName;
-    bool UpdateQueued;
-    EntityHandle SoundEntity;
-    [[bg3::legacy(field_48)]] EntityHandle Parent;
-    std::array<float, 2> OverrideFadeCapacity;
-    std::array<bool, 2> OverrideFadeShadowEnabled;
-    [[bg3::hidden]] void* ConstructionJob;
-    [[bg3::readonly]] uint16_t ConstructFlags;
-    [[bg3::hidden]] uint64_t _Pad;
+    FixedString VisualResource;
+    FixedString Type;
+    FixedString SkeletonSlot;
+    uint8_t field_C;
 };
+
+struct RemoveAnimationSetsRequestOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(RemoveAnimationSetsRequest, "ls::animation::RemoveAnimationSetsRequestOneFrameComponent")
+
+    HashSet<FixedString> AnimationSets;
+};
+
+struct RemoveAnimationSetsGameplayRequestOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(RemoveAnimationSetsGameplayRequest, "ls::animation::RemoveAnimationSetsGameplayRequestOneFrameComponent")
+
+    HashSet<FixedString> AnimationSets;
+};
+
+struct LoadAnimationSetRequestOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(LoadAnimationSetRequest, "ls::animation::LoadAnimationSetRequestOneFrameComponent")
+
+    Array<LoadAnimationFromVisualRequestData> Animations;
+};
+
+struct LoadAnimationSetGameplayRequestOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(LoadAnimationSetGameplayRequest, "ls::animation::LoadAnimationSetGameplayRequestOneFrameComponent")
+
+    Array<LoadAnimationFromVisualRequestData> Animations;
+};
+
+DEFINE_ONEFRAME_TAG_COMPONENT(ls::animation, AnimationSetUpdateRequestComponent, AnimationSetUpdateRequest)
+
+struct AnimationSetSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(AnimationSet, "ls::AnimationSetSystem")
+
+    [[bg3::hidden]] void* AnimationSetSystemHelper;
+    [[bg3::hidden]] void* AnimationBlueprintSystem;
+    [[bg3::hidden]] void* VisualSystem;
+    bool field_28;
+    HashMap<EntityHandle, Array<LoadAnimationFromVisualRequestData>> LoadAnimationSets;
+    HashSet<EntityHandle> AnimationSetUpdates;
+    HashMap<EntityHandle, Array<FixedString>> RemoveAnimationSets;
+    [[bg3::hidden]] UnknownSignalSubscriber DynamicAnimationTagsSignal;
+    [[bg3::hidden]] UnknownSignalSubscriber TemplateAnimationSetOverrideSignal;
+};
+
+struct MaterialParameterFloat
+{
+    FixedString Parameter;
+    float Value;
+    bool Override{ false };
+    uint8_t field_9{ 0 };
+    bool Preset{ false };
+};
+
+struct MaterialParameterVec2
+{
+    FixedString Parameter;
+    glm::vec2 Value;
+    bool Override{ false };
+    uint8_t field_9{ 0 };
+    bool Preset{ false };
+};
+
+struct MaterialParameterVec3
+{
+    FixedString Parameter;
+    glm::vec3 Value;
+    bool Override{ false };
+    uint8_t field_9{ 0 };
+    bool Preset{ false };
+};
+
+struct MaterialParameterVec4
+{
+    FixedString Parameter;
+    glm::aligned_highp_vec4 Value;
+    bool Override{ false };
+    uint8_t field_9{ 0 };
+    bool Preset{ false };
+};
+
+struct MaterialParameterTexture
+{
+    FixedString Parameter;
+    FixedString Value;
+    bool Override{ false };
+    uint8_t field_9{ 0 };
+    bool Preset{ false };
+};
+
+struct MaterialParameterPresetSlot
+{
+    FixedString GroupName;
+    FixedString CCPreset;
+    uint32_t field_8;
+};
+
+struct MaterialParameterPresetsContainer
+{
+    Array<MaterialParameterFloat> FloatOverrides;
+    Array<MaterialParameterVec2> Vec2Overrides;
+    Array<MaterialParameterVec3> Vec3Overrides;
+    Array<MaterialParameterVec4> Vec4Overrides;
+    Array<MaterialParameterTexture> TextureOverrides;
+    Array<MaterialParameterTexture> VirtualTextureOverrides;
+    FixedString field_60;
+    HashMap<FixedString, MaterialParameterPresetSlot> Presets;
+};
+
+struct VisualLocatorAttachment
+{
+    FixedString DisplayName;
+    FixedString LocatorName;
+};
+
+struct VisualSetSlot
+{
+    FixedString Slot;
+    FixedString Visual;
+    FixedString field_8;
+};
+
+struct VisualSetSlots
+{
+    // Editor only
+    // FixedString StatsColorPresetResource;
+    FixedString BodySetVisual;
+    Array<VisualSetSlot> VisualSlots;
+    Array<VisualLocatorAttachment> LocatorAttachments;
+    MaterialParameterPresetsContainer MaterialParameters;
+    LegacyMap<FixedString, MaterialParameterPresetsContainer> Materials;
+    HashMap<FixedString, FixedString> MaterialOverrides;
+    HashMap<FixedString, FixedString> MaterialRemaps;
+    FixedString VisualSet;
+    bool ShowEquipmentVisuals;
+};
+
+struct VisualSetSlotsWrapper
+{
+    VisualSetSlots Slots;
+    bool Managed;
+};
+
+struct VisualChangeRequest
+{
+    EntityHandle Entity;
+    FixedString Visual;
+    VisualLoadFlags Flags;
+};
+
+struct VisualChangeRequestSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(VisualChange, "ls::VisualChangeRequestSystem")
+
+    // TODO - Not supported yet!
+    [[bg3::hidden]] MPMCQueueBounded<VisualChangeRequest> Requests;
+};
+
+
+struct VisualChangedSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(VisualChanged, "ls::VisualChangedSystem")
+
+    HashSet<EntityHandle> VisualChanges;
+    uint32_t FrameNo;
+};
+
+struct VisualLoadDesciptionComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(VisualLoadDescription, "ls::VisualLoadDesciptionComponent")
+
+    FixedString VisualTemplate;
+    uint16_t RenderFlags;
+    uint8_t RenderChannel;
+};
+
+struct VisualLoadRequestsSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(VisualLoadRequests, "ls::VisualLoadRequestsSingletonComponent")
+
+    HashMap<EntityHandle, bool> Requests;
+};
+
+struct VisualChangeRequestOneFrameComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(VisualChangeRequest, "ls::VisualChangeRequestOneFrameComponent")
+
+    FixedString VisualTemplate;
+    uint16_t RenderFlags;
+};
+
+struct VisualAttachRequestOneFrameComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(VisualAttachRequest, "ls::VisualAttachRequestOneFrameComponent")
+
+    EntityHandle Entity;
+    int field_8;
+};
+
+
+DEFINE_TAG_COMPONENT(ls, VisualLoadedComponent, VisualLoaded)
+DEFINE_ONEFRAME_TAG_COMPONENT(ls, VisualChangedEventOneFrameComponent, VisualChangedEvent)
+
+struct SwapVisualRequest
+{
+    Visual* From;
+    Visual* To;
+};
+
+struct VisualSetSlotsPreAllocatedVisual
+{
+    EntityHandle Entity;
+    Visual* Visual;
+};
+
+struct DeferredLoadRequest : ProtectedGameObject<DeferredLoadRequest>
+{
+    [[bg3::hidden]] void* Callback_pInternalCallback{ nullptr };
+    Visual* Visual;
+    resource::AnimationBlueprintResource* Blueprint;
+    gn::GenomeBlueprintInstance* BlueprintInstance;
+    EntityHandle Entity;
+    VisualSetSlotsWrapper Slots;
+    HashMap<FixedString, Array<VisualSetSlotsPreAllocatedVisual>> PreAllocatedEntities;
+    uint32_t RequestId;
+    VisualLoadFlags LoadFlags;
+    uint8_t field_7E;
+    FixedString BlueprintOverride;
+    uint32_t field_80;
+    uint32_t RefCount;
+};
+
+struct VisualSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(Visual, "ls::VisualSystem")
+
+    [[bg3::hidden]] UnknownSignal VisualLoadedSignal;
+    [[bg3::hidden]] UnknownSignal VisualUnloadedSignal;
+    [[bg3::hidden]] UnknownSignal VisualSwappedSignal;
+    HashMap<EntityHandle, SwapVisualRequest> SwapVisuals;
+    HashMap<EntityHandle, FixedString> RemoveAnimationSetRequests;
+    HashMap<EntityHandle, Array<LoadAnimationFromVisualRequestData>> LoadAnimationRequests;
+    [[bg3::hidden]] VisualChangedSystem* VisualChangedSystem;
+    HashMap<EntityHandle, DeferredLoadRequest*> LoadRequests;
+    [[bg3::hidden]] CRITICAL_SECTION VisualSetSlotUpdatesCS;
+    [[bg3::hidden]] Array<void*> VisualSetSlotUpdates; // some kind of hashmap?
+    [[bg3::hidden]] SRWLOCK DeferredLoadRequestsLock;
+    // TODO - Not supported yet!
+    [[bg3::hidden]] MPMCQueueBounded<DeferredLoadRequest*> DeferredLoadRequests;
+    [[bg3::hidden]] SRWLOCK UnloadRequestsLock;
+    // TODO - Not supported yet!
+    [[bg3::hidden]] MPMCQueueBounded<Visual*> UnloadRequests;
+    [[bg3::hidden]] void* UnloadWorkerThreadBatch;
+    [[bg3::hidden]] void* UnloadWorkerThreadJob;
+    [[bg3::hidden]] void* GenomeManager;
+};
+
 
 struct DecalComponent : public BaseProxyComponent
 {
@@ -403,6 +645,7 @@ struct TriggeredEventsOneFrameComponent : public BaseComponent
     HashMap<EntityHandle, Array<FixedString>> Events;
 };
 
+
 END_NS()
 
 
@@ -472,21 +715,21 @@ END_NS()
 BEGIN_NS(ecl)
 
 
-struct EquipmentVisualData
+struct EquipmentVisualRequest
 {
     Array<FixedString> VisualTemplates;
     [[bg3::legacy(BoneSheathed)]] FixedString Bone;
     [[bg3::legacy(SourceBoneSheathed)]] FixedString SourceBone;
-    FixedString field_18;
-    uint32_t AttachFlags;
-    EntityHandle field_20;
+    FixedString Level;
+    VisualAttachmentFlags AttachFlags;
+    EntityHandle Parent;
     Array<resource::PresetData::ScalarParameter> ScalarParameters;
     Array<resource::PresetData::Vector3Parameter> Vector3Parameters;
     EntityHandle Item;
-    uint16_t VisualFlags;
+    VisualLoadFlags VisualFlags;
     uint8_t HairType;
-    uint8_t Flags_63;
-    uint32_t SlotAndFlags;
+    VisualRequestFlags RequestFlags;
+    ItemSlot Slot;
 };
 
 
@@ -499,21 +742,21 @@ struct EquipmentSubVisualRequest
 };
 
 
-struct EquipmentVisualRequest
+struct EquipmentVisualSlotRequest
 {
     Array<EntityHandle> Item;
     Array<EquipmentSubVisualRequest> SubRequests;
-    EquipmentVisualData Data;
+    EquipmentVisualRequest Data;
     EntityHandle field_90;
 };
 
-struct EquipmentVisual
+struct EquipmentVisualSlot
 {
     EntityHandle Item;
     Array<EntityHandle> SubVisuals;
-    EquipmentVisualRequest* VisualRequest;
-    std::optional<EquipmentVisualData> VisualData;
-    bool field_20;
+    EquipmentVisualSlotRequest* VisualRequest;
+    std::optional<EquipmentVisualRequest> VisualData;
+    [[bg3::legacy(field_20)]] bool Loaded;
 };
 
 struct EquipmentVisualsComponent : public BaseComponent
@@ -521,7 +764,7 @@ struct EquipmentVisualsComponent : public BaseComponent
     DEFINE_COMPONENT(ClientEquipmentVisuals, "ecl::EquipmentVisualsComponent")
 
     EntityHandle Entity;
-    HashMap<ItemSlot, EquipmentVisual> Equipment;
+    HashMap<ItemSlot, EquipmentVisualSlot> Equipment;
 };
 
 struct PaperdollComponent : public BaseComponent
@@ -607,99 +850,6 @@ struct VisualSystem : public BaseSystem
     [[bg3::hidden]] void* LevelManager;
     [[bg3::hidden]] void* GlobalTemplateManager;
     [[bg3::hidden]] void* ResourceManager;
-};
-
-
-struct MaterialParameterFloat
-{
-    FixedString Parameter;
-    float Value;
-    bool Override{ false };
-    uint8_t field_9{ 0 };
-    bool Preset{ false };
-};
-
-struct MaterialParameterVec2
-{
-    FixedString Parameter;
-    glm::vec2 Value;
-    bool Override{ false };
-    uint8_t field_9{ 0 };
-    bool Preset{ false };
-};
-
-struct MaterialParameterVec3
-{
-    FixedString Parameter;
-    glm::vec3 Value;
-    bool Override{ false };
-    uint8_t field_9{ 0 };
-    bool Preset{ false };
-};
-
-struct MaterialParameterVec4
-{
-    FixedString Parameter;
-    glm::aligned_highp_vec4 Value;
-    bool Override{ false };
-    uint8_t field_9{ 0 };
-    bool Preset{ false };
-};
-
-struct MaterialParameterTexture
-{
-    FixedString Parameter;
-    FixedString Value;
-    bool Override{ false };
-    uint8_t field_9{ 0 };
-    bool Preset{ false };
-};
-
-struct MaterialParameterPresetSlot
-{
-    FixedString GroupName;
-    FixedString CCPreset;
-    uint32_t field_8;
-};
-
-struct MaterialParameterPresetsContainer
-{
-    Array<MaterialParameterFloat> FloatOverrides;
-    Array<MaterialParameterVec2> Vec2Overrides;
-    Array<MaterialParameterVec3> Vec3Overrides;
-    Array<MaterialParameterVec4> Vec4Overrides;
-    Array<MaterialParameterTexture> TextureOverrides;
-    Array<MaterialParameterTexture> VirtualTextureOverrides;
-    FixedString field_60;
-    HashMap<FixedString, MaterialParameterPresetSlot> Presets;
-};
-
-struct VisualLocatorAttachment
-{
-    FixedString DisplayName;
-    FixedString LocatorName;
-};
-
-struct VisualSetSlot
-{
-    FixedString Slot;
-    FixedString Visual;
-    FixedString field_8;
-};
-
-struct VisualSetSlots
-{
-    // Editor only
-    // FixedString StatsColorPresetResource;
-    FixedString BodySetVisual;
-    Array<VisualSetSlot> VisualSlots;
-    Array<VisualLocatorAttachment> LocatorAttachments;
-    MaterialParameterPresetsContainer MaterialParameters;
-    LegacyMap<FixedString, MaterialParameterPresetsContainer> Materials;
-    HashMap<FixedString, FixedString> MaterialOverrides;
-    HashMap<FixedString, FixedString> MaterialRemaps;
-    FixedString VisualSet;
-    bool ShowEquipmentVisuals;
 };
 
 
@@ -881,7 +1031,7 @@ struct VisualsDesiredStateComponent : public BaseComponent
 {
     DEFINE_COMPONENT(ClientVisualsDesiredState, "ecl::equipment::VisualsDesiredStateComponent")
 
-    HashMap<ItemSlot, EquipmentVisualData> Slots;
+    HashMap<ItemSlot, EquipmentVisualRequest> Slots;
 };
 
 struct VisualsVisibilityStateSystem : public BaseSystem

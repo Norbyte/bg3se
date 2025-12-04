@@ -133,7 +133,7 @@ private:
         auto oldResources = bank_->Resources.raw_values().raw_buf();
         T* newResources = GameMemoryAllocator::NewRaw<T>(curSize);
         for (uint32_t i = 0; i < curSize; i++) {
-            new (oldResources + i) T(newResources[i]);
+            new (newResources + i) T(oldResources[i]);
         }
 
         bank_->Resources.raw_values().unsafe_swap_buffer(newResources);
@@ -144,7 +144,7 @@ private:
     }
 };
 
-#define FOR_RESOURCE_TYPE(ty) case ty::ResourceManagerType: return MakeHelper<ty>(type);
+#define FOR_RESOURCE_TYPE(ty) case resource::ty::ResourceManagerType: return MakeHelper<resource::ty>(type);
 
 class GuidResourceHelpers
 {

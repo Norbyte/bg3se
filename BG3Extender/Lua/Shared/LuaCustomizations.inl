@@ -548,6 +548,29 @@ bool lua_typecheck_cppvalue(lua_State* L, int idx, MetatableTag expectedMetatabl
         && CppValue::DecodePropertyMapTag(val) == propertyMapTag;
 }
 
+bool lua_typecheck_struct(lua_State* L, int idx, int propertyMapIndex)
+{
+    auto pm = gStructRegistry.Get(propertyMapIndex);
+    int aidx = lua_absindex(L, idx);
+
+    // If the table has a __type metainfo field, check if the name matches the C++ type name
+    auto typeName = try_gettable<FixedString>(L, "__type", aidx);
+    if (typeName) {
+        return *typeName == pm->Name;
+    }
+
+    // Iterate the table to check if all fields map to a property in the property map
+    bool matches{ true };
+    for (auto i : iterate(L, aidx)) {
+        auto key = get<FixedStringNoRef>(L, -2);
+        if (pm->Properties.find(key) == pm->Properties.end()) {
+            matches = false;
+        }
+    }
+    
+    return matches;
+}
+
 bool lua_try_get_cppvalue(lua_State* L, int idx, MetatableTag expectedTypeTag, CppObjectMetadata& obj)
 {
     auto value = lua_index2addr(L, idx);
