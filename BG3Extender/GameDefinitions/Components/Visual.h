@@ -2,6 +2,16 @@
 
 #include <GameDefinitions/CharacterCreation.h>
 
+BEGIN_NS(aio)
+
+struct Priority
+{
+    int field_0{ 1 };
+    float field_4{ .0f };
+};
+
+END_NS()
+
 BEGIN_SE()
 
 struct CustomIconComponent : public BaseComponent
@@ -384,12 +394,26 @@ struct VisualChangedSystem : public BaseSystem
     uint32_t FrameNo;
 };
 
+struct VisualLoadComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(VisualLoad, "ls::VisualLoadComponent")
+
+    aio::Priority Priority;
+};
+
+struct VisualStreamLoadComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(VisualStreamLoad, "ls::VisualStreamLoadComponent")
+
+    aio::Priority Priority;
+};
+
 struct VisualLoadDesciptionComponent : public BaseComponent
 {
     DEFINE_COMPONENT(VisualLoadDescription, "ls::VisualLoadDesciptionComponent")
 
     FixedString VisualTemplate;
-    uint16_t RenderFlags;
+    VisualLoadFlags Flags;
     uint8_t RenderChannel;
 };
 
@@ -405,7 +429,7 @@ struct VisualChangeRequestOneFrameComponent : public BaseComponent
     DEFINE_COMPONENT(VisualChangeRequest, "ls::VisualChangeRequestOneFrameComponent")
 
     FixedString VisualTemplate;
-    uint16_t RenderFlags;
+    VisualLoadFlags Flags;
 };
 
 struct VisualAttachRequestOneFrameComponent : public BaseComponent

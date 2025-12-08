@@ -1038,6 +1038,8 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
     // Visuals
     E(Visual)
     E(VisualLoadDescription)
+    E(VisualLoad)
+    E(VisualStreamLoad)
     E(VisualLoadRequests)
     E(VisualChangeRequest)
     E(VisualAttachRequest)

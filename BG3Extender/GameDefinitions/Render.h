@@ -108,7 +108,7 @@ struct SceneObjects
     Array<bool> field_150;
     Array<MoveableObject*> Objects;
     Array<uint32_t> CullFlags;
-    Array<uint32_t> RenderPasses;
+    Array<RenderPass> RenderPasses;
 };
 
 
