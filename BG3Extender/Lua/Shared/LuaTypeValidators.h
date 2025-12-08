@@ -8,6 +8,7 @@
 #define CHECKR(expr) if (!(expr)) return false;
 
 #if defined(_DEBUG)
+// Extra checks for debugging purposes
 #undef ENABLE_FLAKY_HEURISTICS
 #undef ENABLE_GUESSWORK_HEURISTICS
 #endif
@@ -277,6 +278,7 @@ inline bool Validate(TranslatedString const* ts, Overload<TranslatedString>)
 
 inline bool Validate(Guid const* g, Overload<Guid>)
 {
+#if defined(ENABLE_FLAKY_HEURISTICS)
     // Heuristic: Consider non-null GUIDs with zero lower/higher dwords to be sus
     CHECK(!*g
         || (
@@ -285,6 +287,7 @@ inline bool Validate(Guid const* g, Overload<Guid>)
             && (g->Val[1] & 0xffffffff) != 0
             && (g->Val[1] >> 32) != 0
         ));
+#endif
     return true;
 }
 
