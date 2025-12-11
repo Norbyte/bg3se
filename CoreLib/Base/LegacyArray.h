@@ -14,6 +14,7 @@ struct CompactSet
     using const_iterator = ContiguousConstIterator<T>;
     using difference_type = int32_t;
     using size_type = uint32_t;
+    static constexpr unsigned size_offset = (alignof(T) < sizeof(uint64_t) ? sizeof(uint64_t) : alignof(T));
 
     T* Buf{ nullptr };
     TSize Capacity{ 0 };
@@ -70,7 +71,7 @@ struct CompactSet
     {
         if (StoreSize) {
             if (buf != nullptr) {
-                Allocator::Free((void*)((std::ptrdiff_t)buf - 8));
+                Allocator::Free((void*)((std::ptrdiff_t)buf - size_offset));
             }
         } else {
             if (buf != nullptr) {
@@ -85,10 +86,10 @@ struct CompactSet
 
         if (newCapacity > 0) {
             if (StoreSize) {
-                auto newBuf = Allocator::Alloc(newCapacity * sizeof(T) + 8);
+                auto newBuf = Allocator::Alloc(newCapacity * sizeof(T) + size_offset);
                 *(uint64_t*)newBuf = newCapacity;
 
-                return (T*)((std::ptrdiff_t)newBuf + 8);
+                return (T*)((std::ptrdiff_t)newBuf + size_offset);
             } else {
                 return Allocator::template New<T>(newCapacity);
             }

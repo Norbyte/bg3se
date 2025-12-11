@@ -130,10 +130,10 @@ struct Scene : public ProtectedGameObject<Scene>
 
 struct ShaderParamBinding
 {
-    int8_t DxVsIndex;
-    int8_t DxPsIndex;
-    int8_t VkDescriptorSet;
-    int8_t VkBindingIndex;
+    int8_t DxVsIndex{ -1 };
+    int8_t DxPsIndex{ -1 };
+    int8_t VkDescriptorSet{ -1 };
+    int8_t VkBindingIndex{ -1 };
 };
 
 struct MaterialShaderDecalParameters
@@ -180,7 +180,7 @@ struct MaterialShaderDesc
 struct UniformBindingData
 {
     FixedString UniformName;
-    std::array<int16_t, 15> PerShaderCBOffsets;
+    std::array<int16_t, 15> PerShaderCBOffsets{ -1 };
 };
 
 struct TextureBindingData
@@ -245,12 +245,12 @@ struct VirtualTextureParameter : public resource::MaterialResource::VirtualTextu
 struct MaterialParameters
 {
     Material* Material;
-    Array<ScalarParameter> ScalarParameters;
-    Array<Vector2Parameter> Vector2Parameters;
-    Array<Vector3Parameter> Vector3Parameters;
-    Array<Vector4Parameter> VectorParameters;
-    Array<Texture2DParameter> Texture2DParameters;
-    Array<SamplerStateParameter> SamplerStateParameters;
+    TrackedCompactSet<ScalarParameter> ScalarParameters;
+    TrackedCompactSet<Vector2Parameter> Vector2Parameters;
+    TrackedCompactSet<Vector3Parameter> Vector3Parameters;
+    TrackedCompactSet<Vector4Parameter> VectorParameters;
+    TrackedCompactSet<Texture2DParameter> Texture2DParameters;
+    TrackedCompactSet<SamplerStateParameter> SamplerStateParameters;
     Array<VirtualTextureParameter> VirtualTextureParameters;
 };
 

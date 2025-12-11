@@ -456,19 +456,13 @@ struct PresetData
         [[bg3::hidden]] __int8 field_13;
     };
 
-    // alignas(16)
     struct VectorParameter
     {
         FixedString Parameter;
-        [[bg3::hidden]] __int32 field_4;
-        [[bg3::hidden]] __int64 field_8;
-        glm::fvec4 Value; // alignas(16) for some reason, I guess?
+        glm::aligned_vec4 Value;
         bool Enabled;
         bool Color;
         bool Custom;
-        [[bg3::hidden]] __int8 field_23;
-        [[bg3::hidden]] __int32 field_24;
-        [[bg3::hidden]] __int64 field_28;
     };
 
     struct Texture2DParameter
@@ -916,14 +910,11 @@ struct MaterialResource : public TwoStepLoadableResource
         bool IsColor{ false };
     };
 
-    // alignas(16)
     struct Vector4Parameter : public Parameter
     {
-        [[bg3::hidden]] __int64 field_8; // Padding
-        glm::fvec4 Value{ .0f };
-        glm::fvec4 BaseValue{ .0f };
+        glm::aligned_vec4 Value{ .0f };
+        glm::aligned_vec4 BaseValue{ .0f };
         bool IsColor{ false };
-        [[bg3::hidden]] __int64 field_38; // Padding
     };
 
     struct Texture2DParameter : public Parameter
@@ -938,12 +929,12 @@ struct MaterialResource : public TwoStepLoadableResource
     };
 
     Material* Instance;
-    Array<ScalarParameter> ScalarParameters;
-    Array<Vector2Parameter> Vector2Parameters;
-    Array<Vector3Parameter> Vector3Parameters;
-    Array<Vector4Parameter> VectorParameters;
-    Array<Texture2DParameter> Texture2DParameters;
-    Array<VirtualTextureParameter> VirtualTextureParameters;
+    TrackedCompactSet<ScalarParameter> ScalarParameters;
+    TrackedCompactSet<Vector2Parameter> Vector2Parameters;
+    TrackedCompactSet<Vector3Parameter> Vector3Parameters;
+    TrackedCompactSet<Vector4Parameter> VectorParameters;
+    TrackedCompactSet<Texture2DParameter> Texture2DParameters;
+    TrackedCompactSet<VirtualTextureParameter> VirtualTextureParameters;
     FixedString DiffusionProfileUUID;
     MaterialType MaterialType;
     RenderChannel RenderChannel;
@@ -1283,21 +1274,21 @@ struct VisualResource : public TwoStepLoadableResource
     struct ClothData
     {
         HashMap<FixedString, Array<ClothHighResInfo>> Mappings;
-        Array<ClothParam> Params;
+        TrackedCompactSet<ClothParam> Params;
         FixedString ClothColliderResourceID;
     };
 
     [[bg3::hidden]] void* field_48; // DynamicArray VMT
-    Array<FixedString> Tags;
+    TrackedCompactSet<FixedString> Tags;
     [[bg3::hidden]] __int64 field_60; // DynamicArray extra data
-    Array<Object> Objects;
-    Array<Attachment> Attachments;
+    TrackedCompactSet<Object> Objects;
+    TrackedCompactSet<Attachment> Attachments;
     ClothData* Cloth;
     Array<AnimationSetOverride> AnimationSetOverrides;
     Array<FixedString> AnimationWaterfall;
     LegacyRefMap<FixedString, Bone> Bones;
     [[bg3::hidden]] void* field_c8; // DynamicArray VMT
-    Array<FixedString> VertexColorMaskSlots;
+    TrackedCompactSet<FixedString> VertexColorMaskSlots;
     [[bg3::hidden]] __int64 field_e0; // DynamicArray extra data
     FixedString SkeletonResource;
     FixedString Template;
