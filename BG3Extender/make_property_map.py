@@ -752,6 +752,9 @@ try:
 except FileNotFoundError:
     pass
 
+if not os.path.exists('GameDefinitions/Generated'):
+    os.mkdir('GameDefinitions/Generated')
+
 if cur_names != propmap_names + preprocessor.names:
     with open('GameDefinitions/Generated/PropertyMapNames.inl', 'w') as f:
         f.write(propmap_names + preprocessor.names)
