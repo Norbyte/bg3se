@@ -787,15 +787,6 @@ namespace NSE.DebuggerFrontend
             else
             {
                 SendLoadedSources(request);
-                var reply = new DAPLoadedSourcesResponse
-                {
-                    sources = SourceFiles.Select(source => new DAPSource
-                    {
-                        path = (source.Path.Length > 0) ? source.Path.Replace("/", "\\") : source.Name,
-                        name = (source.Name.Length > 0) ? source.Name : ""
-                    }).ToList()
-                };
-                Stream.SendReply(request, reply);
             }
         }
 
