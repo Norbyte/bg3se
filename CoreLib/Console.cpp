@@ -40,7 +40,7 @@ void Console::SetColor(DebugMessageType type)
     SetConsoleTextAttribute(hConsole, wAttributes);
 }
 
-void Console::Print(DebugMessageType type, char const* msg)
+void Console::LocalPrint(DebugMessageType type, char const* msg)
 {
     if (enabled_ && (!inputEnabled_ || !silence_)) {
         SetColor(type);
@@ -51,14 +51,19 @@ void Console::Print(DebugMessageType type, char const* msg)
         SetColor(DebugMessageType::Debug);
     }
 
-    if (logCallback_) {
-        logCallback_(type, msg);
-    }
-
     if (logToFile_) {
         logFile_.write(msg, strlen(msg));
         logFile_.write("\r\n", 2);
         logFile_.flush();
+    }
+}
+
+void Console::Print(DebugMessageType type, char const* msg)
+{
+    LocalPrint(type, msg);
+
+    if (logCallback_) {
+        logCallback_(type, msg);
     }
 }
 

@@ -23,12 +23,12 @@ namespace bg3se
         addr.sin_addr.S_un.S_addr = ip;
         addr.sin_port = htons(port_);
         if (bind(socket_, (sockaddr *)&addr, sizeof(addr)) != 0) {
-            ERR("Could not bind debugger server socket: %d", WSAGetLastError());
+            ERR_LOCAL("Could not bind debugger server socket: %d", WSAGetLastError());
             throw std::runtime_error("Debug server start failed");
         }
 
         if (listen(socket_, 30) != 0) {
-            ERR("Could not listen on server socket: %d", WSAGetLastError());
+            ERR_LOCAL("Could not listen on server socket: %d", WSAGetLastError());
             throw std::runtime_error("Debug server start failed");
         }
     }
@@ -63,7 +63,7 @@ namespace bg3se
     void SocketInterface::SendProtobufMessage(uint8_t* buf, uint32_t length)
     {
         if (clientSocket_ == 0) {
-            DEBUG("ProtobufSocketInterface::Send(): Not connected to debugger frontend");
+            DEBUG_LOCAL("ProtobufSocketInterface::Send(): Not connected to debugger frontend");
             return;
         }
 
@@ -79,7 +79,7 @@ namespace bg3se
         while (length > 0) {
             int sent = send(clientSocket_, (char *)buf, (int)length, 0);
             if (sent <= 0) {
-                ERR("Socket send failed: %d, error %d", sent, WSAGetLastError());
+                ERR_LOCAL("Debugger socket send failed: length %d, error %d", sent, WSAGetLastError());
                 Disconnect();
                 return;
             }
@@ -107,7 +107,10 @@ namespace bg3se
         for (;;) {
             int len = recv(sock, (char *)&receiveBuf_[receivePos_], sizeof(receiveBuf_) - receivePos_, 0);
             if (len < 0) {
-                ERR("Socket recv failed: %d, error %d", len, WSAGetLastError());
+                auto error = WSAGetLastError();
+                if (error != WSAECONNRESET) {
+                    ERR_LOCAL("Debugger socket recv failed: length %d, error %d", len, error);
+                }
                 return;
             }
 
@@ -116,13 +119,13 @@ namespace bg3se
                 uint32_t messageLength = *reinterpret_cast<uint32_t *>(&receiveBuf_[0]);
 
                 if (messageLength < 4 || messageLength > sizeof(receiveBuf_)) {
-                    ERR("DebugInterface::MessageLoop(): Illegal message length: %d", messageLength);
+                    ERR_LOCAL("DebugInterface::MessageLoop(): Illegal message length: %d", messageLength);
                     return;
                 }
 
                 if (receivePos_ >= messageLength) {
                     if (!ProcessMessage(&receiveBuf_[4], messageLength - 4)) {
-                        WARN("DebugInterface::MessageLoop(): Message processing failed");
+                        WARN_LOCAL("DebugInterface::MessageLoop(): Message processing failed");
                         return;
                     }
 
@@ -143,7 +146,7 @@ namespace bg3se
             int addrlen = sizeof(addr);
             clientSocket_ = accept(socket_, (sockaddr *)&addr, &addrlen);
             if (clientSocket_) {
-                DEBUG("Accepted debug connection.");
+                DEBUG_LOCAL("Accepted debug connection.");
                 if (connectHandler_) {
                     connectHandler_();
                 }
