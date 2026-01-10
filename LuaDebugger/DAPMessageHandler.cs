@@ -170,6 +170,11 @@ namespace NSE.DebuggerFrontend
                 {
                     LogError(e.ToString());
                     Stream.SendReply(message as DAPRequest, e.ToString());
+                    Stream.SendEvent("output", new DAPOutputMessage
+                    {
+                        category = "important",
+                        output = $"Error while handling request '{(message as DAPRequest).command}':\r\n{e.ToString()}"
+                    });
                 }
             }
             else if (message is DAPEvent)

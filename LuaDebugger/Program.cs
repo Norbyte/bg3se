@@ -13,21 +13,33 @@ namespace NSE.DebuggerFrontend
         static void Main(string[] args)
         {
             var currentPath = AppDomain.CurrentDomain.BaseDirectory;
-            var logFile = new FileStream(currentPath + "\\DAP.log", FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
             var dap = new DAPStream();
-            dap.EnableLogging(logFile);
-            var dapHandler = new DAPMessageHandler(dap);
-            dapHandler.EnableLogging(logFile);
+            FileStream logFile = null;
+
             try
             {
+                logFile = new FileStream(currentPath + "\\DAP.log", FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
+                dap.EnableLogging(logFile);
+
+                var dapHandler = new DAPMessageHandler(dap);
+                dapHandler.EnableLogging(logFile);
                 dap.RunLoop();
             }
             catch (Exception e)
             {
-                using (var writer = new StreamWriter(logFile, Encoding.UTF8, 0x1000, true))
+                dap.SendEvent("output", new DAPOutputMessage
                 {
-                    writer.Write(e.ToString());
-                    Console.WriteLine(e.ToString());
+                    category = "important",
+                    output = e.ToString()
+                });
+                dap.SendErrorReply(1, "initialize", "Internal error during initialization:\r\n" + e.ToString());
+
+                if (logFile != null)
+                {
+                    using (var writer = new StreamWriter(logFile, Encoding.UTF8, 0x1000, true))
+                    {
+                        writer.Write(e.ToString());
+                    }
                 }
             }
         }
