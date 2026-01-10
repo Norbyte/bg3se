@@ -871,8 +871,7 @@ struct DataComponent : public BaseComponent
     DEFINE_COMPONENT(SpatialGrid, "eoc::spatial_grid::DataComponent")
 
     GridStructure Grid;
-    FixedString Level;
-    uint8_t field_94;
+    std::optional<FixedString> Level;
 };
 
 END_NS()
