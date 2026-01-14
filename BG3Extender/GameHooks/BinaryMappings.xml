@@ -873,7 +873,7 @@
       e8 ?? ?? ?? ?? // call    eoc__InterruptPrototypeManager__Terminate
       <Target Type="Indirect" Offset="@ref1" Symbol="eoc__SpellPrototypeManager" />
       <Target Type="Indirect" Offset="@ref3" Symbol="eoc__StatusPrototypeManager" />
-      <Target Type="Indirect" Offset="@ref7" Symbol="eoc__BoostPrototypeManager" />
+      <Target Type="Indirect" Offset="@ref5" Symbol="eoc__BoostPrototypeManager" />
       <Target Type="Indirect" Offset="@ref7" Symbol="eoc__PassivePrototypeManager" />
       <Target Type="Indirect" Offset="@ref9" Symbol="eoc__InterruptPrototypeManager" />
     </Mapping>

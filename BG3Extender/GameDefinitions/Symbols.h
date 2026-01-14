@@ -79,7 +79,7 @@ namespace bg3se
         stats::StatusPrototypeManager** eoc__StatusPrototypeManager{ nullptr };
         stats::StatusPrototype::InitProc* eoc__StatusPrototype__Init{ nullptr };
 
-        stats::BoostPrototypeManager* eoc__BoostPrototypeManager{ nullptr };
+        stats::BoostPrototypeManager** eoc__BoostPrototypeManager{ nullptr };
 
         stats::PassivePrototypeManager** eoc__PassivePrototypeManager{ nullptr };
         stats::PassivePrototype::InitProc* eoc__PassivePrototype__Init{ nullptr };

@@ -509,7 +509,7 @@ Object* Get(lua_State * L, char const* statName, std::optional<int> level, std::
 
 BoostPrototype* GetCachedBoost(lua_State * L, Guid id)
 {
-    auto proto = GetStaticSymbols().eoc__BoostPrototypeManager->Boosts.try_get(id);
+    auto proto = (*GetStaticSymbols().eoc__BoostPrototypeManager)->Boosts.try_get(id);
     return proto ? *proto : nullptr;
 }
 
