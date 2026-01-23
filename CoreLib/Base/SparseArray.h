@@ -76,27 +76,27 @@ public:
 
     inline T const* try_get(size_type index) const
     {
+        se_assert(index < values_.size());
         if (!mask_[index]) {
             return nullptr;
         } else {
-            se_assert(index < values_.size());
             return &values_[index];
         }
     }
 
     inline T* try_get(size_type index)
     {
+        se_assert(index < values_.size());
         if (!mask_[index]) {
             return nullptr;
         } else {
-            se_assert(index < values_.size());
             return &values_[index];
         }
     }
 
     void clear()
     {
-        mask_.clear();
+        mask_.Clear();
         values_.clear();
     }
 

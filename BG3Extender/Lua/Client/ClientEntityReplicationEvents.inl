@@ -123,16 +123,16 @@ void ClientEntityReplicationEventHooks::RemoveComponentType(ecs::ReplicationType
 
     // Restore original trackers
     for (uint32_t i = 0; i < trackers.size(); i++) {
-        auto tracker = trackers[i];
+        auto tracker = trackers.try_get(i);
         if (tracker) {
-            auto base = static_cast<DummyFieldTracker*>(tracker)->Base;
+            auto base = static_cast<DummyFieldTracker*>(*tracker)->Base;
             if (base) {
                 trackers.set(i, base);
             } else {
                 trackers.clear(i);
             }
 
-            GameDelete(tracker);
+            GameDelete(*tracker);
         }
     }
 
