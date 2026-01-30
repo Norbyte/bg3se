@@ -56,7 +56,7 @@ struct DamageRollAdjustments
     HashMap<uint8_t, HashMap<DamageType, int32_t>> field_40;
     Array<RerollCondition> RerollConditions;
     HashSet<DamageType> DamageTypes;
-    HashSet<DamageType> DamageTypes2;
+    HashSet<DamageType> MaximizeDamage;
 };
 
 

@@ -69,7 +69,7 @@ DEFN_BOOST(Advantage, Advantage, {
 
 DEFN_BOOST(ActionResourceValue, ActionResource, {
     Guid ResourceUUID;
-    int Amount2;
+    [[bg3::legacy(Amount2)]] int Level;
     double Amount;
     DiceSizeId DiceSize;
 })
@@ -415,7 +415,7 @@ DEFN_BOOST(MaximizeHealing, MaximizeHealing, {
 DEFN_BOOST(DamageBonus, DamageBonus, {
     StatsExpressionInternal Amount;
     DamageType DamageType;
-    uint8_t field_31;
+    [[bg3::legacy(field_31)]] bool CriticalHit;
 })
 
 DEFN_BOOST(AdvanceSpells, AdvanceSpells, {
@@ -553,7 +553,7 @@ DEFN_BOOST(ProficiencyBonusIncrease, ProficiencyBonusIncrease, {
 DEFN_BOOST(DamageTakenBonus, DamageTakenBonus, {
     StatsExpressionInternal Amount;
     DamageType DamageType;
-    bool Arg3;
+    [[bg3::legacy(Arg3)]] bool CriticalHit;
 })
 
 DEFN_BOOST(ReceivingCriticalDamageOnHit, ReceivingCriticalDamageOnHit, {
