@@ -20,7 +20,11 @@ UserReturn GenomeVariant::LuaGetValue(lua_State* L) const
         return 1;
     }
 
-    if (Type->TypeName == GFS.strInt 
+    if (Type->TypeName == GFS.strBool) {
+        push(L, *reinterpret_cast<bool const*>(&Value));
+    } else if (Type->TypeName == GFS.strFloat) {
+        push(L, *reinterpret_cast<float const*>(&Value));
+    } else if (Type->TypeName == GFS.strInt 
         || Type->TypeName == GFS.strEnum) {
         push(L, *reinterpret_cast<int32_t const*>(&Value));
     } else if (Type->TypeName == GFS.strGuid) {
@@ -41,7 +45,19 @@ UserReturn GenomeVariant::LuaGetValue(lua_State* L) const
         push(L, *reinterpret_cast<glm::mat3 const*>(Value));
     } else if (Type->TypeName == GFS.strFloat4x4) {
         push(L, *reinterpret_cast<glm::mat4 const*>(Value));
+    } else if (Type->TypeName == GFS.strFloatSet) {
+        Serialize(L, reinterpret_cast<TGenomeSet<float> const*>(Value)->Values);
+    } else if (Type->TypeName == GFS.strIntSet) {
+        Serialize(L, reinterpret_cast<TGenomeSet<int32_t> const*>(Value)->Values);
+    } else if (Type->TypeName == GFS.strShortNameSet) {
+        Serialize(L, reinterpret_cast<TGenomeSet<FixedString> const*>(Value)->Values);
+    } else if (Type->TypeName == GFS.strStringSet) {
+        Serialize(L, reinterpret_cast<TGenomeSet<STDString> const*>(Value)->Values);
+    } else if (Type->TypeName == GFS.strFixedStringSet) {
+        Serialize(L, reinterpret_cast<TGenomeSet<FixedString> const*>(Value)->Values);
     } else {
+        // TODO - TimelineData (= ls::GenomeTimelineData*)
+        WARN("Unsupported Genome variant type: %s", Type->TypeName.GetString());
         push(L, nullptr);
     }
 

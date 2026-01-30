@@ -59,6 +59,14 @@ struct [[bg3::hidden]] GenomeVariant
     UserReturn LuaGetValue(lua_State* L) const;
 };
 
+template <class T>
+struct [[bg3::hidden]] TGenomeSet
+{
+    void* VMT;
+    bool IsOwned;
+    Array<T>* Values;
+};
+
 struct GenomeEventArgs
 {
     virtual ~GenomeEventArgs();
@@ -500,12 +508,12 @@ struct [[bg3::hidden]] AnimationBlueprintSystem : public BaseSystem
     UnknownSignal AnimationReceivedGameplayEventSignal;
     UnknownSignal BlueprintCreatedSignal;
     UnknownSignal BlueprintDestroyedSignal;
-    HashMap<EntityHandle, void*> AnimationUpdates;
+    HashMap<EntityHandle, void*> AnimationUpdates; /* UpdateJob* */
     Queue<AnimationReceivedGameplayEvent> GameplayEventsToGenome;
     CRITICAL_SECTION GameplayEventsToGenomeLock;
     // Editor only 
-    // Queue<AnimationReceivedTextKeyEvent> TextKeyEventsToGenome;
-    // CRITICAL_SECTION TextKeyEventsToGenomeLock;
+    // Queue<AnimationReceivedTextKeyEvent> DebugTextKeyEventsToGenome;
+    // CRITICAL_SECTION DebugTextKeyEventsToGenomeLock;
     HashSet<EntityHandle> LoadedBlueprints;
     GameTime Time;
     bool IsInterestedInVisuals;
@@ -514,17 +522,17 @@ struct [[bg3::hidden]] AnimationBlueprintSystem : public BaseSystem
     void* ThreadTicket;
     Queue<AnimationReceivedRootMotionEvent> RootMotion;
     CRITICAL_SECTION RootMotionLock;
-    Queue<AnimationReceivedGameplayEvent> GenomeGameplayEvents;
-    CRITICAL_SECTION GenomeGameplayEventsLock;
-    Queue<AnimationReceivedTextKeyEvent> GenomeTextKeyEvents;
-    CRITICAL_SECTION GenomeTextKeyEventsLock;
-    Queue<Visual*> VisualUpdates;
-    CRITICAL_SECTION VisualUpdatesLock;
-    Pool Pool1;
+    Queue<AnimationReceivedGameplayEvent> GameplayEventsFromGenome;
+    CRITICAL_SECTION GameplayEventsFromGenomeLock;
+    Queue<AnimationReceivedTextKeyEvent> TextKeyEventsFromGenome;
+    CRITICAL_SECTION TextKeyEventsFromGenomeLock;
+    Queue<Visual*> DelayedUpdateAttachments;
+    CRITICAL_SECTION DelayedUpdateAttachmentsLock;
+    Pool UpdateJobPool;
     void* ThreadDispatcher;
     gn::GenomeManager* GenomeManager;
     int32_t NextInstanceId;
-    HashMap<EntityHandle, Array<uint8_t>> AnimationInstanceChanges;
+    HashMap<EntityHandle, Array<AnimationInstanceChangeType>> AnimationInstanceChanges;
     Array<EntityHandle> LinkedEntities;
     // Editor only 
     // void* AnimationDebugWorker;
