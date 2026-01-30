@@ -48,6 +48,9 @@ UserReturn GenomeVariant::LuaGetValue(lua_State* L) const
     return 1;
 }
 
+GenomeEventArgs::~GenomeEventArgs()
+{}
+
 GenomeParametrizedEventArgs::~GenomeParametrizedEventArgs()
 {}
 

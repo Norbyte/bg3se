@@ -7,6 +7,11 @@ BEGIN_NS(gn)
 
 struct GenomeVariant;
 
+using SequenceIndex = uint16_t;
+using NodeIndex = uint16_t;
+using VariableIndex = uint16_t;
+using EGenomeExecutionResult = uint32_t;
+
 struct [[bg3::hidden]] GenomeVarTypeDesc : public ProtectedGameObject<GenomeVarTypeDesc>
 {
     using AssignProc = void (GenomeVariant* variant, GenomeVariant* other);
@@ -54,31 +59,85 @@ struct [[bg3::hidden]] GenomeVariant
     UserReturn LuaGetValue(lua_State* L) const;
 };
 
-struct GenomeParametrizedEventArgs
+struct GenomeEventArgs
+{
+    virtual ~GenomeEventArgs();
+};
+
+struct GenomeParametrizedEventArgs : public GenomeEventArgs
 {
     virtual ~GenomeParametrizedEventArgs();
 
     std::array<GenomeVariant, 22> Args;
 };
 
+// Unmapped compiler internals
+class GenomeGlobalCompilationContext;
+class GenomeSequenceCompilationContext;
+class GenomeCompilerSequence;
+class GenomeCompilerNode;
+class GenomeCompilerLink;
+class GenomeCompilerSocket;
+class GenomeCompilerFunctionDataSocket;
+class GenomeNodeSocketPrototype;
+class GenomeVisitor;
+class GenomeForceTime;
+class GenomeDebugNode;
+class GenomeDebugSequence;
+class GenomeInstanceDebugContext;
+struct GenomeExecutionContext;
+
 struct GenomeSequenceTemplate : public ProtectedGameObject<GenomeSequenceTemplate>
 {
-    [[bg3::hidden]] void* VMT;
-    [[bg3::readonly]] uint16_t Index;
-    Array<uint16_t> InputVariables;
-    Array<uint16_t> OutputVariables;
-    LegacyRefMap<FixedString, Array<uint16_t>> NodeEvents;
+    virtual ~GenomeSequenceTemplate() = 0;
+    virtual FixedString GetTypeID() const = 0;
+    virtual bool PreprocessSequence(GenomeSequenceCompilationContext&, GenomeCompilerSequence const&) = 0;
+    virtual void SetIndex(SequenceIndex const&) = 0;
+    virtual void RegisterNodeForEvent(NodeIndex const&, FixedString const& event) = 0;
+    virtual void RegisterSequenceForEvent(SequenceIndex const&, FixedString const&) = 0;
+    virtual bool Visit(GenomeVisitor*) = 0;
+
+    [[bg3::readonly]] SequenceIndex Index;
+    Array<VariableIndex> InputVariables;
+    Array<VariableIndex> OutputVariables;
+    LegacyRefMap<FixedString, Array<NodeIndex>> NodeEvents;
 };
 
 struct GenomeNodeTemplate : public ProtectedGameObject<GenomeNodeTemplate>
 {
-    [[bg3::hidden]] void* VMT;
-    [[bg3::readonly]] uint16_t Index;
+    virtual ~GenomeNodeTemplate() = 0;
+    virtual void Create(NodeIndex const&) = 0;
+    virtual bool PreprocessNode(GenomeSequenceCompilationContext&, GenomeCompilerNode const&) = 0;
+    virtual bool DependencyResolve(GenomeSequenceCompilationContext&, GenomeCompilerNode const&) = 0;
+    virtual bool FlowResolve(GenomeSequenceCompilationContext&, GenomeCompilerNode const&, GenomeCompilerLink const*) = 0;
+    virtual FixedString const& GetTypeID() const = 0;
+    virtual bool IsEntryPoint(GenomeSequenceCompilationContext const&) const = 0;
+    virtual bool ShouldResetOnParentReset() const = 0;
+    virtual VariableIndex const* GetInputSocketVariables(int, int*) const = 0;
+    virtual VariableIndex const* GetOutputSocketVariables(int, int*) const = 0;
+    virtual GenomeNodeSocketPrototype const* GetInputSocketPrototypeTypes(uint64_t&) const = 0;
+    virtual GenomeNodeSocketPrototype const* GetOutputSocketPrototypeTypes(uint64_t&) const = 0;
+    virtual bool Visit(GenomeVisitor*) = 0;
+    virtual uint64_t GetProcessType()const = 0;
+    virtual uint64_t GetEntryTrigger(GenomeSequenceCompilationContext const&) const = 0;
+    virtual void AddSocketLinkDependencies(GenomeSequenceCompilationContext&, GenomeCompilerNode const&, GenomeCompilerSocket const&, bool) = 0;
+    virtual bool CreateAndLinkOutputSockets(GenomeSequenceCompilationContext&, GenomeCompilerNode const&) = 0;
+    virtual bool CreateAndLinkInputSockets(GenomeSequenceCompilationContext&, GenomeCompilerNode const&) = 0;
+    virtual bool ValidateAnyTypeSocket(GenomeSequenceCompilationContext&, GenomeCompilerNode const&, GenomeCompilerFunctionDataSocket const&, bool) = 0;
+    virtual VariableIndex& GetSocketVariable(VariableIndex&, GenomeSequenceCompilationContext&, GenomeCompilerNode const&, GenomeCompilerFunctionDataSocket const&, int, bool) = 0;
+    virtual VariableIndex& GetOutputSocketPassthrough(VariableIndex&, GenomeSequenceCompilationContext&, GenomeCompilerNode const&, GenomeCompilerFunctionDataSocket const&, int) = 0;
+    virtual bool ResolveDataInputs(GenomeSequenceCompilationContext&, GenomeCompilerNode const&) = 0;
+    virtual bool HandleResolveDataInput(GenomeSequenceCompilationContext&, FixedString const&, CompactSet<GenomeCompilerSocket*> const&) = 0;
+    virtual bool HandleResolveDataSocket(GenomeSequenceCompilationContext&, FixedString const&, GenomeCompilerSocket const*, uint64_t) = 0;
+    virtual bool ResolveFlow(GenomeSequenceCompilationContext&, GenomeCompilerNode const&) = 0;
+    virtual bool HandleResolveFlow(GenomeSequenceCompilationContext&, FixedString const&, CompactSet<GenomeCompilerSocket*> const&) = 0;
+
+    [[bg3::readonly]] NodeIndex Index;
 };
 
 struct GenomeVariableTemplate : public ProtectedGameObject<GenomeVariableTemplate>
 {
-    [[bg3::readonly]] uint16_t Index;
+    [[bg3::readonly]] VariableIndex Index;
     [[bg3::readonly]] uint8_t Type;
     GenomeVariant Value;
     Guid ID;
@@ -87,7 +146,7 @@ struct GenomeVariableTemplate : public ProtectedGameObject<GenomeVariableTemplat
 
 struct GenomeExternalGroupTemplate : public ProtectedGameObject<GenomeExternalGroupTemplate>
 {
-    Array<uint16_t> Variables;
+    Array<VariableIndex> Variables;
 };
 
 struct GenomeBlueprint : public ProtectedGameObject<GenomeBlueprint>
@@ -99,7 +158,7 @@ struct GenomeBlueprint : public ProtectedGameObject<GenomeBlueprint>
     LegacyRefMap<FixedString, GenomeExternalGroupTemplate*> ExternalGroups;
     [[bg3::hidden]] void* GenomePluginDataWrapper;
     LegacyRefMap<FixedString, GenomeEventTypeIndex> Events;
-    LegacyRefMap<Guid, int16_t> VariableIndices;
+    LegacyRefMap<Guid, VariableIndex> VariableIndices;
     // Editor only
 #if 0
     // [[bg3::hidden]] void* DebugContext;
@@ -122,7 +181,13 @@ struct GenomeSequence : public ProtectedGameObject<GenomeSequence>
 
 struct GenomeNode : public ProtectedGameObject<GenomeNode>
 {
-    [[bg3::hidden]] void* VMT;
+    virtual ~GenomeNode() = 0;
+    virtual void OnGenomeEvent(GenomeExecutionContext&, FixedString const& evt, GenomeEventArgs const& args) = 0;
+    virtual void Reset(GenomeExecutionContext&) = 0;
+    virtual void Create(GenomeBlueprintInstance*, GenomeNodeTemplate const*) = 0;
+    virtual void PreExecute(GenomeExecutionContext&) = 0;
+    virtual EGenomeExecutionResult Execute(GenomeExecutionContext&) = 0;
+    virtual void ForceClock(GenomeExecutionContext&, GenomeForceTime const&) = 0;
 };
 
 // Unmapped
@@ -145,19 +210,58 @@ struct GenomeBlueprintInstance : public ProtectedGameObject<GenomeBlueprintInsta
     // [[bg3::hidden]] bool DumpStateOnNextRun;
 };
 
-struct BlueprintInstanceData
+struct BlueprintInstanceData : public ProtectedGameObject<BlueprintInstanceData>
 {
     GenomeBlueprint* Blueprint;
     [[bg3::readonly]] uint32_t Flags;
     [[bg3::readonly]] uint64_t ThreadEvent;
 };
 
-// Unmapped
-struct GenomeNodeTypeDesc {};
-struct GenomeSequenceTypeDesc {};
-struct GenomeSocketTypeDesc {};
-struct GenomeLinkTypeDesc {};
-struct GenomeExternalGroupDesc {};
+struct [[bg3::hidden]] GenomeNodeTypeDesc : public ProtectedGameObject<GenomeNodeTypeDesc>
+{
+    using CreateNodeTemplateProc = GenomeNodeTemplate* ();
+    using CreateNodeProc = GenomeNode* ();
+    using CreateCompilerNodeProc = GenomeCompilerNode* ();
+    using NodeFunctionProc = uint64_t (GenomeExecutionContext&);
+    using CreateDebugNodeProc = GenomeDebugNode* ();
+    using GetSocketProc = GenomeNodeSocketPrototype* (uint64_t);
+
+    CreateNodeTemplateProc* CreateNodeTemplate;
+    CreateNodeProc* CreateNode;
+    CreateCompilerNodeProc* CreateCompilerNode;
+    uint32_t TypeHash;
+    CreateDebugNodeProc* CreateDebugNode;
+    GetSocketProc* GetInputSockets;
+    GetSocketProc* GetOutputSockets;
+};
+
+struct [[bg3::hidden]] GenomeSequenceTypeDesc : public ProtectedGameObject<GenomeSequenceTypeDesc>
+{
+    using CreateTemplateProc = GenomeSequenceTemplate* ();
+    using CreateInstanceProc = GenomeSequence* ();
+    using CreateCompilationContextProc = GenomeSequenceCompilationContext* (GenomeGlobalCompilationContext*, GenomeSequenceTemplate*);
+    using CreateCompilerSequenceProc = GenomeCompilerSequence* ();
+    using CreateDebugSequenceProc = GenomeDebugSequence* ();
+
+    CreateTemplateProc* CreateTemplate;
+    CreateInstanceProc* CreateInstance;
+    CreateCompilationContextProc* CreateCompilationContext;
+    CreateCompilerSequenceProc* CreateCompilerSequence;
+    CreateDebugSequenceProc* CreateDebugSequence;
+};
+
+struct [[bg3::hidden]] GenomeSocketTypeDesc {
+    // FIXME
+};
+struct [[bg3::hidden]] GenomeLinkTypeDesc {};
+
+struct [[bg3::hidden]] GenomeExternalGroupDesc
+{
+    Guid* Guid;
+    uint32_t Index;
+    FixedString Name;
+};
+
 
 struct [[bg3::hidden]] GenomeTypeManager : public ProtectedGameObject<GenomeTypeManager>
 {
@@ -187,6 +291,32 @@ struct [[bg3::hidden]] GenomeTypeManager : public ProtectedGameObject<GenomeType
     LegacyRefMap<FixedString, FixedString> LinkTypesFromSource;
 };
 
+struct [[bg3::hidden]] GenomeVariableRange
+{
+    uint16_t Start;
+    uint16_t End;
+};
+
+struct [[bg3::hidden]] GenomeExecutionContext
+{
+    GameTime GameTime;
+    GenomeBlueprintInstance* Instance;
+    GenomeSequence* qword20;
+    GenomeSequence* qword28;
+    NodeIndex NodeIndex;
+    GenomeVariableRange* InputRangesStart;
+    GenomeVariableRange* InputRangesEnd;
+    VariableIndex* InputsStart;
+    VariableIndex* InputsEnd;
+    GenomeVariableRange* OutputRangesStart;
+    GenomeVariableRange* OutputRangesEnd;
+    VariableIndex* OutputsStart;
+    VariableIndex* OutputsEnd;
+    Array<GenomeVariant>* Variables;
+    GenomeVariant* StackStart;
+    GenomeVariant* StackEnd;
+    GenomeInstanceDebugContext* DebugContext;
+};
 
 struct [[bg3::hidden]] GenomeManager : public ProtectedGameObject<GenomeManager>
 {
@@ -198,18 +328,22 @@ struct [[bg3::hidden]] GenomeManager : public ProtectedGameObject<GenomeManager>
     CRITICAL_SECTION InstanceLock;
     LegacyRefMap<STDString, BlueprintInstanceData> LoadedBlueprints;
     LegacyRefMap<GenomeBlueprint*, STDString> BlueprintsToPath;
-    SRWLOCK SRWLock;
+    SRWLOCK BlueprintInstantiationRWLock;
     int LockThreadID;
-    int LoaderEnterCount;
-    __int64 field_B0;
+    int LockWriteEnterCount;
+    // Editor only?
+    // __int64 field_B0;
     Array<void*> SourceReaderPlugins;
     StringView CompiledPathRoot;
     StringView DebugPathRoot;
     Version CodeVersion;
     Version MinVersion;
-    __int64 field_F8;
-    SRWLOCK SRWLock2;
-    uint64_t field_108[33];
+    SynchronizedMPMCQueueBounded<GenomeBlueprintInstance*> UnloadInstanceQueue;
+    SynchronizedMPMCQueueBounded<GenomeBlueprint*> UnloadQueue;
+    void* UnloadBatch;
+    void* UnloadBatchJob;
+    CRITICAL_SECTION PendingBlueprintsLock;
+    Array<std::pair<bool, Path>> PendingBlueprints;
     double SyncedTime;
     double LastSyncTime;
     bool IsMasterTime;
