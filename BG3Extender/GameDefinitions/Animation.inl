@@ -186,3 +186,39 @@ GenomeParametrizedEventArgs::~GenomeParametrizedEventArgs()
 {}
 
 END_NS()
+
+BEGIN_SE()
+
+void AnimationBlueprintSystem::LuaQueueGameplayEventToGenome(EntityHandle entity, FixedString const& event, Array<gn::GenomeVariant> args)
+{
+    AnimationReceivedGameplayEvent evt{
+        .Entity = entity,
+        .Event = event,
+    };
+
+    for (unsigned i = 0; i < std::min(args.size(), (uint32_t)std::size(evt.Args.Args)); i++) {
+        evt.Args.Args[i] = args[i];
+    }
+
+    EnterCriticalSection(&GameplayEventsToGenomeLock);
+    GameplayEventsToGenome.push_back(std::move(evt));
+    LeaveCriticalSection(&GameplayEventsToGenomeLock);
+}
+
+void AnimationBlueprintSystem::LuaQueueGameplayEventFromGenome(EntityHandle entity, FixedString const& event, Array<gn::GenomeVariant> args)
+{
+    AnimationReceivedGameplayEvent evt{
+        .Entity = entity,
+        .Event = event,
+    };
+
+    for (unsigned i = 0; i < std::min(args.size(), (uint32_t)std::size(evt.Args.Args)); i++) {
+        evt.Args.Args[i] = args[i];
+    }
+
+    EnterCriticalSection(&GameplayEventsFromGenomeLock);
+    GameplayEventsFromGenome.push_back(std::move(evt));
+    LeaveCriticalSection(&GameplayEventsFromGenomeLock);
+}
+
+END_SE()

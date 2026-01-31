@@ -2,4 +2,3 @@
 
 T(ecl::PickingHelperManager)
 T(esv::DialogSystem)
-T(AnimationBlueprintSystem)

@@ -488,6 +488,9 @@ struct [[bg3::hidden]] AnimationBlueprintSystem : public BaseSystem
     // Editor only 
     // void* AnimationDebugWorker;
     // void* AnimationDebugThread;
+
+    void LuaQueueGameplayEventToGenome(EntityHandle entity, FixedString const& event, Array<gn::GenomeVariant> args);
+    void LuaQueueGameplayEventFromGenome(EntityHandle entity, FixedString const& event, Array<gn::GenomeVariant> args);
 };
 
 
