@@ -15,57 +15,22 @@ ecs::EntitySystemHelpersBase* GetEntitySystem(lua_State* L)
     return State::FromLua(L)->GetEntitySystemHelpers();
 }
 
-template <class T>
-void PushComponentType(lua_State* L, ecs::EntitySystemHelpersBase* helpers, EntityHandle const& handle,
+void PushComponent(lua_State* L, ecs::EntitySystemHelpersBase* helpers, EntityHandle const& handle, ExtComponentType componentType,
     LifetimeHandle lifetime)
 {
-    auto component = helpers->GetComponent<T>(handle);
+    auto component = helpers->GetRawComponent(handle, componentType);
     if (component) {
-        MakeDirectObjectRef(L, component, lifetime);
+        auto meta = helpers->GetComponentMeta(componentType);
+        MakeDirectObjectRef(L, *meta.Properties, component, lifetime);
     } else {
         push(L, nullptr);
     }
 }
 
-#define T(cls) \
-case cls::ComponentType: \
-{ \
-    PushComponentType<cls>(L, helpers, handle, lifetime); \
-    break; \
-}
-
-void PushComponent(lua_State* L, ecs::EntitySystemHelpersBase* helpers, EntityHandle const& handle, ExtComponentType componentType,
-    LifetimeHandle lifetime)
+void PushComponent(lua_State* L, void* rawComponent, lua::GenericPropertyMap& pm, LifetimeHandle lifetime)
 {
-    switch (componentType) {
-
-#include <GameDefinitions/Components/AllComponentTypes.inl>
-
-    default:
-        OsiError("Don't know how to push component type: " << componentType);
-        push(L, nullptr);
-        break;
-    }
+    MakeDirectObjectRef(L, pm, rawComponent, lifetime);
 }
-
-#undef T
-
-#define T(cls) case cls::ComponentType: MakeDirectObjectRef(L, reinterpret_cast<cls*>(rawComponent), lifetime); break;
-
-void PushComponent(lua_State* L, void* rawComponent, ExtComponentType componentType, LifetimeHandle lifetime)
-{
-    switch (componentType) {
-
-#include <GameDefinitions/Components/AllComponentTypes.inl>
-
-    default:
-        OsiError("Don't know how to push component type: " << componentType);
-        push(L, nullptr);
-        break;
-    }
-}
-
-#undef T
 
 
 void EntityHelper::PushComponentByType(lua_State* L, ExtComponentType componentType) const
@@ -171,7 +136,7 @@ void EnumerateComponents(ecs::EntitySystemHelpersBase* ecs, EntityHandle entity,
                     auto const& meta = ecs->GetComponentMeta(*extType);
                     auto component = storage->GetComponent(*componentPtr, typeInfo.Value(), meta.Size, meta.IsProxy);
 
-                    f(*extType, component);
+                    f(ecs, *extType, component);
                 } else if (warnOnMissing) {
                     auto name = ecs->GetComponentName(typeInfo.Key());
                     if (name) {
@@ -188,7 +153,7 @@ void EnumerateComponents(ecs::EntitySystemHelpersBase* ecs, EntityHandle entity,
                     if (extType) {
                         auto const& meta = ecs->GetComponentMeta(*extType);
                         auto component = pool->Value().get_or_default(entity);
-                        f(*extType, component);
+                        f(ecs, *extType, component);
                     } else if (warnOnMissing) {
                         auto name = ecs->GetComponentName(pool.Key());
                         if (name) {
@@ -212,7 +177,7 @@ void EnumerateComponents(ecs::EntitySystemHelpersBase* ecs, EntityHandle entity,
                 if (extType) {
                     auto component = changes->GetComponentChange(comp.ComponentTypeId, comp.Index);
                     if (component) {
-                        f(*extType, component);
+                        f(ecs, *extType, component);
                     }
                 } else if (warnOnMissing) {
                     auto name = ecs->GetComponentName(comp.ComponentTypeId);
@@ -234,9 +199,10 @@ UserReturn EntityProxyMetatable::GetAllComponents(lua_State* L, EntityHandle ent
     lua_newtable(L);
 
     auto ecs = GetEntitySystem(L);
-    EnumerateComponents(ecs, entity, warnOnMissing && *warnOnMissing, [L] (ExtComponentType type, void* component) {
+    EnumerateComponents(ecs, entity, warnOnMissing && *warnOnMissing, [L] (ecs::EntitySystemHelpersBase* ecs, ExtComponentType type, void* component) {
+        auto meta = ecs->GetComponentMeta(type);
         push(L, type);
-        PushComponent(L, component, type, GetCurrentLifetime(L));
+        PushComponent(L, component, *meta.Properties, GetCurrentLifetime(L));
         lua_rawset(L, -3);
     });
 
@@ -460,7 +426,8 @@ int EntityProxyMetatable::Index(lua_State* L, CppValueOpaque* self)
             auto ecs = GetEntitySystem(L);
             auto rawComponent = ecs->GetRawComponent(handle, *entry->Component);
             if (rawComponent != nullptr) {
-                PushComponent(L, rawComponent, *entry->Component, GetCurrentLifetime(L));
+                auto meta = ecs->GetComponentMeta(*entry->Component);
+                PushComponent(L, rawComponent, *meta.Properties, GetCurrentLifetime(L));
             } else {
                 push(L, nullptr);
             }
