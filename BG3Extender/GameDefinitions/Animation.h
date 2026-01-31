@@ -5,66 +5,17 @@
 
 BEGIN_NS(gn)
 
-struct GenomeVariant;
+struct GenomeTypeManager;
 
 using SequenceIndex = uint16_t;
 using NodeIndex = uint16_t;
 using VariableIndex = uint16_t;
 using EGenomeExecutionResult = uint32_t;
 
-struct [[bg3::hidden]] GenomeVarTypeDesc : public ProtectedGameObject<GenomeVarTypeDesc>
-{
-    using AssignProc = void (GenomeVariant* variant, GenomeVariant* other);
-    using AssignFromRawValueProc = void (GenomeVariant* this_, void* data);
-    using VisitProc = bool (ObjectVisitor* visitor, FixedString const& node, GenomeVariant* variant);
-    using FromStringProc = void (GenomeVariant* variant, char const* str);
-    using ToStringProc = void (GenomeVariant* variant, STDString* out);
-    using DestroyProc = void (GenomeVariant* variant);
-    using ComparatorProc = void (void* this_, void* other);
-
-    AssignProc* Assign;
-    AssignFromRawValueProc* AssignFromRawValue;
-    VisitProc* Visit;
-    FromStringProc* FromString;
-    ToStringProc* ToString;
-    DestroyProc* Destroy;
-    ComparatorProc* Comparator;
-
-    uint32_t TypeHash;
-    uint32_t TypeHash2;
-    uint64_t Size;
-    uint64_t Alignment;
-    FixedString TypeName;
-    bool Trivial;
-    GenomeVariant* DefaultValue;
-};
-
 struct GenomeEventTypeIndex
 {
     uint8_t Type;
     uint16_t Index;
-};
-
-struct [[bg3::hidden]] GenomeVariant
-{
-    void* Value;
-    GenomeVarTypeDesc* Type;
-#if 0
-    // Only present in editor build
-    // bool Assigned;
-    // bool Constant;
-#endif
-
-    FixedString GetTypeName() const;
-    UserReturn LuaGetValue(lua_State* L) const;
-};
-
-template <class T>
-struct [[bg3::hidden]] TGenomeSet
-{
-    void* VMT;
-    bool IsOwned;
-    Array<T>* Values;
 };
 
 struct GenomeEventArgs

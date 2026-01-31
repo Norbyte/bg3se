@@ -1,6 +1,7 @@
 #pragma once
 
 #include <CoreLib/Base/Base.h>
+#include <CoreLib/Utils.h>
 // Needed for enum definitions
 #include <NsGui/GridLength.h>
 #include <GameDefinitions/Enumerations.h>
@@ -33,6 +34,7 @@ END_SE()
 #include <GameDefinitions/Base/BaseTypeInformation.h>
 #include <GameDefinitions/Base/CommonTypes.h>
 #include <GameDefinitions/Base/ExposedTypes.h>
+#include <GameDefinitions/Base/Genome.h>
 #include <GameDefinitions/Base/Serialization.h>
 #include <GameDefinitions/TranslatedString.h>
 #include <GameDefinitions/GlobalFixedStrings.h>

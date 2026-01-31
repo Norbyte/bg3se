@@ -142,6 +142,12 @@ struct CompactSet
         FreeBuffer(oldBuf);
     }
 
+    void resize(TSize newCapacity)
+    {
+        Reallocate(newCapacity);
+        Size = newCapacity;
+    }
+
     void ordered_remove_at(uint32_t index)
     {
         se_assert(index < Size);
@@ -151,6 +157,19 @@ struct CompactSet
         }
 
         Buf[Size - 1] = T();
+        Size--;
+    }
+
+    void remove_at(uint32_t index)
+    {
+        se_assert(index < Size);
+
+        if (index == Size - 1) {
+            Buf[index] = T();
+        } else {
+            Buf[index] = std::move(Buf[Size - 1]);
+            Buf[Size - 1] = T();
+        }
         Size--;
     }
 

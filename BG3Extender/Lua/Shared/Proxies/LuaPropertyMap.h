@@ -311,6 +311,7 @@ extern StructRegistry gStructRegistry;
 template <class T>
 inline GenericPropertyMap& GetStaticPropertyMap()
 {
+    static_assert(StructID<std::remove_cv_t<T>>::Valid, "Type does not have a Lua structure definition!");
     return *gStructRegistry.Get(StructID<std::remove_cv_t<T>>::ID);
 }
 

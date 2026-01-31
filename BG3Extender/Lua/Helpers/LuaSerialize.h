@@ -55,6 +55,12 @@ void SerializeArray(lua_State* L, Queue<TK> const* obj)
     SerializeArrayGeneric(L, obj);
 }
 
+template <class TK>
+void SerializeArray(lua_State* L, gn::TGenomeSet<TK> const* obj)
+{
+    SerializeArray(L, obj->Values);
+}
+
 template <class TK, unsigned N>
 void SerializeArray(lua_State* L, Noesis::Vector<TK, N> const* obj)
 {

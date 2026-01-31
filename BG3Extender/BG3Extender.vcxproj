@@ -162,6 +162,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="GameDefinitions\Animation.h" />
     <ClInclude Include="GameDefinitions\Base\Base.h" />
     <ClInclude Include="GameDefinitions\Base\ExposedTypes.h" />
+    <ClInclude Include="GameDefinitions\Base\Genome.h" />
     <ClInclude Include="GameDefinitions\Base\LuaAnnotations.h" />
     <ClInclude Include="GameDefinitions\Base\Serialization.h" />
     <ClInclude Include="GameDefinitions\Base\BaseTypeInformation.h" />

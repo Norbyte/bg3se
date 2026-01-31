@@ -190,6 +190,18 @@ PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, Qu
     }
 }
 
+template <class TK>
+PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, gn::TGenomeSet<TK>* obj)
+{
+    return UnserializeArrayFromTableGeneric<TK>(L, index, obj->Values);
+}
+
+template <class TK>
+PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, gn::TGenomeSet<TK>* obj)
+{
+    return PropertyOperationResult::UnsupportedType;
+}
+
 template <class TK, unsigned N>
 PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, Noesis::Vector<TK, N>* obj)
 {
