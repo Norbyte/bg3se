@@ -115,6 +115,8 @@
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\External\glm;$(SolutionDir)External\rapidjson-master\include;$(SolutionDir)\External\tinycrypt\lib\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Fast</FloatingPointModel>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -135,6 +137,8 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\External\glm;$(SolutionDir)External\rapidjson-master\include;$(SolutionDir)\External\tinycrypt\lib\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Fast</FloatingPointModel>
     </ClCompile>
     <Link>
       <SubSystem>
