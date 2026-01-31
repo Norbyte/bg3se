@@ -407,7 +407,7 @@ private:
         vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice_, &numFamilies, nullptr);
         Array<VkQueueFamilyProperties> families;
         families.resize(numFamilies);
-        vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice_, &numFamilies, families.raw_buf());
+        vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice_, &numFamilies, families.data());
 
         uint32_t queueFamily{ 0 };
         VkQueue queue{ nullptr };
@@ -604,7 +604,7 @@ private:
             images.resize(numSwapImages);
 
             // go through our own function so we assign these images IDs
-            VK_CHECK(vkGetSwapchainImagesKHR(device_, swapChain_, &numSwapImages, images.raw_buf()));
+            VK_CHECK(vkGetSwapchainImagesKHR(device_, swapChain_, &numSwapImages, images.data()));
 
             for (uint32_t i = 0; i < numSwapImages; i++)
             {

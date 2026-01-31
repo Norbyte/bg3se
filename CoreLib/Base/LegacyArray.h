@@ -225,6 +225,16 @@ struct CompactSet
     {
         return ContiguousConstIterator<T>(Buf + Size);
     }
+
+    T const* data() const
+    {
+        return Buf;
+    }
+
+    T* data()
+    {
+        return Buf;
+    }
 };
 
 template <class T>

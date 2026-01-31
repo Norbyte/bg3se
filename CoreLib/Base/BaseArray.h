@@ -326,7 +326,12 @@ public:
         }
     }
 
-    inline T* raw_buf() const
+    inline T* data()
+    {
+        return buf_;
+    }
+
+    inline T const* data() const
     {
         return buf_;
     }
@@ -488,12 +493,12 @@ public:
         return *this;
     }
 
-    inline T* raw_buf()
+    inline T* data()
     {
         return buf_;
     }
 
-    inline T const* raw_buf() const
+    inline T const* data() const
     {
         return buf_;
     }
@@ -649,12 +654,12 @@ public:
         return *this;
     }
 
-    inline constexpr T const* raw_buf() const noexcept
+    inline constexpr T const* data() const noexcept
     {
         return buf_;
     }
 
-    inline constexpr T* raw_buf() noexcept
+    inline constexpr T* data() noexcept
     {
         return buf_;
     }
