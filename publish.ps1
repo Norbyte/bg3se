@@ -78,10 +78,10 @@ function Build-Extender
 	Write-Output " ===== BUILDING GAME EXTENDER ===== "
 	msbuild BG3Tools.sln "/p:Configuration=Game Release" /t:Build /m /nologo /verbosity:quiet /consoleloggerparameters:summary
 	
-	x64\Release\SymbolTableGenerator.exe "x64\Game Release\BG3ScriptExtender.pdb" "BG3Extender\GameHooks\BG3ScriptExtender.symtab"
+	Write-Output " ===== BUILDING SYMTAB ===== "
+	x64\Release\SymbolTableGenerator.exe "x64\Game Release\BG3ScriptExtender.pdb" "x64\Game Release\BG3ScriptExtender.symtab"
 	
-	msbuild BG3Tools.sln "/p:Configuration=Game Release" /t:Build /m /nologo /verbosity:quiet /consoleloggerparameters:summary
-	
+	Write-Output " ===== FIN. ===== "
 	# Write-Output " ===== BUILDING EDITOR EXTENDER ===== "
 	# msbuild BG3Tools.sln "/p:Configuration=Editor Release" /t:Build /m /nologo /verbosity:quiet /consoleloggerparameters:summary
 }
@@ -96,6 +96,7 @@ function Create-PDBDir
 	#Copy-Item "x64\Editor Release\BG3EditorScriptExtender.pdb" -Destination $PDBDir\BG3EditorScriptExtender.pdb
 	Copy-Item "x64\Release\CrashReporter.exe" -Destination $PDBDir\CrashReporter.exe
 	Copy-Item "x64\Game Release\BG3ScriptExtender.dll" -Destination $PDBDir\BG3ScriptExtender.dll
+	Copy-Item "x64\Game Release\BG3ScriptExtender.symtab" -Destination $PDBDir\BG3ScriptExtender.symtab
 	#Copy-Item "x64\Editor Release\BG3EditorScriptExtender.dll" -Destination $PDBDir\BG3EditorScriptExtender.dll
 	Copy-Item External\protobuf\bin\libprotobuf-lite.dll -Destination $PDBDir\libprotobuf-lite.dll
 
@@ -126,6 +127,7 @@ function Create-Update-Package ($BuildDir, $ZipPath, $HasEditor, $HasGame)
 	if ($HasGame)
 	{
 		Copy-Item "x64\Game Release\BG3ScriptExtender.dll" -Destination $BuildDir\BG3ScriptExtender.dll
+		Copy-Item "x64\Game Release\BG3ScriptExtender.symtab" -Destination $BuildDir\BG3ScriptExtender.symtab
 	}
 	
 	Remove-Item $ZipPath -ErrorAction SilentlyContinue

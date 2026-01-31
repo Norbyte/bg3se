@@ -54,6 +54,21 @@ static const ExcludedSymbol ExcludedSymbols[] = {
     {&bg3se::OsirisWrappers::AssertWrapper, 0x120},
 };
 
+std::wstring GetExtenderDllDir()
+{
+    std::wstring dllPath;
+    dllPath.resize(1024);
+    DWORD length = GetModuleFileName(gCoreLibPlatformInterface.ThisModule, dllPath.data(), (DWORD)dllPath.size());
+    // Module not found
+    if (length == 0) return {};
+    dllPath.resize(length);
+
+    auto sep = dllPath.find_last_of('\\');
+    dllPath = dllPath.substr(0, sep);
+    dllPath += L"\\";
+    return dllPath;
+}
+
 class CrashReporterSymbolData
 {
 public:
@@ -67,12 +82,13 @@ public:
         uint32_t NameOffset;
     };
 
-    void Load(int resourceId)
+    void Load(std::wstring symbolFile)
     {
-        auto symbols = GetExeResource(resourceId);
-        if (symbols) {
-            symbols_.resize(symbols->size());
-            memcpy(symbols_.data(), symbols->data(), symbols->size());
+        auto path = GetExtenderDllDir() + symbolFile;
+        std::vector<uint8_t> symbols;
+
+        if (LoadFile(path, symbols)) {
+            symbols_ = symbols;
         }
     }
 
@@ -209,13 +225,8 @@ public:
 
     void Initialize()
     {
-#if defined(USE_GAME_SYMBOL_TABLE)
-        eocAppSymbols_.Load(IDR_SYMBOL_TABLE_GAME);
-#endif
-
-#if defined(USE_DBG_SYMBOL_TABLE)
-        symbols_.Load(IDR_SYMBOL_TABLE_EXTENDER);
-#endif
+        eocAppSymbols_.Load(L"BG3.symtab");
+        symbols_.Load(L"BG3ScriptExtender.symtab");
 
         MODULEINFO moduleInfo;
         auto hEoCApp = gExtender->GetLibraryManager().GetAppHandle();
