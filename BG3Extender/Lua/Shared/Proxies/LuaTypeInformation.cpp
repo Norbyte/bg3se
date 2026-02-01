@@ -39,7 +39,7 @@ void RegisterObjectProxyTypeInformation()
     ty.Kind = LuaTypeId::Object; \
     ty.NativeName = FixedString(typeid(TClass).name()); \
     ty.PropertyMap = &lua::GetStaticPropertyMap<TClass>(); \
-    if constexpr (std::is_base_of_v<BaseComponent, TClass> && !std::is_same_v<BaseComponent, TClass> && !std::is_same_v<BaseProxyComponent, TClass>) { \
+    if constexpr (IsComponentType<TClass>) { \
         ty.ComponentName = FixedString(TClass::ComponentName); \
     } \
     if constexpr (std::is_base_of_v<BaseSystem, TClass> && !std::is_same_v<BaseSystem, TClass>) { \

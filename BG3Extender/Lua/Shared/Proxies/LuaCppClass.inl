@@ -9,6 +9,8 @@ void CppPropertyMapManager::RegisterComponents(ecs::EntitySystemHelpersBase& hel
             helpers.BindPropertyMap(*pm->ComponentType, pm);
         }
     }
+
+    helpers.ValidatePropertyMapBindings();
 }
 
 int CppPropertyMapManager::RegisterArrayProxy(ArrayProxyImplBase* mt)

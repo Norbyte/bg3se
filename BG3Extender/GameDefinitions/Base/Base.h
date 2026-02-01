@@ -102,6 +102,14 @@ END_SE()
 
 BEGIN_SE()
 
+template <class T>
+concept IsComponentType = requires(T t)
+{
+    t.ComponentType;
+    t.ComponentName;
+    t.EngineClass;
+};
+
 enum class ContextType
 {
     None,
