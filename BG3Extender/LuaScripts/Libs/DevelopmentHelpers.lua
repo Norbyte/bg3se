@@ -131,6 +131,20 @@ local function ValidateEntities()
     _P("Done.")
 end
 
+local function ValidateSystems()
+    _P("Validating all systems ...")
+    for i,name in pairs(Ext.Enums.ExtSystemType) do
+        if type(i) == "number" then
+            if name ~= "ServerDialog" and name ~= "PickingHelper" and name ~= "Max" then
+                local sys = Ext.System[name]
+                if sys ~= nil then
+                    Ext.Types.Validate(sys)
+                end
+            end
+        end
+    end
+end
+
 local function ValidateAppliedMaterial(mat)
     if Ext.Types.Validate(mat) then
         Ext.Types.Validate(mat.Material)
@@ -515,13 +529,45 @@ function WatchSingletons()
     end)
 end
 
+local function WatchSystems()
+    _P("Validating all systems ...")
+    local numWatchers = 0
+    for i,name in pairs(Ext.Enums.ExtSystemType) do
+        if type(i) == "number" then
+            if name ~= "ServerDialog" and name ~= "PickingHelper" and name ~= "Max" then
+                local sys = Ext.System[name]
+                if sys ~= nil then
+                    Ext.Entity.OnSystemUpdate(name, function () 
+                        Ext.Types.Validate(Ext.System[name])
+                    end)
+                    Ext.Entity.OnSystemPostUpdate(name, function () 
+                        Ext.Types.Validate(Ext.System[name])
+                    end)
+                    numWatchers = numWatchers + 1
+                end
+            end
+        end
+    end
+
+    print("Set up watcher for " .. numWatchers .. " systems")
+end
+
 Ext.RegisterConsoleCommand("se_watchsingletons", function ()
     WatchSingletons()
+end)
+
+Ext.RegisterConsoleCommand("se_watchsystems", function ()
+    WatchSystems()
 end)
 
 Ext.RegisterConsoleCommand("se_entitytest", function ()
     Ext.Debug.SetEntityRuntimeCheckLevel(0)
     ValidateEntities()
+end)
+
+Ext.RegisterConsoleCommand("se_systemtest", function ()
+    Ext.Debug.SetEntityRuntimeCheckLevel(0)
+    ValidateSystems()
 end)
 
 Ext.RegisterConsoleCommand("se_serializertest", function ()
@@ -573,6 +619,7 @@ Ext.RegisterConsoleCommand("se_deepfry", function ()
     ValidateStaticData()
     ValidateResources()
     ValidateStats()
+    ValidateSystems()
     ValidateEntities()
     ValidateVisuals()
     ValidateEffects()
