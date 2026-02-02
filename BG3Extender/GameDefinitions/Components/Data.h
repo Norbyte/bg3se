@@ -70,12 +70,9 @@ struct DifficultyCheckComponent : public BaseComponent
 {
     DEFINE_COMPONENT(DifficultyCheck, "eoc::DifficultyCheckComponent")
 
-    [[bg3::legacy(field_0)]] Array<int32_t> AbilityDC;
-    [[bg3::legacy(field_10)]] Array<int32_t> AbilityModifiers;
-    Array<AbilityId> Abilities;
-    Array<uint32_t> field_30;
-    int field_40;
-    int field_44;
+    [[bg3::legacy(field_0)]] HashMap<AbilityId, uint32_t> AbilityDC;
+    [[bg3::legacy(field_40)]] int32_t SpellSaveDCBoost;
+    [[bg3::legacy(field_44)]] int32_t WeaponActionDC;
 };
 
 struct BodyTypeComponent : public BaseComponent

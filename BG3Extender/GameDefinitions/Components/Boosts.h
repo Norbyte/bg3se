@@ -316,7 +316,7 @@ DEFN_BOOST(WeaponProperty, WeaponProperty, {
 })
 
 DEFN_BOOST(WeaponAttackRollAbilityOverride, WeaponAttackRollAbilityOverride, {
-    AbilityId Ability;
+    AttackRoll Ability;
 })
 
 DEFN_BOOST(SightRangeAdditive, SightRangeAdditive, {
@@ -409,7 +409,7 @@ DEFN_BOOST(WeaponDamageTypeOverride, WeaponDamageTypeOverride, {
 
 DEFN_BOOST(MaximizeHealing, MaximizeHealing, {
     HealDirection Direction;
-    stats::TargetTypeFlags TargetTypes;
+    [[bg3::legacy(TargetTypes)]] HealingType HealingTypes;
 })
 
 DEFN_BOOST(DamageBonus, DamageBonus, {

@@ -13,7 +13,7 @@ struct ArmorComponent : public BaseComponent
     int ArmorClass;
     int AbilityModifierCap;
     uint8_t ArmorClassAbility;
-    EEquipmentType EquipmentType;
+    [[bg3::legacy(EquipmentType)]] bool Shield;
 };
 
 struct ArmorSetStateComponent : public BaseComponent
@@ -164,8 +164,8 @@ struct WeaponComponent : public BaseComponent
     stats::Functors* WeaponFunctors;
     uint32_t WeaponProperties;
     uint8_t WeaponGroup;
-    AbilityId Ability;
-    [[bg3::legacy(field_38)]] Array<StatsExpressionWithMetadata> DamageValues;
+    [[bg3::legacy(Ability)]] DamageType DamageType;
+    [[bg3::legacy(field_38), bg3::legacy(DamageValues)]] Array<StatsExpressionWithMetadata> AttackRollBonus;
     DiceSizeId DamageDice;
     DiceSizeId VersatileDamageDice;
 };
