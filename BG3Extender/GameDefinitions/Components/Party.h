@@ -165,6 +165,7 @@ struct PartySystem : public BaseSystem
     DEFINE_SYSTEM(ServerParty, "esv::party::PartySystem")
 
     [[bg3::hidden]] void* GameEventListenerVMT;
+    [[bg3::hidden]] void* field_18;
     [[bg3::hidden]] void* GameStateEventListenerVMT;
     [[bg3::hidden]] void* EocServer;
     [[bg3::hidden]] void* PartyUnitTestHelper;

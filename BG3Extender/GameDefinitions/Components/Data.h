@@ -596,7 +596,9 @@ struct PlatformSystem : public BaseSystem
     [[bg3::hidden]] UnknownFunction field_38;
     [[bg3::hidden]] void* TransformSystem;
     Array<PlatformTransformChangeRequest> TransformChanged;
-    Array<EntityHandle> UpdateSubgrids;
+    // Editor only
+    // Array<EntityHandle> UpdateSubgrids;
+    [[bg3::hidden]] void* field_58;
 };
 
 END_SE()
