@@ -172,7 +172,7 @@ UserReturn GenomeVariant::LuaGetValue(lua_State* L) const
         Serialize(L, &GetValue<TGenomeSet<FixedString>>());
     } else {
         // TODO - TimelineData (= ls::GenomeTimelineData*)
-        WARN("Unsupported Genome variant type: %s", Type->TypeName.GetString());
+        WARN_ONCE("Unsupported Genome variant type: %s", Type->TypeName.GetString());
         push(L, nullptr);
     }
 
