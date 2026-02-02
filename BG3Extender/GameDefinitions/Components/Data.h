@@ -859,7 +859,26 @@ END_NS()
 
 BEGIN_NS(heal)
 
-DEFINE_TAG_COMPONENT(eoc::heal, BlockComponent, HealBlock)
+struct BlockComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(HealBlock, "eoc::heal::BlockComponent")
+
+    HealingType HealingType;
+};
+
+struct MaxIncomingComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(HealMaxIncoming, "eoc::heal::MaxIncomingComponent")
+
+    HealingType HealingType;
+};
+
+struct MaxOutgoingComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(HealMaxOutgoing, "eoc::heal::MaxOutgoingComponent")
+
+    HealingType HealingType;
+};
 
 END_NS()
 
