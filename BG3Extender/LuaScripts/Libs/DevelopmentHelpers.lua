@@ -81,8 +81,10 @@ local function ValidateClientCharacter(component, entity, counters)
     DebugValidate(component.Template, entity, counters)
 
     DebugValidate(component.InputController, entity, counters)
-    for i,task in pairs(component.InputController.Tasks) do
-        DebugValidate(task, entity, counters)
+    if component.InputController ~= nil then
+        for i,task in pairs(component.InputController.Tasks) do
+            DebugValidate(task, entity, counters)
+        end
     end
                     
     DebugValidate(component.PlayerData, entity, counters)
@@ -154,8 +156,12 @@ local function ValidateVisual(visual)
         for i,slot in pairs(visual.SkeletonSlots) do
             Ext.Types.Validate(slot)
             Ext.Types.Validate(slot.Skeleton)
-            Ext.Types.Validate(slot.Skeleton.Physics)
-            Ext.Types.Validate(slot.Skeleton.SkeletonContent)
+            if slot.Skeleton.SkeletonContent ~= nil then
+                Ext.Types.Validate(slot.Skeleton.SkeletonContent)
+            end
+            if slot.Skeleton.Physics ~= nil then
+                Ext.Types.Validate(slot.Skeleton.Physics)
+            end
         end
 
         for i,obj in pairs(visual.ObjectDescs) do
@@ -514,6 +520,7 @@ Ext.RegisterConsoleCommand("se_watchsingletons", function ()
 end)
 
 Ext.RegisterConsoleCommand("se_entitytest", function ()
+    Ext.Debug.SetEntityRuntimeCheckLevel(0)
     ValidateEntities()
 end)
 
