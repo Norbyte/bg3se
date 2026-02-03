@@ -2,6 +2,18 @@
 
 BEGIN_NS(lua)
 
+template <class T>
+PropertyOperationResult Unserialize(lua_State* L, int index, T* obj);
+
+template <>
+PropertyOperationResult Unserialize(lua_State* L, int index, gn::GenomeVariant*);
+
+template <class T>
+inline PropertyOperationResult Unserialize(lua_State* L, int index, OverrideableProperty<T>* obj)
+{
+    return Unserialize(L, index, &obj->Value);
+}
+
 template <class TK, class T>
 PropertyOperationResult UnserializeArrayFromTableGeneric(lua_State* L, int index, T* obj)
 {
@@ -575,12 +587,6 @@ inline PropertyOperationResult Unserialize(lua_State* L, int index, T* obj)
     }
 
     return PropertyOperationResult::Success;
-}
-
-template <class T>
-inline PropertyOperationResult Unserialize(lua_State* L, int index, OverrideableProperty<T>* obj)
-{
-    return Unserialize(L, index, &obj->Value);
 }
 
 END_NS()

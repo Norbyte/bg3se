@@ -352,7 +352,7 @@ struct [[bg3::hidden]] ResourceManager
     LegacyMap<FixedString, Path*> Sources;
     Array<void*> VisualLoaders;
     LegacyMap<FixedString, void*> GenomeAnimationManagers;
-    void* GenomeTypeManager;
+    gn::GenomeTypeManager* GenomeTypeManager;
     ui::UIManager* UIManager;
     ui::UIManager* UIManagerSwap;
 };

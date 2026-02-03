@@ -97,7 +97,7 @@ struct GenomeNodeTemplate : public ProtectedGameObject<GenomeNodeTemplate>
 struct GenomeVariableTemplate : public ProtectedGameObject<GenomeVariableTemplate>
 {
     [[bg3::readonly]] VariableIndex Index;
-    [[bg3::readonly]] uint8_t Type;
+    [[bg3::readonly]] GenomeVariableType Type;
     GenomeVariant Value;
     Guid ID;
     STDString Name;
@@ -158,7 +158,7 @@ struct GenomeBlueprintInstance : public ProtectedGameObject<GenomeBlueprintInsta
     [[bg3::hidden]] void* Listener;
     Array<GenomeSequence*> Sequences;
     Array<GenomeNode*> Nodes;
-    Array<GenomeVariant> VariablesForEdit;
+    [[bg3::legacy(VariablesForEdit)]] Array<GenomeVariant> Variables;
     GenomeBlueprint* Parent;
     [[bg3::hidden]] GenomeManager* GenomeManager;
     [[bg3::hidden]] void* GenomeInstanceVariableOverrider;

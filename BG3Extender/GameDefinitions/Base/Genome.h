@@ -13,11 +13,11 @@ using EGenomeExecutionResult = uint32_t;
 struct [[bg3::hidden]] GenomeVarTypeDesc : public ProtectedGameObject<GenomeVarTypeDesc>
 {
     using AssignProc = void (GenomeVariant* variant, GenomeVariant* other);
-    using AssignFromRawValueProc = void (GenomeVariant* this_, void* data);
+    using AssignFromRawValueProc = void (GenomeVariant* this_, void const* data);
     using VisitProc = bool (ObjectVisitor* visitor, FixedString const& node, GenomeVariant* variant);
     using FromStringProc = void (GenomeVariant* variant, char const* str);
     using ToStringProc = void (GenomeVariant* variant, STDString* out);
-    using DestroyProc = void (GenomeVariant* variant);
+    using DestroyProc = void (void* data);
     using ComparatorProc = void (void* this_, void* other);
 
     AssignProc* Assign;
@@ -49,7 +49,7 @@ public:
 #endif
 
     GenomeVariant();
-    GenomeVariant(lua_State* L, FixedString const& type, int index, GenomeTypeManager* types);
+    GenomeVariant(lua_State* L, int index);
     GenomeVariant(GenomeVariant&&);
     GenomeVariant(GenomeVariant const&);
     ~GenomeVariant();
@@ -60,6 +60,9 @@ public:
 
     FixedString GetTypeName() const;
     UserReturn LuaGetValue(lua_State* L) const;
+    void LuaSetValue(lua_State* L, int index);
+    void LuaSetValue(FixedString const& type, lua_State* L, int index);
+    void LuaSetValue(GenomeVarTypeDesc* type, lua_State* L, int index);
 
     template <class T>
     void SetValue(T const& value)

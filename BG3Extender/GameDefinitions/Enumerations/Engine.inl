@@ -188,6 +188,16 @@ BEGIN_ENUM(SceneObjectType, uint32_t)
 END_ENUM()
 
 
+BEGIN_ENUM(GenomeVariableType, uint8_t)
+    EV(Const, 0)
+    EV(Unknown1, 1)
+    EV(Private, 2)
+    EV(Public, 3)
+    EV(Extern, 4)
+    EV(Socket, 5)
+    EV(Function, 6)
+END_ENUM()
+
 BEGIN_BITMASK(AnimationSetAnimationFlags, uint8_t)
     EV(AlwaysIgnore, 1)
     EV(NoFallback, 2)

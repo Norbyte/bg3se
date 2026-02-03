@@ -456,8 +456,6 @@ DEFINE_TAG_COMPONENT(eoc::tag, TraderComponent, Trader)
 DEFINE_TAG_COMPONENT(eoc::ambush, AmbushingComponent, Ambushing)
 DEFINE_TAG_COMPONENT(eoc::trade, CanTradeComponent, CanTrade)
 DEFINE_TAG_COMPONENT(eoc::falling, IsFallingComponent, IsFalling)
-DEFINE_TAG_COMPONENT(eoc::heal, MaxIncomingComponent, HealMaxIncoming)
-DEFINE_TAG_COMPONENT(eoc::heal, MaxOutgoingComponent, HealMaxOutgoing)
 
 struct InteractionFilterComponent : public BaseComponent
 {
