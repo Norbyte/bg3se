@@ -36,7 +36,6 @@ void ConfigGet(Value& node, char const* key, std::wstring& value)
 
 void ConfigGet(Value& node, char const* key, ProfilerThreshold& value)
 {
-    ConfigGet(node, (std::string(key) + "Warning").c_str(), value.Warning);
     ConfigGet(node, (std::string(key) + "Error").c_str(), value.Error);
 }
 
@@ -98,10 +97,8 @@ void LoadConfig(std::wstring const& configPath, ExtenderConfig& config)
     ConfigGet(root, "CustomProfile", config.CustomProfile);
 
     config.EnablePerfMessages = config.CreateConsole;
-    config.ProfilerWarnings = config.EnablePerfMessages && config.DeveloperMode;
 
     ConfigGet(root, "EnablePerfMessages", config.EnablePerfMessages);
-    ConfigGet(root, "ProfilerWarnings", config.ProfilerWarnings);
     ConfigGet(root, "ProfilerLoadThreshold", config.ProfilerLoadThreshold);
     ConfigGet(root, "ProfilerLoadCallbackThreshold", config.ProfilerLoadCallbackThreshold);
     ConfigGet(root, "ProfilerCallbackThreshold", config.ProfilerCallbackThreshold);

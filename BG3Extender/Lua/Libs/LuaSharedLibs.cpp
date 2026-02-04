@@ -86,21 +86,15 @@ void RegisterConfig(lua_State* L)
     push(L, gExtender->GetConfig().EnablePerfMessages);
     lua_setfield(L, -2, "PerfMessagesEnabled");
 
-    push(L, gExtender->GetConfig().ProfilerLoadCallbackThreshold.Warning);
-    lua_setfield(L, -2, "ProfilerLoadCallbackWarningThreshold");
-
     push(L, gExtender->GetConfig().ProfilerLoadCallbackThreshold.Error);
     lua_setfield(L, -2, "ProfilerLoadCallbackErrorThreshold");
 
     if (State::FromLua(L)->IsClient()) {
-        push(L, gExtender->GetConfig().ProfilerClientCallbackThreshold.Warning);
         push(L, gExtender->GetConfig().ProfilerClientCallbackThreshold.Error);
     } else {
-        push(L, gExtender->GetConfig().ProfilerCallbackThreshold.Warning);
         push(L, gExtender->GetConfig().ProfilerCallbackThreshold.Error);
     }
     lua_setfield(L, -3, "ProfilerCallbackErrorThreshold");
-    lua_setfield(L, -2, "ProfilerCallbackWarningThreshold");
 
     lua_setfield(L, -2, "Config");
 

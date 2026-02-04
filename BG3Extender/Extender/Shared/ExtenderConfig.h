@@ -7,11 +7,10 @@ BEGIN_SE()
 
 struct ProfilerThreshold
 {
-    inline constexpr ProfilerThreshold(uint32_t warn, uint32_t error)
-        : Warning(warn), Error(error)
+    inline constexpr ProfilerThreshold(uint32_t error)
+        : Error(error)
     {}
 
-    uint32_t Warning{ 0 };
     uint32_t Error{ 0 };
 };
 
@@ -64,29 +63,19 @@ struct ExtenderConfig
 
     // Lua profiler configuration
     bool EnablePerfMessages{ true };
-    bool ProfilerWarnings{ false };
-    ProfilerThreshold ProfilerLoadThreshold{ 50000, 50000 };
-    ProfilerThreshold ProfilerLoadCallbackThreshold{ 50000, 50000 };
-    ProfilerThreshold ProfilerCallbackThreshold{ 1500, 5000 };
-    ProfilerThreshold ProfilerClientCallbackThreshold{ 1000, 2000 };
+    ProfilerThreshold ProfilerLoadThreshold{ 50000 };
+    ProfilerThreshold ProfilerLoadCallbackThreshold{ 50000 };
+    ProfilerThreshold ProfilerCallbackThreshold{ 5000 };
+    ProfilerThreshold ProfilerClientCallbackThreshold{ 2000 };
 };
 
 inline bool ProfilerShouldReport(uint64_t took, ExtenderConfig const& config, ProfilerThreshold const& threshold)
 {
     return config.EnablePerfMessages
-        && (took >= threshold.Error
-            || config.ProfilerWarnings && took >= threshold.Warning);
+        && took >= threshold.Error;
 }
 
-inline bool ProfilerShouldWarn(uint64_t took, ExtenderConfig const& config, ProfilerThreshold const& threshold)
-{
-    return config.ProfilerWarnings && took >= threshold.Warning;
-}
-
-#define PERF_REPORT(type, took, ...) ProfilerShouldWarn(took, gExtender->GetConfig(), gExtender->GetConfig().Profiler##type##Threshold) \
-    ? WARN(##__VA_ARGS__) \
-    : ERR(##__VA_ARGS__)
-
+#define PERF_REPORT(type, took, ...) WARN(##__VA_ARGS__)
 #define PERF_SHOULD_REPORT(type, took) ProfilerShouldReport((took), gExtender->GetConfig(), gExtender->GetConfig().Profiler##type##Threshold)
 
 END_SE()
