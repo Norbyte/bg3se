@@ -315,8 +315,7 @@ typename std::enable_if_t<std::is_enum_v<T>, bool> Validate(T const* v, Overload
 inline bool Validate(ecs::EntityRef const* g, Overload<ecs::EntityRef>)
 {
     // TODO - check if World points to a valid EntityWorld?
-    CHECK((g->World == nullptr && !g->Handle)
-        || (g->World != nullptr && (bool)g->Handle));
+    CHECK(!g->Handle || (g->World != nullptr && (bool)g->Handle));
     return true;
 }
 

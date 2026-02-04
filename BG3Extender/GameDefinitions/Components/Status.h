@@ -226,8 +226,8 @@ struct AppliedEventRequest
 
 struct RefreshRequest
 {
-    EntityHandle StatusOH;
-    EntityHandle RefreshedStatusOH;
+    ComponentHandle Status;
+    ComponentHandle RefreshedStatus;
     Guid Cause;
     int32_t StoryActionId{ 0 };
 };

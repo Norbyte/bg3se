@@ -334,8 +334,8 @@ struct PendingRequestsComponent : public BaseComponent
     DEFINE_COMPONENT(ServerSpellCastPendingRequests, "esv::spell_cast::PendingRequestsComponent")
 
     Array<CastConfirmRequest> ConfirmRequests;
-    Array<CastCancelRequest> CancelRequests;
     Array<PreviewSetRequest> PreviewSetRequests;
+    Array<CastCancelRequest> CancelRequests;
 };
 
 
