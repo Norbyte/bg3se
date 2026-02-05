@@ -310,15 +310,15 @@ struct DefaultCameraBehavior : public BaseComponent
     float RotationY;
     float Zoom;
     bool CaptureInput;
-    bool field_19;
-    bool field_1A;
+    [[bg3::legacy(field_19)]] bool LockMovement;
+    [[bg3::legacy(field_1A)]] bool LockScroll;
 };
 
 struct EffectCameraBehavior : public BaseComponent
 {
     DEFINE_COMPONENT(EffectCameraBehavior, "ls::EffectCameraBehavior")
 
-    glm::vec3 field_0;
+    [[bg3::legacy(field_0)]] glm::vec3 LookAtShake;
 };
 
 END_SE()
@@ -409,43 +409,209 @@ struct GameCameraBehavior : public BaseComponent
     std::optional<glm::vec3> field_248;
 };
 
-struct CameraSelectorModeComponent : public BaseComponent
+END_NS()
+
+BEGIN_NS(ecl::camera)
+
+struct SelectorModeComponent : public BaseComponent
 {
     DEFINE_COMPONENT(CameraSelectorMode, "ecl::camera::SelectorModeComponent")
 
     uint8_t Mode;
 };
 
-struct CameraTarget
+struct Target
 {
-    Array<EntityHandle> field_0;
-    uint8_t field_10;
-    glm::vec3 field_14;
-    float field_20;
-    float field_24;
-    uint8_t field_28;
-    uint8_t field_29;
-    uint8_t field_2A;
-    uint8_t field_2B;
-    uint8_t field_2C;
-    uint8_t field_2D;
+    Array<EntityHandle> Targets;
+    bool SetPlayerTargets{ false };
+    glm::vec3 Position{ .0f };
+    float Distance{ false };
+    float CameraDistance{ false };
+    uint8_t TargetMode{ 1 };
+    bool ZoomToDistance{ false };
+    bool SetCameraDistance{ false };
+    bool TrackingSwarm{ false };
+    uint8_t Flags{ 0 };
+    bool ClearTargets{ false };
 };
 
-struct CameraTargetComponent : public BaseComponent
+struct TargetComponent : public BaseComponent
 {
     DEFINE_COMPONENT(CameraTarget, "ecl::camera::TargetComponent")
 
-    CameraTarget Target;
+    Target Target;
 };
 
-struct CameraCombatTargetComponent : public BaseComponent
+struct CombatTargetComponent : public BaseComponent
 {
     DEFINE_COMPONENT(CameraCombatTarget, "ecl::camera::CombatTargetComponent")
 
-    CameraTarget Target;
+    Target Target;
 };
 
+struct TemporaryAdditionalFocusTarget
+{
+    EntityHandle Entity;
+    float Lifetime;
+    glm::vec3 Position;
+    bool Active;
+};
+
+struct TargetRequest
+{
+    TargetRequestType Type;
+    EntityHandle Target;
+    Array<EntityHandle> Targets;
+    glm::vec3 Position;
+    float FallbackTimer;
+    float field_30;
+    float CameraDistance;
+    bool RestorePosition;
+    bool Active;
+    uint8_t field_3A;
+    uint32_t field_3C;
+    Array<TemporaryAdditionalFocusTarget> FocusTargets;
+};
+
+
+struct CombatTargetRequestsComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(CameraCombatTargetRequests, "ecl::camera::CombatTargetRequestsComponent")
+
+    Array<TargetRequest> Requests;
+};
+
+struct PhotoModeCameraTransformRequestsSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(PhotoModeCameraTransformRequests, "ecl::camera::PhotoModeCameraTransformRequestsSingletonComponent")
+
+    HashMap<EntityHandle, Transform> SetTransform;
+};
+
+struct PhotoModeCameraBehaviorComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(PhotoModeCameraBehavior, "ecl::camera::PhotoModeCameraBehaviorComponent")
+
+    uint8_t PhotoModeSession;
+    FixedString CameraControllerId;
+};
+
+struct ClearScreenFadeData
+{
+    Guid field_0;
+    float FadeSpeed;
+    float FadeTime;
+    uint8_t field_18;
+    int field_1C;
+};
+
+struct ScreenFadeCreationData
+{
+    Guid field_0;
+    int field_10;
+    int field_14;
+    int field_18;
+    int field_1C;
+};
+
+
+struct ClearScreenFadeRequestManualOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(CameraClearScreenFadeRequestManual, "ecl::camera::ClearScreenFadeRequestManualOneFrameComponent")
+
+    Array<ClearScreenFadeData> Requests;
+};
+
+struct PhotoModeExitScreenFadeClearRequestsSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(PhotoModeExitScreenFadeClearRequests, "ecl::camera::PhotoModeExitScreenFadeClearRequestsSingletonComponent")
+
+    Array<ClearScreenFadeData> Requests;
+};
+
+struct PhotoModeExitScreenFadeCreateRequestsSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(PhotoModeExitScreenFadeCreateRequests, "ecl::camera::PhotoModeExitScreenFadeCreateRequestsSingletonComponent")
+
+    HashMap<int16_t, ScreenFadeCreationData> Requests;
+};
+
+struct ScreenFadeToRequestManualOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(CameraScreenFadeToRequestManual, "ecl::camera::ScreenFadeToRequestManualOneFrameComponent")
+
+    HashMap<int16_t, ScreenFadeCreationData> Requests;
+};
+
+struct PlatformTargetComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(CameraPlatformTarget, "ecl::camera::PlatformTargetComponent")
+
+    uint64_t TargetData0;
+    uint64_t TargetData1;
+};
+
+struct ArriveWatcherComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(CameraArriveWatcher, "ecl::camera::ArriveWatcherComponent")
+
+    int16_t Peer;
+};
+
+struct CameraModeTrackerSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(CameraModeTracker, "ecl::camera::CameraModeTrackerSingletonComponent")
+
+    HashMap<EntityHandle, uint8_t> Modes;
+};
+
+struct EnterPhotoModeRequest
+{
+    EntityHandle Player;
+    uint8_t PhotoModeSession;
+    FixedString CameraControllerId;
+};
+
+struct EnterPhotoModeRequestSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(PhotoModeCameraEnterRequests, "ecl::camera::EnterPhotoModeRequestSingletonComponent")
+
+    Array<EnterPhotoModeRequest> Requests;
+};
+
+struct PhotoModeDestructionRequestsSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(PhotoModeCameraDestructionRequests, "ecl::camera::PhotoModeDestructionRequestsSingletonComponent")
+
+    HashSet<EntityHandle> Requests;
+};
+
+struct PhotoModeCameraOriginalTransformComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(PhotoModeCameraOriginalTransform, "ecl::camera::PhotoModeCameraOriginalTransformComponent")
+
+    Transform Transform;
+};
+
+struct PhotoModeCameraInputComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(PhotoModeCameraInput, "ecl::camera::PhotoModeCameraInputComponent")
+
+    bool Active;
+    float LeftRight;
+    float HeightIncDec;
+    float ForwardBackward;
+    uint8_t field_10;
+    float MouseRotateLeftRight;
+    float MouseRotateUpDown;
+    float RotateLeftRight;
+    float RotateUpDown;
+    float TiltLeftRight;
+};
+
+
 DEFINE_TAG_COMPONENT(ecl::camera, IsInSelectorModeComponent, CameraInSelectorMode)
+DEFINE_TAG_COMPONENT(ecl::camera, IsInSelectorWhileInactiveComponent, CameraInSelectorWhileInactive)
 DEFINE_TAG_COMPONENT(ecl::camera, SpellTrackingComponent, CameraSpellTracking)
 
 END_NS()
