@@ -452,9 +452,9 @@ struct CombatTargetComponent : public BaseComponent
 struct TemporaryAdditionalFocusTarget
 {
     EntityHandle Entity;
-    float Lifetime;
-    glm::vec3 Position;
-    bool Active;
+    float Lifetime{ .0f };
+    glm::vec3 Position{ .0f };
+    bool Active{ false };
 };
 
 struct TargetRequest
@@ -462,14 +462,14 @@ struct TargetRequest
     TargetRequestType Type;
     EntityHandle Target;
     Array<EntityHandle> Targets;
-    glm::vec3 Position;
-    float FallbackTimer;
-    float field_30;
-    float CameraDistance;
-    bool RestorePosition;
-    bool Active;
-    uint8_t field_3A;
-    uint32_t field_3C;
+    glm::vec3 Position{ .0f };
+    float FallbackTimer{ .0f };
+    float field_30{ .0f };
+    float CameraDistance{ .0f };
+    bool RestorePosition{ false };
+    bool Active{ false };
+    uint8_t field_3A{ 0 };
+    uint32_t field_3C{ 0 };
     Array<TemporaryAdditionalFocusTarget> FocusTargets;
 };
 
@@ -498,7 +498,7 @@ struct PhotoModeCameraBehaviorComponent : public BaseComponent
 
 struct ClearScreenFadeData
 {
-    Guid field_0;
+    Guid FadeId;
     float FadeSpeed;
     float FadeTime;
     uint8_t field_18;
@@ -507,7 +507,7 @@ struct ClearScreenFadeData
 
 struct ScreenFadeCreationData
 {
-    Guid field_0;
+    Guid FadeId;
     int field_10;
     int field_14;
     int field_18;
