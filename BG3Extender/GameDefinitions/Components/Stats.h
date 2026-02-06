@@ -157,8 +157,8 @@ struct WeaponComponent : public BaseComponent
 {
     DEFINE_COMPONENT(Weapon, "eoc::WeaponComponent")
 
-    LegacyRefMap<AbilityId, Array<RollDefinition>> Rolls;
-    LegacyRefMap<AbilityId, Array<RollDefinition>> Rolls2;
+    LegacyRefMap<DamageType, Array<RollDefinition>> Rolls;
+    [[bg3::legacy(Rolls2)]] LegacyRefMap<DamageType, Array<RollDefinition>> VersatileRolls;
     float WeaponRange;
     float DamageRange;
     stats::Functors* WeaponFunctors;
