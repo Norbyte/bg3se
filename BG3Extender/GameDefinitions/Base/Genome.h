@@ -12,8 +12,8 @@ using EGenomeExecutionResult = uint32_t;
 
 struct [[bg3::hidden]] GenomeVarTypeDesc : public ProtectedGameObject<GenomeVarTypeDesc>
 {
-    using AssignProc = void (GenomeVariant* variant, GenomeVariant* other);
-    using AssignFromRawValueProc = void (GenomeVariant* this_, void const* data);
+    using AssignProc = void (GenomeVariant* variant, GenomeVariant const& other);
+    using InitProc = void (GenomeVariant* this_, GenomeVariant const& other);
     using VisitProc = bool (ObjectVisitor* visitor, FixedString const& node, GenomeVariant* variant);
     using FromStringProc = void (GenomeVariant* variant, char const* str);
     using ToStringProc = void (GenomeVariant* variant, STDString* out);
@@ -21,7 +21,7 @@ struct [[bg3::hidden]] GenomeVarTypeDesc : public ProtectedGameObject<GenomeVarT
     using ComparatorProc = void (void* this_, void* other);
 
     AssignProc* Assign;
-    AssignFromRawValueProc* AssignFromRawValue;
+    InitProc* Init;
     VisitProc* Visit;
     FromStringProc* FromString;
     ToStringProc* ToString;

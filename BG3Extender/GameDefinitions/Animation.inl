@@ -22,9 +22,8 @@ GenomeVariant::GenomeVariant(GenomeVariant&& o)
 
 GenomeVariant::GenomeVariant(GenomeVariant const& o)
 {
-    Type = o.Type;
-    if (Type) {
-        Type->AssignFromRawValue(this, &o.Value);
+    if (o.Type) {
+        o.Type->Init(this, o);
     }
 }
 
@@ -38,10 +37,10 @@ GenomeVariant& GenomeVariant::operator = (GenomeVariant const& o)
     if (Type && (!o.Type || Type->TypeName != o.Type->TypeName)) {
         ERR("Tried to change type of GenomeVariant from %s to %s!", Type->TypeName.GetString(), (o.Type ? o.Type->TypeName.GetString() : "(Untyped)"));
     } else {
-        Release();
-        Type = o.Type;
-        if (Type) {
-            Type->AssignFromRawValue(this, &o.Value);
+        if (o.Type) {
+            o.Type->Init(this, o);
+        } else {
+            Release();
         }
     }
 
