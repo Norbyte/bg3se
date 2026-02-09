@@ -102,6 +102,7 @@ namespace NSE.DebuggerFrontend
 
         private ExpressionEvaluator Evaluator;
         private DAPRequest PendingLaunchRequest;
+        private DAPRequest PendingLoadedSourcesRequest;
 
 
         public DAPMessageHandler(DAPStream stream)
@@ -170,6 +171,11 @@ namespace NSE.DebuggerFrontend
                 {
                     LogError(e.ToString());
                     Stream.SendReply(message as DAPRequest, e.ToString());
+                    Stream.SendEvent("output", new DAPOutputMessage
+                    {
+                        category = "important",
+                        output = $"Error while handling request '{(message as DAPRequest).command}':\r\n{e.ToString()}"
+                    });
                 }
             }
             else if (message is DAPEvent)
@@ -338,6 +344,12 @@ namespace NSE.DebuggerFrontend
                     Name = source.Name
                 }
             ).ToList();
+
+            if (PendingLoadedSourcesRequest != null)
+            {
+                SendLoadedSources(PendingLoadedSourcesRequest);
+                PendingLoadedSourcesRequest = null;
+            }
         }
 
         private void OnDebugOutput(BkDebugOutput msg)
@@ -767,6 +779,18 @@ namespace NSE.DebuggerFrontend
         }
 
         private void HandleLoadedSourcesRequest(DAPRequest request, DAPLoadedSourcesRequest req)
+        {
+            if (SourceFiles == null)
+            {
+                PendingLoadedSourcesRequest = request;
+            }
+            else
+            {
+                SendLoadedSources(request);
+            }
+        }
+
+        private void SendLoadedSources(DAPRequest request)
         {
             var reply = new DAPLoadedSourcesResponse
             {

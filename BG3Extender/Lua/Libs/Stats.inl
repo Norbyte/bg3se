@@ -507,6 +507,12 @@ Object* Get(lua_State * L, char const* statName, std::optional<int> level, std::
     return StatFindObject(statName, warnOnError.value_or(false));
 }
 
+BoostPrototype* GetCachedBoost(lua_State * L, Guid id)
+{
+    auto proto = (*GetStaticSymbols().eoc__BoostPrototypeManager)->Boosts.try_get(id);
+    return proto ? *proto : nullptr;
+}
+
 SpellPrototype* GetCachedSpell(lua_State * L, FixedString name)
 {
     auto proto = (*GetStaticSymbols().eoc__SpellPrototypeManager)->Spells.try_get(name);
@@ -769,6 +775,7 @@ void RegisterStatsLib()
     MODULE_FUNCTION(GetStats)
     MODULE_FUNCTION(GetStatsLoadedBefore)
     MODULE_FUNCTION(Get)
+    MODULE_FUNCTION(GetCachedBoost)
     MODULE_FUNCTION(GetCachedSpell)
     MODULE_FUNCTION(GetCachedStatus)
     MODULE_FUNCTION(GetCachedPassive)

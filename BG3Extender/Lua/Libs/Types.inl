@@ -307,6 +307,11 @@ std::optional<STDString> GetValueType(lua_State* L, AnyRef object)
     return GetDebugName(L, object.Index);
 }
 
+std::optional<STDString> GetBaseValueType(lua_State* L, AnyRef object)
+{
+    return GetDebugBaseName(L, object.Index);
+}
+
 UserReturn GetHashSetValueAt(lua_State* L, AnyRef object, uint32_t index)
 {
     auto meta = lua_get_lightcppobject(L, object.Index, MetatableTag::Set);
@@ -371,6 +376,7 @@ void RegisterTypesLib()
     DECLARE_MODULE(Types, Both)
     BEGIN_MODULE()
     MODULE_FUNCTION(GetValueType)
+    MODULE_FUNCTION(GetBaseValueType)
     MODULE_FUNCTION(GetObjectType)
     MODULE_FUNCTION(GetTypeInfo)
     MODULE_FUNCTION(TypeOf)

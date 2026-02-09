@@ -46,6 +46,12 @@ struct SpellPrototypeAnimationData
     uint8_t Flags{ 0 };
 };
 
+struct SpellMetaCondition
+{
+    ConditionId Condition;
+    bool OverrideOriginal;
+};
+
 struct SpellPrototype : public Noncopyable<SpellPrototype>
 {
     using InitProc = void(SpellPrototype* self, FixedString const& spellId);
@@ -104,7 +110,7 @@ struct SpellPrototype : public Noncopyable<SpellPrototype>
     uint32_t PathfindTemplateId;
     bool HasTrajectoryRules;
     uint32_t RequirementEvents;
-    [[bg3::hidden]] HashMap<uint8_t, Array<uint64_t>> MetaConditions;
+    HashMap<SpellMetaConditionType, Array<SpellMetaCondition>> MetaConditions;
     FixedString ItemWall;
     FixedString InterruptPrototype;
     FixedString CombatAIOverrideSpell;

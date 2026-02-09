@@ -18,8 +18,6 @@ namespace bg3se
         // Fallback in case allocator is not available
         if (sym.ls__GlobalAllocator__Alloc && sym.ls__GlobalAllocator__Free && sym.ls__GlobalAllocator__Get) {
             return sym.ls__GlobalAllocator__Alloc(sym.ls__GlobalAllocator__Get(), size, 2, 0, 8);
-        } else if (sym.ls__GlobalAllocator__Alloc && sym.ls__GlobalAllocator__Free && sym.ls__gGlobalAllocator) {
-            return sym.ls__GlobalAllocator__Alloc(sym.ls__gGlobalAllocator, size, 2, 0, 8);
         } else {
             return malloc(size);
         }
@@ -30,8 +28,6 @@ namespace bg3se
         auto const& sym = GetStaticSymbols();
         if (sym.ls__GlobalAllocator__Alloc && sym.ls__GlobalAllocator__Free && sym.ls__GlobalAllocator__Get) {
             sym.ls__GlobalAllocator__Free(sym.ls__GlobalAllocator__Get(), ptr);
-        } else if (sym.ls__GlobalAllocator__Alloc && sym.ls__GlobalAllocator__Free && sym.ls__gGlobalAllocator) {
-            sym.ls__GlobalAllocator__Free(sym.ls__gGlobalAllocator, ptr);
         } else {
             return free(ptr);
         }

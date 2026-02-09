@@ -252,6 +252,7 @@ END_NS()
 BEGIN_NS(lua)
 
 char const* GetDebugName(lua_State* L, int idx);
+char const* GetDebugBaseName(lua_State* L, int idx);
 char const* GetDebugName(MetatableTag tag);
 char const* GetDebugName(MetatableTag tag, int propertyMapIdx);
 char const* GetDebugName(CppObjectMetadata const& meta);

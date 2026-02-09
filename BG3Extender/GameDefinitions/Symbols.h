@@ -79,7 +79,7 @@ namespace bg3se
         stats::StatusPrototypeManager** eoc__StatusPrototypeManager{ nullptr };
         stats::StatusPrototype::InitProc* eoc__StatusPrototype__Init{ nullptr };
 
-        stats::BoostPrototypeManager* eoc__BoostPrototypeManager{ nullptr };
+        stats::BoostPrototypeManager** eoc__BoostPrototypeManager{ nullptr };
 
         stats::PassivePrototypeManager** eoc__PassivePrototypeManager{ nullptr };
         stats::PassivePrototype::InitProc* eoc__PassivePrototype__Init{ nullptr };
@@ -92,9 +92,6 @@ namespace bg3se
         stats::ParseStaticBoostsProc* eoc__ParseStaticBoosts{ nullptr };
 
         esv::OsirisVariableHelper__SavegameVisitProc* esv__OsirisVariableHelper__SavegameVisit{ nullptr };
-
-        esv::StatusMachine::CreateStatusProc* esv__StatusMachine__CreateStatus{ nullptr };
-        esv::StatusMachine::ApplyStatusProc* esv__StatusMachine__ApplyStatus{ nullptr };
 
         stats::DealDamageFunctor::ApplyDamageProc* stats__DealDamageFunctor__ApplyDamage{ nullptr };
         stats::StatsSystem_ThrowDamageEventProc* esv__StatsSystem__ThrowDamageEvent{ nullptr };
@@ -131,7 +128,6 @@ namespace bg3se
 
         std::map<uint8_t const *, EoCLibraryInfo> Libraries;
 
-        void* ls__gGlobalAllocator{ nullptr };
         ls__GlobalAllocator__GetProc* ls__GlobalAllocator__Get{ nullptr };
         ls__GlobalAllocator__AllocProc* ls__GlobalAllocator__Alloc{ nullptr };
         ls__GlobalAllocator__FreeProc* ls__GlobalAllocator__Free{ nullptr };
@@ -158,7 +154,6 @@ namespace bg3se
         void* Noesis__GUI__LoadXaml{ nullptr };
         void* Noesis__Visual__AddVisualChild{ nullptr };
         void* Noesis__Visual__RemoveVisualChild{ nullptr };
-        void* ls__UIStateMachine__FireStateEvent2{ nullptr };
 
         GlobalSwitches** ls__GlobalSwitches{ nullptr };
 

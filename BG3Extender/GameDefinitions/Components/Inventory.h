@@ -396,7 +396,8 @@ struct CreateRequestData
     EntityHandle Owner;
     InventoryType Type{ InventoryType::Main };
     int16_t SlotLimit{ -1 };
-    bool field_C{ false };
+    // Editor only?
+    // bool WarnIfExists{ false };
 };
 
 struct ManagementSystem : public BaseSystem

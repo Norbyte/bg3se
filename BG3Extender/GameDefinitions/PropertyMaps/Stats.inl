@@ -130,6 +130,7 @@ P(UnitSystem)
 P(WeightedRolls)
 P(PostCombatAssignation)
 P(ServerFrameCap)
+P(CameraSwitches)
 
 P(AutoRemoveHotbarSpells)
 P(AutoFillHotbarCategories)

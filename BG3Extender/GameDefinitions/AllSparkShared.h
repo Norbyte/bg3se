@@ -4,7 +4,7 @@ BEGIN_SE()
 
 struct RenderPropertyList
 {
-    uint32_t RenderPasses;
+    RenderPass RenderPasses;
     uint8_t OpaqueChannel;
     uint8_t AlphaChannel;
     uint8_t TransformType;

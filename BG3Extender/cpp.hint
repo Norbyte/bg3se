@@ -6,6 +6,8 @@
 #define END_SE() }
 #define BEGIN_NS(ns) namespace bg3se::ns {
 #define END_NS() }
+#define BEGIN_BARE_NS(ns) namespace ns {
+#define END_BARE_NS() }
 
 #define BEGIN_BITMASK_NS(NS, T, luaName, type, id) namespace NS { \
     enum class T : type {
@@ -17,3 +19,65 @@
 #define END_ENUM_NS() }; };
 #define END_ENUM() };
 #define TYPECHECK(ty, luaty) inline bool do_check_strict(lua_State * L, int index, Overload<ty>) { return lua_type(L, index) == luaty; }
+
+
+#define DEFINE_COMPONENT(componentType, cls) \
+    static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \
+    static constexpr auto ComponentName = #componentType; \
+    static constexpr auto EngineClass = cls; \
+    static constexpr auto OneFrame = false; \
+    static constexpr auto ForceProxy = false;
+
+#define DEFINE_PROXY_COMPONENT(componentType, cls) \
+    static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \
+    static constexpr auto ComponentName = #componentType; \
+    static constexpr auto EngineClass = cls; \
+    static constexpr auto OneFrame = false; \
+    static constexpr auto ForceProxy = true;
+
+#define DEFINE_ONEFRAME_COMPONENT(componentType, cls) \
+    static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \
+    static constexpr auto ComponentName = #componentType; \
+    static constexpr auto EngineClass = cls; \
+    static constexpr auto OneFrame = true; \
+    static constexpr auto ForceProxy = false;
+
+#define DEFINE_TAG_COMPONENT(ns, name, componentType) \
+    struct name : public BaseComponent \
+    { \
+        static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \
+        static constexpr auto ComponentName = #componentType; \
+        static constexpr auto EngineClass = #ns "::" #name; \
+        static constexpr auto OneFrame = false; \
+        static constexpr auto ForceProxy = false; \
+        uint8_t Dummy; \
+    };
+
+#define DEFINE_ONEFRAME_TAG_COMPONENT(ns, name, componentType) \
+    struct name : public BaseComponent \
+    { \
+        static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \
+        static constexpr auto ComponentName = #componentType; \
+        static constexpr auto EngineClass = #ns "::" #name; \
+        static constexpr auto OneFrame = true; \
+        static constexpr auto ForceProxy = false; \
+        uint8_t Dummy; \
+    };
+
+#define DEFN_BOOST(name, boostType, defn) \
+    struct name##BoostComponent_Base : public BaseComponent \
+    defn; \
+    struct name##BoostComponent : public name##BoostComponent_Base \
+    { \
+        static constexpr ExtComponentType ComponentType = ExtComponentType::name##Boost; \
+        static constexpr auto ComponentName = #name "Boost"; \
+        static constexpr auto BoostType = BoostType::boostType; \
+        static constexpr auto EngineClass = "eoc::" #name "BoostComponent"; \
+        static constexpr auto OneFrame = false; \
+        static constexpr auto ForceProxy = false; \
+    };
+
+#define DEFINE_SYSTEM(systemType, cls) \
+    static constexpr auto SystemType = ExtSystemType::systemType; \
+    static constexpr auto SystemName = #systemType; \
+    static constexpr auto EngineClass = cls;

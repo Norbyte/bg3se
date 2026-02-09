@@ -273,11 +273,10 @@ inline constexpr StructTypeId CheckedGetDeclStructId()
     return StructID<T>::ID;
 }
 
-
 template <class T>
 inline constexpr ExtComponentType GetComponentType()
 {
-    if constexpr (std::is_base_of_v<bg3se::BaseComponent, T> && !std::is_same_v<T, bg3se::BaseComponent> && !std::is_same_v<T, bg3se::BaseProxyComponent>) {
+    if constexpr (IsComponentType<T>) {
         return T::ComponentType;
     } else {
         return (ExtComponentType)0xffffffff;
@@ -288,7 +287,7 @@ inline constexpr ExtComponentType GetComponentType()
 template <class T>
 inline constexpr char const* GetComponentName()
 {
-    if constexpr (std::is_base_of_v<bg3se::BaseComponent, T> && !std::is_same_v<T, bg3se::BaseComponent> && !std::is_same_v<T, bg3se::BaseProxyComponent>) {
+    if constexpr (IsComponentType<T>) {
         return T::ComponentName;
     } else {
         return nullptr;
@@ -658,7 +657,6 @@ static constexpr PropertyMapRegistrationEntry const* AllClassDefns[] = {
 #undef DECLARE_STRUCT_BARE_NS_FWD
 
 };
-
 
 void InitObjectProxyPropertyMaps()
 {

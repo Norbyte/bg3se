@@ -60,10 +60,10 @@ END_CLS()
 
 BEGIN_CLS(StatsExpressionWithMetadata)
 INHERIT(StatsExpressionInternal)
-P(field_28)
+P_RENAMED(BoostType, field_28)
 P(Cause)
-P(field_48)
-P(field_58)
+P_RENAMED(BoostSourceName, field_48)
+P_RENAMED(CriticalHit, field_58)
 END_CLS()
 
 

@@ -178,9 +178,6 @@ namespace bg3se
 
         SYM_OFF(esv__OsirisVariableHelper__SavegameVisit);
 
-        SYM_OFF(esv__StatusMachine__CreateStatus);
-        SYM_OFF(esv__StatusMachine__ApplyStatus);
-
         SYM_OFF(stats__DealDamageFunctor__ApplyDamage);
         SYM_OFF(esv__StatsSystem__ThrowDamageEvent);
 
@@ -221,11 +218,9 @@ namespace bg3se
         SYM_OFF(Noesis__GUI__LoadXaml);
         SYM_OFF(Noesis__Visual__AddVisualChild);
         SYM_OFF(Noesis__Visual__RemoveVisualChild);
-        SYM_OFF(ls__UIStateMachine__FireStateEvent2);
 
         SYM_OFF(AppInstance);
 
-        SYM_OFF(ls__gGlobalAllocator);
         SYM_OFF(ls__GlobalAllocator__Get);
         SYM_OFF(ls__GlobalAllocator__Alloc);
         SYM_OFF(ls__GlobalAllocator__Free);

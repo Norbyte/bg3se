@@ -71,18 +71,18 @@ public:
             Reserve(3);
             auto vl = (uint32_t)(v + 0x40000);
             Tag(TypeTag::Int16, (vl >> 16) & 0x0f);
-            *reinterpret_cast<uint16_t*>(buf_.raw_buf() + pos_) = (uint16_t)(vl & 0xffff);
+            *reinterpret_cast<uint16_t*>(buf_.data() + pos_) = (uint16_t)(vl & 0xffff);
             pos_ += 2;
         } else if (v >= -0x400000000l && v <= 0x3ffffffffl) {
             Reserve(5);
             auto vl = (uint64_t)(v + 0x400000000l);
             Tag(TypeTag::Int32, (uint32_t)(vl >> 32) & 0x0f);
-            *reinterpret_cast<uint32_t*>(buf_.raw_buf() + pos_) = (uint32_t)(vl & 0xffffffff);
+            *reinterpret_cast<uint32_t*>(buf_.data() + pos_) = (uint32_t)(vl & 0xffffffff);
             pos_ += 4;
         } else {
             Reserve(9);
             Tag(TypeTag::Int64);
-            *reinterpret_cast<int64_t*>(buf_.raw_buf() + pos_) = v;
+            *reinterpret_cast<int64_t*>(buf_.data() + pos_) = v;
             pos_ += 8;
         }
     }
@@ -91,7 +91,7 @@ public:
     {
         Reserve(5);
         Tag(TypeTag::Float, 4);
-        *reinterpret_cast<float*>(buf_.raw_buf() + pos_) = (float)v;
+        *reinterpret_cast<float*>(buf_.data() + pos_) = (float)v;
         pos_ += 4;
     }
 
@@ -104,12 +104,12 @@ public:
         } else if (offset < 0xfffff) {
             Reserve(3);
             Tag(TypeTag::StringRef16, (offset >> 16) & 0x0f);
-            *reinterpret_cast<uint16_t*>(buf_.raw_buf() + pos_) = (uint16_t)offset;
+            *reinterpret_cast<uint16_t*>(buf_.data() + pos_) = (uint16_t)offset;
             pos_ += 2;
         } else {
             Reserve(5);
             Tag(TypeTag::StringRef32);
-            *reinterpret_cast<uint32_t*>(buf_.raw_buf() + pos_) = offset;
+            *reinterpret_cast<uint32_t*>(buf_.data() + pos_) = offset;
             pos_ += 4;
         }
     }
@@ -119,7 +119,7 @@ public:
         auto hash = Hash(v, len);
         auto ref = strings_.try_get(hash);
         if (ref) {
-            if (len == ref->Length && memcmp(v, buf_.raw_buf() + ref->StringOffset, len) == 0) {
+            if (len == ref->Length && memcmp(v, buf_.data() + ref->StringOffset, len) == 0) {
                 auto off = pos_ - ref->TagOffset;
                 StringRef(off);
                 return;
@@ -130,7 +130,7 @@ public:
         auto pos = pos_;
         LongTag(TypeTag::String, len);
         auto stringPos = pos_;
-        memcpy(buf_.raw_buf() + pos_, v, len);
+        memcpy(buf_.data() + pos_, v, len);
         pos_ += len;
 
         strings_.set(hash, PooledString{
@@ -181,7 +181,7 @@ public:
 
     STDString GetString()
     {
-        return STDString((char const*)buf_.raw_buf(), pos_);
+        return STDString((char const*)buf_.data(), pos_);
     }
 
 private:

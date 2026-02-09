@@ -2,6 +2,16 @@
 
 #include <GameDefinitions/CharacterCreation.h>
 
+BEGIN_NS(aio)
+
+struct Priority
+{
+    int field_0{ 1 };
+    float field_4{ .0f };
+};
+
+END_NS()
+
 BEGIN_SE()
 
 struct CustomIconComponent : public BaseComponent
@@ -384,12 +394,26 @@ struct VisualChangedSystem : public BaseSystem
     uint32_t FrameNo;
 };
 
+struct VisualLoadComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(VisualLoad, "ls::VisualLoadComponent")
+
+    aio::Priority Priority;
+};
+
+struct VisualStreamLoadComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(VisualStreamLoad, "ls::VisualStreamLoadComponent")
+
+    aio::Priority Priority;
+};
+
 struct VisualLoadDesciptionComponent : public BaseComponent
 {
     DEFINE_COMPONENT(VisualLoadDescription, "ls::VisualLoadDesciptionComponent")
 
     FixedString VisualTemplate;
-    uint16_t RenderFlags;
+    VisualLoadFlags Flags;
     uint8_t RenderChannel;
 };
 
@@ -405,7 +429,7 @@ struct VisualChangeRequestOneFrameComponent : public BaseComponent
     DEFINE_COMPONENT(VisualChangeRequest, "ls::VisualChangeRequestOneFrameComponent")
 
     FixedString VisualTemplate;
-    uint16_t RenderFlags;
+    VisualLoadFlags Flags;
 };
 
 struct VisualAttachRequestOneFrameComponent : public BaseComponent
@@ -842,8 +866,8 @@ struct VisualSystem : public BaseSystem
     [[bg3::hidden]] UnknownFunction field_168;
     HashMap<EntityHandle, bool> ReloadVisuals;
     HashMap<EntityHandle, uint32_t> ChangeSplatterState;
+    HashSet<EntityHandle> UpdateScale;
     HashMap<EntityHandle, uint32_t> SplatterType;
-    [[bg3::hidden]] __int64 field_268[6];
     bool ReloadAllVisuals;
     [[bg3::hidden]] void* LSVisualSystem;
     [[bg3::hidden]] void* CacheTemplateManager;

@@ -162,7 +162,7 @@ namespace NSE.DebuggerFrontend
             Console.Write(encoded);
         }
 
-        private void SendErrorReply(int requestSeq, string command, string errorText)
+        public void SendErrorReply(int requestSeq, string command, string errorText)
         {
             var reply = new DAPResponse
             {
@@ -188,18 +188,23 @@ namespace NSE.DebuggerFrontend
             Send(reply);
         }
 
-        public void SendReply(DAPRequest request, IDAPMessagePayload response)
+        public void SendReply(string command, int seq, IDAPMessagePayload response)
         {
             var reply = new DAPResponse
             {
                 type = "response",
-                request_seq = request.seq,
+                request_seq = seq,
                 success = true,
-                command = request.command,
+                command = command,
                 body = response
             };
 
             Send(reply);
+        }
+
+        public void SendReply(DAPRequest request, IDAPMessagePayload response)
+        {
+            SendReply(request.command, request.seq, response);
         }
 
         public void SendReply(DAPRequest request, string errorText)

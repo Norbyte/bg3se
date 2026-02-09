@@ -70,37 +70,7 @@ using FireStateEventProc = void(bg3se::ui::UIStateMachine*, bg3se::ui::UIStateMa
 
 void SetState(lua_State* L, FixedString state, std::optional<FixedString> subState, std::optional<bool> clearState, std::optional<int16_t> playerId)
 {
-    auto stateMachine = (*GetStaticSymbols().ls__gGlobalResourceManager)->UIManager->field_3B8.StateMachine;
-    auto fireStateEvent = (FireStateEventProc*)GetStaticSymbols().ls__UIStateMachine__FireStateEvent2;
-
-    bg3se::ui::UIStateMachine::EventResult result;
-    
-    bg3se::ui::UIStateMachine::ECSData ecs;
-    auto world = State::FromLua(L)->GetEntityWorld();
-    ecs.EntityWorld = world;
-    ecs.EntityWorld2 = world;
-    ecs.Storage = world->Storage;
-    ecs.QuerySystem = &world->Queries;
-    ecs.GroupAllocator = &world->GroupAllocator;
-
-    bg3se::ui::UIStateMachine::EntityContext context;
-    context.ECS = &ecs;
-
-    bg3se::ui::UIStateMachine::EventArgs args;
-    args.StateEvent = state;
-    if (subState) {
-        args.SubState = *subState;
-    }
-
-    if (clearState) {
-        args.RemoveState = *clearState;
-    }
-
-    if (playerId) {
-        args.PlayerId = *playerId;
-    }
-
-    fireStateEvent(stateMachine, result, context, args);
+    ERR("Ext.UI.SetState(): Deprecated");
 }
 
 bool RegisterType(lua_State* L, StringView name, HashMap<FixedString, bg3se::ui::CustomPropertyDefn> properties,

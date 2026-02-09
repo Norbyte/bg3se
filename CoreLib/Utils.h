@@ -15,10 +15,25 @@ void Debug(DebugMessageType type, _Printf_format_string_ char const * fmt, Args.
     }
 }
 
+template <typename... Args>
+void DebugLocal(DebugMessageType type, _Printf_format_string_ char const * fmt, Args... args)
+{
+    if (gCoreLibPlatformInterface.GlobalConsole) {
+        char buf[1024];
+        _snprintf_s(buf, std::size(buf), _TRUNCATE, fmt, args...);
+        gCoreLibPlatformInterface.GlobalConsole->LocalPrint(type, buf);
+    }
+}
+
 #define DEBUG(msg, ...) Debug(DebugMessageType::Debug, msg, __VA_ARGS__)
 #define INFO(msg, ...) Debug(DebugMessageType::Info, msg, __VA_ARGS__)
 #define WARN(msg, ...) Debug(DebugMessageType::Warning, msg, __VA_ARGS__)
 #define ERR(msg, ...) Debug(DebugMessageType::Error, msg, __VA_ARGS__)
+
+#define DEBUG_LOCAL(msg, ...) DebugLocal(DebugMessageType::Debug, msg, __VA_ARGS__)
+#define INFO_LOCAL(msg, ...) DebugLocal(DebugMessageType::Info, msg, __VA_ARGS__)
+#define WARN_LOCAL(msg, ...) DebugLocal(DebugMessageType::Warning, msg, __VA_ARGS__)
+#define ERR_LOCAL(msg, ...) DebugLocal(DebugMessageType::Error, msg, __VA_ARGS__)
 
 #define WARN_ONCE(msg, ...) { static bool _warned{false}; if (!_warned) { _warned = true; WARN(msg, __VA_ARGS__); } }
 

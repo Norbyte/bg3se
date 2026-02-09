@@ -2,15 +2,15 @@
 local Profiler = {}
 
 function Profiler:ShouldLikelyReport(time)
-    -- Base warning threshold is assumed to be the smallest, so we don't check the others
-    return Ext.Config.PerfMessagesEnabled and time >= Ext.Config.ProfilerCallbackWarningThreshold
+    -- Base error threshold is assumed to be the smallest, so we don't check the others
+    return Ext.Config.PerfMessagesEnabled and time >= Ext.Config.ProfilerCallbackErrorThreshold
 end
 
 function Profiler:ShouldReport(time)
     if self:IsLoading() then
-        return Ext.Config.PerfMessagesEnabled and time >= Ext.Config.ProfilerLoadCallbackWarningThreshold
+        return Ext.Config.PerfMessagesEnabled and time >= Ext.Config.ProfilerLoadCallbackErrorThreshold
     else
-        return Ext.Config.PerfMessagesEnabled and time >= Ext.Config.ProfilerCallbackWarningThreshold
+        return Ext.Config.PerfMessagesEnabled and time >= Ext.Config.ProfilerCallbackErrorThreshold
     end
 end
 
@@ -19,22 +19,10 @@ function Profiler:IsLoading()
     return state ~= "Running" and state ~= "Paused"
 end
 
-function Profiler:IsWarning(time)
-    if self:IsLoading() then
-        return time < Ext.Config.ProfilerLoadCallbackErrorThreshold
-    else
-        return time < Ext.Config.ProfilerCallbackErrorThreshold
-    end
-end
-
 function Profiler:Report(time, desc)
     if self:ShouldReport(time) then
         local msg = desc .. " took " .. (Ext.Math.Round(time) / 1000) .. " ms"
-        if self:IsWarning(time) then
-            Ext.Log.PrintWarning(msg)
-        else
-            Ext.Log.PrintError(msg)
-        end
+        Ext.Log.PrintWarning(msg)
     end
 end
 

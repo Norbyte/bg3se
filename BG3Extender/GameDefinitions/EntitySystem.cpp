@@ -865,6 +865,16 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
     initialized_ = true;
 }
 
+void EntitySystemHelpersBase::ValidatePropertyMapBindings()
+{
+    for (uint32_t componentType = 0; componentType < components_.size(); componentType++) {
+        if (!components_[componentType].Properties) {
+            ERR("[ECS] Component %s has no property map!",
+                EnumInfo<ExtComponentType>::Find((ExtComponentType)componentType).GetString());
+        }
+    }
+}
+
 void EntitySystemHelpersBase::MapComponentIndices(char const* componentName, ExtComponentType type, std::size_t size, bool isProxy)
 {
     auto it = componentNameToIndexMappings_.find(componentName);

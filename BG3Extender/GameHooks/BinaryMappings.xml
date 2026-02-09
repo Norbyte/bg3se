@@ -605,22 +605,6 @@
 
     <!--
 
-      <Mapping Name="esv::StatusMachine::CreateStatus">
-        <Condition Type="FixedString" Offset="0" Value="STORY_FROZEN" />
-        <Target Name="esv::StatusMachine::CreateStatus" Type="Indirect" Offset="25" Symbol="esv__StatusMachine__CreateStatus" />
-        <Target Name="esv::StatusMachine::ApplyStatus" Type="Indirect" Offset="41" Symbol="esv__StatusMachine__ApplyStatus" />
-        48 8D 15 ?? ?? ?? ?? // lea     rdx, fs_STORY_FROZEN
-        4C 8B 05 ?? ?? ?? ?? // mov     r8, cs:qword_144D7D670
-        48 8B CB // mov     rcx, rbx
-        45 33 C9 // xor     r9d, r9d
-        C6 44 24 20 00 // mov     [rsp+38h+var_18], 0
-        E8 ?? ?? ?? ?? // call    esv__StatusMachine__CreateStatus
-        48 8B D0 // mov     rdx, rax
-        48 8B CB // mov     rcx, rbx
-        48 83 C4 30 // add     rsp, 30h
-        5B // pop     rbx
-        E9 ?? ?? ?? ?? // jmp     esv__StatusMachine__ApplyStatus
-      </Mapping>
 
         <Mapping Name="esv::SurfaceActionFactory::AddSurfaceAction" Scope="Custom">
             <Target Type="Indirect" Offset="6" Symbol="esv__SurfaceManager__AddAction" />
@@ -873,7 +857,7 @@
       e8 ?? ?? ?? ?? // call    eoc__InterruptPrototypeManager__Terminate
       <Target Type="Indirect" Offset="@ref1" Symbol="eoc__SpellPrototypeManager" />
       <Target Type="Indirect" Offset="@ref3" Symbol="eoc__StatusPrototypeManager" />
-      <Target Type="Indirect" Offset="@ref7" Symbol="eoc__BoostPrototypeManager" />
+      <Target Type="Indirect" Offset="@ref5" Symbol="eoc__BoostPrototypeManager" />
       <Target Type="Indirect" Offset="@ref7" Symbol="eoc__PassivePrototypeManager" />
       <Target Type="Indirect" Offset="@ref9" Symbol="eoc__InterruptPrototypeManager" />
     </Mapping>
@@ -1013,20 +997,6 @@
       @ref2 e8 ?? ?? ?? ?? // call    Noesis::Visual::AddVisualChild(Noesis::Visual *)
       <Target Type="Indirect" Offset="@ref1" Symbol="Noesis__Visual__RemoveVisualChild" />
       <Target Type="Indirect" Offset="@ref2" Symbol="Noesis__Visual__AddVisualChild" />
-    </Mapping>
-
-    <Mapping Name="ls::UIStateMachine::FireStateEvent2" AllowFail="true">
-      44 0f b7 03 // movzx   r8d, word ptr [rbx]
-      @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, pfs_OpenTrade
-      48 8d 4c 24 30 // lea     rcx, [rsp+0A8h+var_78]
-      e8 ?? ?? ?? ?? // call    ls__UIStateMachine__EventArgs__Make
-      90 // nop
-      4c 8b c8 // mov     r9, rax
-      4c 8b c5 // mov     r8, rbp
-      48 8d 54 24 50 // lea     rdx, [rsp+0A8h+var_58]
-      48 8b ce // mov     rcx, rsi
-      @ref3 e8 ?? ?? ?? ?? // call    ls__UIStateMachine__FireStateEvent2
-      <Target Type="Indirect" Offset="@ref3" Symbol="ls__UIStateMachine__FireStateEvent2" />
     </Mapping>
 
     <!-- Sigs: exposed as "IsReachable" -->

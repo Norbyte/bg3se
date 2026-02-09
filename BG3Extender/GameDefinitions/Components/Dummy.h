@@ -211,27 +211,25 @@ struct CameraOffsetComponent : public BaseComponent
 {
     DEFINE_COMPONENT(PhotoModeCameraOffset, "ecl::photo_mode::CameraOffsetComponent")
 
-    glm::vec3 field_0;
-    glm::vec3 field_C;
+    glm::vec3 Offset;
+    glm::vec3 Offset2;
 };
 
 struct CameraSavedTransformComponent : public BaseComponent
 {
     DEFINE_COMPONENT(PhotoModeCameraSavedTransform, "ecl::photo_mode::CameraSavedTransformComponent")
 
-    Transform field_0;
-    int field_28;
-    int field_2C;
-    int field_30;
-    int field_34;
+    Transform Transform;
+    glm::vec3 CameraOffset;
+    float CameraTilt;
 };
 
 struct CameraTiltComponent : public BaseComponent
 {
     DEFINE_COMPONENT(PhotoModeCameraTilt, "ecl::photo_mode::CameraTiltComponent")
 
-    float field_0;
-    float field_4;
+    float Tilt;
+    float Tilt2;
 };
 
 struct CameraTrackingComponent : public BaseComponent
@@ -248,22 +246,19 @@ struct DummyAnimationUpdateSingletonComponent : public BaseComponent
     HashMap<EntityHandle, ecl::dummy::AnimationState> Updates;
 };
 
+struct DummyEquipmentVisualVisibility
+{
+    bool Vanity;
+    bool Helmet;
+    bool Weapon;
+    bool MusicalInstrument;
+};
+
 struct DummyEquipmentSetupOneFrameComponent : public BaseComponent
 {
     DEFINE_COMPONENT(PhotoModeDummyEquipmentSetupOneFrame, "ecl::photo_mode::DummyEquipmentSetupOneFrameComponent")
 
-    uint8_t field_0;
-    uint8_t field_1;
-    uint8_t field_2;
-    uint8_t field_3;
-};
-
-struct DummyEquipmentVisualVisibility
-{
-    uint8_t field_0;
-    uint8_t field_1;
-    uint8_t field_2;
-    uint8_t field_3;
+    DummyEquipmentVisualVisibility Visibility;
 };
 
 struct DummyEquipmentVisualUpdateSingletonComponent : public BaseComponent

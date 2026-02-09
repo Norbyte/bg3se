@@ -125,6 +125,7 @@ public:
         ImGui_ImplDX11_Init(device_, context_);
 
         initializationFailed_ = false;
+        renderObjectsCreated_ = false;
         initialized_ = true;
     }
 
@@ -135,6 +136,7 @@ public:
         IMGUI_DEBUG("DX11Backend::DestroyUI()");
         ImGui_ImplDX11_Shutdown();
         initialized_ = false;
+        renderObjectsCreated_ = false;
     }
 
     void NewFrame() override
@@ -145,6 +147,7 @@ public:
         if (requestReloadFonts_) {
             OPTICK_EVENT("InvalidateDeviceObjects", Optick::Category::Rendering);
             IMGUI_DEBUG("Rebuilding font atlas");
+            renderObjectsCreated_ = false;
             ImGui_ImplDX11_InvalidateDeviceObjects();
             requestReloadFonts_ = false;
             initializationFailed_ = false;
@@ -156,6 +159,8 @@ public:
             initializationFailed_ = !ImGui_ImplDX11_CreateDeviceObjects();
             if (initializationFailed_) {
                 ERR("Failed to initialize IMGUI DX11 backend!");
+            } else {
+                renderObjectsCreated_ = true;
             }
         }
 
@@ -321,10 +326,16 @@ private:
         /* [in] */ UINT SyncInterval,
         /* [in] */ UINT Flags)
     {
-        if (pSwapChain != swapChain_ || !initialized_ || drawViewport_ == -1) return;
+        if (pSwapChain != swapChain_
+            || !initialized_
+            || initializationFailed_
+            || !renderObjectsCreated_
+            || drawViewport_ == -1) {
+            return;
+        }
 
         auto& vp = viewports_[drawViewport_].Viewport;
-        if (!vp.DrawDataP.Valid || initializationFailed_) return;
+        if (!vp.DrawDataP.Valid) return;
 
         ImGui_ImplDX11_RenderDrawData(&vp.DrawDataP);
     }
@@ -359,6 +370,7 @@ private:
     IDXGISwapChain* swapChain_{ nullptr };
 
     bool initialized_{ false };
+    bool renderObjectsCreated_{ false };
     bool initializationFailed_{ false };
     bool requestReloadFonts_{ false };
     uint32_t width_{ 0 };

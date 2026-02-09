@@ -1476,7 +1476,7 @@ void InputText::StyledRender(DrawingContext& context)
     }
 
     auto flags = (ImGuiInputTextFlags)Flags | ImGuiInputTextFlags_CallbackResize;
-    if (ImGui::InputTextEx(Label.c_str(), Hint ? Hint->c_str() : nullptr, Text.data(), Text.capacity(), context.Scale(ToImVec(SizeHint)), 
+    if (ImGui::InputTextEx(Label.c_str(), Hint ? Hint->c_str() : nullptr, Text.data(), Text.capacity()+1, context.Scale(ToImVec(SizeHint)), 
         flags, &InputTextCallback, this)) {
 
         if (OnChange) {
