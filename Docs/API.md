@@ -61,7 +61,7 @@ To start using the extension in your mod, a configuration file must be created t
 Create a file at `Mods\YourMod\ScriptExtender\Config.json` with the following contents, then tweak the values as desired:
 ```json
 {
-    "RequiredVersion": 1,
+    "RequiredVersion": 29,
     "ModTable": "YOUR_MOD_NAME_HERE",
     "FeatureFlags": ["Lua"]
 }
@@ -72,7 +72,7 @@ Meaning of configuration keys:
 | Key | Meaning |
 |--|--|
 | `RequiredVersion` | Osiris Extender version required to run the mod. It is recommended to use the version number of the Script Extender you used for developing the mod since the behavior of new features and backwards compatibility functions depends on this version number. |
-| `ModTable` | Name of the mod in the global mod table (`Mods`) when using Lua. This name is required to use Lua scripting, and must be unique. |
+| `ModTable` | Name of the mod in the global mod table (`Mods`) when using Lua. This name is required to use Lua scripting, and must be unique.<br/>It has no relation with the `Folder` value from your meta.lsx. |
 | `FeatureFlags` | A list of features that the mod is using. For performance reasons it is recommended to only list features that are actually in use. |
 
 The following features are accepted in `FeatureFlags`:
@@ -80,6 +80,8 @@ The following features are accepted in `FeatureFlags`:
 | Value| Meaning |
 |--|--|
 | `Lua` | Enables Lua scripting |
+
+
 <!-- | `Osiris` | Enables Osiris scripting? | -->
 
 <a id="bootstrap-scripts"></a>
@@ -967,14 +969,19 @@ function NetChannel:RequestToClient(data, user, replyCallback) end
 #### Usage patterns and examples
 
 This section provides some pseudo-code examples of how to use the NetChannel API under different scenarios.
+It is recommended to create the same channels in both contexts, e.g. within Shared files that both server and client contexts import before their main logic.
 
 ##### 1) Server-side handler that calls Osiris using data from the payload
 
 ```lua
--- Server side: handle requests
+-- Shared: create channels for both server and client
 Channels = {}
-Channels.TemplateAddTo = Net.CreateChannel(ModuleUUID, "TemplateAddTo")
+Channels.TemplateAddTo = Ext.Net.CreateChannel(ModuleUUID, "TemplateAddTo")
+return Channels
 
+---
+
+-- Server side: handle requests
 -- Using SetHandler: note there's no reply callback
 Channels.TemplateAddTo:SetHandler(function(data, user)
     for _, v in pairs(data.Items) do
@@ -984,12 +991,16 @@ Channels.TemplateAddTo:SetHandler(function(data, user)
     end
 end)
 
+---
+
 -- Client side: send message to server
 Channels.TemplateAddTo:SendToServer({
     Items = { {"item-template-guid-1", 1}, {"item-template-guid-2", 2} },
     Target = someEntityId
 })
 ```
+
+In the following examples, channel creation may be partially omitted for brevity.
 
 ##### 2) Request / reply (client requests some data from the server)
 
@@ -1012,8 +1023,9 @@ This pattern allows the caller to perform work after the reply arrives without s
 ##### 3) Broadcast & sync (server pushes global state)
 
 ```lua
+Channels.SyncSettings = Ext.Net.CreateChannel(ModuleUUID, "SyncSettings")
+
 -- Client side: message handler for SyncSettings
-Channels.SyncSettings = Net.CreateChannel(ModuleUUID, "SyncSettings")
 Channels.SyncSettings:SetHandler(function(data, user)
     ModSettings = data.Settings
     _P("Received mod settings sync from server")
@@ -1026,8 +1038,9 @@ Channels.SyncSettings:Broadcast({ Settings = MCM.GetCurrentSettings() })
 ##### 4) Targeted messages (server → specific client)
 
 ```lua
+Channels.ChangeAppearance = Ext.Net.CreateChannel(ModuleUUID, "ChangeAppearance")
+
 -- Server side: send data to a specific client (determined by clientId)
-Channels.ChangeAppearance = Net.CreateChannel(ModuleUUID, "ChangeAppearance")
 local clientId = ...
 Channels.ChangeAppearance:SendToClient({ CCAData = {...} }, clientId)
 ```
