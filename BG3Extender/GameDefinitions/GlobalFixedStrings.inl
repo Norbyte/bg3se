@@ -166,6 +166,8 @@ FS(Trade);
 FS(Pop);
 
 // Genome type names
+FS(Bool);
+FS(Float);
 FS(Int);
 FS(Enum);
 FS(String);
@@ -174,6 +176,11 @@ FS(Vector3);
 FS(Rotator3);
 FS(Float3x3);
 FS(Float4x4);
+FS(FloatSet);
+FS(IntSet);
+FS(ShortNameSet);
+FS(StringSet);
+FS(FixedStringSet);
 FS(AnimationSimpleName);
 FS(AnimationSetID);
 FS(AnimationComplexName);

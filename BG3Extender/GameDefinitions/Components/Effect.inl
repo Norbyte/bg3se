@@ -40,7 +40,9 @@ EntityHandle HandlerSystem::InitMultiEffect(EffectHandlerInitInfo info)
     auto sceneRoot = ecs.GetSingletonEntity<SceneComponent>();
     auto scene = ecs.GetComponent<SceneComponent>(sceneRoot);
 
-    auto effect = ecs.GetEntityWorld()->Deferred()->CreateEntityImmediate();
+    auto ecb = ecs.GetEntityWorld()->Deferred();
+    auto effect = ecb->CreateEntityImmediate();
+    //ecb->CreateComponent();
     auto ops = ecs.GetComponentOps<HandlerComponent>();
     ops->AddImmediateDefaultComponent(effect.Handle, 0);
 

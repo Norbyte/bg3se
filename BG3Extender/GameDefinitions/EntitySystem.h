@@ -105,6 +105,14 @@ struct alignas(64) MPMCQueueBounded : public ProtectedGameObject<MPMCQueueBounde
     };
 };
 
+
+template <class T>
+struct alignas(64) SynchronizedMPMCQueueBounded : public ProtectedGameObject<SynchronizedMPMCQueueBounded<T>>
+{
+    SRWLOCK Lock;
+    MPMCQueueBounded<T> Queue;
+};
+
 END_SE()
 
 BEGIN_NS(ecs)

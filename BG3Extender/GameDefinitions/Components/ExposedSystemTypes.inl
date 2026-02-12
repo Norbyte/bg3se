@@ -1,3 +1,4 @@
+T(AnimationBlueprintSystem)
 T(AnimationSetSystem)
 T(EffectsManager)
 T(VisualChangeRequestSystem)

@@ -56,6 +56,7 @@ BEGIN_SE()
 
 
 void InitializeEnumerations();
+void RegisterEnumerationTypeInformation();
 
 
 #define BEGIN_BITMASK_NS(NS, T, luaName, type, id) \

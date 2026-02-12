@@ -26,8 +26,8 @@ struct EffectComponent : public BaseProxyComponent
     [[bg3::hidden]] uint64_t _Pad;
 };
 
-DEFINE_ONEFRAME_TAG_COMPONENT(ls, EffectCreateOneFrameComponent, EffectCreate);
-DEFINE_TAG_COMPONENT(ls, AlwaysUpdateEffectComponent, AlwaysUpdateEffect);
+DEFINE_ONEFRAME_TAG_COMPONENT(ls, EffectCreateOneFrameComponent, EffectCreate)
+DEFINE_TAG_COMPONENT(ls, AlwaysUpdateEffectComponent, AlwaysUpdateEffect)
 
 struct GameplayEffectSetTimeFactorRequestsSingletonComponent : public BaseComponent
 {

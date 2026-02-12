@@ -315,8 +315,7 @@ typename std::enable_if_t<std::is_enum_v<T>, bool> Validate(T const* v, Overload
 inline bool Validate(ecs::EntityRef const* g, Overload<ecs::EntityRef>)
 {
     // TODO - check if World points to a valid EntityWorld?
-    CHECK((g->World == nullptr && !g->Handle)
-        || (g->World != nullptr && (bool)g->Handle));
+    CHECK(!g->Handle || (g->World != nullptr && (bool)g->Handle));
     return true;
 }
 
@@ -388,7 +387,7 @@ bool ValidateLinearContainer(TE const* buf, uint64_t size, uint64_t capacity)
 template <class TE>
 bool ValidateRef(Array<TE> const* v, Overload<Array<TE>>)
 {
-    return ValidateLinearContainer(v->raw_buf(), v->size(), v->capacity());
+    return ValidateLinearContainer(v->data(), v->size(), v->capacity());
 }
 
 template <class TE>
@@ -481,13 +480,13 @@ bool ValidateRef(Noesis::Vector<TE, N> const* v, Overload<Noesis::Vector<TE, N>>
 template <class TE>
 bool ValidateRef(StaticArray<TE> const* v, Overload<StaticArray<TE>>)
 {
-    return ValidateLinearContainer(v->raw_buf(), v->size(), v->size());
+    return ValidateLinearContainer(v->data(), v->size(), v->size());
 }
 
 template <class TE>
 bool ValidateRef(UninitializedStaticArray<TE> const* v, uint32_t initializedSize, Overload<UninitializedStaticArray<TE>>)
 {
-    return ValidateLinearContainer(v->raw_buf(), initializedSize, v->size());
+    return ValidateLinearContainer(v->data(), initializedSize, v->size());
 }
 
 template <class TK, class TV>

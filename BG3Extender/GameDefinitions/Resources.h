@@ -352,7 +352,7 @@ struct [[bg3::hidden]] ResourceManager
     LegacyMap<FixedString, Path*> Sources;
     Array<void*> VisualLoaders;
     LegacyMap<FixedString, void*> GenomeAnimationManagers;
-    void* GenomeTypeManager;
+    gn::GenomeTypeManager* GenomeTypeManager;
     ui::UIManager* UIManager;
     ui::UIManager* UIManagerSwap;
 };
@@ -688,7 +688,7 @@ struct VisualSet
     PresetData MaterialOverrides;
     LegacyMap<FixedString, PresetData> Materials;
     HashMap<FixedString, FixedString> RealMaterialOverrides;
-    HashMap<FixedString, FixedString> field_158;
+    [[bg3::legacy(field_158)]] HashMap<FixedString, FixedString> MaterialRemaps;
     FixedString ID;
     bool ShowEquipmentVisuals;
 };

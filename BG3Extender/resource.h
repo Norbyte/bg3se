@@ -2,19 +2,11 @@
 // Microsoft Visual C++ generated include file.
 // Used by BG3Extender.rc
 //
-#define RES_DLL_MAJOR_VERSION           29
-#define RES_DLL_VERSION_STRING          "29.0.0.0"
+#define RES_DLL_MAJOR_VERSION           30
+#define RES_DLL_VERSION_STRING          "30.0.0.0"
 
 #define IDR_LUA_BUILTIN_BUNDLE          101
 #define IDR_BINARY_MAPPINGS             107
-
-#if defined(USE_GAME_SYMBOL_TABLE)
-#define IDR_SYMBOL_TABLE_GAME           109
-#endif
-
-#if defined(USE_DBG_SYMBOL_TABLE)
-#define IDR_SYMBOL_TABLE_EXTENDER       110
-#endif
 
 // Next default values for new objects
 // 

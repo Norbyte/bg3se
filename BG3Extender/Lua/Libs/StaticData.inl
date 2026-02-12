@@ -130,7 +130,7 @@ private:
         // The game may still reference the old resources, so ensure that a copy is kept of the old buffer
         // (This leaks memory!)
         auto curSize = bank_->Resources.keys().size();
-        auto oldResources = bank_->Resources.raw_values().raw_buf();
+        auto oldResources = bank_->Resources.raw_values().data();
         T* newResources = GameMemoryAllocator::NewRaw<T>(curSize);
         for (uint32_t i = 0; i < curSize; i++) {
             new (newResources + i) T(oldResources[i]);

@@ -13,7 +13,7 @@ struct ArmorComponent : public BaseComponent
     int ArmorClass;
     int AbilityModifierCap;
     uint8_t ArmorClassAbility;
-    EEquipmentType EquipmentType;
+    [[bg3::legacy(EquipmentType)]] bool Shield;
 };
 
 struct ArmorSetStateComponent : public BaseComponent
@@ -157,15 +157,15 @@ struct WeaponComponent : public BaseComponent
 {
     DEFINE_COMPONENT(Weapon, "eoc::WeaponComponent")
 
-    LegacyRefMap<AbilityId, Array<RollDefinition>> Rolls;
-    LegacyRefMap<AbilityId, Array<RollDefinition>> Rolls2;
+    LegacyRefMap<DamageType, Array<RollDefinition>> Rolls;
+    [[bg3::legacy(Rolls2)]] LegacyRefMap<DamageType, Array<RollDefinition>> VersatileRolls;
     float WeaponRange;
     float DamageRange;
     stats::Functors* WeaponFunctors;
     uint32_t WeaponProperties;
     uint8_t WeaponGroup;
-    AbilityId Ability;
-    [[bg3::legacy(field_38)]] Array<StatsExpressionWithMetadata> DamageValues;
+    [[bg3::legacy(Ability)]] DamageType DamageType;
+    [[bg3::legacy(field_38), bg3::legacy(DamageValues)]] Array<StatsExpressionWithMetadata> AttackRollBonus;
     DiceSizeId DamageDice;
     DiceSizeId VersatileDamageDice;
 };

@@ -506,12 +506,12 @@ public:
 
     std::span<TValue> values()
     {
-        return std::span(Values.raw_buf(), Values.raw_buf() + this->Keys.size());
+        return std::span(Values.data(), Values.data() + this->Keys.size());
     }
 
     std::span<TValue const> values() const
     {
-        return std::span(Values.raw_buf(), Values.raw_buf() + this->Keys.size());
+        return std::span(Values.data(), Values.data() + this->Keys.size());
     }
 
     UninitializedStaticArray<TValue>& raw_values()
@@ -710,7 +710,7 @@ public:
 
     void Build(Array<TK> const& keys, Array<TV> const& values)
     {
-        auto hashSize = GetHashSizeFor(std::span<TK const>(keys.raw_buf(), keys.raw_buf() + keys.size()), 2);
+        auto hashSize = GetHashSizeFor(std::span<TK const>(keys.data(), keys.data() + keys.size()), 2);
         Build(hashSize, keys, values);
     }
 

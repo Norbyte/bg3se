@@ -120,7 +120,7 @@ struct GTSFile
 
     bool ReadHeader(char const*& reason)
     {
-        auto buf = Buf.raw_buf();
+        auto buf = Buf.data();
         Header = reinterpret_cast<GTSHeader*>(buf);
         if (Header->Magic != GTSHeader::GRPGMagic || Header->CurrentVersion != GTSHeader::CurrentVersion) {
             reason = "Incorrect GTS magic number or version";
@@ -162,7 +162,7 @@ struct GTSFile
 
     bool ReadMetadata(char const*& reason)
     {
-        auto buf = Buf.raw_buf();
+        auto buf = Buf.data();
         Layers = std::span<GTSTileSetLayer>(reinterpret_cast<GTSTileSetLayer*>(buf + Header->LayersOffset), Header->NumLayers);
         Levels = std::span<GTSTileSetLevel>(reinterpret_cast<GTSTileSetLevel*>(buf + Header->LevelsOffset), Header->NumLevels);
         PerLevelFlatTileIndices.resize(Header->NumLevels);
@@ -209,7 +209,7 @@ struct GTSFile
 
     bool ReadTiles(char const*& reason)
     {
-        auto buf = Buf.raw_buf();
+        auto buf = Buf.data();
         PageFiles = std::span<GTSPageFileInfo>(reinterpret_cast<GTSPageFileInfo*>(buf + Header->PageFileMetadataOffset), Header->NumPageFiles);
         PackedTileIDs = std::span<GTSPackedTileID>(reinterpret_cast<GTSPackedTileID*>(buf + Header->PackedTileIDsOffset), Header->NumPackedTileIDs);
         FlatTileInfos = std::span<GTSFlatTileInfo>(reinterpret_cast<GTSFlatTileInfo*>(buf + Header->FlatTileInfoOffset), Header->NumFlatTileInfos);
@@ -241,7 +241,7 @@ struct GTSFile
 
     bool ReadFourCC(char const*& reason)
     {
-        auto buf = Buf.raw_buf();
+        auto buf = Buf.data();
         FourCC = FourCCNode(reinterpret_cast<GTSFourCCMetadata*>(buf + Header->FourCCListOffset), Header->FourCCListSize);
 
         auto meta = FourCC.Enter('META');
@@ -421,7 +421,7 @@ struct FourCCWriter
     T* Advance()
     {
         RequestBytes(sizeof(T));
-        auto ptr = (T*)(Buf.raw_buf() + Offset);
+        auto ptr = (T*)(Buf.data() + Offset);
         Offset += sizeof(T);
         return ptr;
     }
@@ -458,7 +458,7 @@ struct FourCCWriter
         meta->Length = (uint16_t)size;
 
         RequestBytes(size);
-        memcpy(Buf.raw_buf() + Offset, val, size);
+        memcpy(Buf.data() + Offset, val, size);
         Offset += size;
 
         while ((Offset % 4) != 0)
@@ -480,10 +480,10 @@ struct FourCCWriter
     void EndNode()
     {
         auto off = Stack.pop_last();
-        auto meta = (GTSFourCCMetadata*)(Buf.raw_buf() + off);
+        auto meta = (GTSFourCCMetadata*)(Buf.data() + off);
         auto len = Offset - off - sizeof(GTSFourCCMetadata) - sizeof(uint32_t);
         meta->Length = (uint16_t)len;
-        auto len2 = (uint32_t*)(Buf.raw_buf() + off + sizeof(GTSFourCCMetadata));
+        auto len2 = (uint32_t*)(Buf.data() + off + sizeof(GTSFourCCMetadata));
         *len2 = ((uint32_t)len >> 16);
     }
 };
@@ -772,15 +772,15 @@ struct GTSStitchedFile
         f.write((char const*)&Header, sizeof(Header));
 
         Header.LayersOffset = (uint32_t)f.tellp();
-        f.write((char const*)Layers.raw_buf(), sizeof(GTSTileSetLayer) * Layers.size());
+        f.write((char const*)Layers.data(), sizeof(GTSTileSetLayer) * Layers.size());
 
         for (uint32_t i = 0; i < Levels.size(); i++) {
             Levels[i].FlatTileIndicesOffset = (uint32_t)f.tellp();
-            f.write((char const*)PerLevelFlatTileIndices[i].raw_buf(), sizeof(uint32_t) * PerLevelFlatTileIndices[i].size());
+            f.write((char const*)PerLevelFlatTileIndices[i].data(), sizeof(uint32_t) * PerLevelFlatTileIndices[i].size());
         }
 
         Header.LevelsOffset = (uint32_t)f.tellp();
-        f.write((char const*)Levels.raw_buf(), sizeof(GTSTileSetLevel) * Levels.size());
+        f.write((char const*)Levels.data(), sizeof(GTSTileSetLevel) * Levels.size());
 
         for (uint32_t i = 0; i < ParameterBlocks.size(); i++) {
             ParameterBlocks[i].FileInfoOffset = (uint32_t)f.tellp();
@@ -788,13 +788,13 @@ struct GTSStitchedFile
         }
 
         Header.ParameterBlockHeadersOffset = (uint32_t)f.tellp();
-        f.write((char const*)ParameterBlocks.raw_buf(), sizeof(GTSParameterBlockHeader) * ParameterBlocks.size());
+        f.write((char const*)ParameterBlocks.data(), sizeof(GTSParameterBlockHeader) * ParameterBlocks.size());
 
         Header.PageFileMetadataOffset = (uint32_t)f.tellp();
-        f.write((char const*)PageFiles.raw_buf(), sizeof(GTSPageFileInfo) * PageFiles.size());
+        f.write((char const*)PageFiles.data(), sizeof(GTSPageFileInfo) * PageFiles.size());
 
         Header.FourCCListOffset = (uint32_t)f.tellp();
-        f.write((char const*)FourCC.Buf.raw_buf(), FourCC.Offset);
+        f.write((char const*)FourCC.Buf.data(), FourCC.Offset);
 
         Header.ThumbnailsOffset = (uint32_t)f.tellp();
         GTSThumbnailInfoHeader thumb;
@@ -802,10 +802,10 @@ struct GTSStitchedFile
         f.write((char const*)&thumb, sizeof(GTSThumbnailInfoHeader));
 
         Header.PackedTileIDsOffset = (uint32_t)f.tellp();
-        f.write((char const*)PackedTileIDs.raw_buf(), sizeof(GTSPackedTileID) * PackedTileIDs.size());
+        f.write((char const*)PackedTileIDs.data(), sizeof(GTSPackedTileID) * PackedTileIDs.size());
 
         Header.FlatTileInfoOffset = (uint32_t)f.tellp();
-        f.write((char const*)FlatTileInfos.raw_buf(), sizeof(GTSFlatTileInfo) * FlatTileInfos.size());
+        f.write((char const*)FlatTileInfos.data(), sizeof(GTSFlatTileInfo) * FlatTileInfos.size());
 
         f.seekp(0, std::ios::beg);
         f.write((char const*)&Header, sizeof(Header));

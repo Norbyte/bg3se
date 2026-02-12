@@ -466,6 +466,7 @@ struct ZoneBlockReasonComponent : public BaseComponent
 
 DEFINE_TAG_COMPONENT(eoc::ftb, IsFtbPausedComponent, FTBPaused)
 DEFINE_TAG_COMPONENT(eoc::ftb, IsInFtbComponent, IsInFTB)
+DEFINE_TAG_COMPONENT(eoc::ftb, RespectComponent, FTBRespect)
 
 END_NS()
 

@@ -193,6 +193,8 @@ public:
         components_[(unsigned)type].Properties = pm;
     }
 
+    void ValidatePropertyMapBindings();
+
     template <class T>
     T* GetComponent(FixedString const& guid)
     {

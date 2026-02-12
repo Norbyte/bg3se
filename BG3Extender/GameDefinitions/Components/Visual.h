@@ -866,8 +866,8 @@ struct VisualSystem : public BaseSystem
     [[bg3::hidden]] UnknownFunction field_168;
     HashMap<EntityHandle, bool> ReloadVisuals;
     HashMap<EntityHandle, uint32_t> ChangeSplatterState;
+    HashSet<EntityHandle> UpdateScale;
     HashMap<EntityHandle, uint32_t> SplatterType;
-    [[bg3::hidden]] __int64 field_268[6];
     bool ReloadAllVisuals;
     [[bg3::hidden]] void* LSVisualSystem;
     [[bg3::hidden]] void* CacheTemplateManager;

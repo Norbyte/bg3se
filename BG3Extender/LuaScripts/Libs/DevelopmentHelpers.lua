@@ -81,8 +81,10 @@ local function ValidateClientCharacter(component, entity, counters)
     DebugValidate(component.Template, entity, counters)
 
     DebugValidate(component.InputController, entity, counters)
-    for i,task in pairs(component.InputController.Tasks) do
-        DebugValidate(task, entity, counters)
+    if component.InputController ~= nil then
+        for i,task in pairs(component.InputController.Tasks) do
+            DebugValidate(task, entity, counters)
+        end
     end
                     
     DebugValidate(component.PlayerData, entity, counters)
@@ -129,6 +131,20 @@ local function ValidateEntities()
     _P("Done.")
 end
 
+local function ValidateSystems()
+    _P("Validating all systems ...")
+    for i,name in pairs(Ext.Enums.ExtSystemType) do
+        if type(i) == "number" then
+            if name ~= "ServerDialog" and name ~= "PickingHelper" and name ~= "Max" then
+                local sys = Ext.System[name]
+                if sys ~= nil then
+                    Ext.Types.Validate(sys)
+                end
+            end
+        end
+    end
+end
+
 local function ValidateAppliedMaterial(mat)
     if Ext.Types.Validate(mat) then
         Ext.Types.Validate(mat.Material)
@@ -154,8 +170,12 @@ local function ValidateVisual(visual)
         for i,slot in pairs(visual.SkeletonSlots) do
             Ext.Types.Validate(slot)
             Ext.Types.Validate(slot.Skeleton)
-            Ext.Types.Validate(slot.Skeleton.Physics)
-            Ext.Types.Validate(slot.Skeleton.SkeletonContent)
+            if slot.Skeleton.SkeletonContent ~= nil then
+                Ext.Types.Validate(slot.Skeleton.SkeletonContent)
+            end
+            if slot.Skeleton.Physics ~= nil then
+                Ext.Types.Validate(slot.Skeleton.Physics)
+            end
         end
 
         for i,obj in pairs(visual.ObjectDescs) do
@@ -509,12 +529,45 @@ function WatchSingletons()
     end)
 end
 
+local function WatchSystems()
+    _P("Validating all systems ...")
+    local numWatchers = 0
+    for i,name in pairs(Ext.Enums.ExtSystemType) do
+        if type(i) == "number" then
+            if name ~= "ServerDialog" and name ~= "PickingHelper" and name ~= "Max" then
+                local sys = Ext.System[name]
+                if sys ~= nil then
+                    Ext.Entity.OnSystemUpdate(name, function () 
+                        Ext.Types.Validate(Ext.System[name])
+                    end)
+                    Ext.Entity.OnSystemPostUpdate(name, function () 
+                        Ext.Types.Validate(Ext.System[name])
+                    end)
+                    numWatchers = numWatchers + 1
+                end
+            end
+        end
+    end
+
+    print("Set up watcher for " .. numWatchers .. " systems")
+end
+
 Ext.RegisterConsoleCommand("se_watchsingletons", function ()
     WatchSingletons()
 end)
 
+Ext.RegisterConsoleCommand("se_watchsystems", function ()
+    WatchSystems()
+end)
+
 Ext.RegisterConsoleCommand("se_entitytest", function ()
+    Ext.Debug.SetEntityRuntimeCheckLevel(0)
     ValidateEntities()
+end)
+
+Ext.RegisterConsoleCommand("se_systemtest", function ()
+    Ext.Debug.SetEntityRuntimeCheckLevel(0)
+    ValidateSystems()
 end)
 
 Ext.RegisterConsoleCommand("se_serializertest", function ()
@@ -566,6 +619,7 @@ Ext.RegisterConsoleCommand("se_deepfry", function ()
     ValidateStaticData()
     ValidateResources()
     ValidateStats()
+    ValidateSystems()
     ValidateEntities()
     ValidateVisuals()
     ValidateEffects()

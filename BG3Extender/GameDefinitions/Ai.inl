@@ -345,7 +345,7 @@ std::span<AiSubgridId const> AiGrid::GetSubgridsAt(AiWorldPos const& pos) const
         | ((uint64_t)(uint32_t)(int32_t)floor(pos.Zglobal / PatchSize) << 32);
     auto subgrids = SubgridsAtPatch.find(gridKey);
     if (subgrids != SubgridsAtPatch.end()) {
-        return std::span<AiSubgridId const>(subgrids.Value().raw_buf(), subgrids.Value().raw_buf() + subgrids.Value().size());
+        return std::span<AiSubgridId const>(subgrids.Value().data(), subgrids.Value().data() + subgrids.Value().size());
     } else {
         return {};
     }

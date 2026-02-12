@@ -4,7 +4,7 @@
 #include "Enumerations.h"
 #include "EntitySystem.h"
 #include "Module.h"
-#include <glm/gtc/quaternion.hpp>
+#include <GameDefinitions/Components/Camera.h>
 
 BEGIN_NS(esv)
 
@@ -53,11 +53,6 @@ namespace bg3se
             char field_40;
             TranslatedString field_44;
             void* UpdateProc;
-        };
-
-        struct GlobalCameraSwitches
-        {
-            float field_0[101];
         };
 
         struct ControlSwitch
@@ -363,7 +358,7 @@ namespace bg3se
         uint8_t field_77E;
         int ServerFrameCap;
 
-        GlobalCameraSwitches CameraSwitches[4];
+        std::array<CameraGlobalSwitches, 4> CameraSwitches;
         ControlSwitch ControlSwitches;
         SomeSetting SomeSettings[72];
 

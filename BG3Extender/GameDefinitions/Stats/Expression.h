@@ -82,10 +82,10 @@ BY_VAL(StatsExpressionRef);
 
 struct StatsExpressionWithMetadata : public StatsExpressionInternal
 {
-    uint8_t field_28;
+    BoostType BoostType;
     BoostSource Cause;
-    TranslatedString field_48;
-    uint8_t field_58;
+    TranslatedString BoostSourceName;
+    bool CriticalHit;
 };
 
 struct StaticStatsExpressionManager : public ProtectedGameObject<StaticStatsExpressionManager>

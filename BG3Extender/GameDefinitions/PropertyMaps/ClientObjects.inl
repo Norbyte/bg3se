@@ -46,3 +46,10 @@ P_BITMASK(Flags2)
 P(Flags3)
 P_BITMASK(Flags3)
 END_CLS()
+
+
+BEGIN_CLS(AnimationBlueprintSystem)
+INHERIT(BaseSystem)
+P_FUN(QueueGameplayEventToGenome, AnimationBlueprintSystem::LuaQueueGameplayEventToGenome)
+P_FUN(QueueGameplayEventFromGenome, AnimationBlueprintSystem::LuaQueueGameplayEventFromGenome)
+END_CLS()

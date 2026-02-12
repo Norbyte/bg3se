@@ -270,7 +270,7 @@ struct ResurrectFunctor : public Functor
 
     float Probability{ 1.0f }; // Arg0
     float HealthPercentage{ 1.0f }; // Arg1
-    TargetTypeFlags HealingType{ 0 };
+    HealingType HealingType{ 0 };
 };
 
 struct SabotageFunctor : public Functor
@@ -398,7 +398,7 @@ struct RegainHitPointsFunctor : public Functor
     DEFN_FUNCTOR(RegainHitPoints)
 
     StatsExpressionRef HitPoints;
-    TargetTypeFlags HealingType{ TargetTypeFlags::Living };
+    HealingType HealingType{ HealingType::Living };
 };
 
 struct TeleportSourceFunctor : public Functor

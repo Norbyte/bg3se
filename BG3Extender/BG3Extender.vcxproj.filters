@@ -522,6 +522,7 @@
     <ClInclude Include="Extender\Client\VisualHelpers.h" />
     <ClInclude Include="Extender\Shared\Optick.h" />
     <ClInclude Include="GameDefinitions\Components\Effect.h" />
+    <ClInclude Include="GameDefinitions\Base\Genome.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

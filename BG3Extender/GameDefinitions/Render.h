@@ -869,8 +869,9 @@ struct LightSystem : public BaseSystem
     HashMap<EntityHandle, LightUpdateFadeRequest> FadeIntensity;
     HashMap<EntityHandle, LightUpdateFadeRequest> FadeIntensityOffset;
     HashSet<EntityHandle> ExplicitUpdateTransform;
-    HashSet<EntityHandle> CheckFlickering;
-    HashSet<EntityHandle> CheckMoving;
+    // Editor only
+    // HashSet<EntityHandle> CheckFlickering;
+    // HashSet<EntityHandle> CheckMoving;
 };
 
 

@@ -39,7 +39,7 @@ void RegisterObjectProxyTypeInformation()
     ty.Kind = LuaTypeId::Object; \
     ty.NativeName = FixedString(typeid(TClass).name()); \
     ty.PropertyMap = &lua::GetStaticPropertyMap<TClass>(); \
-    if constexpr (std::is_base_of_v<BaseComponent, TClass> && !std::is_same_v<BaseComponent, TClass> && !std::is_same_v<BaseProxyComponent, TClass>) { \
+    if constexpr (IsComponentType<TClass>) { \
         ty.ComponentName = FixedString(TClass::ComponentName); \
     } \
     if constexpr (std::is_base_of_v<BaseSystem, TClass> && !std::is_same_v<BaseSystem, TClass>) { \
@@ -87,43 +87,7 @@ void RegisterObjectProxyTypeInformation()
 #undef P_FUN
 #undef P_FALLBACK
 
-
-#define BEGIN_BITMASK_NS(NS, T, luaName, type, id) ([]() { \
-    using TEnum = NS::T; \
-    auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#luaName)); \
-    ty.Kind = LuaTypeId::Enumeration; \
-    ty.IsBitfield = true;
-
-#define BEGIN_ENUM_NS(NS, T, luaName, type, id) ([]() { \
-    using TEnum = NS::T; \
-    auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#luaName)); \
-    ty.Kind = LuaTypeId::Enumeration;
-
-#define BEGIN_BITMASK(T, type, id) ([]() { \
-    using TEnum = T; \
-    auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#T)); \
-    ty.Kind = LuaTypeId::Enumeration; \
-    ty.IsBitfield = true;
-
-#define BEGIN_ENUM(T, type, id) ([]() { \
-    using TEnum = T; \
-    auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#T)); \
-    ty.Kind = LuaTypeId::Enumeration;
-
-#define EV(label, value) ty.EnumValues.insert(std::make_pair(FixedString(#label), (uint64_t)TEnum::label));
-#define END_ENUM_NS() GetStaticTypeInfo(Overload<TEnum>{}).Type = &ty; })();
-#define END_ENUM() GetStaticTypeInfo(Overload<TEnum>{}).Type = &ty; })(); 
-
-#include <GameDefinitions/Generated/Enumerations.inl>
-#include <GameDefinitions/Generated/ExternalEnumerations.inl>
-
-#undef BEGIN_BITMASK_NS
-#undef BEGIN_ENUM_NS
-#undef BEGIN_BITMASK
-#undef BEGIN_ENUM
-#undef EV
-#undef END_ENUM_NS
-#undef END_ENUM
+    RegisterEnumerationTypeInformation();
 }
 
 END_SE()

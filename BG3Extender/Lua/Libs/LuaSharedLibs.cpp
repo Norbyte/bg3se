@@ -80,27 +80,15 @@ void RegisterConfig(lua_State* L)
 
     lua_newtable(L);
 
-    push(L, gExtender->GetConfig().Optick);
-    lua_setfield(L, -2, "ProfilerEnabled");
-
-    push(L, gExtender->GetConfig().EnablePerfMessages);
-    lua_setfield(L, -2, "PerfMessagesEnabled");
-
-    push(L, gExtender->GetConfig().ProfilerLoadCallbackThreshold.Warning);
-    lua_setfield(L, -2, "ProfilerLoadCallbackWarningThreshold");
-
-    push(L, gExtender->GetConfig().ProfilerLoadCallbackThreshold.Error);
-    lua_setfield(L, -2, "ProfilerLoadCallbackErrorThreshold");
+    setfield(L, "ProfilerEnabled", gExtender->GetConfig().Optick);
+    setfield(L, "PerfMessagesEnabled", gExtender->GetConfig().EnablePerfMessages);
+    setfield(L, "ProfilerLoadCallbackErrorThreshold", gExtender->GetConfig().ProfilerLoadCallbackThreshold.Error);
 
     if (State::FromLua(L)->IsClient()) {
-        push(L, gExtender->GetConfig().ProfilerClientCallbackThreshold.Warning);
-        push(L, gExtender->GetConfig().ProfilerClientCallbackThreshold.Error);
+        setfield(L, "ProfilerCallbackErrorThreshold", gExtender->GetConfig().ProfilerClientCallbackThreshold.Error);
     } else {
-        push(L, gExtender->GetConfig().ProfilerCallbackThreshold.Warning);
-        push(L, gExtender->GetConfig().ProfilerCallbackThreshold.Error);
+        setfield(L, "ProfilerCallbackErrorThreshold", gExtender->GetConfig().ProfilerCallbackThreshold.Error);
     }
-    lua_setfield(L, -3, "ProfilerCallbackErrorThreshold");
-    lua_setfield(L, -2, "ProfilerCallbackWarningThreshold");
 
     lua_setfield(L, -2, "Config");
 

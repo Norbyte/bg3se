@@ -1040,8 +1040,33 @@ local function GenerateSubscriptionEvents(self)
     end
 end
 
-local _restrictedKeys = {
+local reservedWords = {
+    ["and"] = true,
+    ["break"] = true,
+    ["do"] = true,
+    ["else"] = true,
+    ["elseif"] = true,
     ["end"] = true,
+    ["false"] = true,
+    ["function"] = true,
+    ["if"] = true,
+    ["in"] = true,
+    ["local"] = true,
+    ["nil"] = true,
+    ["not"] = true,
+    ["or"] = true,
+    ["repeat"] = true,
+    ["return"] = true,
+    ["then"] = true,
+    ["true"] = true,
+    ["until"] = true,
+    ["while"] = true
+}
+
+local excludeNumericKeysFor = {
+    ExtComponentType = true,
+    ExtResourceManagerType = true,
+    ExtSystemType = true
 }
 
 function Generator:GenerateEnum(enumName)
@@ -1062,16 +1087,26 @@ function Generator:GenerateEnum(enumName)
         return a.key < b.key
     end)
         
-    for _,val in ipairs(sortedKeys) do
-        if string.find(val.label, "%s") then
-            self:EmitLine(string.format("\t[\"%s\"] = %s,", val.label, val.key))
-        else
-            self:EmitLine(string.format("\t%s = %s,", val.label, val.key))
+    if excludeNumericKeysFor[enumName] ~= nil then
+        for _,val in ipairs(sortedKeys) do
+            if string.find(val.label, "%s") or reservedWords[val.label] == true then
+                self:EmitLine(string.format("\t[\"%s\"],", val.label))
+            else
+                self:EmitLine(string.format("\t%s,", val.label))
+            end
         end
-    end
-        
-    for _,val in ipairs(sortedKeys) do
-        self:EmitLine(string.format("\t[%s] = \"%s\",", val.key, val.label))
+    else
+        for _,val in ipairs(sortedKeys) do
+            if string.find(val.label, "%s") or reservedWords[val.label] == true then
+                self:EmitLine(string.format("\t[\"%s\"] = %s,", val.label, val.key))
+            else
+                self:EmitLine(string.format("\t%s = %s,", val.label, val.key))
+            end
+        end
+            
+        for _,val in ipairs(sortedKeys) do
+            self:EmitLine(string.format("\t[%s] = \"%s\",", val.key, val.label))
+        end
     end
 
     self:EmitLine("}")

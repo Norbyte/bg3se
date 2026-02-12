@@ -70,12 +70,9 @@ struct DifficultyCheckComponent : public BaseComponent
 {
     DEFINE_COMPONENT(DifficultyCheck, "eoc::DifficultyCheckComponent")
 
-    [[bg3::legacy(field_0)]] Array<int32_t> AbilityDC;
-    [[bg3::legacy(field_10)]] Array<int32_t> AbilityModifiers;
-    Array<AbilityId> Abilities;
-    Array<uint32_t> field_30;
-    int field_40;
-    int field_44;
+    [[bg3::legacy(field_0)]] HashMap<AbilityId, uint32_t> AbilityDC;
+    [[bg3::legacy(field_40)]] int32_t SpellSaveDCBoost;
+    [[bg3::legacy(field_44)]] int32_t WeaponActionDC;
 };
 
 struct BodyTypeComponent : public BaseComponent
@@ -459,8 +456,6 @@ DEFINE_TAG_COMPONENT(eoc::tag, TraderComponent, Trader)
 DEFINE_TAG_COMPONENT(eoc::ambush, AmbushingComponent, Ambushing)
 DEFINE_TAG_COMPONENT(eoc::trade, CanTradeComponent, CanTrade)
 DEFINE_TAG_COMPONENT(eoc::falling, IsFallingComponent, IsFalling)
-DEFINE_TAG_COMPONENT(eoc::heal, MaxIncomingComponent, HealMaxIncoming)
-DEFINE_TAG_COMPONENT(eoc::heal, MaxOutgoingComponent, HealMaxOutgoing)
 
 struct InteractionFilterComponent : public BaseComponent
 {
@@ -596,7 +591,9 @@ struct PlatformSystem : public BaseSystem
     [[bg3::hidden]] UnknownFunction field_38;
     [[bg3::hidden]] void* TransformSystem;
     Array<PlatformTransformChangeRequest> TransformChanged;
-    Array<EntityHandle> UpdateSubgrids;
+    // Editor only
+    // Array<EntityHandle> UpdateSubgrids;
+    [[bg3::hidden]] void* field_58;
 };
 
 END_SE()
@@ -860,7 +857,26 @@ END_NS()
 
 BEGIN_NS(heal)
 
-DEFINE_TAG_COMPONENT(eoc::heal, BlockComponent, HealBlock)
+struct BlockComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(HealBlock, "eoc::heal::BlockComponent")
+
+    HealingType HealingType;
+};
+
+struct MaxIncomingComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(HealMaxIncoming, "eoc::heal::MaxIncomingComponent")
+
+    HealingType HealingType;
+};
+
+struct MaxOutgoingComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(HealMaxOutgoing, "eoc::heal::MaxOutgoingComponent")
+
+    HealingType HealingType;
+};
 
 END_NS()
 

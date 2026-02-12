@@ -329,7 +329,7 @@ struct LevelComponent : public BaseComponent
 {
     DEFINE_COMPONENT(Level, "ls::LevelComponent")
 
-    EntityHandle field_0;
+    [[bg3::legacy(field_0)]] EntityHandle RootLevel;
     FixedString LevelName;
 };
 
@@ -345,7 +345,7 @@ struct LevelInstanceComponent : public BaseComponent
     DEFINE_COMPONENT(LevelInstance, "ls::LevelInstanceComponent")
 
     FixedString LevelInstanceID;
-    FixedString LevelName;
+    FixedString SubLevelName;
     FixedString LevelInstanceTemplate;
     uint8_t LevelType;
     bool Active;
@@ -353,28 +353,20 @@ struct LevelInstanceComponent : public BaseComponent
     bool MovingPlatform;
     bool DynamicLayer;
     bool NeedsPhysics;
-    uint8_t field_12;
-    uint8_t field_13;
-    uint8_t field_14;
-    uint8_t field_15;
-    uint64_t qword18;
-    int dword20;
-    int field_24;
-    int field_28;
-    int field_2C;
-    int field_30;
-    float field_34;
-    float field_38;
-    float field_3C;
+    bool HasTemplateAfterDestruction;
+    bool UseSoundOcclusion;
+    bool IsCinematic;
+    bool Activated;
+    Transform Transform;
 };
 
 struct LevelInstanceStateComponent : public BaseComponent
 {
     DEFINE_COMPONENT(LevelInstanceState, "ls::LevelInstanceStateComponent")
 
-    HashSet<EntityHandle> field_0;
-    HashSet<EntityHandle> field_30;
-    int32_t field_60;
+    HashSet<EntityHandle> Children;
+    HashSet<EntityHandle> Children2;
+    int32_t State;
     AABound LocalBound;
     AABound WorldBound;
     FixedString MergedLevelTemplateUUID;
@@ -384,16 +376,7 @@ struct LevelInstanceStateComponent : public BaseComponent
     bool Destroyed;
     bool MovingPlatform;
     uint8_t field_A6;
-    float field_A8;
-    float field_AC;
-    float field_B0;
-    float field_B4;
-    float field_B8;
-    float field_BC;
-    float field_C0;
-    float field_C4;
-    float field_C8;
-    float field_CC;
+    Transform Transform;
 };
 
 struct LevelInstanceTempDestroyedComponent : public BaseComponent
