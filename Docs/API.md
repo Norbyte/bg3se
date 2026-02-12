@@ -1,4 +1,4 @@
-# BG3SE Lua API v29 Documentation
+# BG3SE Lua API v30 Documentation
 
 ## Table of Contents
 - [Getting Started](#getting-started)
@@ -29,6 +29,7 @@
   - [Synchronization](#synchronization)
   - [Caching Behavior](#caching-behavior)
 - [Entity Class](#entity-class)
+  - [Entity subscriptions](#entity-subscriptions)
 - [Helper/Aliased Functions](#helper-functions)
 - [Networking](#networking)
   - [NetChannel API](#net-channel-api)
@@ -36,6 +37,7 @@
   - [Utility functions](#net-utils)
 - [Noesis UI](#noesis-ui)
   - [Custom ViewModels](#noesis-viewmodels)
+  - [UI input and world interaction](#ui-input-and-world-interaction)
 - [Stats](#stats)
   - [Stats Objects](#stats-objects)
   - [Reading/Writing Stat Attributes](#reading-writing-stats)
@@ -781,7 +783,7 @@ Ext.Events.SessionLoaded:Subscribe(OnSessionLoaded)
 > Please refer to the [ExtIdeHelpers](https://github.com/Norbyte/bg3se/blob/main/BG3Extender/IdeHelpers/ExtIdeHelpers.lua) for a more comprehensive and systematic definition/reference of the API.
 
 ## ECS
-### TODO - WIP
+Entity and component APIs are available on both client and server.
 
 <a id="entity-class"></a>
 ## Entity class - `Ext.Entity`
@@ -869,17 +871,104 @@ Attaches a new empty copy of the specified component type to the entity, if one 
 
 
 ### Entity:Replicate(component)
-### Entity:SetReplicationFlags(component, flags, word)
-### Entity:GetReplicationFlags(component, word) : flags
-The following methods allow subscribing to component lifecycle events (creation, destruction, or modification):
-### Ext.Entity.Subscribe(componentName, callback, [entity], [order])
-### Ext.Entity.Unsubscribe(subscriptionId)
-### Ext.Entity.OnChange(...)
-### Ext.Entity.OnCreate(...) / OnCreateDeferred(...) / OnCreateOnce(...)
-### Ext.Entity.OnDestroy(...) / OnDestroyDeferred(...) / OnDestroyOnce(...)
-### Ext.Entity.OnSystemUpdate(...) / OnSystemPostUpdate(...)
 
-TODO - DOCUMENT
+Marks a component as changed so replication can propagate it.
+
+### Entity:SetReplicationFlags(component, flags, word)
+
+Sets replication behavior flags for a component.
+
+### Entity:GetReplicationFlags(component, word) : flags
+
+Reads replication behavior flags for a component.
+
+### Entity subscriptions
+
+The following methods allow subscribing to component lifecycle events (creation, destruction, modification) and ECS system updates.
+This allows you to react to changes in the entities and execute code based on those changes.
+
+*Note:* normal subscriptions fire immediately. 'Deferred' variants fire at the end of the tick.
+
+### Ext.Entity.Subscribe(componentName, callback, [entity], [order])
+
+Generic component-change subscription.
+
+ - `componentName`: component type (`ExtComponentType`)
+ - `callback`: function called on matching changes
+ - `entity` (optional): restrict to one entity
+ - `order` (optional): ordering key for subscription processing
+
+Returns a subscription id (`uint64`) that can be passed to `Unsubscribe`.
+
+### Ext.Entity.Unsubscribe(subscriptionId)
+
+Unregisters a subscription created by any method below. Returns `true` if removed.
+
+### Ext.Entity.OnChange(...)
+
+Alias? of `Subscribe` for component updates.
+
+`OnChange(componentName, callback, [entity], [order])`
+
+### Ext.Entity.OnCreate(...)
+
+`OnCreate(componentName, callback, [entity], [opt1], [opt2])`
+
+Called when matching component is created/attached.
+
+### Ext.Entity.OnCreateOnce(...)
+
+`OnCreateOnce(componentName, callback, [entity])`
+
+One-shot create subscription; auto-unsubscribes after first match.
+
+### Ext.Entity.OnCreateDeferred(...)
+
+`OnCreateDeferred(componentName, callback, [entity])`
+
+Like `OnCreate`, but callback runs deferred.
+
+### Ext.Entity.OnCreateDeferredOnce(...)
+
+`OnCreateDeferredOnce(componentName, callback, [entity])`
+
+Deferred + one-shot create subscription.
+
+### Ext.Entity.OnDestroy(...)
+
+`OnDestroy(componentName, callback, [entity], [opt1], [opt2])`
+
+Called when matching component is removed/destroyed.
+
+### Ext.Entity.OnDestroyOnce(...)
+
+`OnDestroyOnce(componentName, callback, [entity])`
+
+One-shot destroy subscription; auto-unsubscribes after first match.
+
+### Ext.Entity.OnDestroyDeferred(...)
+
+`OnDestroyDeferred(componentName, callback, [entity])`
+
+Like `OnDestroy`, but callback runs deferred.
+
+### Ext.Entity.OnDestroyDeferredOnce(...)
+
+`OnDestroyDeferredOnce(componentName, callback, [entity])`
+
+Deferred + one-shot destroy subscription.
+
+### Ext.Entity.OnSystemUpdate(...)
+
+`OnSystemUpdate(systemType, callback, [once])`
+
+Subscribes to ECS system update hooks.
+
+### Ext.Entity.OnSystemPostUpdate(...)
+
+`OnSystemPostUpdate(systemType, callback, [once])`
+
+TODO.
 
 ### Entity:IsAlive() : boolean
 
@@ -1247,13 +1336,30 @@ end)
 mainMenu.DataContext = ctx
 ```
 
-### Input & world interaction
+### UI input and world interaction
+
+UI is inherently client-side, therefore these APIs are client-side only.
+
+#### Ext.UI.GetPickingHelper(playerId): EclPlayerPickingHelper
+
+Returns the picking helper for `playerId`. Useful for point-and-click logic and world cursor targeting.
+
+Some useful fields:
+ - `Selection`: currently selected in-range entity under cursor;
+ - `Inner.WorldPosition`: world-space hit position;
+ - `WindowCursorPos`: cursor position in window coordinates;
+
+#### Ext.UI.GetCursorControl(): EclCursorControl
+
 TODO:
-```lua
-    Ext.UI.GetPickingHelper(playerId): Returns data about what is under the cursor (world pos, entities).
-    Ext.UI.GetCursorControl(): Access cursor state.
-    Ext.UI.GetDragDrop(): Access drag-and-drop state.
-```
+
+#### Ext.UI.GetDragDrop(playerId: uint16): EclPlayerDragData
+
+Returns drag-and-drop state for `playerId`.
+
+Some useful fields:
+ - `IsDragging`;
+ - `ScreenPosition`;
 
 <a id="stats"></a>
 ## Stats - `Ext.Stats`
@@ -1422,16 +1528,20 @@ Ext.Utils.Print(Ext.Stats.ExtraData.WisdomTierHigh)
 <a id="io"></a>
 ## I/O - `Ext.IO`
 
-TODO.
+Server and client filesystem helpers.
 
-`Ext.IO.LoadFile(path, [context])`: Read file contents.
+### Methods
 
-`Ext.IO.SaveFile(path, content)`: Write data to a file.
+- `Ext.IO.LoadFile(path, [context]): string?`
+  Reads file contents. Returns `nil` if the file cannot be read.
+- `Ext.IO.SaveFile(path, content): boolean`
+  Writes content to a file. Creates missing parent directories.
+- `Ext.IO.AddPathOverride(originalPath, newPath)`
+  Redirects game file access from `originalPath` to `newPath`.
+- `Ext.IO.GetPathOverride(path): string?`
+  Returns active override target for `path`, if any.
 
-`Ext.IO.AddPathOverride(originalPath, newPath)`
-
-Redirects file access from `originalPath` to `newPath`. This is useful for overriding built-in files or resources that are otherwise not moddable.
-Make sure that the override is added as early as possible (preferably in `StatsLoaded`), as adding path overrides after the game has already loaded the resource has no effect.
+`AddPathOverride` should be called as early as possible (typically `ModuleLoadStarted`), before the original resource is loaded.
 
 Example:
 ```lua
@@ -1441,21 +1551,43 @@ Ext.IO.AddPathOverride("Public/Game/GUI/enemyHealthBar.swf", "Public/YourMod/GUI
 <a id="timers"></a>
 ## Timers - `Ext.Timer`
 
-TODO:
-Delayed Execution
+Timer and clock helpers.
 
-`Ext.Timer.WaitFor(ms, callback)`: Uses game clock (pauses when game pauses).
+### Delayed execution
 
-`Ext.Timer.WaitForRealtime(ms, callback)`: Uses OS clock.
+#### `Ext.Timer.WaitFor(ms, callback)`
+Uses game clock (pauses when game pauses).
+
+#### `Ext.Timer.WaitForRealtime(ms, callback)`
+Uses OS clock.
 
 Most of the time they are the same, but there are cases when the game timer is paused and time doesn't "progress".
 Game timer can also be affected by the tick throttling logic if the framerate drops too low.
 
-`Ext.Timer.WaitForPersistent(ms, name, callback)`: Creates a persistent handle that is written to the savegame so your timer survives a save/reload.
+#### `Ext.Timer.WaitForPersistent(ms, name, callback)`
+Creates a persistent handle that is written to the savegame so your timer survives a save/reload.
 
-`Ext.Timer.MonotonicTime()`:
+#### `Ext.Timer.MonotonicTime()`
 Returns a monotonic value representing the current system time in milliseconds. Useful for performance measurements / measuring real world time.
 (Note: This value is not synchronized between peers and different clients may report different time values!)
+
+### Timer handle control
+
+- `Ext.Timer.Cancel(handle): boolean`
+- `Ext.Timer.Pause(handle): boolean`
+- `Ext.Timer.Resume(handle): boolean`
+- `Ext.Timer.IsPaused(handle): boolean`
+- `Ext.Timer.RegisterPersistentHandler(name, callback)`
+
+### Clock helpers
+
+- `Ext.Timer.GameTime(): number`
+- `Ext.Timer.MicrosecTime(): number`
+- `Ext.Timer.MonotonicTime(): int64`
+- `Ext.Timer.ClockTime(): string`
+- `Ext.Timer.ClockEpoch(): int64`
+
+`Ext.Timer.MonotonicTime()` returns monotonic system time (ms). Decent for profiling. It is not synchronized between peers.
 
 Example:
 ```lua
@@ -1550,9 +1682,22 @@ end
 
 Returns the list of loaded module UUIDs in the order they're loaded in.
 
+### GetBaseMod()
+
+TODO.
+
 ### GetMod(modGuid)
 
-Returns detailed information about the specified (loaded) module.
+Returns detailed information about the specified loaded module.
+
+Returned object type is `Module`:
+- `Info: ModuleInfo`
+- `Dependencies: ModuleShortDesc[]`
+- `Addons: ModuleShortDesc[]`
+- `ModConflicts: ModuleShortDesc[]`
+
+`ModuleInfo` includes fields such as `Name`, `Author`, `Description`, `Directory`, `ModuleUUID`, and `ModVersion`.
+
 Example:
 ```lua
 local loadOrder = Ext.Mod.GetLoadOrder()
@@ -1563,51 +1708,168 @@ end
 ```
 
 ### GetModManager(): ModManager
-TODO:
-Provides access to the engine's internal ModManager.
+
+Provides access to the engine's internal ModManager. Useful to get information about load order, dependencies, conflicts, etc.
+
+`ModManager` commonly used fields:
+- `AvailableMods: Module[]`
+- `LoadOrderedModules: Module[]`
+- `BaseModule: Module`
+- `Settings: ModuleSettings`
 
 <a id="utils"></a>
 ## Utils - `Ext.Utils`
-TODO:
 
-`Ext.Utils.GetGlobalSwitches() : GlobalSwitches`
-Allows access to engine toggles (e.g., AiEnableSwarm, NrOfAutoSaves).
+General utility helpers.
+
+### Common methods
+
+- `Ext.Utils.Version(): int32` - Script Extender API version.
+- `Ext.Utils.GameVersion(): string?` - game version string.
+- `Ext.Utils.GetGameState()` - current game state enum.
+- `Ext.Utils.GetGlobalSwitches(): GlobalSwitches` - exposes a large settings object (`GlobalSwitches`) including fields like `AiEnableSwarm`, `CanAutoSave`, `NrOfAutoSaves`, etc.
+- `Ext.Utils.GetCommandLineParams(): string[]` - CLI arguments used to launch the game, e.g.:
+```[
+    "\"..\\bin\\bg3_dx11.exe\"",
+    "--skip-launcher",
+    "-continueGame",
+    "-externalcrashhandler",
+    "-stats",
+    "0",
+    "-modded",
+    "1"
+]
+```
+- `Ext.Utils.HandleToInteger(handle): int64`
+- `Ext.Utils.IntegerToHandle(value): EntityHandle`
+- `Ext.Utils.IsValidHandle(handle): boolean`
+- `Ext.Utils.ProfileBegin(name)` / `Ext.Utils.ProfileEnd()`
+
 
 <a id="audio"></a>
 ## Audio - `Ext.Audio`
-TODO: Document `Ext.Audio` module
 
-Functionality for audio manipulation including Sound Banks, Events, and RTPC (Real-Time Parameter Controls).
+Client-side audio control API (banks, events, RTPC, switches, states).
+
+### Methods
+
+- `Ext.Audio.LoadBank(bankName): boolean`
+- `Ext.Audio.UnloadBank(bankName): boolean`
+- `Ext.Audio.PrepareBank(bankName): boolean`
+- `Ext.Audio.UnprepareBank(bankName): boolean`
+- `Ext.Audio.LoadEvent(eventName): boolean`
+- `Ext.Audio.UnloadEvent(eventName): boolean`
+- `Ext.Audio.PostEvent(objectHandle, eventName, [flags]): boolean`
+- `Ext.Audio.Stop([objectHandle])`
+- `Ext.Audio.SetRTPC(objectHandle, rtpcName, value, [skipInterpolation]): boolean`
+- `Ext.Audio.GetRTPC(objectHandle, rtpcName): number`
+- `Ext.Audio.ResetRTPC(objectHandle, rtpcName)`
+- `Ext.Audio.SetSwitch(objectHandle, switchGroup, switchState): boolean`
+- `Ext.Audio.SetState(stateGroup, state): boolean`
+- `Ext.Audio.PlayExternalSound(objectHandle, pathOrName, resourceName, codec, [volume]): boolean`
+- `Ext.Audio.PauseAllSounds()`
+- `Ext.Audio.ResumeAllSounds()`
 
 <a id="loca"></a>
 ## Localization - `Ext.Loca`
-TODO: Document `Ext.Loca` module
 
 Methods for reading and writing localization entries (loca) at runtime.
 
+### Methods
+
+- `Ext.Loca.GetTranslatedString(handle, [fallbackText]): string`
+  Returns localized text for a localization handle.
+- `Ext.Loca.UpdateTranslatedString(handle, text): boolean`
+  Updates/overrides translated text for a handle at runtime.
+
+Example:
+```lua
+local text = Ext.Loca.GetTranslatedString("h1234567890abcdef1234567890abcdefg")
+Ext.Loca.UpdateTranslatedString("h1234567890abcdef1234567890abcdefg", text .. " (modified)")
+```
+
 <a id="templates"></a>
 ## Templates - `Ext.Template`
-TODO: Document `Ext.Template` module
 
-API for accessing and modifying Character and Item templates.
+Template lookup API (e.g. character/item root templates).
+
+### Client template methods
+
+- `Ext.Template.GetTemplate(templateId): GameObjectTemplate`
+- `Ext.Template.GetRootTemplate(templateId): GameObjectTemplate`
+- `Ext.Template.GetAllRootTemplates(): table<FixedString, GameObjectTemplate>`
+
+### Server-only additional template methods
+
+- `Ext.Template.GetLocalTemplate(templateId): GameObjectTemplate`
+- `Ext.Template.GetLocalCacheTemplate(templateId): GameObjectTemplate`
+- `Ext.Template.GetCacheTemplate(templateId): GameObjectTemplate`
+- `Ext.Template.GetAllLocalTemplates(): table<FixedString, GameObjectTemplate>`
+- `Ext.Template.GetAllLocalCacheTemplates(): table<FixedString, GameObjectTemplate>`
+- `Ext.Template.GetAllCacheTemplates(): table<FixedString, GameObjectTemplate>`
 
 <a id="static-data"></a>
 ## Static Data - `Ext.StaticData`
-TODO: Document `Ext.StaticData` module
 
-Access to static game resources such as Races, Classes, and other UUID-based engine definitions.
+Access to static game resources such as Races, Classes, and other UUID-based engine definitions, via resource manager type (`ExtResourceManagerType`).
+
+### Methods
+
+- `Ext.StaticData.Get(resourceGuid, managerType)`
+- `Ext.StaticData.GetAll(managerType): Guid[]`
+- `Ext.StaticData.GetByModId(managerType, modGuid): Guid[]`
+- `Ext.StaticData.GetSources(managerType): table<Guid, Guid[]>`
+- `Ext.StaticData.Create(managerType, [resourceGuid])`
+
+Common manager types include: `ClassDescription`, `Progression`, `Feat`, `Race`, `Background`, `God`, etc.
 
 <a id="resources"></a>
 ## Resources - `Ext.Resource`
-TODO: Document `Ext.Resource` module
 
-Access to visual resources including Meshes, Materials, and Textures.
+Access to visual resources including Meshes, Materials, and Textures, via resource bank (`ResourceBankType`).
+
+### Methods
+
+- `Ext.Resource.Get(resourceId, bankType)`
+- `Ext.Resource.GetAll(bankType): FixedString[]`
+
+Common bank types include `Visual`, `Material`, `Texture`, `Animation`, `Effect`, `Sound`, `Script`, etc.
 
 <a id="level"></a>
 ## Levels, Pathfinding & Physics - `Ext.Level`
-TODO: Document `Ext.Level` module
 
 Contains logic for Raycasting, Pathfinding, and checking entity/tile physics data.
+
+### Pathfinding
+
+- `Ext.Level.BeginPathfinding(entity, targetPos, opts): AiPath`
+- `Ext.Level.BeginPathfindingImmediate(entity, targetPos): AiPath`
+- `Ext.Level.FindPath(path): boolean`
+- `Ext.Level.ReleasePath(path)`
+- `Ext.Level.GetPathById(pathId): AiPath`
+- `Ext.Level.GetActivePathfindingRequests(): AiPath[]`
+
+### Tile and height queries
+
+- `Ext.Level.GetEntitiesOnTile(position): EntityHandle[]`
+- `Ext.Level.GetHeightsAt(x, z): number[]`
+- `Ext.Level.GetTileDebugInfo(position): AiGridLuaTile`
+
+### Physics queries
+
+- Raycasts:
+  - `Ext.Level.RaycastAny(from, to, physicsType, collidesWith, ignoredGroups, maxHits): boolean`
+  - `Ext.Level.RaycastClosest(...): PhxPhysicsHit`
+  - `Ext.Level.RaycastAll(...): PhxPhysicsHitAll`
+- Sweeps:
+  - `Ext.Level.SweepBoxClosest(...)`, `Ext.Level.SweepBoxAll(...)`
+  - `Ext.Level.SweepSphereClosest(...)`, `Ext.Level.SweepSphereAll(...)`
+  - `Ext.Level.SweepCapsuleClosest(...)`, `Ext.Level.SweepCapsuleAll(...)`
+- Overlap tests:
+  - `Ext.Level.TestBox(...) : PhxPhysicsHitAll`
+  - `Ext.Level.TestSphere(...) : PhxPhysicsHitAll`
+
+`PhxPhysicsHit` includes `Position`, `Normal`, `Distance`, `Shape`, `PhysicsGroup`.
 
 <a id="math"></a>
 ## Math library - `Ext.Math`
