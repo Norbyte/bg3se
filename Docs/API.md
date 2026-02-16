@@ -112,7 +112,9 @@ The Lua state and all local variables are reset after each game reload. For keep
 
 Example:
 ```lua
-PersistentVars = {}
+if not PersistentVars then
+    PersistentVars = {}
+end
 ...
 -- Variable will be restored after the savegame finished loading
 function doStuff()
