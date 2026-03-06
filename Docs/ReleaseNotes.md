@@ -1,5 +1,62 @@
 # Release Notes
 
+## v30
+
+### Materials
+- Added support for applying base/overlay materials
+- Added support for reading current instance parameter values
+- Added support for setting parameters on queued materials
+- Added support for setting virtual texture and texture2D material parameters
+- Fixed bug where updating a material with no CB would allocate in an incorrectly sized CB
+
+### Genome
+- Added support for queuing Genome events
+- Added support for more Genome value types: Bool, Float, FloatSet, IntSet, ShortNameSet, StringSet, FixedStringSet
+- Added support for writing Genome variants
+- Fixed crash when reassigning Genome values
+- Fixed AnimationBlueprintSystem mapping
+
+### Mappings
+- Added support for creating non-immediate components
+- Added animation blueprint systems and components
+- Added combat turn blueprint systems and components
+- Added level state components
+- Added effect manager and client effect components
+- Added light system
+- Added camera global switches and improved game camera mappings
+- Improved mapping of visual state types
+- Added visual systems: VisualSystem, VisualChangedSystem, VisualChangeRequestSystem
+- Fixed mappings for various components and systems
+
+### Debugger
+- Fixed crash when running multiple DAP instances
+- Fixed DAP not reporting startup errors to the client
+- Fixed debugger disconnect message spam
+- Fixed race condition when fetching source list from debugger
+- Fixed source reply being sent twice
+
+### UI
+- Added support for reading Noesis types CornerRadius, ICommand, GridLength
+- Fixed crash when DX11 renderer is reinitialized while a frame is being rendered
+- Fixed issue where IMGUI InputText text buffer did not grow after a certain size
+- Fixed crash when reading Noesis symbol properties
+
+### ECS
+- Fixed crash when unregistering client replication handlers
+- Fixed missing type mapping for some components
+- Fixed some logic errors in internal ECS validation
+- Optimized component fetch
+- Worked around VS2026 compiler bug when fetching components
+
+### Misc
+- Fixed validation errors caused by jank UUIDs
+- Added Ext.Stats.GetCachedBoost
+- Use AVX2 & fast float in release builds
+
+## v29
+
+?
+
 ## v28
 
 - Added support for separate client/server reset to `Ext.Utils.Reset()`
@@ -15,7 +72,7 @@
 
 ## v27.1
 
-- Hotfix 34 InputManager compatibility 
+- Hotfix 34 InputManager compatibility
 
 
 ## v27
@@ -131,7 +188,7 @@
 ### Entity system
 - Added `Ext.Entity.Create`, `Destroy`, `RemoveComponent`
 - It is now possible to retrieve and enumerate one-frame components that were created in the current frame
- 
+
 ### Input
 - Added support for programmatic triggering of input events via `Ext.Input.InjectKeyPress`, `InjectKeyDown`, `InjectKeyUp`
 
