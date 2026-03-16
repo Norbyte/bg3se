@@ -1,72 +1,16 @@
+#include <CoreLib/ConfigUtils.inl>
+
 BEGIN_SE()
 
 using namespace rapidjson;
-
-void ConfigGet(Value& node, char const* key, bool& value)
-{
-    auto configVar = node.FindMember(key);
-    if (configVar != node.MemberEnd() && configVar->value.IsBool()) {
-        value = configVar->value.GetBool();
-    }
-}
-
-void ConfigGet(Value& node, char const* key, uint32_t& value)
-{
-    auto configVar = node.FindMember(key);
-    if (configVar != node.MemberEnd() && configVar->value.IsUint()) {
-        value = configVar->value.GetUint();
-    }
-}
-
-void ConfigGet(Value& node, char const* key, std::string& value)
-{
-    auto configVar = node.FindMember(key);
-    if (configVar != node.MemberEnd() && configVar->value.IsString()) {
-        value = configVar->value.GetString();
-    }
-}
-
-void ConfigGet(Value& node, char const* key, std::wstring& value)
-{
-    auto configVar = node.FindMember(key);
-    if (configVar != node.MemberEnd() && configVar->value.IsString()) {
-        value = FromStdUTF8(configVar->value.GetString());
-    }
-}
 
 void ConfigGet(Value& node, char const* key, ProfilerThreshold& value)
 {
     ConfigGet(node, (std::string(key) + "Error").c_str(), value.Error);
 }
 
-bool ReadConfig(std::wstring const& configPath, std::string& configJson)
+void ApplyConfig(ExtenderConfig& config, Document& root)
 {
-    std::ifstream f(configPath, std::ios::in | std::ios::binary);
-    if (f.good()) {
-        f.seekg(0, std::ios::end);
-        configJson.resize((unsigned)f.tellg());
-        f.seekg(0, std::ios::beg);
-        f.read(configJson.data(), configJson.size());
-        return true;
-    }
-
-    return false;
-}
-
-void LoadConfig(std::wstring const& configPath, ExtenderConfig& config)
-{
-    std::string configJson;
-    if (!ReadConfig(configPath, configJson)) {
-        return;
-    }
-
-    Document root;
-    if (root.ParseInsitu(configJson.data()).HasParseError()) {
-        std::stringstream err;
-        err << "Failed to parse configuration file '" << ToStdUTF8(configPath) << "'";
-        Fail(err.str().c_str());
-    }
-
     ConfigGet(root, "CreateConsole", config.CreateConsole);
     ConfigGet(root, "DefaultToClientConsole", config.DefaultToClientConsole);
     ConfigGet(root, "EnableLogging", config.EnableLogging);
@@ -103,6 +47,11 @@ void LoadConfig(std::wstring const& configPath, ExtenderConfig& config)
     ConfigGet(root, "ProfilerLoadCallbackThreshold", config.ProfilerLoadCallbackThreshold);
     ConfigGet(root, "ProfilerCallbackThreshold", config.ProfilerCallbackThreshold);
     ConfigGet(root, "ProfilerClientCallbackThreshold", config.ProfilerClientCallbackThreshold);
+}
+
+void LoadConfig(std::wstring const& configPath, ExtenderConfig& config)
+{
+    ApplyConfigFile(configPath, config, &ApplyConfig);
 }
 
 END_SE()

@@ -200,6 +200,7 @@
     <None Include="Base\BaseMap.inl" />
     <None Include="Base\BaseMemory.inl" />
     <None Include="Base\BaseString.inl" />
+    <None Include="ConfigUtils.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

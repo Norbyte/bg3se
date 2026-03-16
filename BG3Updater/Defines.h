@@ -7,3 +7,4 @@
 #define UPDATER_CHANNEL_EDITOR "Editor"
 #define GAME_DLL L"BG3ScriptExtender.dll"
 #define EDITOR_DLL L"BG3EditorScriptExtender.dll"
+#define UPDATER_CONFIG_FILE L"ScriptExtenderUpdaterConfig.json"

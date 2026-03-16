@@ -1,7 +1,8 @@
 #include "stdafx.h"
+#include "Config.h"
 #include "Cache.h"
 #include "HttpFetcher.h"
-#include <curl/curl.h>
+#include "UI.h"
 #include <CoreLib/Wrappers.h>
 #include <SDL.h>
 
@@ -66,24 +67,6 @@ class UpdaterConsole : public Console
 {
 public:
     void Print(DebugMessageType type, char const* msg) override;
-};
-
-class UpdaterUI
-{
-public:
-    void Show();
-    void Hide();
-    void SetStatusText(std::wstring const& status);
-
-private:
-    bool requestShow_{ false };
-    HWND progressWindow_{ NULL };
-    std::wstring status_;
-
-    void DoShow();
-
-    static HRESULT UICallback(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam, LONG_PTR lpRefData);
-    static DWORD WINAPI UIThreadMain(LPVOID param);
 };
 
 class ScriptExtenderUpdater

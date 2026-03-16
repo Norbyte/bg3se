@@ -125,12 +125,16 @@ class ManifestSerializer
 {
 public:
     ManifestParseResult Parse(std::string const& json, Manifest& manifest, std::string& parseError);
-    std::string Stringify(Manifest& manifest);
+    std::string Stringify(Manifest const& manifest);
 
 private:
     bool Parse(rapidjson::Value const& node, Manifest& manifest, std::string& parseError);
     bool ParseResource(rapidjson::Value const& node, Manifest::Resource& resource, std::string& parseError);
     bool ParseVersion(rapidjson::Value const& node, Manifest::ResourceVersion& version, std::string& parseError);
+
+    void Stringify(rapidjson::Value& doc, Manifest const& manifest, RAPIDJSON_DEFAULT_ALLOCATOR& alloc);
+    void Stringify(rapidjson::Value& resources, Manifest::Resource const& resource, RAPIDJSON_DEFAULT_ALLOCATOR& alloc);
+    void Stringify(rapidjson::Value& versions, Manifest::ResourceVersion const& ver, RAPIDJSON_DEFAULT_ALLOCATOR& alloc);
 };
 
 

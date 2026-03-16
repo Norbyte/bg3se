@@ -7,6 +7,9 @@
 #include <Shlobj.h>
 #include <psapi.h>
 
+#include <Config.inl>
+#include <ThreadInfo.inl>
+
 extern "C" {
     int default_CSPRNG(uint8_t* dest, unsigned int size)
     {
@@ -37,27 +40,11 @@ GameHelpers::GameHelpers()
 
 GameHelpers::~GameHelpers()
 {
-    if (exceptionHandler_ != NULL) {
-        RemoveVectoredExceptionHandler(exceptionHandler_);
-    }
-
     delete gCoreLibPlatformInterface.GlobalConsole;
     gCoreLibPlatformInterface.GlobalConsole = nullptr;
 }
 
 #define SYM_OFF(name) mappings_.StaticSymbols.insert(std::make_pair(#name, SymbolMappings::StaticSymbol{ (int)offsetof(UpdaterSymbols, name) }))
-
-void GameHelpers::BindToGame()
-{
-    if (bindingsDone_) return;
-    exceptionHandler_ = AddVectoredExceptionHandler(1, &ThreadNameCaptureFilter);
-    bindingsDone_ = true;
-}
-
-void GameHelpers::SetMainThread(HANDLE h)
-{
-    hMainThread_ = h;
-}
 
 DWORD WINAPI GameHelpers::ShowErrorThreadMain(LPVOID param)
 {
@@ -72,63 +59,6 @@ void GameHelpers::ShowError(char const * msg)
     errorMsg_ = msg;
     CreateThread(NULL, 0, &ShowErrorThreadMain, this, 0, NULL);
 }
-
-void GameHelpers::SuspendClientThread() const
-{
-    auto thread = FindClientThread();
-    if (thread != nullptr) {
-        auto hThread = OpenThread(THREAD_SUSPEND_RESUME, FALSE, thread->ThreadId);
-        if (hThread && hThread != INVALID_HANDLE_VALUE) {
-            SuspendThread(hThread);
-            CloseHandle(hThread);
-        }
-    } else {
-        DEBUG("Could not suspend client thread (thread not found!)");
-        SuspendThread(hMainThread_);
-    }
-}
-
-void GameHelpers::ResumeClientThread() const
-{
-    auto thread = FindClientThread();
-    if (thread != nullptr) {
-        auto hThread = OpenThread(THREAD_SUSPEND_RESUME, FALSE, thread->ThreadId);
-        if (hThread && hThread != INVALID_HANDLE_VALUE) {
-            ResumeThread(hThread);
-            CloseHandle(hThread);
-        }
-    } else {
-        DEBUG("Could not resume client thread (thread not found!)");
-        ResumeThread(hMainThread_);
-    }
-}
-
-GameHelpers::ThreadInfo const * GameHelpers::FindClientThread() const
-{
-    for (auto const & it : threads_) {
-        if (it.Name == "ClientInit" || it.Name == "ClientLoadModule") {
-            return &it;
-        }
-    }
-
-    return nullptr;
-}
-
-LONG NTAPI GameHelpers::ThreadNameCaptureFilter(_EXCEPTION_POINTERS *ExceptionInfo)
-{
-    if (ExceptionInfo->ExceptionRecord->ExceptionCode == 0x406D1388) {
-        auto info = reinterpret_cast<THREADNAME_INFO *>(&ExceptionInfo->ExceptionRecord->ExceptionInformation);
-        if (info->dwType == 0x1000 && info->dwFlags == 0) {
-            ThreadInfo thread;
-            thread.ThreadId = info->dwThreadID;
-            thread.Name = info->szName;
-            gGameHelpers->threads_.push_back(thread);
-        }
-    }
-
-    return EXCEPTION_CONTINUE_SEARCH;
-}
-
 
 HMODULE GetExeHandle()
 {
@@ -201,90 +131,6 @@ std::optional<VersionNumber> GetModuleVersion(std::wstring_view path)
     return version;
 }
 
-using namespace rapidjson;
-
-void ConfigGetBool(Value& node, char const* key, bool& value)
-{
-    auto configVar = node.FindMember(key);
-    if (configVar != node.MemberEnd() && configVar->value.IsBool()) {
-        value = configVar->value.GetBool();
-    }
-}
-
-void ConfigGetString(Value& node, char const* key, std::wstring& value)
-{
-    auto configVar = node.FindMember(key);
-    if (configVar != node.MemberEnd() && configVar->value.IsString()) {
-        value = FromStdUTF8(configVar->value.GetString());
-    }
-}
-
-void ConfigGetString(Value& node, char const* key, std::string& value)
-{
-    auto configVar = node.FindMember(key);
-    if (configVar != node.MemberEnd() && configVar->value.IsString()) {
-        value = configVar->value.GetString();
-    }
-}
-
-std::wstring GetDefaultCachePath()
-{
-    TCHAR appDataPath[MAX_PATH];
-    if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, appDataPath)))
-    {
-        return L"";
-    }
-
-    return std::wstring(appDataPath) + L"\\BG3ScriptExtender";
-}
-
-void LoadConfigFile(std::wstring const& configPath, UpdaterConfig& config)
-{
-    config.ManifestURL = UPDATER_MANIFEST_URL;
-    config.ManifestName = UPDATER_MANIFEST_NAME;
-    config.UpdateChannel = UPDATER_CHANNEL;
-    config.CachePath = GetDefaultCachePath();
-#if defined(_DEBUG)
-    config.Debug = true;
-#else
-    config.Debug = false;
-#endif
-    config.ValidateSignature = true;
-    config.IPv4Only = false;
-    config.DisableUpdates = false;
-
-    STDString configJson;
-    std::ifstream f(configPath, std::ios::in | std::ios::binary);
-    if (!f.good()) {
-        return;
-    }
-
-    f.seekg(0, std::ios::end);
-    configJson.resize((uint32_t)f.tellg());
-    f.seekg(0, std::ios::beg);
-    f.read(configJson.data(), configJson.size());
-
-    Document root;
-    if (root.Parse(configJson.data(), configJson.size()).HasParseError()) {
-        std::wstringstream err;
-        err << L"Failed to load configuration file '" << configPath << "'";
-        Fail(ToStdUTF8(err.str()).c_str());
-    }
-
-    ConfigGetString(root, "ManifestURL", config.ManifestURL);
-    ConfigGetString(root, "ManifestName", config.ManifestName);
-    ConfigGetString(root, "UpdateChannel", config.UpdateChannel);
-    ConfigGetString(root, "TargetVersion", config.TargetVersion);
-    ConfigGetString(root, "TargetResourceDigest", config.TargetResourceDigest);
-    ConfigGetString(root, "CachePath", config.CachePath);
-#if defined(HAS_DEBUG_LOGGING)
-    ConfigGetBool(root, "Debug", config.Debug);
-    ConfigGetBool(root, "ValidateSignature", config.ValidateSignature);
-#endif
-    ConfigGetBool(root, "IPv4Only", config.IPv4Only);
-    ConfigGetBool(root, "DisableUpdates", config.DisableUpdates);
-}
-
 std::string trim(std::string const & s)
 {
     size_t first = s.find_first_not_of(" \t\r\n");
@@ -304,6 +150,8 @@ bool ShouldLoad()
         return false;
     }
 
+    // Check to ensure that multiple instances of the updater were not chain-loaded in some fashion
+    // (Rare, but users are surprisingly creative with DLL placement)
     if (UpdaterMutex == NULL) {
         char mutexName[MAX_PATH];
         sprintf_s(mutexName, "BG3SE_Upd_%d", GetCurrentProcessId());

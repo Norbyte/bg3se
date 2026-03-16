@@ -21,4 +21,5 @@
 #include <CoreLib/Base/Base.h>
 #include <CoreLib/Utils.h>
 #include "Defines.h"
+#include "Config.h"
 #include "GameHelpers.h"

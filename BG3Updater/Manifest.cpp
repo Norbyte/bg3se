@@ -155,7 +155,7 @@ std::optional<Manifest::ResourceVersion> Manifest::Resource::FindResourceVersion
     }
 }
 
-std::optional<bool> GetBoolProperty(Value const& node, std::string_view key, std::optional<bool> defaultVal = {})
+bool GetBoolProperty(Value const& node, std::string_view key, bool defaultVal = false)
 {
     auto attr = node.FindMember(key.data());
     if (attr == node.MemberEnd() || !attr->value.IsBool()) {
@@ -165,7 +165,7 @@ std::optional<bool> GetBoolProperty(Value const& node, std::string_view key, std
     return attr->value.GetBool();
 }
 
-std::optional<int> GetIntProperty(Value const& node, std::string_view key, std::optional<int> defaultVal = {})
+int GetIntProperty(Value const& node, std::string_view key, int defaultVal = 0)
 {
     auto attr = node.FindMember(key.data());
     if (attr == node.MemberEnd() || !attr->value.IsInt()) {
@@ -175,7 +175,7 @@ std::optional<int> GetIntProperty(Value const& node, std::string_view key, std::
     return attr->value.GetInt();
 }
 
-std::optional<int64_t> GetInt64Property(Value const& node, std::string_view key, std::optional<int64_t> defaultVal = {})
+int64_t GetInt64Property(Value const& node, std::string_view key, int64_t defaultVal = 0)
 {
     auto attr = node.FindMember(key.data());
     if (attr == node.MemberEnd() || !attr->value.IsInt64()) {
@@ -185,7 +185,7 @@ std::optional<int64_t> GetInt64Property(Value const& node, std::string_view key,
     return attr->value.GetInt64();
 }
 
-std::optional<std::string_view> GetStringProperty(Value const& node, std::string_view key, std::optional<std::string_view> defaultVal = {})
+std::string_view GetStringProperty(Value const& node, std::string_view key, std::string_view defaultVal = {})
 {
     auto attr = node.FindMember(key.data());
     if (attr == node.MemberEnd() || !attr->value.IsString()) {
@@ -211,20 +211,20 @@ ManifestParseResult ManifestSerializer::Parse(std::string const& json, Manifest&
         return ManifestParseResult::Failed;
     }
 
-    if (*version != Manifest::CurrentVersion) {
+    if (version != Manifest::CurrentVersion) {
         parseError = "Expected manifest version 1; got ";
-        parseError += std::to_string(*version);
-        if (*version > Manifest::CurrentVersion) {
+        parseError += std::to_string(version);
+        if (version > Manifest::CurrentVersion) {
             return ManifestParseResult::UpdateRequired;
         } else {
             return ManifestParseResult::Failed;
         }
     }
 
-    manifest.ManifestVersion = *version;
-    manifest.ManifestMinorVersion = *GetIntProperty(root, "ManifestMinorVersion", 0);
-    manifest.Notice = *GetStringProperty(root, "Notice", "");
-    manifest.NoMatchingVersionNotice = *GetStringProperty(root, "NoMatchingVersionNotice", "");
+    manifest.ManifestVersion = version;
+    manifest.ManifestMinorVersion = GetIntProperty(root, "ManifestMinorVersion", 0);
+    manifest.Notice = GetStringProperty(root, "Notice", "");
+    manifest.NoMatchingVersionNotice = GetStringProperty(root, "NoMatchingVersionNotice", "");
 
     if (Parse(root, manifest, parseError)) {
         return ManifestParseResult::Successful;
@@ -262,7 +262,7 @@ bool ManifestSerializer::Parse(Value const& node, Manifest& manifest, std::strin
 
 bool ManifestSerializer::ParseResource(Value const& node, Manifest::Resource& resource, std::string& parseError)
 {
-    resource.Name = *GetStringProperty(node, "Name", "");
+    resource.Name = GetStringProperty(node, "Name", "");
 
     auto versions = node.FindMember("Versions");
     if (versions == node.MemberEnd() || !versions->value.IsArray()) {
@@ -290,8 +290,8 @@ bool ManifestSerializer::ParseResource(Value const& node, Manifest::Resource& re
 bool ManifestSerializer::ParseVersion(Value const& node, Manifest::ResourceVersion& version, std::string& parseError)
 {
     auto minGameVersion = GetStringProperty(node, "MinGameVersion");
-    if (minGameVersion) {
-        auto minVersion = VersionNumber::FromString(minGameVersion->data());
+    if (!minGameVersion.empty()) {
+        auto minVersion = VersionNumber::FromString(minGameVersion.data());
         if (!minVersion) {
             parseError = "Unable to parse 'MinGameVersion'.";
             return false;
@@ -301,8 +301,8 @@ bool ManifestSerializer::ParseVersion(Value const& node, Manifest::ResourceVersi
     }
 
     auto maxGameVersion = GetStringProperty(node, "MaxGameVersion");
-    if (maxGameVersion) {
-        auto maxVersion = VersionNumber::FromString(maxGameVersion->data());
+    if (!maxGameVersion.empty()) {
+        auto maxVersion = VersionNumber::FromString(maxGameVersion.data());
         if (!maxVersion) {
             parseError = "Unable to parse 'MaxGameVersion'.";
             return false;
@@ -311,7 +311,7 @@ bool ManifestSerializer::ParseVersion(Value const& node, Manifest::ResourceVersi
         version.MaxGameVersion = maxVersion;
     }
 
-    auto resVersion = VersionNumber::FromString(GetStringProperty(node, "Version", "")->data());
+    auto resVersion = VersionNumber::FromString(GetStringProperty(node, "Version", "").data());
     if (!resVersion) {
         parseError = "Unable to parse 'Version'.";
         return false;
@@ -319,58 +319,36 @@ bool ManifestSerializer::ParseVersion(Value const& node, Manifest::ResourceVersi
 
     version.Version = *resVersion;
 
-    version.URL = *GetStringProperty(node, "URL", "");
-    version.Digest = *GetStringProperty(node, "Digest", "");
-    version.BuildDate = (uint64_t)*GetInt64Property(node, "BuildDate", 0);
-    version.Revoked = *GetBoolProperty(node, "Revoked", false);
-    version.Signature = *GetStringProperty(node, "Signature", "");
-    version.Notice = *GetStringProperty(node, "Notice", "");
+    version.URL = GetStringProperty(node, "URL", "");
+    version.Digest = GetStringProperty(node, "Digest", "");
+    version.BuildDate = (uint64_t)GetInt64Property(node, "BuildDate", 0);
+    version.Revoked = GetBoolProperty(node, "Revoked", false);
+    version.Signature = GetStringProperty(node, "Signature", "");
+    version.Notice = GetStringProperty(node, "Notice", "");
     return true;
 }
 
-std::string ManifestSerializer::Stringify(Manifest& manifest)
+std::string ManifestSerializer::Stringify(Manifest const& manifest)
 {
     Document doc{ kObjectType };
     auto& alloc = doc.GetAllocator();
 
+    Stringify(doc, manifest, alloc);
+
+    StringBuffer sb;
+    PrettyWriter<StringBuffer> writer(sb);
+    doc.Accept(writer);
+
+    std::ostringstream os;
+    os.write(sb.GetString(), sb.GetLength());
+    return os.str();
+}
+
+void ManifestSerializer::Stringify(rapidjson::Value& doc, Manifest const& manifest, RAPIDJSON_DEFAULT_ALLOCATOR& alloc)
+{
     Value resources{ kArrayType };
     for (auto const& res : manifest.Resources) {
-        Value jsonRes{ kObjectType };
-        jsonRes.AddMember("Name", res.first, alloc);
-
-        Value versions{ kArrayType };
-        for (auto const& ver : res.second.ResourceVersions) {
-            Value jsonVer{ kObjectType };
-            if (ver.second.MinGameVersion) {
-                jsonVer.AddMember("MinGameVersion", ver.second.MinGameVersion->ToString(), alloc);
-            }
-
-            if (ver.second.MaxGameVersion) {
-                jsonVer.AddMember("MaxGameVersion", ver.second.MaxGameVersion->ToString(), alloc);
-            }
-
-            jsonVer.AddMember("Version", ver.second.Version.ToString(), alloc);
-            jsonVer.AddMember("URL", ver.second.URL, alloc);
-            jsonVer.AddMember("Digest", ver.second.Digest, alloc);
-            jsonVer.AddMember("BuildDate", ver.second.BuildDate, alloc);
-
-            if (ver.second.Revoked) {
-                jsonVer.AddMember("BuildDate", true, alloc);
-            }
-
-            if (!ver.second.Signature.empty()) {
-                jsonVer.AddMember("Signature", ver.second.Signature, alloc);
-            }
-
-            if (!ver.second.Notice.empty()) {
-                jsonVer.AddMember("Notice", ver.second.Notice, alloc);
-            }
-
-            versions.PushBack(jsonVer, alloc);
-        }
-
-        jsonRes.AddMember("Versions", versions, alloc);
-        resources.PushBack(jsonRes, alloc);
+        Stringify(resources, res.second, alloc);
     }
 
     doc.AddMember("ManifestVersion", Value(manifest.ManifestVersion), alloc);
@@ -385,14 +363,61 @@ std::string ManifestSerializer::Stringify(Manifest& manifest)
     }
 
     doc.AddMember("Resources", resources, alloc);
+}
 
-    StringBuffer sb;
-    PrettyWriter<StringBuffer> writer(sb);
-    doc.Accept(writer);
+void ManifestSerializer::Stringify(rapidjson::Value& resources, Manifest::Resource const& resource, RAPIDJSON_DEFAULT_ALLOCATOR& alloc)
+{
+    Value jsonRes{ kObjectType };
+    jsonRes.AddMember("Name", resource.Name, alloc);
 
-    std::ostringstream os;
-    os.write(sb.GetString(), sb.GetLength());
-    return os.str();
+    std::vector<Manifest::ResourceVersion> sortedVersions;
+    for (auto const& ver : resource.ResourceVersions) {
+        sortedVersions.push_back(ver.second);
+    }
+
+    // Sort by build date in the generated manifest
+    std::sort(sortedVersions.begin(), sortedVersions.end(), [](Manifest::ResourceVersion const& a, Manifest::ResourceVersion const& b) {
+        return a.BuildDate < b.BuildDate;
+    });
+
+    Value versions{ kArrayType };
+    for (auto const& ver : sortedVersions) {
+        Stringify(versions, ver, alloc);
+    }
+
+    jsonRes.AddMember("Versions", versions, alloc);
+    resources.PushBack(jsonRes, alloc);
+}
+
+void ManifestSerializer::Stringify(rapidjson::Value& versions, Manifest::ResourceVersion const& ver, RAPIDJSON_DEFAULT_ALLOCATOR& alloc)
+{
+    Value jsonVer{ kObjectType };
+    if (ver.MinGameVersion) {
+        jsonVer.AddMember("MinGameVersion", ver.MinGameVersion->ToString(), alloc);
+    }
+
+    if (ver.MaxGameVersion) {
+        jsonVer.AddMember("MaxGameVersion", ver.MaxGameVersion->ToString(), alloc);
+    }
+
+    jsonVer.AddMember("Version", ver.Version.ToString(), alloc);
+    jsonVer.AddMember("URL", ver.URL, alloc);
+    jsonVer.AddMember("Digest", ver.Digest, alloc);
+    jsonVer.AddMember("BuildDate", ver.BuildDate, alloc);
+
+    if (ver.Revoked) {
+        jsonVer.AddMember("BuildDate", true, alloc);
+    }
+
+    if (!ver.Signature.empty()) {
+        jsonVer.AddMember("Signature", ver.Signature, alloc);
+    }
+
+    if (!ver.Notice.empty()) {
+        jsonVer.AddMember("Notice", ver.Notice, alloc);
+    }
+
+    versions.PushBack(jsonVer, alloc);
 }
 
 END_SE()

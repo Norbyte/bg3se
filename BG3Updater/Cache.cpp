@@ -128,6 +128,51 @@ bool CachedResource::AreDllsWriteable()
     return true;
 }
 
+bool UnzipFile(ZipArchive::Ptr& archive, ZipArchiveEntry::Ptr& entry, std::wstring const& outputPath, std::string& reason)
+{
+    DEBUG("Extracting: %s", entry->GetFullName().c_str());
+
+    auto tempPath = outputPath + L".tmp";
+    std::ofstream f(tempPath.c_str(), std::ios::out | std::ios::binary);
+    if (!f.good()) {
+        DEBUG("Failed to open %s for extraction", entry->GetFullName().c_str());
+        reason = "Script Extender update failed:\r\n";
+        reason += std::string("Failed to open file ") + entry->GetFullName() + " for extraction";
+        return false;
+    }
+
+    auto stream = entry->GetDecompressionStream();
+    if (!stream) {
+        DEBUG("Failed to decompress %s", entry->GetFullName().c_str());
+        reason = "Script Extender update failed:\r\n";
+        reason += std::string("Failed to decompress file ") + entry->GetFullName();
+        return false;
+    }
+
+    auto len = entry->GetSize();
+
+    char buf[4096];
+    while (len) {
+        auto chunkSize = std::min(len, std::size(buf));
+        stream->read(buf, chunkSize);
+        f.write(buf, chunkSize);
+        len -= chunkSize;
+    }
+
+    entry->CloseDecompressionStream();
+    f.close();
+
+    if (!MoveFileExW(tempPath.c_str(), outputPath.c_str(), MOVEFILE_REPLACE_EXISTING)) {
+        DEBUG("Failed to move file %s", entry->GetFullName().c_str());
+        reason = "Script Extender update failed:\r\n";
+        reason += std::string("Failed to update file ") + entry->GetFullName();
+        DeleteFileW(tempPath.c_str());
+        return false;
+    }
+
+    return true;
+}
+
 bool CachedResource::UnzipPackage(std::wstring const& zipPath, std::wstring const& resourcePath, std::string& reason)
 {
     auto archive = ZipFile::Open(zipPath);
@@ -141,46 +186,10 @@ bool CachedResource::UnzipPackage(std::wstring const& zipPath, std::wstring cons
     auto entries = archive->GetEntriesCount();
     for (auto i = 0; i < entries; i++) {
         auto entry = archive->GetEntry(i);
-
         DEBUG("Extracting: %s", entry->GetFullName().c_str());
 
         auto outPath = resourcePath + L"\\" + FromStdUTF8(entry->GetFullName());
-        auto tempPath = resourcePath + L"\\extract.tmp";
-        std::ofstream f(tempPath.c_str(), std::ios::out | std::ios::binary);
-        if (!f.good()) {
-            DEBUG("Failed to open %s for extraction", entry->GetFullName().c_str());
-            reason = "Script Extender update failed:\r\n";
-            reason += std::string("Failed to open file ") + entry->GetFullName() + " for extraction";
-            failed = true;
-            break;
-        }
-
-        auto stream = entry->GetDecompressionStream();
-        if (!stream) {
-            DEBUG("Failed to decompress %s", entry->GetFullName().c_str());
-            reason = "Script Extender update failed:\r\n";
-            reason += std::string("Failed to decompress file ") + entry->GetFullName();
-            failed = true;
-            break;
-        }
-
-        auto len = entry->GetSize();
-
-        char buf[4096];
-        while (len) {
-            auto chunkSize = std::min(len, std::size(buf));
-            stream->read(buf, chunkSize);
-            f.write(buf, chunkSize);
-            len -= chunkSize;
-        }
-
-        entry->CloseDecompressionStream();
-        f.close();
-
-        if (!MoveFileExW(tempPath.c_str(), outPath.c_str(), MOVEFILE_REPLACE_EXISTING)) {
-            DEBUG("Failed to move file %s", entry->GetFullName().c_str());
-            reason = "Script Extender update failed:\r\n";
-            reason += std::string("Failed to update file ") + entry->GetFullName();
+        if (!UnzipFile(archive, entry, outPath, reason)) {
             failed = true;
             break;
         }

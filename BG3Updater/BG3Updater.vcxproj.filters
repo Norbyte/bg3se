@@ -22,11 +22,17 @@
     <ClInclude Include="Cache.h" />
     <ClInclude Include="Updater.h" />
     <ClInclude Include="Defines.h" />
+    <ClInclude Include="ThreadInfo.h" />
+    <ClInclude Include="Config.h" />
+    <ClInclude Include="UI.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources.rc" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Exports.def" />
+    <None Include="ThreadInfo.inl" />
+    <None Include="Config.inl" />
+    <None Include="UI.inl" />
   </ItemGroup>
 </Project>

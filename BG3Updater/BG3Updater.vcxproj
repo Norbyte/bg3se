@@ -173,6 +173,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Cache.h" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="Defines.h" />
     <ClInclude Include="DWriteWrapper.h" />
     <ClInclude Include="GameHelpers.h" />
@@ -181,6 +182,8 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="ThreadInfo.h" />
+    <ClInclude Include="UI.h" />
     <ClInclude Include="Updater.h" />
   </ItemGroup>
   <ItemGroup>
@@ -200,7 +203,10 @@
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Config.inl" />
     <None Include="Exports.def" />
+    <None Include="ThreadInfo.inl" />
+    <None Include="UI.inl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources.rc" />

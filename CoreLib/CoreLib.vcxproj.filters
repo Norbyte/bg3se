@@ -142,5 +142,8 @@
     <None Include="Base\BaseString.inl">
       <Filter>Source Files\Base</Filter>
     </None>
+    <None Include="ConfigUtils.inl">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

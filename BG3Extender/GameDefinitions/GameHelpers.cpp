@@ -29,6 +29,7 @@ namespace bg3se
             EnumsById.resize(id + 1);
         }
 
+        se_assert(EnumsById[id] == nullptr);
         EnumsById[id] = ei;
     }
 
@@ -49,6 +50,7 @@ namespace bg3se
             BitfieldsById.resize(id + 1);
         }
 
+        se_assert(BitfieldsById[id] == nullptr);
         BitfieldsById[id] = ei;
     }
 
