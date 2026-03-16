@@ -23,20 +23,20 @@ OperationResult ManifestFetcher::Fetch(Manifest& manifest)
     std::string manifestUrl = config_.ManifestURL + config_.UpdateChannel + "/" + config_.ManifestName;
 
     DEBUG("Fetching manifest from: %s", manifestUrl.c_str());
-    std::vector<uint8_t> manifestBinary;
+    std::vector<char> manifestBody;
     fetcher_.TransferCategory = ErrorCategory::ManifestFetch;
-    auto result = fetcher_.Fetch(manifestUrl, manifestBinary);
+    auto result = fetcher_.Fetch(manifestUrl, manifestBody);
     if (!result) {
         result.error().Message = std::string("Unable to download: ") + result.error().Message
             + "\r\n\r\nURL: " + manifestUrl;
         return result;
     }
 
-    std::string manifestStr((char*)manifestBinary.data(), (char*)manifestBinary.data() + manifestBinary.size());
+    std::string_view manifestStr(manifestBody.data(), manifestBody.size());
     return Parse(manifestStr, manifest);
 }
 
-OperationResult ManifestFetcher::Parse(std::string const& manifestStr, Manifest& manifest)
+OperationResult ManifestFetcher::Parse(std::string_view manifestStr, Manifest& manifest)
 {
     ManifestSerializer parser;
     std::string parseError;
@@ -65,7 +65,7 @@ OperationResult ResourceUpdater::Update(Manifest const& manifest, std::string co
         return ErrorReason{ ErrorCategory::LocalLoad, std::string("No manifest entry found for resource: ") + resourceName };
     }
 
-    auto version = resIt->second.FindResourceVersionWithOverrides(gameVersion, config_);
+    auto version = manifest.FindResourceVersionWithOverrides(resourceName, gameVersion, config_);
     if (!version) {
         if (!config_.TargetResourceDigest.empty()) {
             return ErrorReason{ ErrorCategory::NoMatchingVersion,
@@ -79,7 +79,7 @@ OperationResult ResourceUpdater::Update(Manifest const& manifest, std::string co
         }
     }
 
-    if (cache_.LocalResourceExists(resIt->first, *version)) {
+    if (cache_.LocalResourceExists(resourceName, *version)) {
         DEBUG("Resource already cached locally, skipping update: Version %s, Digest %s", version->Version.ToString().c_str(), version->Digest.c_str());
         return OperationSuccessful{};
     }
@@ -99,7 +99,7 @@ OperationResult ResourceUpdater::Update(Manifest::Resource const& resource, Mani
 
     gUpdater->SetStatusText(std::wstring(L"Downloading update: ") + FromStdUTF8(version.Version.ToString()));
     DEBUG("Fetching update package: %s", version.URL.c_str());
-    std::vector<uint8_t> response;
+    std::vector<char> response;
     fetcher_.TransferCategory = ErrorCategory::UpdateDownload;
     auto result = fetcher_.Fetch(version.URL, response);
     if (!result) {
@@ -109,7 +109,7 @@ OperationResult ResourceUpdater::Update(Manifest::Resource const& resource, Mani
     }
 
     gUpdater->SetStatusText(std::wstring(L"Unpacking update: ") + FromStdUTF8(version.Version.ToString()));
-    return cache_.UpdateLocalPackage(resource, version, response);
+    return cache_.UpdateLocalPackage(resource, version, std::string_view(response.data(), response.size()));
 }
 
 void UpdaterConsole::Print(DebugMessageType type, char const* msg)
@@ -150,7 +150,7 @@ void ScriptExtenderUpdater::FetchUpdates()
         updateResult_ = OperationSuccessful{};
     }
 
-    auto resource = cache_->FindLoadableResource("ScriptExtender", gameVersion_);
+    auto resource = cache_->FindLoadableResource(UPDATER_RESOURCE_NAME, gameVersion_);
     if (resource) {
         launchDllPath_ = resource->GetAppDllPath();
         launchNotice_ = resource->GetVersion().Notice;
@@ -292,10 +292,11 @@ OperationResult ScriptExtenderUpdater::TryToUpdate()
     }
 
     cache_->UpdateFromManifest(manifest);
+    cache_->SaveManifestIfNecessary();
 
     updateManifest_ = manifest;
     ResourceUpdater updater(fetcher_, config_, *cache_);
-    return updater.Update(manifest, "ScriptExtender", gameVersion_);
+    return updater.Update(manifest, UPDATER_RESOURCE_NAME, gameVersion_);
 }
 
 bool ScriptExtenderUpdater::IsCompleted() const

@@ -58,7 +58,6 @@ std::optional<std::string> GetExeResource(int resourceId)
         }
     }
 
-    ERR("Could not get bootstrap resource %d!", resourceId);
     return {};
 }
 
@@ -100,7 +99,7 @@ bool SaveFile(std::wstring const& path, std::vector<uint8_t> const& body)
     return f.good();
 }
 
-bool SaveFile(std::wstring const& path, std::string const& body)
+bool SaveFile(std::wstring const& path, std::string_view body)
 {
     std::ofstream f(path, std::ios::binary | std::ios::out);
     if (!f.good()) {

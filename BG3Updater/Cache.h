@@ -7,13 +7,13 @@ BEGIN_SE()
 class CachedResource
 {
 public:
-    CachedResource(std::wstring const& cachePath, Manifest::Resource const& resource, Manifest::ResourceVersion const& version);
+    CachedResource(std::wstring const& cachePath, std::string const& resourceName, Manifest::ResourceVersion const& version);
     std::wstring GetResourceLocalPath() const;
     std::wstring TryCreateLocalResourceCacheDirectory();
     std::wstring GetLocalPath() const;
     std::wstring GetLocalPackagePath() const;
     std::wstring TryCreateLocalCacheDirectory();
-    OperationResult UpdateLocalPackage(std::vector<uint8_t> const& contents);
+    OperationResult UpdateLocalPackage(std::string_view contents);
     bool RemoveLocalPackage();
     std::wstring GetAppDllPath();
     bool ExtenderDLLExists();
@@ -44,7 +44,7 @@ public:
     bool SaveManifest(std::wstring const& path);
     bool SaveManifestIfNecessary();
     bool LocalResourceExists(std::string const& name, Manifest::ResourceVersion const& version) const;
-    OperationResult UpdateLocalPackage(Manifest::Resource const& resource, Manifest::ResourceVersion const& version, std::vector<uint8_t> const& contents);
+    OperationResult UpdateLocalPackage(Manifest::Resource const& resource, Manifest::ResourceVersion const& version, std::string_view contents);
     void UpdateFromManifest(Manifest const& manifest);
     bool UpdateFromLatestMetadata(Manifest::Resource const& resource, Manifest::ResourceVersion const& version);
     bool RemoveLocalResource(Manifest::Resource const& resource, Manifest::ResourceVersion const& version);

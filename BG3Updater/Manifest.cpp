@@ -108,6 +108,17 @@ bool Manifest::ResourceVersion::UpdateDLLMetadata(std::wstring const& path)
 }
 
 
+std::optional<Manifest::ResourceVersion> Manifest::FindResourceVersionWithOverrides(std::string const& resourceName,
+    VersionNumber const& gameVersion, UpdaterConfig const& config) const
+{
+    auto resIt = Resources.find(resourceName);
+    if (resIt == Resources.end()) {
+        return {};
+    }
+
+    return resIt->second.FindResourceVersionWithOverrides(gameVersion, config);
+}
+
 std::optional<Manifest::ResourceVersion> Manifest::Resource::FindResourceVersionWithOverrides(VersionNumber const& gameVersion,
     UpdaterConfig const& config) const
 {
@@ -141,13 +152,7 @@ std::optional<Manifest::ResourceVersion> Manifest::Resource::FindResourceVersion
         }
     }
 
-    std::sort(availableVersions.begin(), availableVersions.end(), [](ResourceVersion const& a, ResourceVersion const& b) {
-        if (a.MinGameVersion && b.MinGameVersion && a.MinGameVersion != b.MinGameVersion) {
-            return a.MinGameVersion < b.MinGameVersion;
-        }
-
-        return a.BuildDate < b.BuildDate;
-    });
+    std::sort(availableVersions.begin(), availableVersions.end());
 
     if (availableVersions.empty()) {
         return {};
@@ -196,7 +201,7 @@ std::string_view GetStringProperty(Value const& node, std::string_view key, std:
     return std::string_view(attr->value.GetString(), attr->value.GetStringLength());
 }
 
-OperationResult ManifestSerializer::Parse(std::string const& json, Manifest& manifest)
+OperationResult ManifestSerializer::Parse(std::string_view json, Manifest& manifest)
 {
     Document root;
     if (root.Parse(json.data(), json.size()).HasParseError()) {

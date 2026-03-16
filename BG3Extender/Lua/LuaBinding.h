@@ -323,10 +323,6 @@ namespace bg3se::lua
 
         std::optional<int> LoadScript(STDString const & script, STDString const & name = "", int globalsIdx = 0);
 
-        /*void OnNetMessageReceived(STDString const & channel, STDString const & payload, UserId userId);*/
-
-        static STDString GetBuiltinLibrary(int resourceId);
-
     protected:
         LuaStateWrapper L;
         bool startupDone_{ false };

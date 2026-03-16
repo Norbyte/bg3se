@@ -84,7 +84,7 @@ bool SEUpdaterGetResourceVersion(int32_t* major, int32_t* minor, int32_t* revisi
     if (!gUpdater) return false;
 
     gUpdater->LoadCaches();
-    auto ver = gUpdater->GetCache()->FindResourceVersion("ScriptExtender", gUpdater->GetCachedGameVersion());
+    auto ver = gUpdater->GetCache()->FindResourceVersion(UPDATER_RESOURCE_NAME, gUpdater->GetCachedGameVersion());
     if (ver) {
         *major = ver->Version.Major;
         *minor = ver->Version.Minor;

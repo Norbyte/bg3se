@@ -14,7 +14,7 @@ class ManifestFetcher
 public:
     ManifestFetcher(HttpFetcher& fetcher, UpdaterConfig const& config);
     OperationResult Fetch(Manifest& manifest);
-    OperationResult Parse(std::string const& manifestStr, Manifest& manifest);
+    OperationResult Parse(std::string_view manifestStr, Manifest& manifest);
 
 private:
     UpdaterConfig const& config_;

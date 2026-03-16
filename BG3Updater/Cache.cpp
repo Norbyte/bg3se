@@ -300,10 +300,10 @@ bool ResourceCacheRepository::LocalResourceExists(std::string const& name, Manif
     return HasLocalCopy(resource->second, found->second);
 }
 
-OperationResult ResourceCacheRepository::UpdateLocalPackage(Manifest::Resource const& resource, Manifest::ResourceVersion const& version, std::vector<uint8_t> const& contents)
+OperationResult ResourceCacheRepository::UpdateLocalPackage(Manifest::Resource const& resource, Manifest::ResourceVersion const& version, std::string_view contents)
 {
     DEBUG("Updating local copy of resource %s, digest %s", resource.Name.c_str(), version.Digest.c_str());
-    CachedResource res(path_, resource, version);
+    CachedResource res(path_, resource.Name, version);
     auto result = res.UpdateLocalPackage(contents);
     if (result) {
         AddResourceToManifest(resource, version);
@@ -332,7 +332,7 @@ void ResourceCacheRepository::UpdateFromManifest(Manifest const& manifest)
     }
 
     // Remove all resource versions that are cached locally but are not present in the manifest
-    std::vector<std::pair< Manifest::Resource const*, Manifest::ResourceVersion const*>> removals;
+    std::vector<std::pair<Manifest::Resource const*, Manifest::ResourceVersion const*>> removals;
     for (auto const& res : manifest_.Resources) {
         for (auto const& ver : res.second.ResourceVersions) {
             auto resIt = manifest.Resources.find(res.second.Name);
@@ -400,36 +400,26 @@ bool ResourceCacheRepository::RemoveLocalResource(Manifest::Resource const& reso
 
     DEBUG("Removing local copy of resource %s, digest %s", resource.Name.c_str(), version.Digest.c_str());
 
-    CachedResource res(path_, resource, version);
+    CachedResource res(path_, resource.Name, version);
     res.RemoveLocalPackage();
     resIt->second.ResourceVersions.erase(verIt);
     manifestDirty_ = true;
     return true;
 }
 
-std::optional<Manifest::ResourceVersion> ResourceCacheRepository::FindResourceVersion(std::string const& name, VersionNumber const& gameVersion)
+std::optional<Manifest::ResourceVersion> ResourceCacheRepository::FindResourceVersion(std::string const& resourceName, VersionNumber const& gameVersion)
 {
-    auto resource = manifest_.Resources.find(name);
-    if (resource == manifest_.Resources.end()) {
-        return {};
-    }
-
-    return resource->second.FindResourceVersionWithOverrides(gameVersion, config_);
+    return manifest_.FindResourceVersionWithOverrides(resourceName, gameVersion, config_);
 }
 
-std::optional<CachedResource> ResourceCacheRepository::FindLoadableResource(std::string const& name, VersionNumber const& gameVersion)
+std::optional<CachedResource> ResourceCacheRepository::FindLoadableResource(std::string const& resourceName, VersionNumber const& gameVersion)
 {
-    auto resource = manifest_.Resources.find(name);
-    if (resource == manifest_.Resources.end()) {
-        return {};
-    }
-
-    auto ver = resource->second.FindResourceVersionWithOverrides(gameVersion, config_);
+    auto ver = manifest_.FindResourceVersionWithOverrides(resourceName, gameVersion, config_);
     if (!ver) {
         return {};
     }
 
-    CachedResource res(path_, resource->second, *ver);
+    CachedResource res(path_, resourceName, *ver);
     if (res.ExtenderDLLExists()) {
         return res;
     } else {
@@ -439,7 +429,7 @@ std::optional<CachedResource> ResourceCacheRepository::FindLoadableResource(std:
 
 bool ResourceCacheRepository::HasLocalCopy(Manifest::Resource const& resource, Manifest::ResourceVersion const& version) const
 {
-    CachedResource res(path_, resource, version);
+    CachedResource res(path_, resource.Name, version);
     return res.ExtenderDLLExists();
 }
 

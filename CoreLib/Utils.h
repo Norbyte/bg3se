@@ -44,7 +44,7 @@ void Fail(char const * reason);
 
 bool TryCreateDirectory(std::wstring const& path);
 bool SaveFile(std::wstring const& path, std::vector<uint8_t> const& body);
-bool SaveFile(std::wstring const& path, std::string const& body);
+bool SaveFile(std::wstring const& path, std::string_view body);
 bool LoadFile(std::wstring const& path, std::vector<uint8_t>& body);
 bool LoadFile(std::wstring const& path, std::string& body);
 

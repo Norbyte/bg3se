@@ -718,16 +718,6 @@ void State::OnFindPath(AiGrid* self, AiPathId pathId)
     ThrowEvent("FindPath", params);
 }
 
-STDString State::GetBuiltinLibrary(int resourceId)
-{
-    auto resource = GetExeResource(resourceId);
-    if (resource) {
-        return STDString(resource->c_str());
-    } else {
-        return STDString();
-    }
-}
-
 EventResult State::DispatchEvent(EventBase& evt, char const* eventName, bool canPreventAction, uint32_t restrictions)
 {
     OPTICK_SCRIPT_EVENT(eventName, "", 0);

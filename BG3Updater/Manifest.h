@@ -34,6 +34,15 @@ struct Manifest
 
         bool UpdatePackageMetadata(std::wstring const& path);
         bool UpdateDLLMetadata(std::wstring const& path);
+
+        inline bool operator < (ResourceVersion const& o) const
+        {
+            if (MinGameVersion && o.MinGameVersion && MinGameVersion != o.MinGameVersion) {
+                return MinGameVersion < o.MinGameVersion;
+            }
+
+            return BuildDate < o.BuildDate;
+        }
     };
 
     struct Resource
@@ -52,12 +61,15 @@ struct Manifest
     std::string Notice;
     std::string NoMatchingVersionNotice;
     std::unordered_map<std::string, Resource> Resources;
+
+    std::optional<Manifest::ResourceVersion> FindResourceVersionWithOverrides(std::string const& resourceName,
+        VersionNumber const& gameVersion, UpdaterConfig const& config) const;
 };
 
 class ManifestSerializer
 {
 public:
-    OperationResult Parse(std::string const& json, Manifest& manifest);
+    OperationResult Parse(std::string_view json, Manifest& manifest);
     std::string Stringify(Manifest const& manifest);
 
 private:

@@ -31,7 +31,7 @@ void HttpFetcher::LogError(CURL* curl, CURLcode result)
     DEBUG("Updater error: %s", lastError_.c_str());
 }
 
-OperationResult HttpFetcher::Fetch(std::string const& url, std::vector<uint8_t> & response)
+OperationResult HttpFetcher::Fetch(std::string const& url, std::vector<char> & response)
 {
     cancelling_ = false;
     socket_ = NULL;
