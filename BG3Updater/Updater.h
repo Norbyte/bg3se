@@ -14,6 +14,7 @@ class ManifestFetcher
 public:
     ManifestFetcher(HttpFetcher& fetcher, UpdaterConfig const& config);
     OperationResult Fetch(Manifest& manifest);
+    OperationResult LoadEmbedded(Manifest& manifest);
     OperationResult Parse(std::string_view manifestStr, Manifest& manifest);
 
 private:
@@ -46,6 +47,7 @@ class ScriptExtenderUpdater
 public:
     void SetGameVersion(int32_t major, int32_t minor, int32_t revision, int32_t build);
     OperationResult TryToUpdate();
+    void UpdateFromEmbeddedCache();
     inline bool IsCompleted() const;
     void InitConsole();
     void InitUI();

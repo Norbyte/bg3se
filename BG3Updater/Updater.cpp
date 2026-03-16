@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Updater.h"
 #include "HttpFetcher.h"
+#include "resource.h"
 #include <Shlwapi.h>
 #include <CommCtrl.h>
 #include <detours.h>
@@ -34,6 +35,18 @@ OperationResult ManifestFetcher::Fetch(Manifest& manifest)
 
     std::string_view manifestStr(manifestBody.data(), manifestBody.size());
     return Parse(manifestStr, manifest);
+}
+    
+OperationResult ManifestFetcher::LoadEmbedded(Manifest& manifest)
+{
+    auto manifestBinary = GetExeResource(IDR_LOCAL_MANIFEST);
+    if (!manifestBinary || manifestBinary->empty()) {
+        DEBUG("No embedded manifest found; skipping embedded load");
+        return ErrorReason{ "No embedded manifest found" };
+    }
+
+    DEBUG("Loading embedded manifest");
+    return Parse(*manifestBinary, manifest);
 }
 
 OperationResult ManifestFetcher::Parse(std::string_view manifestStr, Manifest& manifest)
@@ -144,6 +157,8 @@ void ScriptExtenderUpdater::FetchUpdates()
     } else {
         updateResult_ = OperationSuccessful{};
     }
+
+    UpdateFromEmbeddedCache();
 
     if (cancellingUpdate_) {
         // Update failure is due to cancellation, don't show an error message
@@ -297,6 +312,49 @@ OperationResult ScriptExtenderUpdater::TryToUpdate()
     updateManifest_ = manifest;
     ResourceUpdater updater(fetcher_, config_, *cache_);
     return updater.Update(manifest, UPDATER_RESOURCE_NAME, gameVersion_);
+}
+    
+void ScriptExtenderUpdater::UpdateFromEmbeddedCache()
+{
+    Manifest manifest;
+    ManifestFetcher manifestFetcher(fetcher_, config_);
+    auto result = manifestFetcher.LoadEmbedded(manifest);
+    if (!result) {
+        DEBUG("Failed to load embedded manifest: %s", result.error().Message.c_str());
+        return;
+    }
+
+    // Pick a version to load from the local cache
+    auto localRes = cache_->GetManifest().FindResourceVersionWithOverrides(UPDATER_RESOURCE_NAME, gameVersion_, config_);
+
+    // Pick a version to load from the embedded manifest
+    auto embeddedRes = manifest.FindResourceVersionWithOverrides(UPDATER_RESOURCE_NAME, gameVersion_, config_);
+
+    if (!embeddedRes) {
+        DEBUG("Not extracting embedded resource - doesn't match current game version");
+        return;
+    }
+
+    // Don't unpack if the embedded resource is already available
+    if (localRes && localRes->Digest == embeddedRes->Digest) {
+        DEBUG("Not extracting embedded resource - already available in local cache");
+        return;
+    }
+
+    // Don't unpack if the embedded resource is not newer than the one in the local cache
+    if (localRes && *embeddedRes < *localRes) {
+        DEBUG("Not extracting embedded resource - less recent than version in local cache");
+        return;
+    }
+
+    auto packageBinary = GetExeResource(IDR_LOCAL_SE_PACKAGE);
+    if (!packageBinary || packageBinary->empty()) {
+        DEBUG("Not extracting embedded resource - embedded package blob is missing or empty");
+        return;
+    }
+
+    auto const& resource = manifest.Resources[UPDATER_RESOURCE_NAME];
+    cache_->UpdateLocalPackage(resource, *embeddedRes, *packageBinary);
 }
 
 bool ScriptExtenderUpdater::IsCompleted() const
