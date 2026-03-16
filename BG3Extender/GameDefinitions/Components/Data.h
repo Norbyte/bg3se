@@ -396,8 +396,8 @@ struct CanMoveComponent : public BaseComponent
     DEFINE_COMPONENT(CanMove, "eoc::CanMoveComponent")
 
     CanMoveFlags Flags;
-    uint16_t field_4;
-    uint8_t field_6;
+    [[bg3::legacy(field_2)]] uint16_t Encumbrance;
+    [[bg3::legacy(field_4)]] MovementSpeedType SpeedLimit;
 };
 
 struct CanSenseComponent : public BaseComponent

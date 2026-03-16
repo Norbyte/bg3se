@@ -707,6 +707,15 @@ BEGIN_ENUM(HandednessType, uint32_t)
     EV(Two, 2)
 END_ENUM()
 
+
+BEGIN_ENUM(MovementSpeedType, uint8_t)
+    EV(None, 0)
+    EV(Stroll, 1)
+    EV(Walk, 2)
+    EV(Run, 3)
+    EV(Sprint, 4)
+END_ENUM()
+
 BEGIN_ENUM(EquipmentStatsType, uint32_t)
     EV(Weapon, 0)
     EV(Armor, 1)
