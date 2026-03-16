@@ -49,14 +49,17 @@ GameHelpers::~GameHelpers()
 DWORD WINAPI GameHelpers::ShowErrorThreadMain(LPVOID param)
 {
     auto self = reinterpret_cast<GameHelpers*>(param);
-    MessageBoxA(NULL, self->errorMsg_.c_str(), "Script Extender Updater Error", MB_OK | MB_ICONERROR);
+    DWORD flags = MB_OK | (self->isWarning_ ? MB_ICONWARNING : MB_ICONERROR);
+    auto message = FromStdUTF8(self->errorMsg_);
+    MessageBoxW(NULL, message.c_str(), L"Script Extender Updater Error", flags);
 
     return 0;
 }
 
-void GameHelpers::ShowError(char const * msg)
+void GameHelpers::ShowError(std::string_view msg, bool isWarning)
 {
     errorMsg_ = msg;
+    isWarning_ = isWarning;
     CreateThread(NULL, 0, &ShowErrorThreadMain, this, 0, NULL);
 }
 

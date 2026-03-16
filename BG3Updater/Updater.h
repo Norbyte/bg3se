@@ -57,6 +57,11 @@ public:
         return config_;
     }
 
+    bool ShowError() const
+    {
+        return showError_;
+    }
+
     std::string const& GetErrorMessage() const
     {
         return errorMessage_;
@@ -87,10 +92,10 @@ public:
         needsClientSuspend_ = suspend;
     }
 
-    void Initialize(char const* exeDirOverride);
+    void Initialize(std::string_view exeDirOverride);
     void Run();
     void LoadCaches();
-    bool FetchUpdates();
+    void FetchUpdates();
     bool LoadExtender();
 
     enum class SDLInitTag {};
@@ -103,8 +108,14 @@ private:
     std::wstring exeDir_;
     std::unique_ptr<ResourceCacheRepository> cache_;
     std::unique_ptr<UpdaterUI> ui_;
+
     std::optional<std::wstring> launchDllPath_;
+    std::string launchNotice_;
+
     std::string errorMessage_;
+    bool showError_{ false };
+    bool criticalError_{ false };
+
     OperationResult updateResult_{ OperationSuccessful{} };
     bool completed_{ false };
     bool cancellingUpdate_{ false };
@@ -114,12 +125,13 @@ private:
     WrappableFunction<SDLInitTag, int (Uint32)> SDLInitHook;
 
     void UpdatePaths();
-    void UpdateExeDir(char const* exeDirOverride);
+    void UpdateExeDir(std::string_view exeDirOverride);
     void LoadConfig();
     void LoadGameVersion();
     void HookSDL();
     void UnhookSDL();
     void OnSDLInit(Uint32, int);
+    void UpdateErrorText();
 };
 
 void StartUpdaterThread();

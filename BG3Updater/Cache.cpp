@@ -7,12 +7,12 @@
 BEGIN_SE()
 
 CachedResource::CachedResource(std::wstring const& cachePath, Manifest::Resource const& resource, Manifest::ResourceVersion const& version)
-    : cachePath_(cachePath), resource_(resource), version_(version)
+    : cachePath_(cachePath), resourceName_(resource.Name), version_(version)
 {}
 
 std::wstring CachedResource::GetResourceLocalPath() const
 {
-    return cachePath_ + L"\\" + FromStdUTF8(resource_.Name);
+    return cachePath_ + L"\\" + FromStdUTF8(resourceName_);
 }
 
 std::wstring CachedResource::TryCreateLocalResourceCacheDirectory()
@@ -369,6 +369,17 @@ bool ResourceCacheRepository::UpdateFromLatestMetadata(Manifest::Resource const&
     if (version.Revoked) {
         RemoveLocalResource(resource, version);
     } else {
+        // Allow retroactive correction of various publishing attributes
+        if (verIt->second.Version != version.Version
+            || verIt->second.MinGameVersion != version.MinGameVersion
+            || verIt->second.MaxGameVersion != version.MaxGameVersion
+            || verIt->second.Notice != version.Notice) {
+            manifestDirty_ = true;
+        }
+
+        verIt->second.Version = version.Version;
+        verIt->second.MinGameVersion = version.MinGameVersion;
+        verIt->second.MaxGameVersion = version.MaxGameVersion;
         verIt->second.Notice = version.Notice;
     }
 
@@ -406,7 +417,7 @@ std::optional<Manifest::ResourceVersion> ResourceCacheRepository::FindResourceVe
     return resource->second.FindResourceVersionWithOverrides(gameVersion, config_);
 }
 
-std::optional<std::wstring> ResourceCacheRepository::FindResourcePath(std::string const& name, VersionNumber const& gameVersion)
+std::optional<CachedResource> ResourceCacheRepository::FindLoadableResource(std::string const& name, VersionNumber const& gameVersion)
 {
     auto resource = manifest_.Resources.find(name);
     if (resource == manifest_.Resources.end()) {
@@ -420,27 +431,7 @@ std::optional<std::wstring> ResourceCacheRepository::FindResourcePath(std::strin
 
     CachedResource res(path_, resource->second, *ver);
     if (res.ExtenderDLLExists()) {
-        return res.GetLocalPath();
-    } else {
-        return {};
-    }
-}
-
-std::optional<std::wstring> ResourceCacheRepository::FindResourceDllPath(std::string const& name, VersionNumber const& gameVersion)
-{
-    auto resource = manifest_.Resources.find(name);
-    if (resource == manifest_.Resources.end()) {
-        return {};
-    }
-
-    auto ver = resource->second.FindResourceVersionWithOverrides(gameVersion, config_);
-    if (!ver) {
-        return {};
-    }
-
-    CachedResource res(path_, resource->second, *ver);
-    if (res.ExtenderDLLExists()) {
-        return res.GetAppDllPath();
+        return res;
     } else {
         return {};
     }

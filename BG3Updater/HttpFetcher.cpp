@@ -80,7 +80,7 @@ OperationResult HttpFetcher::Fetch(std::string const& url, std::vector<uint8_t> 
 
 size_t HttpFetcher::XferInfoFunc(void* clientp, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow)
 {
-    DEBUG("XferInfo: %d", dlnow);
+    DEBUG("XferInfo: %lld/%lld", dlnow, dltotal);
     auto self = reinterpret_cast<HttpFetcher*>(clientp);
     if (self->cancelling_) {
         return 1;

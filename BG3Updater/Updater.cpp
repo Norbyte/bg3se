@@ -27,7 +27,8 @@ OperationResult ManifestFetcher::Fetch(Manifest& manifest)
     fetcher_.TransferCategory = ErrorCategory::ManifestFetch;
     auto result = fetcher_.Fetch(manifestUrl, manifestBinary);
     if (!result) {
-        result.error().Message = std::string("Unable to download manifest: ") + result.error().Message;
+        result.error().Message = std::string("Unable to download: ") + result.error().Message
+            + "\r\n\r\nURL: " + manifestUrl;
         return result;
     }
 
@@ -67,13 +68,13 @@ OperationResult ResourceUpdater::Update(Manifest const& manifest, std::string co
     auto version = resIt->second.FindResourceVersionWithOverrides(gameVersion, config_);
     if (!version) {
         if (!config_.TargetResourceDigest.empty()) {
-            return ErrorReason{ ErrorCategory::LocalLoad, 
+            return ErrorReason{ ErrorCategory::NoMatchingVersion,
                 std::string("Script extender digest not found in manifest: ") + config_.TargetResourceDigest };
-        } else if (!config_.TargetVersion.empty()) {
-            return ErrorReason{ ErrorCategory::LocalLoad,
-                std::string("Script extender version not found in manifest: ") + config_.TargetVersion };
+        } else if (config_.TargetVersion) {
+            return ErrorReason{ ErrorCategory::NoMatchingVersion,
+                std::string("Script extender version not found in manifest: ") + config_.TargetVersion->ToString() };
         } else {
-            return ErrorReason{ ErrorCategory::LocalLoad,
+            return ErrorReason{ ErrorCategory::NoMatchingVersion,
                 std::string("Script extender not available for game version v") + gameVersion.ToString() };
         }
     }
@@ -102,7 +103,8 @@ OperationResult ResourceUpdater::Update(Manifest::Resource const& resource, Mani
     fetcher_.TransferCategory = ErrorCategory::UpdateDownload;
     auto result = fetcher_.Fetch(version.URL, response);
     if (!result) {
-        result.error().Message = std::string("Unable to download package: ") + result.error().Message;
+        result.error().Message = std::string("Unable to download: ") + result.error().Message
+            + "\r\n\r\nURL: " + version.URL;
         return result;
     }
 
@@ -133,11 +135,10 @@ void ScriptExtenderUpdater::LoadCaches()
     cache_ = std::make_unique<ResourceCacheRepository>(config_, config_.CachePath);
 }
 
-bool ScriptExtenderUpdater::FetchUpdates()
+void ScriptExtenderUpdater::FetchUpdates()
 {
     LoadCaches();
 
-    ErrorReason updateReason;
     if (!config_.DisableUpdates) {
         updateResult_ = TryToUpdate();
     } else {
@@ -149,33 +150,45 @@ bool ScriptExtenderUpdater::FetchUpdates()
         updateResult_ = OperationSuccessful{};
     }
 
-    launchDllPath_ = cache_->FindResourcePath("ScriptExtender", gameVersion_);
-
-    bool showError = !updateResult_;
-    if (updateResult_ && !launchDllPath_) {
-        showError = true;
-        if (updateManifest_ && !updateManifest_->NoMatchingVersionNotice.empty()) {
-            updateReason.Message = updateManifest_->NoMatchingVersionNotice;
-        } else {
-            updateReason.Message = "No extender version found for game version v";
-            updateReason.Message += gameVersion_.ToString();
-        }
+    auto resource = cache_->FindLoadableResource("ScriptExtender", gameVersion_);
+    if (resource) {
+        launchDllPath_ = resource->GetAppDllPath();
+        launchNotice_ = resource->GetVersion().Notice;
     }
 
-    if (showError) {
-        DEBUG("Update failed; reason category %d, message: %s", updateReason.Category, updateReason.Message.c_str());
+    UpdateErrorText();
+}
 
-        switch (updateReason.Category) {
+void ScriptExtenderUpdater::UpdateErrorText()
+{
+    showError_ = false;
+    criticalError_ = false;
+
+    if (!updateResult_) {
+        showError_ = true;
+        // If we found a local fallback version to load, show an update warning; otherwise show an error
+        criticalError_ = !launchDllPath_.has_value();
+
+        errorMessage_ = updateResult_.error().Message;
+
+        DEBUG("Update failed; reason category %d, message: %s", updateResult_.error().Category, updateResult_.error().Message.c_str());
+
+        switch (updateResult_.error().Category) {
         case ErrorCategory::UpdateDownload:
-            if (updateReason.IsInternetIssue()) {
-                errorMessage_ = std::string("Failed to download Script Extender update package. Make sure you're connected to the internet and try again.\r\n") + updateReason.Message;
-            } else {
-                errorMessage_ = std::string("Failed to download Script Extender update package.\r\n") + updateReason.Message;
+            if (updateResult_.error().IsInternetIssue()) {
+                errorMessage_ = std::string("Failed to download Script Extender update package. Make sure you're connected to the internet and try again.\r\n") + errorMessage_;
+            }
+            else {
+                errorMessage_ = std::string("Failed to download Script Extender update package.\r\n") + errorMessage_;
             }
             break;
 
         case ErrorCategory::LocalUpdate:
-            errorMessage_ = std::string("Failed to apply Script Extender update:\r\n") + updateReason.Message;
+            errorMessage_ = std::string("Failed to apply Script Extender update:\r\n") + errorMessage_;
+            break;
+
+        case ErrorCategory::NoMatchingVersion:
+            // Use error message as-is
             break;
 
         case ErrorCategory::UpdateRequired:
@@ -185,54 +198,61 @@ bool ScriptExtenderUpdater::FetchUpdates()
         case ErrorCategory::General:
         case ErrorCategory::ManifestFetch:
         default:
-            if (updateReason.IsInternetIssue()) {
-                errorMessage_ = std::string("Script Extender update failed; make sure you're connected to the internet and try again.\r\n") + updateReason.Message;
-            } else {
-                errorMessage_ = std::string("Script Extender update failed.\r\n") + updateReason.Message;
+            if (updateResult_.error().IsInternetIssue()) {
+                errorMessage_ = std::string("Script Extender update failed; make sure you're connected to the internet and try again.\r\n") + errorMessage_;
+            }
+            else {
+                errorMessage_ = std::string("Script Extender update failed.\r\n") + errorMessage_;
             }
             break;
         }
     }
 
-    if (launchDllPath_) {
-        auto ver = cache_->FindResourceVersion("ScriptExtender", gameVersion_);
-        if (ver && errorMessage_.empty() && !ver->Notice.empty()) {
-            DEBUG("Notice in manifest resource data: %s", ver->Notice.c_str());
-            errorMessage_ = ver->Notice;
+    // Successful update, but local resource could not be found -> critical
+    if (!showError_ && !launchDllPath_) {
+        showError_ = true;
+        criticalError_ = true;
+        if (updateManifest_ && !updateManifest_->NoMatchingVersionNotice.empty()) {
+            errorMessage_ = updateManifest_->NoMatchingVersionNotice;
+        } else {
+            errorMessage_ = std::string("No extender version found for game version v") + gameVersion_.ToString();
         }
     }
 
-    if (errorMessage_.empty() && updateManifest_ && !updateManifest_->Notice.empty()) {
-        DEBUG("Notice in manifest: %s", updateManifest_->Notice.c_str());
-        errorMessage_ = updateManifest_->Notice;
+    if (!showError_ && !launchNotice_.empty()) {
+        DEBUG("Notice in manifest resource data: %s", launchNotice_.c_str());
+        showError_ = true;
+        criticalError_ = false;
+        errorMessage_ = launchNotice_;
     }
 
-    return !showError;
+    if (!showError_ && updateManifest_ && !updateManifest_->Notice.empty()) {
+        DEBUG("Notice in manifest: %s", updateManifest_->Notice.c_str());
+        showError_ = true;
+        criticalError_ = false;
+        errorMessage_ = updateManifest_->Notice;
+    }
 }
 
 bool ScriptExtenderUpdater::LoadExtender()
 {
-    auto dllPath = cache_->FindResourceDllPath("ScriptExtender", gameVersion_);
-    if (!dllPath) {
-        if (errorMessage_.empty()) {
-            errorMessage_ = "No extender version found for game version v";
-            errorMessage_ += gameVersion_.ToString();
-        }
+    if (!launchDllPath_) {
+        DEBUG("Unable to launch extender - no loadable DLL path found");
         return false;
     }
 
-    DEBUG("Loading extender DLL: %s", ToStdUTF8(*dllPath).c_str());
-    HMODULE handle = LoadLibraryExW(dllPath->c_str(), NULL, LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | LOAD_LIBRARY_SEARCH_APPLICATION_DIR | LOAD_LIBRARY_SEARCH_SYSTEM32);
+    DEBUG("Loading extender DLL: %s", ToStdUTF8(*launchDllPath_).c_str());
+    HMODULE handle = LoadLibraryExW(launchDllPath_->c_str(), NULL, LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | LOAD_LIBRARY_SEARCH_APPLICATION_DIR | LOAD_LIBRARY_SEARCH_SYSTEM32);
 
     if (handle == NULL) {
-        if (updateResult_) {
+        if (!criticalError_) {
             auto errc = GetLastError();
             DEBUG("Extender DLL load failed; error code %d", errc);
-            if (errorMessage_.empty()) {
-                errorMessage_ = "Failed to load Script Extender library.\r\n"
-                    "LoadLibrary() returned error code ";
-                errorMessage_ += std::to_string(errc);
-            }
+            showError_ = true;
+            criticalError_ = false;
+            errorMessage_ = "Failed to load Script Extender library.\r\n"
+                "LoadLibrary() returned error code ";
+            errorMessage_ += std::to_string(errc);
         }
 
         return false;
@@ -250,8 +270,8 @@ void ScriptExtenderUpdater::Run()
     LoadExtender();
     completed_ = true;
 
-    if (!errorMessage_.empty()) {
-        gGameHelpers->ShowError(errorMessage_.c_str());
+    if (showError_) {
+        gGameHelpers->ShowError(errorMessage_.c_str(), !criticalError_);
     }
 }
     
@@ -311,7 +331,7 @@ void ScriptExtenderUpdater::RequestCancelUpdate()
     fetcher_.Cancel();
 }
 
-void ScriptExtenderUpdater::Initialize(char const* exeDirOverride)
+void ScriptExtenderUpdater::Initialize(std::string_view exeDirOverride)
 {
     SetStatusText(L"Initializing");
     UpdateExeDir(exeDirOverride);
@@ -320,9 +340,9 @@ void ScriptExtenderUpdater::Initialize(char const* exeDirOverride)
     HookSDL();
 }
 
-void ScriptExtenderUpdater::UpdateExeDir(char const* exeDirOverride)
+void ScriptExtenderUpdater::UpdateExeDir(std::string_view exeDirOverride)
 {
-    if (exeDirOverride && *exeDirOverride) {
+    if (!exeDirOverride.empty()) {
         exeDir_ = FromStdUTF8(exeDirOverride);
     } else {
         HMODULE hGameModule = GetExeHandle();
@@ -428,7 +448,7 @@ void StartUpdaterThread()
     gGameHelpers = std::make_unique<GameHelpers>();
 
     gUpdater = std::make_unique<ScriptExtenderUpdater>();
-    gUpdater->Initialize(nullptr);
+    gUpdater->Initialize({});
     gUpdater->RequestClientSuspend(true);
     CreateThread(NULL, 0, &UpdaterThread, NULL, 0, NULL);
 }

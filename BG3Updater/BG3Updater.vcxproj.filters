@@ -26,6 +26,7 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="Result.h" />
+    <ClInclude Include="GameVersion.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources.rc" />

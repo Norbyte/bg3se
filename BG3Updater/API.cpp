@@ -49,7 +49,8 @@ bool SEUpdate()
 {
     if (!gUpdater) return false;
 
-    return gUpdater->FetchUpdates();
+    gUpdater->FetchUpdates();
+    return gUpdater->ShowError();
 }
 
 void SEUpdaterGetError(char* buf, uint32_t* length)

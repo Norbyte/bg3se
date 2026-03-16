@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GameVersion.h"
+
 BEGIN_SE()
 
 struct UpdaterConfig
@@ -7,7 +9,7 @@ struct UpdaterConfig
     std::string ManifestURL;
     std::string ManifestName;
     std::string UpdateChannel;
-    std::string TargetVersion;
+    std::optional<VersionNumber> TargetVersion;
     std::string TargetResourceDigest;
     std::wstring CachePath;
 #if defined(_DEBUG)

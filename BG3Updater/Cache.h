@@ -18,10 +18,15 @@ public:
     std::wstring GetAppDllPath();
     bool ExtenderDLLExists();
 
+    Manifest::ResourceVersion const& GetVersion() const
+    {
+        return version_;
+    }
+
 private:
     std::wstring cachePath_;
-    Manifest::Resource const& resource_;
-    Manifest::ResourceVersion const& version_;
+    std::string resourceName_;
+    Manifest::ResourceVersion version_;
 
     bool AreDllsWriteable();
     OperationResult UnzipPackage(std::wstring const& zipPath, std::wstring const& resourcePath);
@@ -44,8 +49,7 @@ public:
     bool UpdateFromLatestMetadata(Manifest::Resource const& resource, Manifest::ResourceVersion const& version);
     bool RemoveLocalResource(Manifest::Resource const& resource, Manifest::ResourceVersion const& version);
     std::optional<Manifest::ResourceVersion> FindResourceVersion(std::string const& name, VersionNumber const& gameVersion);
-    std::optional<std::wstring> FindResourcePath(std::string const& name, VersionNumber const& gameVersion);
-    std::optional<std::wstring> FindResourceDllPath(std::string const& name, VersionNumber const& gameVersion);
+    std::optional<CachedResource> FindLoadableResource(std::string const& name, VersionNumber const& gameVersion);
 
 private:
     UpdaterConfig const& config_;

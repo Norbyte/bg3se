@@ -177,6 +177,7 @@
     <ClInclude Include="Defines.h" />
     <ClInclude Include="DWriteWrapper.h" />
     <ClInclude Include="GameHelpers.h" />
+    <ClInclude Include="GameVersion.h" />
     <ClInclude Include="HttpFetcher.h" />
     <ClInclude Include="Manifest.h" />
     <ClInclude Include="resource.h" />

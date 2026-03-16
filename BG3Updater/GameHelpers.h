@@ -17,12 +17,13 @@ public:
     GameHelpers();
     ~GameHelpers();
 
-    void ShowError(char const * msg);
+    void ShowError(std::string_view msg, bool isWarning);
     std::optional<ecl::GameState> GetState() const;
 
 private:
     GameThreadRegistry threads_;
     std::string errorMsg_;
+    bool isWarning_;
 
     static DWORD WINAPI ShowErrorThreadMain(LPVOID param);
 };

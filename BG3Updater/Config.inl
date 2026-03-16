@@ -22,7 +22,11 @@ void ApplyConfig(UpdaterConfig& config, Document& root)
     ConfigGet(root, "ManifestURL", config.ManifestURL);
     ConfigGet(root, "ManifestName", config.ManifestName);
     ConfigGet(root, "UpdateChannel", config.UpdateChannel);
-    ConfigGet(root, "TargetVersion", config.TargetVersion);
+    std::string targetVersion;
+    ConfigGet(root, "TargetVersion", targetVersion);
+    if (!targetVersion.empty()) {
+        config.TargetVersion = VersionNumber::FromString(targetVersion);
+    }
     ConfigGet(root, "TargetResourceDigest", config.TargetResourceDigest);
     ConfigGet(root, "CachePath", config.CachePath);
 #if defined(HAS_DEBUG_LOGGING)

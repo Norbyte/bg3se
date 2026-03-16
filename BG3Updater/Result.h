@@ -12,6 +12,7 @@ enum class ErrorCategory
     UpdateDownload,
     LocalUpdate,
     LocalLoad,
+    NoMatchingVersion,
     UpdateRequired,
     Canceled
 };

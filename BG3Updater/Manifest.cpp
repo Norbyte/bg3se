@@ -121,9 +121,8 @@ std::optional<Manifest::ResourceVersion> Manifest::Resource::FindResourceVersion
         }
     }
 
-    if (!config.TargetVersion.empty()) {
-        auto resourceVersion = VersionNumber::FromString(config.TargetVersion.c_str());
-        return FindResourceVersion(gameVersion, resourceVersion);
+    if (config.TargetVersion) {
+        return FindResourceVersion(gameVersion, config.TargetVersion);
     }
 
     return FindResourceVersion(gameVersion, {});
