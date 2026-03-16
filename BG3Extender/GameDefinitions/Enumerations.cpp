@@ -75,33 +75,40 @@ void InitializeEnumerations()
 
 void RegisterEnumerationTypeInformation()
 {
-    Array<TypeInformation*> typeInfos;
+    Array<TypeInformation*> enumInfos, bitmaskInfos;
     TypeInformation* typeInfo{ nullptr };
 
     for (auto i = 0; i < std::size(gEnumRegistrationTable); i++) {
         auto const& entry = gEnumRegistrationTable[i];
         if (entry.Type == EnumRegistrationType::EnumType) {
-            if (typeInfos.size() <= entry.TypeId) {
-                typeInfos.resize(entry.TypeId + 1);
+            if (enumInfos.size() <= (uint32_t)entry.TypeId) {
+                enumInfos.resize(entry.TypeId + 1);
             }
 
             typeInfo = &TypeInformationRepository::GetInstance().RegisterType(FixedString(entry.LuaName));
             typeInfo->Kind = LuaTypeId::Enumeration;
             typeInfo->IsBitfield = false;
-            typeInfos[entry.TypeId] = typeInfo;
+            se_assert(enumInfos[entry.TypeId] == nullptr);
+            enumInfos[entry.TypeId] = typeInfo;
         } else if (entry.Type == EnumRegistrationType::BitfieldType) {
+            if (bitmaskInfos.size() <= (uint32_t)entry.TypeId) {
+                bitmaskInfos.resize(entry.TypeId + 1);
+            }
+
             typeInfo = &TypeInformationRepository::GetInstance().RegisterType(FixedString(entry.LuaName));
             typeInfo->Kind = LuaTypeId::Enumeration;
             typeInfo->IsBitfield = true;
+            se_assert(bitmaskInfos[entry.TypeId] == nullptr);
+            bitmaskInfos[entry.TypeId] = typeInfo;
         } else if (entry.Type == EnumRegistrationType::Value) {
             typeInfo->EnumValues.insert(std::make_pair(FixedString(entry.Name), entry.Value));
         }
     }
 
-#define BEGIN_BITMASK_NS(NS, T, luaName, type, id) GetStaticTypeInfo(Overload<NS::T>{}).Type = typeInfos[id];
-#define BEGIN_ENUM_NS(NS, T, luaName, type, id) GetStaticTypeInfo(Overload<NS::T>{}).Type = typeInfos[id];
-#define BEGIN_BITMASK(T, type, id) GetStaticTypeInfo(Overload<T>{}).Type = typeInfos[id];
-#define BEGIN_ENUM(T, type, id) GetStaticTypeInfo(Overload<T>{}).Type = typeInfos[id];
+#define BEGIN_BITMASK_NS(NS, T, luaName, type, id) GetStaticTypeInfo(Overload<NS::T>{}).Type = bitmaskInfos[id];
+#define BEGIN_ENUM_NS(NS, T, luaName, type, id) GetStaticTypeInfo(Overload<NS::T>{}).Type = enumInfos[id];
+#define BEGIN_BITMASK(T, type, id) GetStaticTypeInfo(Overload<T>{}).Type = bitmaskInfos[id];
+#define BEGIN_ENUM(T, type, id) GetStaticTypeInfo(Overload<T>{}).Type = enumInfos[id];
 #define EV(label, value)
 #define END_ENUM_NS()
 #define END_ENUM()
