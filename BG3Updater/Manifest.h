@@ -58,6 +58,9 @@ struct Manifest
 
     int32_t ManifestVersion;
     int32_t ManifestMinorVersion;
+    // Indicates that the manifest only contains a subset of all available resources and 
+    // should not be used for local resource deletion
+    bool Partial;
     std::string Notice;
     std::string NoMatchingVersionNotice;
     std::unordered_map<std::string, Resource> Resources;

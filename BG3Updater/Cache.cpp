@@ -6,8 +6,8 @@
 
 BEGIN_SE()
 
-CachedResource::CachedResource(std::wstring const& cachePath, Manifest::Resource const& resource, Manifest::ResourceVersion const& version)
-    : cachePath_(cachePath), resourceName_(resource.Name), version_(version)
+CachedResource::CachedResource(std::wstring const& cachePath, std::string const& resourceName, Manifest::ResourceVersion const& version)
+    : cachePath_(cachePath), resourceName_(resourceName), version_(version)
 {}
 
 std::wstring CachedResource::GetResourceLocalPath() const
@@ -40,7 +40,7 @@ std::wstring CachedResource::TryCreateLocalCacheDirectory()
     return path;
 }
 
-OperationResult CachedResource::UpdateLocalPackage(std::vector<uint8_t> const& contents)
+OperationResult CachedResource::UpdateLocalPackage(std::string_view contents)
 {
     TryCreateLocalResourceCacheDirectory();
     auto packagePath = GetLocalPackagePath();
@@ -328,6 +328,12 @@ void ResourceCacheRepository::UpdateFromManifest(Manifest const& manifest)
 
     // Prevent removal of local resources if a bogus manifest was fetched
     if (!hasAnyResources) {
+        return;
+    }
+
+    // Only delete from local cache when reading a full manifest; this prevents the local cache from being cleared
+    // each time the embedded manifest is synced.
+    if (manifest.Partial) {
         return;
     }
 

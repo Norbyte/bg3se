@@ -224,6 +224,7 @@ OperationResult ManifestSerializer::Parse(std::string_view json, Manifest& manif
 
     manifest.ManifestVersion = version;
     manifest.ManifestMinorVersion = GetIntProperty(root, "ManifestMinorVersion", 0);
+    manifest.Partial = GetBoolProperty(root, "Partial", false);
     manifest.Notice = GetStringProperty(root, "Notice", "");
     manifest.NoMatchingVersionNotice = GetStringProperty(root, "NoMatchingVersionNotice", "");
 
@@ -345,6 +346,7 @@ void ManifestSerializer::Stringify(rapidjson::Value& doc, Manifest const& manife
 
     doc.AddMember("ManifestVersion", Value(manifest.ManifestVersion), alloc);
     doc.AddMember("ManifestMinorVersion", manifest.ManifestMinorVersion, alloc);
+    doc.AddMember("Partial", manifest.Partial, alloc);
 
     if (!manifest.Notice.empty()) {
         doc.AddMember("Notice", Value(manifest.Notice.c_str(), alloc), alloc);
