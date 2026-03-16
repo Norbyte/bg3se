@@ -18,43 +18,37 @@ ManifestFetcher::ManifestFetcher(HttpFetcher& fetcher, UpdaterConfig const& conf
     : fetcher_(fetcher), config_(config)
 {}
     
-bool ManifestFetcher::Fetch(Manifest& manifest, ErrorReason& reason)
+OperationResult ManifestFetcher::Fetch(Manifest& manifest)
 {
     std::string manifestUrl = config_.ManifestURL + config_.UpdateChannel + "/" + config_.ManifestName;
 
     DEBUG("Fetching manifest from: %s", manifestUrl.c_str());
     std::vector<uint8_t> manifestBinary;
-    if (!fetcher_.Fetch(manifestUrl, manifestBinary)) {
-        reason.Category = ErrorCategory::ManifestFetch;
-        reason.Message = "Unable to download manifest: ";
-        reason.Message += fetcher_.GetLastError();
-        reason.CurlResult = fetcher_.GetLastResultCode();
-        return false;
+    fetcher_.TransferCategory = ErrorCategory::ManifestFetch;
+    auto result = fetcher_.Fetch(manifestUrl, manifestBinary);
+    if (!result) {
+        result.error().Message = std::string("Unable to download manifest: ") + result.error().Message;
+        return result;
     }
 
     std::string manifestStr((char*)manifestBinary.data(), (char*)manifestBinary.data() + manifestBinary.size());
-    return Parse(manifestStr, manifest, reason);
+    return Parse(manifestStr, manifest);
 }
 
-bool ManifestFetcher::Parse(std::string const& manifestStr, Manifest& manifest, ErrorReason& reason)
+OperationResult ManifestFetcher::Parse(std::string const& manifestStr, Manifest& manifest)
 {
     ManifestSerializer parser;
     std::string parseError;
-    auto result = parser.Parse(manifestStr, manifest, parseError);
-    if (result == ManifestParseResult::Failed) {
-        reason.Category = ErrorCategory::General;
-        reason.Message = "Unable to parse manifest: ";
-        reason.Message += parseError;
-        return false;
+    auto result = parser.Parse(manifestStr, manifest);
+    if (!result) {
+        if (result.error().Category == ErrorCategory::UpdateRequired) {
+            result.error().Message = "Unable to parse manifest - update required.";
+        } else {
+            result.error().Message = std::string("Unable to parse manifest: ") + result.error().Message;
+        }
     }
 
-    if (result == ManifestParseResult::UpdateRequired) {
-        reason.Category = ErrorCategory::UpdateRequired;
-        reason.Message = "Unable to parse manifest - update required.";
-        return false;
-    }
-
-    return true;
+    return result;
 }
 
 
@@ -62,68 +56,58 @@ ResourceUpdater::ResourceUpdater(HttpFetcher& fetcher, UpdaterConfig const& conf
     : fetcher_(fetcher), config_(config), cache_(cache)
 {}
 
-bool ResourceUpdater::Update(Manifest const& manifest, std::string const& resourceName, VersionNumber const& gameVersion, ErrorReason& reason)
+OperationResult ResourceUpdater::Update(Manifest const& manifest, std::string const& resourceName, VersionNumber const& gameVersion)
 {
     DEBUG("Starting fetch for resource: %s", resourceName.c_str());
     auto resIt = manifest.Resources.find(resourceName);
     if (resIt == manifest.Resources.end()) {
-        reason.Message = "No manifest entry found for resource: ";
-        reason.Message += resourceName;
-        return false;
+        return ErrorReason{ ErrorCategory::LocalLoad, std::string("No manifest entry found for resource: ") + resourceName };
     }
 
     auto version = resIt->second.FindResourceVersionWithOverrides(gameVersion, config_);
     if (!version) {
         if (!config_.TargetResourceDigest.empty()) {
-            reason.Message = "Script extender digest not found in manifest: ";
-            reason.Message += config_.TargetResourceDigest;
+            return ErrorReason{ ErrorCategory::LocalLoad, 
+                std::string("Script extender digest not found in manifest: ") + config_.TargetResourceDigest };
         } else if (!config_.TargetVersion.empty()) {
-            reason.Message = "Script extender version not found in manifest: ";
-            reason.Message += config_.TargetVersion;
+            return ErrorReason{ ErrorCategory::LocalLoad,
+                std::string("Script extender version not found in manifest: ") + config_.TargetVersion };
         } else {
-            reason.Message = "Script extender not available for game version v";
-            reason.Message += gameVersion.ToString();
+            return ErrorReason{ ErrorCategory::LocalLoad,
+                std::string("Script extender not available for game version v") + gameVersion.ToString() };
         }
-        return false;
     }
 
-    if (cache_.ResourceExists(resIt->first, *version)) {
+    if (cache_.LocalResourceExists(resIt->first, *version)) {
         DEBUG("Resource already cached locally, skipping update: Version %s, Digest %s", version->Version.ToString().c_str(), version->Digest.c_str());
-        return true;
+        return OperationSuccessful{};
     }
 
     DEBUG("Selected version for update: Version %s, Digest %s", version->Version.ToString().c_str(), version->Digest.c_str());
     DEBUG("Fetch fromn URL: %s", version->URL.c_str());
-    return Update(resIt->second, *version, reason);
+    return Update(resIt->second, *version);
 }
 
     
-bool ResourceUpdater::Update(Manifest::Resource const& resource, Manifest::ResourceVersion const& version, ErrorReason& reason)
+OperationResult ResourceUpdater::Update(Manifest::Resource const& resource, Manifest::ResourceVersion const& version)
 {
     if (version.Revoked) {
-        reason.Category = ErrorCategory::UpdateDownload;
-        reason.Message = "Attempted to download unavailable resource version.";
-        return false;
+        return ErrorReason{ ErrorCategory::UpdateDownload,
+            std::string("Attempted to download revoked resource: ") + version.Digest };
     }
 
     gUpdater->SetStatusText(std::wstring(L"Downloading update: ") + FromStdUTF8(version.Version.ToString()));
     DEBUG("Fetching update package: %s", version.URL.c_str());
     std::vector<uint8_t> response;
-    if (!fetcher_.Fetch(version.URL, response)) {
-        reason.Category = ErrorCategory::UpdateDownload;
-        reason.Message = "Unable to download package: ";
-        reason.Message += fetcher_.GetLastError();
-        reason.CurlResult = fetcher_.GetLastResultCode();
-        return false;
+    fetcher_.TransferCategory = ErrorCategory::UpdateDownload;
+    auto result = fetcher_.Fetch(version.URL, response);
+    if (!result) {
+        result.error().Message = std::string("Unable to download package: ") + result.error().Message;
+        return result;
     }
 
     gUpdater->SetStatusText(std::wstring(L"Unpacking update: ") + FromStdUTF8(version.Version.ToString()));
-    if (cache_.UpdateLocalPackage(resource, version, response, reason.Message)) {
-        return true;
-    } else {
-        reason.Category = ErrorCategory::LocalUpdate;
-        return false;
-    }
+    return cache_.UpdateLocalPackage(resource, version, response);
 }
 
 void UpdaterConsole::Print(DebugMessageType type, char const* msg)
@@ -155,20 +139,20 @@ bool ScriptExtenderUpdater::FetchUpdates()
 
     ErrorReason updateReason;
     if (!config_.DisableUpdates) {
-        updated_ = TryToUpdate(updateReason);
+        updateResult_ = TryToUpdate();
     } else {
-        updated_ = true;
+        updateResult_ = OperationSuccessful{};
     }
 
     if (cancellingUpdate_) {
         // Update failure is due to cancellation, don't show an error message
-        updated_ = true;
+        updateResult_ = OperationSuccessful{};
     }
 
     launchDllPath_ = cache_->FindResourcePath("ScriptExtender", gameVersion_);
 
-    bool showError = !updated_;
-    if (updated_ && !launchDllPath_) {
+    bool showError = !updateResult_;
+    if (updateResult_ && !launchDllPath_) {
         showError = true;
         if (updateManifest_ && !updateManifest_->NoMatchingVersionNotice.empty()) {
             updateReason.Message = updateManifest_->NoMatchingVersionNotice;
@@ -241,7 +225,7 @@ bool ScriptExtenderUpdater::LoadExtender()
     HMODULE handle = LoadLibraryExW(dllPath->c_str(), NULL, LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | LOAD_LIBRARY_SEARCH_APPLICATION_DIR | LOAD_LIBRARY_SEARCH_SYSTEM32);
 
     if (handle == NULL) {
-        if (updated_) {
+        if (updateResult_) {
             auto errc = GetLastError();
             DEBUG("Extender DLL load failed; error code %d", errc);
             if (errorMessage_.empty()) {
@@ -271,22 +255,27 @@ void ScriptExtenderUpdater::Run()
     }
 }
     
-bool ScriptExtenderUpdater::TryToUpdate(ErrorReason& reason)
+OperationResult ScriptExtenderUpdater::TryToUpdate()
 {
     cancellingUpdate_ = false;
 
     ManifestFetcher manifestFetcher(fetcher_, config_);
     Manifest manifest;
     SetStatusText(L"Fetching manifest");
-    if (!manifestFetcher.Fetch(manifest, reason) || cancellingUpdate_) {
-        return false;
+    auto result = manifestFetcher.Fetch(manifest);
+    if (!result) {
+        return result;
+    }
+
+    if (cancellingUpdate_) {
+        return ErrorReason{ ErrorCategory::Canceled, "" };
     }
 
     cache_->UpdateFromManifest(manifest);
 
     updateManifest_ = manifest;
     ResourceUpdater updater(fetcher_, config_, *cache_);
-    return updater.Update(manifest, "ScriptExtender", gameVersion_, reason);
+    return updater.Update(manifest, "ScriptExtender", gameVersion_);
 }
 
 bool ScriptExtenderUpdater::IsCompleted() const

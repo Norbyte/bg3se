@@ -115,23 +115,23 @@ bool CryptoUtils::VerifySignedFile(std::wstring const& zipPath, std::string& rea
 {
     std::vector<uint8_t> contents;
     if (!LoadFile(zipPath, contents)) {
-        reason = "Script Extender update failed:\r\nUnable to open update package";
+        reason = "Unable to open update package";
         return false;
     }
 
     if (contents.size() < sizeof(PackageSignature)) {
-        reason = "Script Extender update failed:\r\nUpdate package not cryptographically signed.";
+        reason = "Update package not cryptographically signed";
         return false;
     }
 
     auto sig = reinterpret_cast<PackageSignature*>(contents.data() + contents.size() - sizeof(PackageSignature));
     if (sig->Magic != PackageSignature::MAGIC_V1) {
-        reason = "Script Extender update failed:\r\nUpdate package not cryptographically signed.";
+        reason = "Update package not cryptographically signed";
         return false;
     }
 
     if (!EccVerify(reinterpret_cast<uint8_t*>(contents.data()), contents.size() - sizeof(PackageSignature), UpdaterPublicKey, sig->EccSignature)) {
-        reason = "Script Extender update failed:\r\nCryptographic signature on update package is incorrect.";
+        reason = "Cryptographic signature on update package is incorrect";
         return false;
     }
 

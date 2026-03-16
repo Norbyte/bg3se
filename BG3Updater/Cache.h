@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Manifest.h"
+#include "Result.h"
 
 BEGIN_SE()
 
@@ -12,7 +13,7 @@ public:
     std::wstring GetLocalPath() const;
     std::wstring GetLocalPackagePath() const;
     std::wstring TryCreateLocalCacheDirectory();
-    bool UpdateLocalPackage(std::vector<uint8_t> const& contents, std::string& reason);
+    OperationResult UpdateLocalPackage(std::vector<uint8_t> const& contents);
     bool RemoveLocalPackage();
     std::wstring GetAppDllPath();
     bool ExtenderDLLExists();
@@ -23,7 +24,7 @@ private:
     Manifest::ResourceVersion const& version_;
 
     bool AreDllsWriteable();
-    bool UnzipPackage(std::wstring const& zipPath, std::wstring const& resourcePath, std::string& reason);
+    OperationResult UnzipPackage(std::wstring const& zipPath, std::wstring const& resourcePath);
     bool DeleteLocalCacheFromZip(std::wstring const& zipPath, std::wstring const& resourcePath);
 };
 
@@ -34,13 +35,14 @@ public:
     ResourceCacheRepository(UpdaterConfig const& config, std::wstring const& path);
     std::wstring GetCachedManifestPath() const;
     Manifest const& GetManifest() const;
-    bool LoadManifest(std::wstring const& path);
+    OperationResult LoadManifest(std::wstring const& path);
     bool SaveManifest(std::wstring const& path);
-    bool ResourceExists(std::string const& name, Manifest::ResourceVersion const& version) const;
-    bool UpdateLocalPackage(Manifest::Resource const& resource, Manifest::ResourceVersion const& version, std::vector<uint8_t> const& contents, std::string& reason);
+    bool SaveManifestIfNecessary();
+    bool LocalResourceExists(std::string const& name, Manifest::ResourceVersion const& version) const;
+    OperationResult UpdateLocalPackage(Manifest::Resource const& resource, Manifest::ResourceVersion const& version, std::vector<uint8_t> const& contents);
     void UpdateFromManifest(Manifest const& manifest);
     bool UpdateFromLatestMetadata(Manifest::Resource const& resource, Manifest::ResourceVersion const& version);
-    bool RemoveResource(Manifest::Resource const& resource, Manifest::ResourceVersion const& version);
+    bool RemoveLocalResource(Manifest::Resource const& resource, Manifest::ResourceVersion const& version);
     std::optional<Manifest::ResourceVersion> FindResourceVersion(std::string const& name, VersionNumber const& gameVersion);
     std::optional<std::wstring> FindResourcePath(std::string const& name, VersionNumber const& gameVersion);
     std::optional<std::wstring> FindResourceDllPath(std::string const& name, VersionNumber const& gameVersion);
@@ -49,6 +51,7 @@ private:
     UpdaterConfig const& config_;
     std::wstring path_;
     Manifest manifest_;
+    bool manifestDirty_{ false };
 
     bool HasLocalCopy(Manifest::Resource const& resource, Manifest::ResourceVersion const& version) const;
     void AddResourceToManifest(Manifest::Resource const& resource, Manifest::ResourceVersion const& version);

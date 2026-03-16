@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Config.h"
 #include "Cache.h"
+#include "Result.h"
 #include "HttpFetcher.h"
 #include "UI.h"
 #include <CoreLib/Wrappers.h>
@@ -8,41 +9,12 @@
 
 BEGIN_SE()
 
-enum class ErrorCategory
-{
-    General,
-    ManifestFetch,
-    UpdateDownload,
-    LocalUpdate,
-    UpdateRequired
-};
-
-struct ErrorReason
-{
-    std::string Message;
-    ErrorCategory Category{ ErrorCategory::General };
-    CURLcode CurlResult{ CURLE_OK };
-
-    inline bool IsInternetIssue() const
-    {
-        return
-            CurlResult == CURLE_COULDNT_RESOLVE_PROXY
-            || CurlResult == CURLE_COULDNT_RESOLVE_HOST
-            || CurlResult == CURLE_COULDNT_CONNECT
-            || CurlResult == CURLE_WEIRD_SERVER_REPLY
-            || CurlResult == CURLE_OPERATION_TIMEDOUT
-            || CurlResult == CURLE_SSL_CONNECT_ERROR
-            || CurlResult == CURLE_SEND_ERROR
-            || CurlResult == CURLE_RECV_ERROR;
-    }
-};
-
 class ManifestFetcher
 {
 public:
     ManifestFetcher(HttpFetcher& fetcher, UpdaterConfig const& config);
-    bool Fetch(Manifest& manifest, ErrorReason& reason);
-    bool Parse(std::string const& manifestStr, Manifest& manifest, ErrorReason& reason);
+    OperationResult Fetch(Manifest& manifest);
+    OperationResult Parse(std::string const& manifestStr, Manifest& manifest);
 
 private:
     UpdaterConfig const& config_;
@@ -54,8 +26,8 @@ class ResourceUpdater
 {
 public:
     ResourceUpdater(HttpFetcher& fetcher, UpdaterConfig const& config, ResourceCacheRepository& cache);
-    bool Update(Manifest const& manifest, std::string const& resourceName, VersionNumber const& gameVersion, ErrorReason& reason);
-    bool Update(Manifest::Resource const& resource, Manifest::ResourceVersion const& version, ErrorReason& reason);
+    OperationResult Update(Manifest const& manifest, std::string const& resourceName, VersionNumber const& gameVersion);
+    OperationResult Update(Manifest::Resource const& resource, Manifest::ResourceVersion const& version);
 
 private:
     UpdaterConfig const& config_;
@@ -73,7 +45,7 @@ class ScriptExtenderUpdater
 {
 public:
     void SetGameVersion(int32_t major, int32_t minor, int32_t revision, int32_t build);
-    bool TryToUpdate(ErrorReason& reason);
+    OperationResult TryToUpdate();
     inline bool IsCompleted() const;
     void InitConsole();
     void InitUI();
@@ -133,7 +105,7 @@ private:
     std::unique_ptr<UpdaterUI> ui_;
     std::optional<std::wstring> launchDllPath_;
     std::string errorMessage_;
-    bool updated_{ false };
+    OperationResult updateResult_{ OperationSuccessful{} };
     bool completed_{ false };
     bool cancellingUpdate_{ false };
     std::string log_;

@@ -31,7 +31,7 @@ void HttpFetcher::LogError(CURL* curl, CURLcode result)
     DEBUG("Updater error: %s", lastError_.c_str());
 }
 
-bool HttpFetcher::Fetch(std::string const& url, std::vector<uint8_t> & response)
+OperationResult HttpFetcher::Fetch(std::string const& url, std::vector<uint8_t> & response)
 {
     cancelling_ = false;
     socket_ = NULL;
@@ -71,7 +71,11 @@ bool HttpFetcher::Fetch(std::string const& url, std::vector<uint8_t> & response)
     }
 
     response = lastResponse_;
-    return (lastResult_ == CURLE_OK);
+    if (lastResult_ == CURLE_OK) {
+        return OperationSuccessful{};
+    } else {
+        return ErrorReason{ TransferCategory, lastResult_, lastError_ };
+    }
 }
 
 size_t HttpFetcher::XferInfoFunc(void* clientp, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow)

@@ -25,6 +25,7 @@
     <ClInclude Include="ThreadInfo.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="UI.h" />
+    <ClInclude Include="Result.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources.rc" />
@@ -34,5 +35,6 @@
     <None Include="ThreadInfo.inl" />
     <None Include="Config.inl" />
     <None Include="UI.inl" />
+    <None Include="Result.inl" />
   </ItemGroup>
 </Project>

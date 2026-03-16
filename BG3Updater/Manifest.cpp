@@ -2,6 +2,8 @@
 #include "Manifest.h"
 #include <CoreLib/Crypto.h>
 
+#include "Result.inl"
+
 BEGIN_SE()
 
 using namespace rapidjson;
@@ -195,30 +197,25 @@ std::string_view GetStringProperty(Value const& node, std::string_view key, std:
     return std::string_view(attr->value.GetString(), attr->value.GetStringLength());
 }
 
-ManifestParseResult ManifestSerializer::Parse(std::string const& json, Manifest& manifest, std::string& parseError)
+OperationResult ManifestSerializer::Parse(std::string const& json, Manifest& manifest)
 {
     Document root;
     if (root.Parse(json.data(), json.size()).HasParseError()) {
-        parseError = "Unable to parse JSON";
-        return ManifestParseResult::Failed;
+        return ErrorReason{ "Unable to parse JSON" };
     }
 
     manifest.Resources.clear();
 
     auto version = GetIntProperty(root, "ManifestVersion");
     if (!version) {
-        parseError = "Manifest has no 'ManifestVersion' property";
-        return ManifestParseResult::Failed;
+        return ErrorReason{ "Manifest has no 'ManifestVersion' property" };
     }
 
     if (version != Manifest::CurrentVersion) {
-        parseError = "Expected manifest version 1; got ";
-        parseError += std::to_string(version);
-        if (version > Manifest::CurrentVersion) {
-            return ManifestParseResult::UpdateRequired;
-        } else {
-            return ManifestParseResult::Failed;
-        }
+        return ErrorReason{
+            (version > Manifest::CurrentVersion) ? ErrorCategory::UpdateRequired : ErrorCategory::General,
+            std::string("Expected manifest version 1; got ") + std::to_string(version)
+        };
     }
 
     manifest.ManifestVersion = version;
@@ -226,75 +223,68 @@ ManifestParseResult ManifestSerializer::Parse(std::string const& json, Manifest&
     manifest.Notice = GetStringProperty(root, "Notice", "");
     manifest.NoMatchingVersionNotice = GetStringProperty(root, "NoMatchingVersionNotice", "");
 
-    if (Parse(root, manifest, parseError)) {
-        return ManifestParseResult::Successful;
-    } else {
-        return ManifestParseResult::Failed;
-    }
+    return Parse(root, manifest);
 }
 
-bool ManifestSerializer::Parse(Value const& node, Manifest& manifest, std::string& parseError)
+OperationResult ManifestSerializer::Parse(Value const& node, Manifest& manifest)
 {
     manifest.Resources.clear();
 
     auto resources = node.FindMember("Resources");
     if (resources == node.MemberEnd() || !resources->value.IsArray()) {
-        parseError = "Manifest has no 'Resources' array";
-        return false;
+        return ErrorReason{ "Manifest has no 'Resources' array" };
     }
 
     for (auto const& resourceNode : resources->value.GetArray()) {
         if (!resourceNode.IsObject()) {
-            parseError = "Bundle info is not an object";
-            return false;
+            return ErrorReason{ "Bundle info is not an object" };
         }
 
         Manifest::Resource resource;
-        if (!ParseResource(resourceNode, resource, parseError)) {
-            return false;
+        auto result = ParseResource(resourceNode, resource);
+        if (!result) {
+            return result;
         }
 
         manifest.Resources.insert(std::make_pair(resource.Name, resource));
     }
 
-    return true;
+    return OperationSuccessful{};
 }
 
-bool ManifestSerializer::ParseResource(Value const& node, Manifest::Resource& resource, std::string& parseError)
+OperationResult ManifestSerializer::ParseResource(Value const& node, Manifest::Resource& resource)
 {
     resource.Name = GetStringProperty(node, "Name", "");
 
     auto versions = node.FindMember("Versions");
     if (versions == node.MemberEnd() || !versions->value.IsArray()) {
-        parseError = "Manifest resource has no 'Versions' array";
-        return false;
+        return ErrorReason{ "Manifest resource has no 'Versions' array" };
     }
 
     for (auto const& versionNode : versions->value.GetArray()) {
         if (!versionNode.IsObject()) {
-            parseError = "Bundle version info is not an object";
-            return false;
+            return ErrorReason{ "Bundle version info is not an object" };
         }
 
         Manifest::ResourceVersion version;
-        if (!ParseVersion(versionNode, version, parseError)) {
-            return false;
+        auto result = ParseVersion(versionNode, version);
+        if (!result) {
+            return result;
         }
 
         resource.ResourceVersions.insert(std::make_pair(version.Digest, version));
     }
 
-    return true;
+    return OperationSuccessful{};
 }
 
-bool ManifestSerializer::ParseVersion(Value const& node, Manifest::ResourceVersion& version, std::string& parseError)
+OperationResult ManifestSerializer::ParseVersion(Value const& node, Manifest::ResourceVersion& version)
 {
     auto minGameVersion = GetStringProperty(node, "MinGameVersion");
     if (!minGameVersion.empty()) {
         auto minVersion = VersionNumber::FromString(minGameVersion.data());
         if (!minVersion) {
-            parseError = "Unable to parse 'MinGameVersion'.";
-            return false;
+            return ErrorReason{ "Unable to parse resource 'MinGameVersion'." };
         }
 
         version.MinGameVersion = minVersion;
@@ -304,8 +294,7 @@ bool ManifestSerializer::ParseVersion(Value const& node, Manifest::ResourceVersi
     if (!maxGameVersion.empty()) {
         auto maxVersion = VersionNumber::FromString(maxGameVersion.data());
         if (!maxVersion) {
-            parseError = "Unable to parse 'MaxGameVersion'.";
-            return false;
+            return ErrorReason{ "Unable to parse resource 'MaxGameVersion'." };
         }
 
         version.MaxGameVersion = maxVersion;
@@ -313,8 +302,7 @@ bool ManifestSerializer::ParseVersion(Value const& node, Manifest::ResourceVersi
 
     auto resVersion = VersionNumber::FromString(GetStringProperty(node, "Version", "").data());
     if (!resVersion) {
-        parseError = "Unable to parse 'Version'.";
-        return false;
+        return ErrorReason{ "Unable to parse resource 'Version'." };
     }
 
     version.Version = *resVersion;
@@ -325,7 +313,7 @@ bool ManifestSerializer::ParseVersion(Value const& node, Manifest::ResourceVersi
     version.Revoked = GetBoolProperty(node, "Revoked", false);
     version.Signature = GetStringProperty(node, "Signature", "");
     version.Notice = GetStringProperty(node, "Notice", "");
-    return true;
+    return OperationSuccessful{};
 }
 
 std::string ManifestSerializer::Stringify(Manifest const& manifest)

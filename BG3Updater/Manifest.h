@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <optional>
 #include <CoreLib/JsonLibs.h>
+#include "Result.h"
 
 BEGIN_SE()
 
@@ -76,13 +77,6 @@ struct VersionNumber
 std::optional<VersionNumber> GetGameVersion();
 std::optional<VersionNumber> GetModuleVersion(std::wstring_view path);
 
-enum class ManifestParseResult
-{
-    Successful,
-    Failed,
-    UpdateRequired
-};
-
 struct Manifest
 {
     static constexpr int32_t CurrentVersion = 1;
@@ -124,13 +118,13 @@ struct Manifest
 class ManifestSerializer
 {
 public:
-    ManifestParseResult Parse(std::string const& json, Manifest& manifest, std::string& parseError);
+    OperationResult Parse(std::string const& json, Manifest& manifest);
     std::string Stringify(Manifest const& manifest);
 
 private:
-    bool Parse(rapidjson::Value const& node, Manifest& manifest, std::string& parseError);
-    bool ParseResource(rapidjson::Value const& node, Manifest::Resource& resource, std::string& parseError);
-    bool ParseVersion(rapidjson::Value const& node, Manifest::ResourceVersion& version, std::string& parseError);
+    OperationResult Parse(rapidjson::Value const& node, Manifest& manifest);
+    OperationResult ParseResource(rapidjson::Value const& node, Manifest::Resource& resource);
+    OperationResult ParseVersion(rapidjson::Value const& node, Manifest::ResourceVersion& version);
 
     void Stringify(rapidjson::Value& doc, Manifest const& manifest, RAPIDJSON_DEFAULT_ALLOCATOR& alloc);
     void Stringify(rapidjson::Value& resources, Manifest::Resource const& resource, RAPIDJSON_DEFAULT_ALLOCATOR& alloc);
