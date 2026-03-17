@@ -123,6 +123,7 @@ private:
     uint32_t apiCapabilities_{ 0 };
 
     std::optional<std::wstring> launchDllPath_;
+    std::optional<Manifest::ResourceVersion> launchVersion_;
     std::string launchNotice_;
 
     std::string errorMessage_;

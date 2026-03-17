@@ -30,7 +30,7 @@ OperationResult ManifestFetcher::Fetch(Manifest& manifest)
     fetcher_.Timeout = MANIFEST_FETCH_TIMEOUT;
     auto result = fetcher_.Fetch(manifestUrl, manifestBody);
     if (!result) {
-        result.error().Message = std::string("Unable to download: ") + result.error().Message;
+        result.error().Message = std::string("Unable to fetch manifest - ") + result.error().Message;
         return result;
     }
 
@@ -83,13 +83,15 @@ OperationResult ResourceUpdater::Update(Manifest const& manifest, std::string co
     if (!version) {
         if (!config_.TargetResourceDigest.empty()) {
             return ErrorReason{ ErrorCategory::NoMatchingVersion,
-                std::string("Script extender digest not found in manifest: ") + config_.TargetResourceDigest };
+                std::string("The requested Script Extender version ID (") + config_.TargetResourceDigest + ") is not available."
+                + "\r\nThis is likely caused by an invalid version setting in ScriptExtenderUpdaterConfig.json" };
         } else if (config_.TargetVersion) {
             return ErrorReason{ ErrorCategory::NoMatchingVersion,
-                std::string("Script extender version not found in manifest: ") + config_.TargetVersion->ToString() };
+                std::string("The requested Script Extender version (") + config_.TargetVersion->ToString() + ") is not available."
+                + "\r\nThis is likely caused by an invalid version setting in ScriptExtenderUpdaterConfig.json" };
         } else {
             return ErrorReason{ ErrorCategory::NoMatchingVersion,
-                std::string("Script extender not available for game version v") + gameVersion.ToString() };
+                std::string("No Script Extender version was found that supports your game version (v") + gameVersion.ToString() + ")" };
         }
     }
 
@@ -118,7 +120,7 @@ OperationResult ResourceUpdater::Update(Manifest::Resource const& resource, Mani
     fetcher_.Timeout = CONTENT_FETCH_TIMEOUT;
     auto result = fetcher_.Fetch(version.URL, response);
     if (!result) {
-        result.error().Message = std::string("Unable to download: ") + result.error().Message;
+        result.error().Message = std::string("Unable to download package - ") + result.error().Message;
         return result;
     }
 
@@ -171,11 +173,12 @@ void ScriptExtenderUpdater::FetchUpdates()
     if (config_.DebugLoadSE) {
         DEBUG("Loading SE DLL from local bin");
         launchDllPath_ = GetDebugDllPath();
-        updateResult_ = OperationSuccessful{};
+        launchVersion_ = Manifest::ResourceVersion{}; // Dummy info needed to satisfy the loader
     } else {
         auto resource = cache_->FindLoadableResource(UPDATER_RESOURCE_NAME, gameVersion_);
         if (resource) {
             launchDllPath_ = resource->GetAppDllPath();
+            launchVersion_ = resource->GetVersion();
             launchNotice_ = resource->GetVersion().Notice;
         }
     }
@@ -204,14 +207,12 @@ void ScriptExtenderUpdater::UpdateErrorText()
 
     if (!updateResult_) {
         showError_ = true;
-        // If we found a local fallback version to load, show an update warning; otherwise show an error
-        criticalError_ = !launchDllPath_.has_value();
-
         errorMessage_ = updateResult_.error().Message;
 
-        DEBUG("Update failed; reason category %d, message: %s", updateResult_.error().Category, updateResult_.error().Message.c_str());
+        auto errorCategory = updateResult_.error().Category;
+        DEBUG("Update failed; reason category %d, message: %s", errorCategory, updateResult_.error().Message.c_str());
 
-        switch (updateResult_.error().Category) {
+        switch (errorCategory) {
         case ErrorCategory::UpdateDownload:
             if (updateResult_.error().IsInternetIssue()) {
                 errorMessage_ = std::string("Failed to download Script Extender update package. Make sure you're connected to the internet and try again.\r\n") + errorMessage_;
@@ -244,6 +245,21 @@ void ScriptExtenderUpdater::UpdateErrorText()
             }
             break;
         }
+
+        // If we found a local fallback version to load, show an update warning; otherwise show an error
+        if (launchDllPath_) {
+            criticalError_ = false;
+
+            if (launchVersion_
+                && (errorCategory == ErrorCategory::UpdateDownload
+                || errorCategory == ErrorCategory::ManifestFetch)) {
+                errorMessage_ += std::string("\r\n\r\nThe latest downloaded version (v")
+                    + std::to_string(launchVersion_->Version.Major)
+                    + ") will be loaded.";
+            }
+        } else {
+            criticalError_ = true;
+        }
     }
 
     // Successful update, but local resource could not be found -> critical
@@ -269,6 +285,12 @@ void ScriptExtenderUpdater::UpdateErrorText()
         showError_ = true;
         criticalError_ = false;
         errorMessage_ = updateManifest_->Notice;
+    }
+
+    if (showError_) {
+        DEBUG("Update result [%s] - error text: %s", (criticalError_ ? "critical" : "warning"), errorMessage_.c_str());
+    } else {
+        DEBUG("Update result - no error text");
     }
 }
 
