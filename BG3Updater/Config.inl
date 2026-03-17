@@ -33,6 +33,7 @@ void ApplyConfig(UpdaterConfig& config, Document& root)
     ConfigGet(root, "Debug", config.Debug);
 #endif
 #if defined(_DEBUG)
+    ConfigGet(root, "DebugLoadSE", config.DebugLoadSE);
     ConfigGet(root, "ValidateSignature", config.ValidateSignature);
 #endif
     ConfigGet(root, "IPv4Only", config.IPv4Only);

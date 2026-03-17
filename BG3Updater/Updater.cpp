@@ -165,10 +165,16 @@ void ScriptExtenderUpdater::FetchUpdates()
         updateResult_ = OperationSuccessful{};
     }
 
-    auto resource = cache_->FindLoadableResource(UPDATER_RESOURCE_NAME, gameVersion_);
-    if (resource) {
-        launchDllPath_ = resource->GetAppDllPath();
-        launchNotice_ = resource->GetVersion().Notice;
+    if (config_.DebugLoadSE) {
+        DEBUG("Loading SE DLL from local bin");
+        launchDllPath_ = GAME_DLL;
+        updateResult_ = OperationSuccessful{};
+    } else {
+        auto resource = cache_->FindLoadableResource(UPDATER_RESOURCE_NAME, gameVersion_);
+        if (resource) {
+            launchDllPath_ = resource->GetAppDllPath();
+            launchNotice_ = resource->GetVersion().Notice;
+        }
     }
 
     UpdateErrorText();
