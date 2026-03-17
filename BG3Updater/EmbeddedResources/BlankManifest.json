@@ -1,0 +1,11 @@
+{
+  "ManifestVersion": 1,
+  "ManifestMinorVersion": 1,
+  "Resources": [
+    {
+      "Name": "ScriptExtender",
+      "Versions": [
+      ]
+    }
+  ]
+}
