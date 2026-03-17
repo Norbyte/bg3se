@@ -41,15 +41,22 @@ OperationResult HttpFetcher::Fetch(std::string const& url, std::vector<char> & r
     }
 
     curl_easy_setopt(curl_, CURLOPT_URL, url.c_str());
-    curl_easy_setopt(curl_, CURLOPT_NOBODY, 0);
-    curl_easy_setopt(curl_, CURLOPT_HEADER, 0);
-    curl_easy_setopt(curl_, CURLOPT_FAILONERROR, 1);
-    curl_easy_setopt(curl_, CURLOPT_CONNECTTIMEOUT_MS, 10000);
+    curl_easy_setopt(curl_, CURLOPT_NOBODY, 0l);
+    curl_easy_setopt(curl_, CURLOPT_HEADER, 0l);
+    curl_easy_setopt(curl_, CURLOPT_FAILONERROR, 1l);
     curl_easy_setopt(curl_, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2_0);
     curl_easy_setopt(curl_, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA | CURLSSLOPT_REVOKE_BEST_EFFORT);
 
+    if (Timeout) {
+        curl_easy_setopt(curl_, CURLOPT_TIMEOUT_MS, *Timeout);
+        curl_easy_setopt(curl_, CURLOPT_CONNECTTIMEOUT_MS, std::min(*Timeout, ConnectionTimeout));
+    } else {
+        curl_easy_setopt(curl_, CURLOPT_TIMEOUT_MS, 0);
+        curl_easy_setopt(curl_, CURLOPT_CONNECTTIMEOUT_MS, ConnectionTimeout);
+    }
+
     if (DebugLogging) {
-        curl_easy_setopt(curl_, CURLOPT_VERBOSE, 1);
+        curl_easy_setopt(curl_, CURLOPT_VERBOSE, 1l);
         curl_easy_setopt(curl_, CURLOPT_DEBUGFUNCTION, &DebugFunc);
     }
 

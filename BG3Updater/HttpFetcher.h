@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <optional>
 #include <curl/curl.h>
 #include "Result.h"
 
@@ -13,6 +14,7 @@ public:
     bool DebugLogging{ false };
     bool IPv4Only{ false };
     ErrorCategory TransferCategory{ ErrorCategory::General };
+    std::optional<long> Timeout;
 
     HttpFetcher();
     ~HttpFetcher();
@@ -21,6 +23,8 @@ public:
     void Cancel();
 
 private:
+    static constexpr long ConnectionTimeout = 10000;
+
     std::string lastError_;
     std::vector<char> lastResponse_;
     long lastHttpCode_{ 0 };

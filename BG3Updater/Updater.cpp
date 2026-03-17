@@ -26,6 +26,7 @@ OperationResult ManifestFetcher::Fetch(Manifest& manifest)
     DEBUG("Fetching manifest from: %s", manifestUrl.c_str());
     std::vector<char> manifestBody;
     fetcher_.TransferCategory = ErrorCategory::ManifestFetch;
+    fetcher_.Timeout = MANIFEST_FETCH_TIMEOUT;
     auto result = fetcher_.Fetch(manifestUrl, manifestBody);
     if (!result) {
         result.error().Message = std::string("Unable to download: ") + result.error().Message
@@ -114,6 +115,7 @@ OperationResult ResourceUpdater::Update(Manifest::Resource const& resource, Mani
     DEBUG("Fetching update package: %s", version.URL.c_str());
     std::vector<char> response;
     fetcher_.TransferCategory = ErrorCategory::UpdateDownload;
+    fetcher_.Timeout = CONTENT_FETCH_TIMEOUT;
     auto result = fetcher_.Fetch(version.URL, response);
     if (!result) {
         result.error().Message = std::string("Unable to download: ") + result.error().Message
