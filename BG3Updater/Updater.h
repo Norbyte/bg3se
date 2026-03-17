@@ -64,6 +64,11 @@ public:
         return showError_;
     }
 
+    bool IsCriticalError() const
+    {
+        return criticalError_;
+    }
+
     std::string const& GetErrorMessage() const
     {
         return errorMessage_;
@@ -94,6 +99,11 @@ public:
         needsClientSuspend_ = suspend;
     }
 
+    void SetAPICapabilities(uint32_t capabilities)
+    {
+        apiCapabilities_ = capabilities;
+    }
+
     void Initialize(std::string_view exeDirOverride);
     void Run();
     void LoadCaches();
@@ -110,6 +120,7 @@ private:
     std::wstring exeDir_;
     std::unique_ptr<ResourceCacheRepository> cache_;
     std::unique_ptr<UpdaterUI> ui_;
+    uint32_t apiCapabilities_{ 0 };
 
     std::optional<std::wstring> launchDllPath_;
     std::string launchNotice_;
@@ -134,6 +145,7 @@ private:
     void UnhookSDL();
     void OnSDLInit(Uint32, int);
     void UpdateErrorText();
+    std::wstring GetDebugDllPath();
 };
 
 void StartUpdaterThread();

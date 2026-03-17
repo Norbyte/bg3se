@@ -2,6 +2,7 @@
 #include "Updater.h"
 #include "HttpFetcher.h"
 #include "resource.h"
+#include "ExtenderAPI.h"
 #include <Shlwapi.h>
 #include <CommCtrl.h>
 #include <detours.h>
@@ -29,8 +30,7 @@ OperationResult ManifestFetcher::Fetch(Manifest& manifest)
     fetcher_.Timeout = MANIFEST_FETCH_TIMEOUT;
     auto result = fetcher_.Fetch(manifestUrl, manifestBody);
     if (!result) {
-        result.error().Message = std::string("Unable to download: ") + result.error().Message
-            + "\r\n\r\nURL: " + manifestUrl;
+        result.error().Message = std::string("Unable to download: ") + result.error().Message;
         return result;
     }
 
@@ -118,8 +118,7 @@ OperationResult ResourceUpdater::Update(Manifest::Resource const& resource, Mani
     fetcher_.Timeout = CONTENT_FETCH_TIMEOUT;
     auto result = fetcher_.Fetch(version.URL, response);
     if (!result) {
-        result.error().Message = std::string("Unable to download: ") + result.error().Message
-            + "\r\n\r\nURL: " + version.URL;
+        result.error().Message = std::string("Unable to download: ") + result.error().Message;
         return result;
     }
 
@@ -171,7 +170,7 @@ void ScriptExtenderUpdater::FetchUpdates()
 
     if (config_.DebugLoadSE) {
         DEBUG("Loading SE DLL from local bin");
-        launchDllPath_ = GAME_DLL;
+        launchDllPath_ = GetDebugDllPath();
         updateResult_ = OperationSuccessful{};
     } else {
         auto resource = cache_->FindLoadableResource(UPDATER_RESOURCE_NAME, gameVersion_);
@@ -182,6 +181,20 @@ void ScriptExtenderUpdater::FetchUpdates()
     }
 
     UpdateErrorText();
+}
+
+std::wstring ScriptExtenderUpdater::GetDebugDllPath()
+{
+    wchar_t path[MAX_PATH];
+    auto len = GetModuleFileNameW(gCoreLibPlatformInterface.ThisModule, path, std::size(path));
+    path[len] = 0;
+
+    auto sep = wcsrchr(path, L'\\');
+    if (sep != nullptr) {
+        *sep = 0;
+    }
+
+    return std::wstring(path) + L'\\' + GAME_DLL;
 }
 
 void ScriptExtenderUpdater::UpdateErrorText()
@@ -295,7 +308,10 @@ void ScriptExtenderUpdater::Run()
     LoadExtender();
     completed_ = true;
 
-    if (showError_) {
+    if (showError_
+        // Allow passing non-critical errors to SE for ingame display
+        && (criticalError_ || !(apiCapabilities_ & CapErrorReporting)))
+    {
         gGameHelpers->ShowError(errorMessage_.c_str(), !criticalError_);
     }
 }

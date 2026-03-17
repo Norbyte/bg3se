@@ -151,6 +151,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="Extender\Shared\ScriptHelpers.h" />
     <ClInclude Include="Extender\Shared\StatLoadOrderHelper.h" />
     <ClInclude Include="Extender\Shared\tinyxml2.h" />
+    <ClInclude Include="Extender\Shared\UpdaterAPI.h" />
     <ClInclude Include="Extender\Shared\UseActions.h" />
     <ClInclude Include="Extender\Shared\UserVariables.h" />
     <ClInclude Include="Extender\Shared\Utils.h" />
@@ -437,6 +438,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="Extender\Shared\ExtenderProtocol.proto" />
     <None Include="Extender\Shared\StatLoadOrderHelper.inl" />
     <None Include="Extender\Shared\ThreadedExtenderState.inl" />
+    <None Include="Extender\Shared\UpdaterAPI.inl" />
     <None Include="Extender\Shared\UseActions.inl" />
     <None Include="Extender\Shared\UserVariables.inl" />
     <None Include="Extender\Shared\VirtualTextureMerge.inl" />

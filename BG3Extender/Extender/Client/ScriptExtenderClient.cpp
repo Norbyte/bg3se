@@ -224,12 +224,19 @@ void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
         break;
 
     case GameState::Menu:
-        #if defined(SE_IS_DEVELOPER_BUILD) && defined(NDEBUG)
-        if (!gExtender->GetConfig().DeveloperMode) {
-            gExtender->GetLibraryManager().ShowStartupError("This is an experimental version of the Script Extender meant for development use; things may frequently break here. It is recommended to switch back to the Release version unless you know what you are doing!", false, false);
+    {
+        auto error = gExtender->GetUpdaterAPI().GetDisplayError();
+        if (error) {
+            gExtender->GetLibraryManager().ShowStartupError(STDString(*error), false, false);
+        } else {
+            #if defined(SE_IS_DEVELOPER_BUILD) && defined(NDEBUG)
+            if (!gExtender->GetConfig().DeveloperMode) {
+                gExtender->GetLibraryManager().ShowStartupError("This is an experimental version of the Script Extender meant for development use; things may frequently break here. It is recommended to switch back to the Release version unless you know what you are doing!", false, false);
+            }
+            #endif
         }
-        #endif
         break;
+    }
 
     case GameState::LoadModule:
         gExtender->InitRuntimeLogging();

@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <chrono>
 
+#include <Extender/Shared/UpdaterAPI.inl>
 #include <Extender/Shared/StatLoadOrderHelper.inl>
 #include <Extender/Shared/UserVariables.inl>
 #include <Extender/Shared/UseActions.inl>
@@ -96,6 +97,7 @@ void ScriptExtender::Initialize()
 
     if (!Libraries.CriticalInitializationFailed()) {
         imgui_.EnableHooks();
+        updaterApi_.MarkReadyToDisplayErrors();
     }
 
     server_.Initialize();

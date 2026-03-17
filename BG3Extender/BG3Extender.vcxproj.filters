@@ -523,6 +523,7 @@
     <ClInclude Include="Extender\Shared\Optick.h" />
     <ClInclude Include="GameDefinitions\Components\Effect.h" />
     <ClInclude Include="GameDefinitions\Base\Genome.h" />
+    <ClInclude Include="Extender\Shared\UpdaterAPI.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -784,6 +785,9 @@
     <None Include="GameDefinitions\Stats\Expression.inl" />
     <None Include="Lua\Libs\StatFunctors.inl" />
     <None Include="GameDefinitions\Components\Effect.inl" />
+    <None Include="Extender\Shared\UpdaterAPI.inl">
+      <Filter>Extender\Shared</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

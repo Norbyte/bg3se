@@ -10,6 +10,7 @@
 #include <Extender/Shared/VirtualTextures.h>
 #include <Extender/Shared/UseActions.h>
 #include <Extender/Shared/Hooks.h>
+#include <Extender/Shared/UpdaterAPI.h>
 #include <Lua/Debugger/LuaDebugger.h>
 #include <Lua/Debugger/LuaDebugMessages.h>
 #include <Lua/Shared/LuaBundle.h>
@@ -135,6 +136,11 @@ public:
         return imgui_;
     }
 
+    inline UpdaterAPIHelpers& GetUpdaterAPI()
+    {
+        return updaterApi_;
+    }
+
     void ClearPathOverrides();
     void AddPathOverride(STDString const & path, STDString const & overriddenPath);
     std::optional<STDString> GetPathOverride(STDString const& path);
@@ -167,6 +173,7 @@ private:
     VirtualTextureHelpers virtualTextures_;
     UseActionHelpers useActions_;
     extui::IMGUIManager imgui_;
+    UpdaterAPIHelpers updaterApi_;
 
     ExtenderConfig config_;
     bool postStartupDone_{ false };

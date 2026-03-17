@@ -176,6 +176,7 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="Defines.h" />
     <ClInclude Include="DWriteWrapper.h" />
+    <ClInclude Include="ExtenderAPI.h" />
     <ClInclude Include="GameHelpers.h" />
     <ClInclude Include="GameVersion.h" />
     <ClInclude Include="HttpFetcher.h" />
@@ -207,6 +208,7 @@
   <ItemGroup>
     <None Include="Config.inl" />
     <None Include="Exports.def" />
+    <None Include="ExtenderAPI.inl" />
     <None Include="Result.inl" />
     <None Include="ThreadInfo.inl" />
     <None Include="UI.inl" />

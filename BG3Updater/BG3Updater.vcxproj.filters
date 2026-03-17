@@ -27,6 +27,7 @@
     <ClInclude Include="UI.h" />
     <ClInclude Include="Result.h" />
     <ClInclude Include="GameVersion.h" />
+    <ClInclude Include="ExtenderAPI.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources.rc" />
@@ -37,5 +38,6 @@
     <None Include="Config.inl" />
     <None Include="UI.inl" />
     <None Include="Result.inl" />
+    <None Include="ExtenderAPI.inl" />
   </ItemGroup>
 </Project>
