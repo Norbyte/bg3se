@@ -124,9 +124,9 @@ int HttpFetcher::DebugFunc(CURL* handle, curl_infotype type, char* data, size_t 
 {
     std::string line;
     switch (type) {
-    case CURLINFO_TEXT: line = "* "; break;
-    case CURLINFO_HEADER_IN: line = "< "; break;
-    case CURLINFO_HEADER_OUT: line = "> "; break;
+    case CURLINFO_TEXT: line = "* "; line += std::string_view(data, size - 1); break;
+    case CURLINFO_HEADER_IN: line = "< "; line += std::string_view(data, size - 2); break;
+    case CURLINFO_HEADER_OUT: line = "> "; line += std::string_view(data, size - 2); break;
     default: return 0;
     }
 
