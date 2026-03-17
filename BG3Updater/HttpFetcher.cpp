@@ -10,8 +10,14 @@ HttpFetcher::HttpFetcher()
 
 HttpFetcher::~HttpFetcher()
 {
-    if (curl_ != NULL) {
+    Cleanup();
+}
+
+void HttpFetcher::Cleanup()
+{
+    if (curl_ != nullptr) {
         curl_easy_cleanup(curl_);
+        curl_ = nullptr;
     }
 }
 
@@ -28,7 +34,7 @@ void HttpFetcher::LogError(CURL* curl, CURLcode result)
     }
 
     lastError_ = ss.str();
-    DEBUG("Updater error: %s", lastError_.c_str());
+    DEBUG("  Fetch failed: %s", lastError_.c_str());
 }
 
 OperationResult HttpFetcher::Fetch(std::string const& url, std::vector<char> & response)
@@ -72,9 +78,14 @@ OperationResult HttpFetcher::Fetch(std::string const& url, std::vector<char> & r
     curl_easy_setopt(curl_, CURLOPT_WRITEDATA, this);
     lastResponse_.clear();
 
+    DEBUG("Start cURL fetch for URL %s", url.c_str());
+    DEBUG("  (Debug %s, IPv4 only %s)", (DebugLogging ? "on" : "off"), (IPv4Only ? "on" : "off"));
+
     lastResult_ = curl_easy_perform(curl_);
     if (lastResult_ != CURLE_OK) {
         LogError(curl_, lastResult_);
+    } else {
+        DEBUG("  Fetch succeeded (%lld bytes)", lastResponse_.size());
     }
 
     response = lastResponse_;
@@ -130,7 +141,6 @@ int HttpFetcher::DebugFunc(CURL* handle, curl_infotype type, char* data, size_t 
     default: return 0;
     }
 
-    line += std::string_view(data, size - 2);
     DEBUG("%s", line.c_str());
 
     return 0;

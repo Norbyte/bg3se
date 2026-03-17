@@ -156,6 +156,8 @@ void ScriptExtenderUpdater::FetchUpdates()
 
     if (!config_.DisableUpdates) {
         updateResult_ = TryToUpdate();
+        // Ensure that we don't keep dangling HTTP connections open to the update server forever
+        fetcher_.Cleanup();
     } else {
         updateResult_ = OperationSuccessful{};
     }

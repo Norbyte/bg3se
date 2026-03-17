@@ -21,6 +21,7 @@ public:
 
     OperationResult Fetch(std::string const& url, std::vector<char> & response);
     void Cancel();
+    void Cleanup();
 
 private:
     static constexpr long ConnectionTimeout = 10000;
