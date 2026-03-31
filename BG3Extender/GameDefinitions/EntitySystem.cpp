@@ -510,7 +510,7 @@ void* EntityCommandBuffer::CreateComponentRaw(EntityHandle entity, ComponentType
     }
 
     auto component = storage->Allocate(index);
-    auto changes = Data.EntityChanges.add(entity, Allocator);
+    auto changes = Data.GetOrAddEntityChange(entity);
     auto change = changes->Store.add();
     change->Index = index;
     change->ComponentTypeId = type;
