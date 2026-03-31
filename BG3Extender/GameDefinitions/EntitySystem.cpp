@@ -159,7 +159,7 @@ void* FrameAllocator::Allocate(uint16_t size)
         offset = (uint64_t)InterlockedExchangeAdd64(&curPage->Offset, realSize);
     }
 
-    return curPage + offset;
+    return (uint8_t*)curPage + offset;
 }
 
 FrameAllocator::FrameBuffer* FrameAllocator::AllocPage()
@@ -684,10 +684,14 @@ void* EntitySystemHelpersBase::CreateComponentRaw(EntityHandle entity, ExtCompon
     if (meta.IsProxy) {
         auto ptr = (void**)GetEntityWorld()->Deferred()->CreateComponentRaw(entity, meta.ComponentIndex, sizeof(void*), index, meta.Properties->ProxyDestroy);
         *ptr = GameAllocRaw(meta.Size);
+        memset(*ptr, 0, meta.Size);
         meta.Properties->Construct(*ptr);
         return *ptr;
     } else {
         auto ptr = GetEntityWorld()->Deferred()->CreateComponentRaw(entity, meta.ComponentIndex, meta.Size, index, meta.Properties->ProxyDestroy);
+        // Ensure we're using zeroed memory since not every component has proper default constructors
+        // and could end up using leftover garbage from memory
+        memset(ptr, 0, meta.Size);
         meta.Properties->Construct(ptr);
         return ptr;
     }
