@@ -299,7 +299,7 @@ public:
     bool SetSystemUpdateHook(SystemTypeIndex system, std::function<SystemHookProc> preUpdate, std::function<SystemHookProc> postUpdate);
 
 protected:
-    void MapComponentIndices(char const* componentName, ExtComponentType type, std::size_t size, bool isProxy);
+    void MapComponentIndices(char const* componentName, ExtComponentType type, std::size_t size, bool isProxy, bool oneFrame);
     void MapResourceManagerIndex(char const* componentName, ExtResourceManagerType type);
     void MapSystemIndex(char const* systemName, ExtSystemType type);
     void UpdateComponentMappings();

@@ -875,12 +875,13 @@ void EntitySystemHelpersBase::ValidatePropertyMapBindings()
     }
 }
 
-void EntitySystemHelpersBase::MapComponentIndices(char const* componentName, ExtComponentType type, std::size_t size, bool isProxy)
+void EntitySystemHelpersBase::MapComponentIndices(char const* componentName, ExtComponentType type, std::size_t size, bool isProxy, bool oneFrame)
 {
     auto it = componentNameToIndexMappings_.find(componentName);
     if (it != componentNameToIndexMappings_.end()) {
-        components_[(unsigned)type].ComponentIndex = it->second.ComponentIndex;
-        components_[(unsigned)type].ReplicationIndex = it->second.ReplicationIndex;
+        auto& comp = components_[(unsigned)type];
+        comp.ComponentIndex = it->second.ComponentIndex;
+        comp.ReplicationIndex = it->second.ReplicationIndex;
 
         if (it->second.ComponentIndex != UndefinedComponent) {
             auto& binding = ecsComponentData_.GetOrAdd(it->second.ComponentIndex);
@@ -897,8 +898,9 @@ void EntitySystemHelpersBase::MapComponentIndices(char const* componentName, Ext
         }
 
         se_assert(size < 0x10000);
-        components_[(unsigned)type].Size = (uint16_t)size;
-        components_[(unsigned)type].IsProxy = isProxy;
+        comp.Size = (uint16_t)size;
+        comp.IsProxy = isProxy;
+        comp.OneFrame = oneFrame;
     } else {
         OsiWarn("Could not find index for component: " << componentName);
     }
@@ -1221,11 +1223,6 @@ void EntitySystemHelpersBase::ValidateMappedComponentSizes()
             if (!ValidateMappedComponentSize(world, componentType, ExtComponentType{ componentIdx })) {
                 deletions.push_back(componentType);
             }
-
-            auto registryEntry = world->ComponentRegistry_.Get(componentType);
-            if (registryEntry) {
-                components_[componentIdx].OneFrame = registryEntry->OneFrame;
-            }
         }
     }
 
@@ -1245,6 +1242,11 @@ bool EntitySystemHelpersBase::ValidateMappedComponentSize(ecs::EntityWorld* worl
     auto const& local = components_[(unsigned)extType];
     auto name = ecsComponentData_.Get(typeId).Name;
     if (mapped != nullptr) {
+        if (!local.Properties) {
+            WARN("[ECS INTEGRITY CHECK] '%s' has no property map", name->c_str());
+            return false;
+        }
+
         if (local.IsProxy) {
             if (mapped->InlineSize != sizeof(void*)) {
                 ERR("[ECS INTEGRITY CHECK] '%s' marked as proxy, but entity only has inline data (%d)", 
@@ -1270,6 +1272,11 @@ bool EntitySystemHelpersBase::ValidateMappedComponentSize(ecs::EntityWorld* worl
                     name->c_str(), local.Size, mapped->ComponentSize);
                 return false;
             }
+        }
+
+        if (mapped->OneFrame != local.OneFrame) {
+            ERR("[ECS INTEGRITY CHECK] '%s' one-frame type mismatch", name->c_str());
+            return false;
         }
     }
 
