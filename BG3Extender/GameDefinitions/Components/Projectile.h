@@ -137,10 +137,10 @@ struct Projectile : public BaseProxyComponent
     FixedString TextKey;
     [[bg3::legacy(Hit)]] HitDesc SpellRollResult;
     DamageType MainDamageType;
-    CauseType Cause;
-    float LifeTime;
-    float HitInterpolation;
-    float FallbackTimer;
+    CauseType Cause{ CauseType::Attack };
+    float LifeTime{ 10.0f };
+    float HitInterpolation{ -1.0f };
+    float FallbackTimer{ 15.0f };
     path::PathMover Path;
     path::PathMover Path2;
     float ExplodeRadius;
@@ -159,11 +159,11 @@ struct Projectile : public BaseProxyComponent
     bool IsOnHold;
     bool IsTrap;
     bool IsThrown;
-    [[bg3::legacy(MoveFromOwner)]] bool MoveFromSource;
+    [[bg3::legacy(MoveFromOwner)]] bool MoveFromSource{ true };
     bool IsFromItem;
     bool IgnoreTargetChecks;
     bool IgnoreRoof;
-    bool CanDeflect;
+    bool CanDeflect{ true };
     bool IgnoreObjects;
     bool IgnoreSurfaces;
     bool Used;

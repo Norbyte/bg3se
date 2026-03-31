@@ -18,7 +18,7 @@ struct ActionOriginator
     FixedString PassiveId;
     FixedString StatusId;
     FixedString InterruptId;
-    bool CanApplyConcentration{ false };
+    bool CanApplyConcentration{ true };
 };
 
 struct SpellMetaId
@@ -165,10 +165,10 @@ struct MappedVelocity
 
 struct Settings
 {
-    std::variant<Bezier3Trajectory, Bezier4Trajectory> Trajectory;
+    std::variant<Bezier3Trajectory, Bezier4Trajectory> Trajectory{ Bezier3Trajectory{} };
     [[bg3::hidden]] uint32_t _Pad;
-    PathRotateMode RotateMode{ PathRotateMode::Static };
-    std::variant<ConstantVelocity, LinearVelocity, MappedVelocity> Velocity;
+    PathRotateMode RotateMode{ PathRotateMode::Follow };
+    std::variant<ConstantVelocity, LinearVelocity, MappedVelocity> Velocity{ ConstantVelocity{} };
 };
 
 struct PathMover : public Settings
@@ -177,7 +177,7 @@ struct PathMover : public Settings
     glm::quat SourceRotation;
     glm::vec3 TargetPosition;
     glm::quat TargetRotation;
-    float InterpolateValue;
+    float InterpolateValue{ .0f };
     std::array<float, 32> ComputedTrajectoryValues;
     Array<glm::vec3> ComputedVelocityValues;
     bool Initialized{ false };
