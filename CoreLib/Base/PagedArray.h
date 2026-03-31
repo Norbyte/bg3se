@@ -108,8 +108,14 @@ public:
         : TAllocator(allocator), layout_(bitsPerPage)
     {}
 
+    ~PagedArray()
+    {
+        clear();
+    }
+
     // Can't copy these for now
     PagedArray(PagedArray const&) = delete;
+    PagedArray(PagedArray &&) = delete;
 
     inline TAllocator& allocator()
     {
@@ -136,15 +142,47 @@ public:
         return layout_.capacity();
     }
 
-    void resize(uint32_t newSize)
+    void realloc(uint32_t newSize)
     {
         PagedOps<T, TAllocator>::Resize(newSize, pages_, layout_, *this);
+    }
+
+    template <class TAlloc>
+    void reallocExtern(uint32_t newSize, TAlloc& alloc)
+    {
+        PagedOps<T, TAlloc>::Resize(newSize, pages_, layout_, alloc);
+    }
+
+    void resize(uint32_t newSize)
+    {
+        for (auto i = newSize; i < size_; i++) {
+            layout_.at(pages_, i)->~T();
+        }
+
+        realloc(newSize);
+
+        for (auto i = size_; i < newSize; i++) {
+            new (layout_.at(pages_, i)) T();
+        }
+
+        size_ = newSize;
+    }
+
+    void clear()
+    {
+        PagedOps<T, TAllocator>::Resize(0, pages_, layout_, *this);
+    }
+
+    template <class TAlloc>
+    void clearExtern(TAlloc& alloc)
+    {
+        PagedOps<T, TAlloc>::Resize(0, pages_, layout_, alloc);
     }
 
     T* add()
     {
         if (capacity() <= size()) {
-            resize(capacity() + layout_.bucket_size());
+            realloc(capacity() + layout_.bucket_size());
         }
 
         auto val = layout_.at(pages_, size_++);
@@ -155,7 +193,7 @@ public:
     T* add_uninitialized()
     {
         if (capacity() <= size()) {
-            resize(capacity() + layout_.bucket_size());
+            realloc(capacity() + layout_.bucket_size());
         }
 
         return layout_.at(pages_, size_++);
@@ -180,11 +218,15 @@ private:
 template <class TAllocator = DefaultPagedAllocator>
 struct PagedBitSet
 {
-    PagedArray<uint64_t, TAllocator> Storage;
+public:
+    inline TAllocator& allocator()
+    {
+        return storage_.allocator();
+    }
 
     inline uint32_t size() const
     {
-        return Storage.size() << 6;
+        return storage_.size() << 6;
     }
 
     inline bool get(uint32_t index) const
@@ -193,7 +235,7 @@ struct PagedBitSet
             return false;
         } else {
             auto qword = index >> 6;
-            return _bittest64((int64_t const*)&Storage[qword], index & 0x3f);
+            return _bittest64((int64_t const*)&storage_[qword], index & 0x3f);
         }
     }
 
@@ -202,68 +244,33 @@ struct PagedBitSet
         return get(index);
     }
 
+    void resize(uint32_t newSize)
+    {
+        if (newSize > size()) {
+            storage_.resize(newSize / 64 + ((newSize % 64) ? 1 : 0));
+        }
+    }
+
     inline void set(uint32_t index)
     {
-        se_assert(index < size());
+        if (index >= size()) {
+            resize(index + 1);
+        }
+
         auto qword = index >> 6;
-        Storage[qword] |= (1ull << (index & 0x3f));
+        storage_[qword] |= (1ull << (index & 0x3f));
     }
 
     inline void clear(uint32_t index)
     {
-        se_assert(index < size());
-        auto qword = index >> 6;
-        Storage[qword] &= ~(1ull << (index & 0x3f));
-    }
-};
-
-
-template <class TKey, class TValue, class TAllocator = DefaultPagedAllocator>
-struct DoubleIndexedPagedArray
-{
-    static constexpr uint16_t InvalidIndex = 0xffff;
-
-    PagedBitSet<TAllocator> Bitmap;
-    PagedArray<uint16_t, DefaultPagedAllocator> LookupTable;
-    PagedArray<TKey, TAllocator> Keys;
-    PagedArray<TValue, TAllocator> Values;
-
-    uint16_t FindIndex(TKey const& key) const
-    {
-        auto hash = (uint32_t)SparseHashMapHash(key);
-        if (!Bitmap[hash]) return InvalidIndex;
-
-        auto keyIndex = LookupTable[hash];
-        if (keyIndex == InvalidIndex || Keys[keyIndex] != key) return InvalidIndex;
-        return keyIndex;
+        if (index < size()) {
+            auto qword = index >> 6;
+            storage_[qword] &= ~(1ull << (index & 0x3f));
+        }
     }
 
-    TValue const* Find(TKey const& key) const
-    {
-        auto index = FindIndex(key);
-        if (index == InvalidIndex) return nullptr;
-
-        return &Values[index];
-    }
-
-    TValue* Find(TKey const& key)
-    {
-        auto index = FindIndex(key);
-        if (index == InvalidIndex) return nullptr;
-
-        return &Values[index];
-    }
-
-    template <class... Args>
-    TValue* Add(TKey const& key, Args... args)
-    {
-        auto hash = (uint32_t)SparseHashMapHash(key);
-        Bitmap.set(hash);
-        auto nextIndex = (uint16_t)Keys.size();
-        LookupTable[hash] = nextIndex;
-        new (Keys.add_uninitialized()) TKey(key);
-        return new (Values.add_uninitialized()) TValue(std::forward<Args>(args)...);
-    }
+private:
+    PagedArray<uint64_t, TAllocator> storage_;
 };
 
 END_SE()
