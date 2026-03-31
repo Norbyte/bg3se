@@ -256,7 +256,7 @@ struct DummyEquipmentVisualVisibility
 
 struct DummyEquipmentSetupOneFrameComponent : public BaseComponent
 {
-    DEFINE_COMPONENT(PhotoModeDummyEquipmentSetupOneFrame, "ecl::photo_mode::DummyEquipmentSetupOneFrameComponent")
+    DEFINE_ONEFRAME_COMPONENT(PhotoModeDummyEquipmentSetupOneFrame, "ecl::photo_mode::DummyEquipmentSetupOneFrameComponent")
 
     DummyEquipmentVisualVisibility Visibility;
 };

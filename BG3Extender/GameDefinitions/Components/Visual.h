@@ -426,7 +426,7 @@ struct VisualLoadRequestsSingletonComponent : public BaseComponent
 
 struct VisualChangeRequestOneFrameComponent : public BaseComponent
 {
-    DEFINE_COMPONENT(VisualChangeRequest, "ls::VisualChangeRequestOneFrameComponent")
+    DEFINE_ONEFRAME_COMPONENT(VisualChangeRequest, "ls::VisualChangeRequestOneFrameComponent")
 
     FixedString VisualTemplate;
     VisualLoadFlags Flags;
@@ -434,7 +434,7 @@ struct VisualChangeRequestOneFrameComponent : public BaseComponent
 
 struct VisualAttachRequestOneFrameComponent : public BaseComponent
 {
-    DEFINE_COMPONENT(VisualAttachRequest, "ls::VisualAttachRequestOneFrameComponent")
+    DEFINE_ONEFRAME_COMPONENT(VisualAttachRequest, "ls::VisualAttachRequestOneFrameComponent")
 
     EntityHandle Entity;
     int field_8;
@@ -648,7 +648,7 @@ struct GameplayEventsSingletonComponent : public BaseComponent
 
 struct GameplayEventsOneFrameComponent : public BaseComponent
 {
-    DEFINE_COMPONENT(AnimationGameplayEvents, "eoc::animation::GameplayEventsOneFrameComponent")
+    DEFINE_ONEFRAME_COMPONENT(AnimationGameplayEvents, "eoc::animation::GameplayEventsOneFrameComponent")
 
     HashMap<EntityHandle, Array<ReceivedEvent>> Events;
 };
@@ -656,7 +656,7 @@ struct GameplayEventsOneFrameComponent : public BaseComponent
 
 struct TextKeyEventsOneFrameComponent : public BaseComponent
 {
-    DEFINE_COMPONENT(AnimationTextKeyEvents, "eoc::animation::TextKeyEventsOneFrameComponent")
+    DEFINE_ONEFRAME_COMPONENT(AnimationTextKeyEvents, "eoc::animation::TextKeyEventsOneFrameComponent")
 
     HashMap<EntityHandle, Array<TextKeyEventInfo>> Events;
 };
@@ -664,7 +664,7 @@ struct TextKeyEventsOneFrameComponent : public BaseComponent
 
 struct TriggeredEventsOneFrameComponent : public BaseComponent
 {
-    DEFINE_COMPONENT(AnimationTriggeredEvents, "eoc::animation::TriggeredEventsOneFrameComponent")
+    DEFINE_ONEFRAME_COMPONENT(AnimationTriggeredEvents, "eoc::animation::TriggeredEventsOneFrameComponent")
 
     HashMap<EntityHandle, Array<FixedString>> Events;
 };

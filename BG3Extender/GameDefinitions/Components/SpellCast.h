@@ -134,7 +134,7 @@ struct ExecutionTimeComponent : public BaseComponent
 
 struct CastEventOneFrameComponent : public BaseComponent
 {
-    DEFINE_ONEFRAME_COMPONENT(SpellCastEvent, "eoc::spell_cast::CastEventOneFrameComponent")
+    DEFINE_COMPONENT(SpellCastEvent, "eoc::spell_cast::CastEventOneFrameComponent")
 
     HitDesc Hit;
     EntityHandle Target;
@@ -234,7 +234,7 @@ struct AnimationRequestOneFrameComponent : public BaseComponent
 
 struct FinishedEventOneFrameComponent : public BaseComponent
 {
-    DEFINE_ONEFRAME_COMPONENT(SpellCastFinishedEvent, "eoc::spell_cast::FinishedEventOneFrameComponent")
+    DEFINE_COMPONENT(SpellCastFinishedEvent, "eoc::spell_cast::FinishedEventOneFrameComponent")
 
     SpellCastFailReason Result;
     uint8_t field_1;
@@ -243,7 +243,7 @@ struct FinishedEventOneFrameComponent : public BaseComponent
 DEFINE_TAG_COMPONENT(eoc::spell_cast, CanBeTargetedComponent, SpellCastCanBeTargeted)
 DEFINE_ONEFRAME_TAG_COMPONENT(eoc::spell_cast, PrepareStartEventOneFrameComponent, SpellCastPrepareStartEvent)
 DEFINE_ONEFRAME_TAG_COMPONENT(eoc::spell_cast, PrepareEndEventOneFrameComponent, SpellCastPrepareEndEvent)
-DEFINE_ONEFRAME_TAG_COMPONENT(eoc::spell_cast, LogicExecutionStartEventOneFrameComponent, SpellCastLogicExecutionStartEvent)
+DEFINE_TAG_COMPONENT(eoc::spell_cast, LogicExecutionStartEventOneFrameComponent, SpellCastLogicExecutionStartEvent)
 DEFINE_ONEFRAME_TAG_COMPONENT(eoc::spell_cast, LogicExecutionEndEventOneFrameComponent, SpellCastLogicExecutionEndEvent)
 DEFINE_ONEFRAME_TAG_COMPONENT(eoc::spell_cast, PreviewEndEventOneFrameComponent, SpellCastPreviewEndEvent)
 DEFINE_ONEFRAME_TAG_COMPONENT(eoc::spell_cast, CounteredEventOneFrameComponent, SpellCastCounteredEvent)

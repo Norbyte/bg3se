@@ -517,7 +517,7 @@ struct ScreenFadeCreationData
 
 struct ClearScreenFadeRequestManualOneFrameComponent : public BaseComponent
 {
-    DEFINE_ONEFRAME_COMPONENT(CameraClearScreenFadeRequestManual, "ecl::camera::ClearScreenFadeRequestManualOneFrameComponent")
+    DEFINE_COMPONENT(CameraClearScreenFadeRequestManual, "ecl::camera::ClearScreenFadeRequestManualOneFrameComponent")
 
     Array<ClearScreenFadeData> Requests;
 };
@@ -538,7 +538,7 @@ struct PhotoModeExitScreenFadeCreateRequestsSingletonComponent : public BaseComp
 
 struct ScreenFadeToRequestManualOneFrameComponent : public BaseComponent
 {
-    DEFINE_ONEFRAME_COMPONENT(CameraScreenFadeToRequestManual, "ecl::camera::ScreenFadeToRequestManualOneFrameComponent")
+    DEFINE_COMPONENT(CameraScreenFadeToRequestManual, "ecl::camera::ScreenFadeToRequestManualOneFrameComponent")
 
     HashMap<int16_t, ScreenFadeCreationData> Requests;
 };

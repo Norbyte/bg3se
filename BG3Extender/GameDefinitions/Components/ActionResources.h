@@ -69,7 +69,7 @@ struct ActionResourcesComponent : public BaseComponent
 
 struct ActionResourceEventsOneFrameComponent : public BaseComponent
 {
-    DEFINE_ONEFRAME_COMPONENT(ActionResourceEvents, "eoc::ActionResourceEventsOneFrameComponent")
+    DEFINE_COMPONENT(ActionResourceEvents, "eoc::ActionResourceEventsOneFrameComponent")
 
     Array<ActionResourceSetValueRequest> Events;
 };

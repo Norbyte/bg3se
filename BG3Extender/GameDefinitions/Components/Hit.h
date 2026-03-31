@@ -207,14 +207,14 @@ struct HitEventData
 
 struct UnresolvedHitNotificationComponent : public BaseComponent
 {
-    DEFINE_ONEFRAME_COMPONENT(UnresolvedHitNotification, "esv::hit::UnresolvedHitNotificationComponent")
+    DEFINE_COMPONENT(UnresolvedHitNotification, "esv::hit::UnresolvedHitNotificationComponent")
 
     Array<HitEventData> Hits;
 };
 
 struct HitNotificationEventOneFrameComponent : public BaseComponent
 {
-    DEFINE_ONEFRAME_COMPONENT(HitNotification, "esv::hit::HitNotificationEventOneFrameComponent")
+    DEFINE_COMPONENT(HitNotification, "esv::hit::HitNotificationEventOneFrameComponent")
 
     EntityHandle Target;
     HitEventData Hit;
@@ -223,7 +223,7 @@ struct HitNotificationEventOneFrameComponent : public BaseComponent
 
 struct HitNotificationRequestOneFrameComponent : public BaseComponent
 {
-    DEFINE_ONEFRAME_COMPONENT(HitNotificationRequest, "esv::hit::HitNotificationRequestOneFrameComponent")
+    DEFINE_COMPONENT(HitNotificationRequest, "esv::hit::HitNotificationRequestOneFrameComponent")
 
     EntityHandle Target;
     HitEventData Hit;

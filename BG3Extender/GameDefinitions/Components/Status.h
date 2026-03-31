@@ -268,7 +268,7 @@ struct AddedStatusAuraEffectEventOneFrameComponent : public BaseComponent
 
 struct RemovedStatusAuraEffectEventOneFrameComponent : public BaseComponent
 {
-    DEFINE_COMPONENT(ServerRemovedStatusAuraEffectEvent, "esv::status::aura::RemovedStatusAuraEffectEventOneFrameComponent")
+    DEFINE_ONEFRAME_COMPONENT(ServerRemovedStatusAuraEffectEvent, "esv::status::aura::RemovedStatusAuraEffectEventOneFrameComponent")
 
     FixedString StatusId;
     int StoryActionId;

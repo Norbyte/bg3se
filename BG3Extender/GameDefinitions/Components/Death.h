@@ -147,7 +147,7 @@ struct DeathDeadByDefaultRequestOneFrameComponent : public BaseComponent
 
 struct DeathRequestOneFrameComponent : public BaseComponent
 {
-    DEFINE_ONEFRAME_COMPONENT(ServerDeathRequest, "esv::death::DeathRequestOneFrameComponent")
+    DEFINE_COMPONENT(ServerDeathRequest, "esv::death::DeathRequestOneFrameComponent")
 
     EntityHandle Entity;
     bg3se::death::DeathRequestData Death;
@@ -155,7 +155,7 @@ struct DeathRequestOneFrameComponent : public BaseComponent
 
 struct ModifyDelayDeathRequestOneFrameComponent : public BaseComponent
 {
-    DEFINE_ONEFRAME_COMPONENT(ServerModifyDelayDeathRequest, "esv::death::ModifyDelayDeathRequestOneFrameComponent")
+    DEFINE_COMPONENT(ServerModifyDelayDeathRequest, "esv::death::ModifyDelayDeathRequestOneFrameComponent")
 
     EntityHandle Entity;
     bool Increase;
@@ -163,12 +163,12 @@ struct ModifyDelayDeathRequestOneFrameComponent : public BaseComponent
 
 struct ResurrectedEventOneFrameComponent : public BaseComponent
 {
-    DEFINE_ONEFRAME_COMPONENT(ServerResurrectedEvent, "esv::death::ResurrectedEventOneFrameComponent")
+    DEFINE_COMPONENT(ServerResurrectedEvent, "esv::death::ResurrectedEventOneFrameComponent")
 
     bg3se::death::ResurrectionData Resurrect;
 };
 
-DEFINE_ONEFRAME_TAG_COMPONENT(esv::death, DownedEventOneFrameComponent, DownedEvent)
+DEFINE_TAG_COMPONENT(esv::death, DownedEventOneFrameComponent, DownedEvent)
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::death, DiedEventOneFrameComponent, DiedEvent)
 
 END_NS()

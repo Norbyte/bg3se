@@ -224,7 +224,7 @@ struct CombatantKilledEventOneFrameComponent : public BaseComponent
 
 struct JoinEventOneFrameComponent : public BaseComponent
 {
-    DEFINE_ONEFRAME_COMPONENT(CombatantJoinEvent, "esv::combat::JoinEventOneFrameComponent")
+    DEFINE_COMPONENT(CombatantJoinEvent, "esv::combat::JoinEventOneFrameComponent")
 
     EntityHandle Combat;
     int32_t Initiative;
@@ -243,7 +243,7 @@ struct LeftEventOneFrameComponent : public BaseComponent
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, CombatScheduledForDeleteOneFrameComponent, CombatScheduledForDelete)
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, CombatStartedEventOneFrameComponent, CombatStartedEvent)
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, DelayedFanfareRemovedDuringCombatEventOneFrameComponent, DelayedFanfareRemovedDuringCombatEvent)
-DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, FleeSuccessOneFrameComponent, CombatFleeSuccess)
+DEFINE_TAG_COMPONENT(esv::combat, FleeSuccessOneFrameComponent, CombatFleeSuccess)
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, JoinInCurrentRoundFailedEventOneFrameComponent, CombatJoinInCurrentRoundFailedEvent)
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, JoinInCurrentRoundOneFrameComponent, CombatJoinInCurrentRound)
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, RequestCompletedEventOneFrameComponent, CombatRequestCompletedEvent)

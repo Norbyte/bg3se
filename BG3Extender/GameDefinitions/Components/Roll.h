@@ -225,7 +225,7 @@ struct FinishedEvent
 
 struct RollFinishedEventOneFrameComponent : public BaseComponent
 {
-    DEFINE_COMPONENT(ServerRollFinishedEvent, "esv::roll::RollFinishedEventOneFrameComponent")
+    DEFINE_ONEFRAME_COMPONENT(ServerRollFinishedEvent, "esv::roll::RollFinishedEventOneFrameComponent")
 
     Array<FinishedEvent> Events;
 };

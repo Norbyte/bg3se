@@ -809,7 +809,7 @@ struct RestTypeChosenEventOneFrameComponent : public BaseComponent
 
 struct ShortRestResultEventOneFrameComponent : public BaseComponent
 {
-    DEFINE_ONEFRAME_COMPONENT(ServerShortRestResultEvent, "esv::rest::ShortRestResultEventOneFrameComponent")
+    DEFINE_COMPONENT(ServerShortRestResultEvent, "esv::rest::ShortRestResultEventOneFrameComponent")
 
     bool Rested;
     RestErrorFlags ErrorFlags;
@@ -1111,7 +1111,7 @@ BEGIN_NS(esv::approval)
 
 struct RatingsChangedOneFrameComponent : public BaseComponent
 {
-    DEFINE_ONEFRAME_COMPONENT(ServerRatingsChanged, "esv::approval::RatingsChangedOneFrameComponent")
+    DEFINE_COMPONENT(ServerRatingsChanged, "esv::approval::RatingsChangedOneFrameComponent")
 
     EntityHandle Subject;
     EntityHandle Avatar;

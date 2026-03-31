@@ -524,6 +524,7 @@
     <ClInclude Include="GameDefinitions\Components\Effect.h" />
     <ClInclude Include="GameDefinitions\Base\Genome.h" />
     <ClInclude Include="Extender\Shared\UpdaterAPI.h" />
+    <ClInclude Include="GameDefinitions\Components\Dummy.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
