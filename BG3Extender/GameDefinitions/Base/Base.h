@@ -43,8 +43,7 @@ END_SE()
     static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \
     static constexpr auto ComponentName = #componentType; \
     static constexpr auto EngineClass = cls; \
-    static constexpr auto OneFrame = false; \
-    static constexpr auto ForceProxy = false;
+    static constexpr auto OneFrame = false;
 
 #define DEFINE_PROXY_COMPONENT(componentType, cls) \
     static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \
@@ -57,8 +56,7 @@ END_SE()
     static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \
     static constexpr auto ComponentName = #componentType; \
     static constexpr auto EngineClass = cls; \
-    static constexpr auto OneFrame = true; \
-    static constexpr auto ForceProxy = false;
+    static constexpr auto OneFrame = true;
 
 #define DEFINE_TAG_COMPONENT(ns, name, componentType) \
     struct name : public BaseComponent \
@@ -67,7 +65,6 @@ END_SE()
         static constexpr auto ComponentName = #componentType; \
         static constexpr auto EngineClass = #ns "::" #name; \
         static constexpr auto OneFrame = false; \
-        static constexpr auto ForceProxy = false; \
         uint8_t Dummy; \
     };
 
@@ -78,7 +75,6 @@ END_SE()
         static constexpr auto ComponentName = #componentType; \
         static constexpr auto EngineClass = #ns "::" #name; \
         static constexpr auto OneFrame = true; \
-        static constexpr auto ForceProxy = false; \
         uint8_t Dummy; \
     };
 
@@ -92,7 +88,6 @@ END_SE()
         static constexpr auto BoostType = BoostType::boostType; \
         static constexpr auto EngineClass = "eoc::" #name "BoostComponent"; \
         static constexpr auto OneFrame = false; \
-        static constexpr auto ForceProxy = false; \
     };
 
 #define DEFINE_SYSTEM(systemType, cls) \
@@ -101,14 +96,6 @@ END_SE()
     static constexpr auto EngineClass = cls;
 
 BEGIN_SE()
-
-template <class T>
-concept IsComponentType = requires(T t)
-{
-    t.ComponentType;
-    t.ComponentName;
-    t.EngineClass;
-};
 
 enum class ContextType
 {

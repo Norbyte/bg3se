@@ -28,6 +28,18 @@ struct BaseSystem : ProtectedGameObject<BaseSystem>
     [[bg3::hidden]] ecs::EntityWorld* EntityWorld;
 };
 
+template <class T>
+concept IsComponentType = requires(T t)
+{
+    t.ComponentType;
+    t.ComponentName;
+    t.EngineClass;
+};
+
+template <class T>
+concept IsProxyComponentType = IsComponentType<T> && 
+    (std::derived_from<T, BaseProxyComponent> || requires(T t) { t.ForceProxy; });
+
 END_SE()
 
 BEGIN_NS(ecs)
