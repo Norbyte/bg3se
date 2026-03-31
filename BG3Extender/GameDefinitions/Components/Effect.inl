@@ -32,9 +32,6 @@ HandlerComponentView::HandlerComponentView(EntityHandle entity)
 
 EntityHandle HandlerSystem::InitMultiEffect(EffectHandlerInitInfo info)
 {
-    ERR("InitMultiEffect(): Disabled for now as AddImmediateDefaultComponent() is cooked on effects");
-    return {};
-
     auto& ecs = gExtender->GetClient().GetEntityHelpers();
 
     auto sceneRoot = ecs.GetSingletonEntity<SceneComponent>();
@@ -42,9 +39,7 @@ EntityHandle HandlerSystem::InitMultiEffect(EffectHandlerInitInfo info)
 
     auto ecb = ecs.GetEntityWorld()->Deferred();
     auto effect = ecb->CreateEntityImmediate();
-    //ecb->CreateComponent();
-    auto ops = ecs.GetComponentOps<HandlerComponent>();
-    ops->AddImmediateDefaultComponent(effect.Handle, 0);
+    auto effectHandler = ecs.CreateComponent<HandlerComponent>(effect);
 
     HandlerComponentView handler(effect);
     Helper->InitMultiEffect(handler, info, (Scene*)scene);

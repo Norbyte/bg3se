@@ -499,15 +499,14 @@ void* EntityCommandBuffer::GetComponentChange(ComponentTypeIndex type, Component
     return nullptr;
 }
 
-void* EntityCommandBuffer::CreateComponent(EntityHandle entity, ComponentTypeIndex type, uint16_t componentSize, ComponentFrameStorageIndex& index)
+void* EntityCommandBuffer::CreateComponentRaw(EntityHandle entity, ComponentTypeIndex type, uint16_t componentSize, ComponentFrameStorageIndex& index, void* dtor)
 {
     auto storage = Data.ComponentPools.Find(type);
     if (!storage) {
         storage = Data.ComponentPools.Add(type, Allocator);
         storage->ComponentSizeInBytes = componentSize;
         storage->ComponentTypeId = type;
-        // TODO - bind dtor
-        storage->DestructorProc = nullptr;
+        storage->DestructorProc = dtor;
     }
 
     auto component = storage->Allocate(index);
@@ -670,6 +669,28 @@ STDString SimplifyComponentName(StringView name)
     }
 
     return key;
+}
+
+void* EntitySystemHelpersBase::CreateComponentRaw(EntityHandle entity, ExtComponentType type)
+{
+    auto const& meta = GetComponentMeta(type);
+    if (meta.ComponentIndex == UndefinedComponent
+        || meta.Properties == nullptr
+        || meta.Properties->Construct == nullptr) {
+        return nullptr;
+    }
+
+    ComponentFrameStorageIndex index;
+    if (meta.IsProxy) {
+        auto ptr = (void**)GetEntityWorld()->Deferred()->CreateComponentRaw(entity, meta.ComponentIndex, sizeof(void*), index, meta.Properties->ProxyDestroy);
+        *ptr = GameAllocRaw(meta.Size);
+        meta.Properties->Construct(*ptr);
+        return *ptr;
+    } else {
+        auto ptr = GetEntityWorld()->Deferred()->CreateComponentRaw(entity, meta.ComponentIndex, meta.Size, index, meta.Properties->ProxyDestroy);
+        meta.Properties->Construct(ptr);
+        return ptr;
+    }
 }
 
 BitSet<>* EntitySystemHelpersBase::GetReplicationFlags(EntityHandle const& entity, ExtComponentType type)

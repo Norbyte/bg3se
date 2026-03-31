@@ -307,8 +307,20 @@ inline constexpr GenericPropertyMap::TConstructor* GetConstructor()
 template <class T>
 inline constexpr GenericPropertyMap::TDestructor* GetDestructor()
 {
-    if constexpr (std::is_default_constructible_v<T> && !std::is_base_of_v<Noesis::BaseObject, T> && !std::is_base_of_v<Noesis::Interface, T>) {
+    if constexpr (std::is_default_constructible_v<T> && !std::is_trivially_destructible_v<T> && !std::is_base_of_v<Noesis::BaseObject, T> && !std::is_base_of_v<Noesis::Interface, T>) {
         return &(DefaultDestroy<T>);
+    } else {
+        return nullptr;
+    }
+}
+
+template <class T>
+inline constexpr GenericPropertyMap::TDestructor* GetProxyDestructor()
+{
+    if constexpr (IsProxyComponentType<T>
+        && std::is_default_constructible_v<T> 
+        && !std::is_trivially_destructible_v<T>) {
+        return &(DefaultProxyDestroy<T>);
     } else {
         return nullptr;
     }

@@ -114,6 +114,7 @@ public:
     using TFallbackNext = int (lua_State* L, LifetimeHandle lifetime, void const* object, FixedStringId const& prop);
     using TConstructor = void (void*);
     using TDestructor = void (void*);
+    using TProxyDestructor = void (void**);
     using TSerializer = void (lua_State* L, void const*);
     using TUnserializer = void (lua_State* L, int index, void*);
     using TAssigner = void (void* object, void* rhs);
@@ -171,6 +172,7 @@ public:
     TFallbackNext* FallbackNext{ nullptr };
     TConstructor* Construct{ nullptr };
     TDestructor* Destroy{ nullptr };
+    TProxyDestructor* ProxyDestroy{ nullptr };
     TAssigner* Assign{ nullptr };
     TSerializer* Serialize{ nullptr };
     TUnserializer* Unserialize{ nullptr };
@@ -258,6 +260,16 @@ template <class T>
 void DefaultDestroy(void* ptr)
 {
     (reinterpret_cast<T*>(ptr))->~T();
+}
+
+template <class T>
+void DefaultProxyDestroy(void** ptr)
+{
+    if (*ptr) {
+        (reinterpret_cast<T*>(*ptr))->~T();
+        GameFree(*ptr);
+        *ptr = nullptr;
+    }
 }
 
 template <class T>

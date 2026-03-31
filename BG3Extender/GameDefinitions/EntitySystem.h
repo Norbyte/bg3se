@@ -740,6 +740,7 @@ struct ECBData : public ProtectedGameObject<ECBData>
 
 struct EntityCommandBuffer : public ProtectedGameObject<EntityCommandBuffer>
 {
+public:
     EntityHandleGenerator* HandleGenerator;
     FrameAllocator* Allocator;
     ECBData Data;
@@ -749,7 +750,7 @@ struct EntityCommandBuffer : public ProtectedGameObject<EntityCommandBuffer>
     EntityHandle CreateEntityImmediate();
     bool DestroyEntity(EntityHandle entity);
     void* GetComponentChange(ComponentTypeIndex type, ComponentFrameStorageIndex const& index) const;
-    void* CreateComponent(EntityHandle entity, ComponentTypeIndex type, uint16_t componentSize, ComponentFrameStorageIndex& index);
+    void* CreateComponentRaw(EntityHandle entity, ComponentTypeIndex type, uint16_t componentSize, ComponentFrameStorageIndex& index, void* dtor);
 };
 
 struct GroupAllocator : public ProtectedGameObject<GroupAllocator>

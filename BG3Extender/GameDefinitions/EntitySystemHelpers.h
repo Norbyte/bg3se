@@ -92,6 +92,15 @@ struct ECSChangeLog
     void AddComponentChange(EntityWorld* world, EntityHandle entity, ComponentTypeIndex type, ComponentChangeFlags flags);
 };
 
+template <class T>
+void EntityProxyDeleteHelper(T** p)
+{
+    if (*p) {
+        GameDelete(*p);
+        *p = nullptr;
+    }
+}
+
 class EntitySystemHelpersBase : public Noncopyable<EntitySystemHelpersBase>
 {
 public:
@@ -229,6 +238,14 @@ public:
     {
         return reinterpret_cast<T*>(GetRawSystem(T::SystemType));
     }
+
+    template <class T>
+    inline T* CreateComponent(EntityHandle entity)
+    {
+        return static_cast<T*>(CreateComponentRaw(entity, T::ComponentType));
+    }
+
+    void* CreateComponentRaw(EntityHandle entity, ExtComponentType type);
 
     virtual EntityWorld* GetEntityWorld() const = 0;
     virtual ExtensionStateBase* GetExtensionState() const = 0;
