@@ -228,9 +228,9 @@ namespace bg3se
 
     struct Transform
     {
-        glm::quat RotationQuat;
-        glm::vec3 Translate;
-        glm::vec3 Scale;
+        glm::quat RotationQuat{ 1.0f, .0f, .0f, .0f };
+        glm::vec3 Translate{ .0f };
+        glm::vec3 Scale{ 1.0f };
     };
 }
 
