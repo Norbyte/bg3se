@@ -127,24 +127,24 @@ struct Bezier3Trajectory
 {
     float DistanceMin;
     float DistanceMax;
-    float OffsetMin[2];
-    float OffsetMax[2];
-    float ShiftMin;
-    float ShiftMax;
+    std::array<float, 2> OffsetMin;
+    std::array<float, 2> OffsetMax;
+    float ShiftMin{ .5f };
+    float ShiftMax{ .5f };
 };
 
 struct Bezier4Trajectory
 {
     float DistanceMin;
     float DistanceMax;
-    float OffsetAMin[2];
-    float OffsetAMax[2];
-    float OffsetBMin[2];
-    float OffsetBMax[2];
-    float ShiftAMin;
-    float ShiftAMax;
-    float ShiftBMin;
-    float ShiftBMax;
+    std::array<float, 2> OffsetAMin;
+    std::array<float, 2> OffsetAMax;
+    std::array<float, 2> OffsetBMin;
+    std::array<float, 2> OffsetBMax;
+    float ShiftAMin{ .5f };
+    float ShiftAMax{ .5f };
+    float ShiftBMin{ .5f };
+    float ShiftBMax{ .5f };
 };
 
 struct ConstantVelocity

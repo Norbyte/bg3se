@@ -445,7 +445,7 @@ struct AnimationReceivedTextKeyEvent
 struct AnimationReceivedRootMotionEvent
 {
     EntityHandle Entity;
-    float LocalPose[7];
+    std::array<float, 7> LocalPose;
 };
 
 struct [[bg3::hidden]] AnimationBlueprintSystem : public BaseSystem

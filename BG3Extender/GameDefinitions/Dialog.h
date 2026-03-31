@@ -157,7 +157,7 @@ struct DialogGameData : public ProtectedGameObject<DialogGameData>
     TrackedCompactSet<FixedString> AiPersonality;
     Array<LookAtInfo> LookAt;
     STDString SoundEvent;
-    STDString SoundPerMusicInstrument[4];
+    std::array<STDString, 4> SoundPerMusicInstrument;
     FixedString OriginTheme;
     FixedString OriginOnly;
     bool OriginThemeAddInstrument;

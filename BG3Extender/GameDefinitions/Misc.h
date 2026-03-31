@@ -47,7 +47,7 @@ namespace bg3se
     {
         struct SoundSetting
         {
-            float ConfigValue[3];
+            std::array<float, 3> ConfigValue;
             FixedString ConfigKey;
             HashSet<FixedString> RTPCs;
             char field_40;
