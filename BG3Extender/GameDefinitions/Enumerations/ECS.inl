@@ -8,6 +8,7 @@ BEGIN_ENUM(ExtSystemType, uint32_t)
     E(VisualChanged)
     E(Visual)
     E(Light)
+    E(FadeableObstructionMapping)
     E(LevelInstanceAttach)
 
     E(ServerShapeshift)

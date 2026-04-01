@@ -874,7 +874,6 @@ struct LightSystem : public BaseSystem
     // HashSet<EntityHandle> CheckMoving;
 };
 
-
 END_SE()
 
 BEGIN_NS(lua)

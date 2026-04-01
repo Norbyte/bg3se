@@ -58,4 +58,47 @@ struct FadeableObstructionMappingSingletonComponent : public BaseComponent
     HashMap<Guid, EntityHandle> Mappings;
 };
 
+struct FadeableAddedOrRemovedData
+{
+    Guid Uuid;
+    EntityHandle Entity;
+    Array<Guid> FadeChildren;
+    FixedString FadeGroup;
+    bool OnlyFadeChildrenFromGroupChanged{ false };
+    bool Added{ true };
+};
+
+struct FadeChildrenChange
+{
+    Array<Guid> Children;
+    EntityHandle Entity;
+    bool Added{ true };
+};
+
+struct FadeGroupChange
+{
+    EntityHandle Entity;
+    FixedString OldFadeGroup;
+    FixedString NewFadeGroup;
+};
+
+struct OnlyFadeChildrenFromGroupChange
+{
+    EntityHandle Entity;
+    bool OnlyFadeChildrenFromGroup{ false };
+};
+
+
+struct FadeableObstructionMappingSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(FadeableObstructionMapping, "ls::FadeableObstructionMappingSystem")
+
+    [[bg3::hidden]] UnknownFunction qword10;
+    Array<FadeableAddedOrRemovedData> AddRemove;
+    Array<FadeChildrenChange> FadeChildrenChanges;
+    Array<FadeGroupChange> FadeGroupChanges;
+    Array<OnlyFadeChildrenFromGroupChange> OnlyFadeChildrenFromGroupChanges;
+};
+
+
 END_SE()
