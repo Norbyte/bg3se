@@ -2,7 +2,7 @@
 
 #include <GameDefinitions/Components/Components.h>
 #include <GameDefinitions/Components/SpellCast.h>
-#include <GameDefinitions/Components/Visual.h>
+#include <GameDefinitions/Components/Physics.h>
 
 BEGIN_NS(spell_cast)
 

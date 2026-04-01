@@ -1,4 +1,5 @@
 #include <GameDefinitions/Components/Effect.h>
+#include <GameDefinitions/Components/Level.h>
 
 BEGIN_SE()
 

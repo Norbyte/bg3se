@@ -8,6 +8,7 @@
 #include <GameDefinitions/RootTemplates.inl>
 #include <GameDefinitions/Status.inl>
 #include <GameDefinitions/Components/Effect.inl>
+#include <GameDefinitions/Components/Level.inl>
 #include <GameDefinitions/Components/Spell.inl>
 #include <GameDefinitions/Controllers/Action.inl>
 #include <GameDefinitions/Controllers/Behaviour.inl>

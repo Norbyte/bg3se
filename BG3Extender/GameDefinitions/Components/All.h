@@ -13,6 +13,7 @@
 #include <GameDefinitions/Components/Inventory.h>
 #include <GameDefinitions/Components/Item.h>
 #include <GameDefinitions/Components/Hit.h>
+#include <GameDefinitions/Components/Level.h>
 #include <GameDefinitions/Components/Passives.h>
 #include <GameDefinitions/Components/Runtime.h>
 #include <GameDefinitions/Components/Events.h>
@@ -24,6 +25,7 @@
 #include <GameDefinitions/Components/Tadpole.h>
 #include <GameDefinitions/Components/Effect.h>
 #include <GameDefinitions/Components/Visual.h>
+#include <GameDefinitions/Components/Physics.h>
 #include <GameDefinitions/Components/Projectile.h>
 #include <GameDefinitions/Components/Progression.h>
 #include <GameDefinitions/Components/Roll.h>

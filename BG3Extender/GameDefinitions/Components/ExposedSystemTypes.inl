@@ -5,6 +5,7 @@ T(VisualChangeRequestSystem)
 T(VisualChangedSystem)
 T(VisualSystem)
 T(LightSystem)
+T(LevelInstanceAttachRequestSystem)
 
 T(esv::ActionResourceSystem)
 T(esv::boost::BoostSystem)

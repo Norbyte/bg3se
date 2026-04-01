@@ -97,29 +97,6 @@ struct GameplayLightComponent : public BaseComponent
     uint8_t field_44;
 };
 
-struct StaticPhysicsComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(StaticPhysics, "ls::StaticPhysicsComponent")
-
-    // Editor only
-    // FixedString field_0;
-    // GameObjectTemplate* Template;
-    phx::PhysicsObject* Physics;
-};
-
-struct PhysicsComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(Physics, "ls::PhysicsComponent")
-
-    phx::PhysicsObject* Physics;
-    uint32_t PhysicsGroup;
-    uint32_t CollidesWith;
-    uint32_t ExtraFlags;
-    [[bg3::legacy(field_14)]] bool HasPhysics;
-    uint8_t field_15;
-    [[bg3::legacy(field_16)]] bool IsClustered;
-};
-
 struct CharacterCreationAppearanceComponent : public BaseComponent
 {
     DEFINE_COMPONENT(CharacterCreationAppearance, "eoc::character_creation::AppearanceComponent")
@@ -389,6 +366,16 @@ struct VisualLoadComponent : public BaseComponent
     DEFINE_COMPONENT(VisualLoad, "ls::VisualLoadComponent")
 
     aio::Priority Priority;
+};
+
+struct VisualStreamComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(VisualStream, "ls::VisualStreamComponent")
+
+    int field_0{ 0 };
+    int field_4{ 0 };
+    float field_8{ -1.0 };
+    bool IsHLOD{ false };
 };
 
 struct VisualStreamLoadComponent : public BaseComponent
