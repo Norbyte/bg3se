@@ -1070,6 +1070,15 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
     E(VisualLoaded)
     E(VisualChangedEvent)
 
+    // Fade
+    E(FadeChildrenAdded)
+    E(FadeChildrenRemoved)
+    E(FadeableObstructionHierarchy)
+    E(FadeGroup)
+    E(FadeGroupMapping)
+    E(FadeableObstruction)
+    E(FadeableObstructionMapping)
+
     E(BackgroundGoals)
 
     E(CalendarDaysPassed)

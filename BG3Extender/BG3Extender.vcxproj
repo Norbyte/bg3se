@@ -177,6 +177,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="GameDefinitions\Components\Death.h" />
     <ClInclude Include="GameDefinitions\Components\Dummy.h" />
     <ClInclude Include="GameDefinitions\Components\Effect.h" />
+    <ClInclude Include="GameDefinitions\Components\Fade.h" />
     <ClInclude Include="GameDefinitions\Components\Level.h" />
     <ClInclude Include="GameDefinitions\Components\Physics.h" />
     <ClInclude Include="GameDefinitions\Components\Sound.h" />

@@ -10,6 +10,7 @@
 #include <GameDefinitions/Components/Data.h>
 #include <GameDefinitions/Components/Death.h>
 #include <GameDefinitions/Components/Dummy.h>
+#include <GameDefinitions/Components/Fade.h>
 #include <GameDefinitions/Components/Inventory.h>
 #include <GameDefinitions/Components/Item.h>
 #include <GameDefinitions/Components/Hit.h>

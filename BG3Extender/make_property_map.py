@@ -659,6 +659,7 @@ sources = [
     'GameDefinitions/Components/Dummy.h',
     'GameDefinitions/Components/Effect.h',
     'GameDefinitions/Components/Events.h',
+    'GameDefinitions/Components/Fade.h',
     'GameDefinitions/Components/Hit.h',
     'GameDefinitions/Components/Item.h',
     'GameDefinitions/Components/Inventory.h',

@@ -527,6 +527,7 @@
     <ClInclude Include="GameDefinitions\Components\Dummy.h" />
     <ClInclude Include="GameDefinitions\Components\Physics.h" />
     <ClInclude Include="GameDefinitions\Components\Level.h" />
+    <ClInclude Include="GameDefinitions\Components\Fade.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
