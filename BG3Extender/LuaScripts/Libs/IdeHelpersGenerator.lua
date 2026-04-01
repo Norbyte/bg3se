@@ -1116,7 +1116,8 @@ function Generator:GenerateEnum(enumName)
         end
     end
     table.sort(sortedKeys, function (a, b) 
-        return a.key < b.key
+        if a.key ~= b.key then return a.key < b.key end
+        return a.label < b.label
     end)
         
     if excludeNumericKeysFor[enumName] ~= nil then
@@ -1169,11 +1170,18 @@ function Generator:GenerateSystems()
     self:EmitComment("@class Ext_System")
     
     local types = Ext.Types.GetAllTypes()
+    local systems = {}
     for _,name in pairs(types) do
         local type = Ext.Types.GetTypeInfo(name)
         if type.SystemName ~= "" then
-            self:EmitFieldComment(type.SystemName .. " " .. self:MakeTypeName(type.TypeName))
+            table.insert(systems, type)
         end
+    end
+
+    table.sort(systems, function (a, b) return a.SystemName < b.SystemName end)
+    
+    for _,type in ipairs(systems) do
+        self:EmitFieldComment(type.SystemName .. " " .. self:MakeTypeName(type.TypeName))
     end
     
     self:EmitEmptyLine()
