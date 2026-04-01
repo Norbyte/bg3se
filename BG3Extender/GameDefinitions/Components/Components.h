@@ -372,6 +372,33 @@ struct ChangedEventOneFrameComponent : public BaseComponent
 END_NS()
 
 
+BEGIN_NS(transform)
+
+struct GameplaySetTransformRequestsComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(GameplaySetTransform, "ls::transform::GameplaySetTransformRequestsComponent")
+
+    HashMap<EntityHandle, Transform> SetTransform;
+    HashMap<EntityHandle, Transform> CreateTransform;
+};
+
+struct InventoryMemberSetTransformRequestComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(InventoryMemberSetTransform, "ls::transform::InventoryMemberSetTransformRequestComponent")
+
+    HashMap<EntityHandle, Transform> SetTransform;
+};
+
+struct InventoryMemberSetTranslateRequestComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(InventoryMemberSetTranslate, "ls::transform::InventoryMemberSetTranslateRequestComponent")
+
+    HashMap<EntityHandle, glm::vec3> SetTranslate;
+};
+
+END_NS()
+
+
 BEGIN_NS(sight)
 
 struct SightBaseComponent : public BaseComponent

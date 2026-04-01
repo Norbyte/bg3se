@@ -95,6 +95,7 @@ DEFINE_TAG_COMPONENT(ls, SceneRootComponent, SceneRoot)
 DEFINE_TAG_COMPONENT(ls, LevelIsOwnerComponent, LevelIsOwner)
 DEFINE_TAG_COMPONENT(ls, LevelPrepareUnloadBusyComponent, LevelPrepareUnloadBusy)
 DEFINE_TAG_COMPONENT(ls, LevelUnloadBusyComponent, LevelUnloadBusy)
+DEFINE_TAG_COMPONENT(ls, LevelInstanceLoadComponent, LevelInstanceLoad)
 DEFINE_TAG_COMPONENT(ls::level, LevelInstanceUnloadingComponent, LevelInstanceUnloading)
 DEFINE_ONEFRAME_TAG_COMPONENT(ls, LevelInstanceUnloadedOneFrameComponent, LevelInstanceUnloaded)
 DEFINE_ONEFRAME_TAG_COMPONENT(ls, LevelInstanceLoadedOneFrameComponent, LevelInstanceLoaded)
@@ -102,7 +103,7 @@ DEFINE_ONEFRAME_TAG_COMPONENT(ls, LevelInstanceLoadedOneFrameComponent, LevelIns
 
 struct LevelInstanceAttachRequestSystem : public BaseSystem
 {
-    DEFINE_SYSTEM(LevelInstanceAttach, "ls::LevelInstanceAttachRequestSystem")
+    DEFINE_SYSTEM(LevelInstanceAttachRequest, "ls::LevelInstanceAttachRequestSystem")
 
     [[bg3::hidden]] CRITICAL_SECTION LevelSwapRequestsCS;
     [[bg3::hidden]] HashMap<EntityHandle, EntityHandle> LevelSwapRequests;
@@ -112,5 +113,50 @@ struct LevelInstanceAttachRequestSystem : public BaseSystem
     //# P_FUN(RequestLevelSwap, LevelInstanceAttachRequestSystem::RequestLevelSwap)
     void RequestLevelSwap(EntityHandle entity, EntityHandle level);
 };
+
+struct LevelInstanceLoadRequest
+{
+    EntityHandle Level;
+    bool Load{ true };
+};
+
+struct LevelInstanceLoadRequestSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(LevelInstanceLoadRequest, "ls::LevelInstanceLoadRequestSystem")
+
+    [[bg3::hidden]] SynchronizedMPMCQueueBounded<LevelInstanceLoadRequest> Requests;
+};
+
+struct LevelInstanceMoveSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(LevelInstanceMove, "ls::LevelInstanceMoveSystem")
+
+    HashSet<EntityHandle> LastFrameMovedLevels;
+    HashSet<EntityHandle> MoveLevels;
+    [[bg3::hidden]] UnknownFunction Signals;
+};
+
+struct LevelInstanceAttachSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(LevelInstanceAttach, "ls::level::LevelInstanceAttachSystem")
+
+    HashSet<EntityHandle> RemoveLevelInstance;
+    HashMap<EntityHandle, HashSet<EntityHandle>> DetachLevel;
+    HashMap<EntityHandle, HashSet<EntityHandle>> AttachLevel;
+    [[bg3::hidden]] LevelInstanceAttachRequestSystem* LevelInstanceAttachRequestSystem;
+    [[bg3::hidden]] UnknownSignalSubscriber Replication;
+    [[bg3::hidden]] void* qword118;
+};
+
+struct LevelInstanceLoadSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(LevelInstanceLoad, "ls::level::LevelInstanceLoadSystem")
+
+    [[bg3::hidden]] UnknownSignal field_10;
+    [[bg3::hidden]] LevelManager* LevelManager;
+    [[bg3::hidden]] Queue<EntityHandle> LoadRequests;
+    [[bg3::hidden]] CRITICAL_SECTION LoadRequestsCS;
+};
+
 
 END_SE()

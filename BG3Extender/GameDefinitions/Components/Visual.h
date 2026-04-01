@@ -580,6 +580,20 @@ struct Construction : public ProtectedGameObject<Construction>
     ConstructionTemplate* Template;
 };
 
+struct ConstructionSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(Construction, "ls::ConstructionSystem")
+
+    HashMap<Guid, EntityHandle> Constructions;
+    HashMap<Guid, EntityHandle> Tiles;
+    HashMap<Guid, EntityHandle> Fillings;
+    HashMap<Guid, EntityHandle> ConstructionUpdateRequests;
+    [[bg3::hidden]] void* TransformSystem;
+    [[bg3::hidden]] void* PhysicsLoaderSystem;
+    [[bg3::hidden]] void* PhysicsRequestSystem;
+    [[bg3::hidden]] void* VisualChangeRequestSystem;
+    [[bg3::hidden]] void* OcclusionSystem;
+};
 
 DEFINE_TAG_COMPONENT(ls, IsSeeThroughComponent, IsSeeThrough)
 
