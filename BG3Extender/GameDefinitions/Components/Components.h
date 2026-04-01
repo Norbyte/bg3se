@@ -2,6 +2,7 @@
 
 #include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/EntitySystem.h>
+#include <GameDefinitions/Ai.h>
 
 BEGIN_SE()
 
@@ -425,7 +426,6 @@ struct DataComponent : public BaseComponent
     int field_24;
 };
 
-
 struct EntityViewshedComponent : public BaseComponent
 {
     DEFINE_COMPONENT(SightEntityViewshed, "eoc::sight::EntityViewshedComponent")
@@ -442,6 +442,28 @@ struct IgnoreSurfacesComponent : public BaseComponent
 
 END_NS()
 
+BEGIN_NS(navcloud)
+
+struct ObstacleComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(NavcloudObstacle, "navcloud::ObstacleComponent")
+
+    glm::vec3 Position;
+    glm::vec3 Extents;
+    bool CanShootThrough;
+};
+
+struct ObstacleMetaDataComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(NavcloudObstacleMetaData, "navcloud::ObstacleMetaDataComponent")
+
+    HashSet<TilePos> field_0;
+    HashSet<TilePos> field_30;
+};
+
+DEFINE_TAG_COMPONENT(navcloud, InRangeComponent, NavcloudInRange)
+
+END_NS()
 
 BEGIN_NS(esv::sight)
 
@@ -522,6 +544,14 @@ inline uint64_t HashMapHash<esv::sight::EntityLosCheck>(esv::sight::EntityLosChe
 END_SE()
 
 BEGIN_NS(esv::sight)
+
+struct ViewshedParticipantComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerViewshedParticipant, "esv::sight::ViewshedParticipantComponent")
+
+    glm::vec3 Position;
+    HashSet<EntityHandle> CanSee;
+};
 
 struct AggregatedDataComponent : public BaseComponent
 {
@@ -628,5 +658,18 @@ BEGIN_NS(game)
 
 DEFINE_TAG_COMPONENT(ls::game, PauseExcludedComponent, PauseExcluded)
 DEFINE_TAG_COMPONENT(ls::game, PauseComponent, Pause)
+
+END_NS()
+
+BEGIN_NS(esv::uuid)
+
+struct HistoryMappingComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerUuidHistoryMapping, "esv::uuid::HistoryMappingComponent")
+
+    HashMap<EntityHandle, Guid> Mappings;
+};
+
+DEFINE_TAG_COMPONENT(esv::uuid, HistoryTrackedComponent, UuidHistoryTracked)
 
 END_NS()

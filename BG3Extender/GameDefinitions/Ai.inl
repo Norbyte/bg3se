@@ -161,9 +161,9 @@ void AiPath::SetBounds(float movingBound, float standingBound)
     StandingBound = standingBound;
     MovingBound2 = movingBound;
 
-    MovingBoundTiles = (int)floor(2.0f * movingBound + 0.5f - 0.001f);
-    StandingBoundTiles = (int)floor(2.0f * standingBound + 0.5f - 0.001f);
-    MovingBoundTiles2 = (int)floor(2.0f * movingBound + 0.5f - 0.001f);
+    MovingBoundTiles = (int)::floor(2.0f * movingBound + 0.5f - 0.001f);
+    StandingBoundTiles = (int)::floor(2.0f * standingBound + 0.5f - 0.001f);
+    MovingBoundTiles2 = (int)::floor(2.0f * movingBound + 0.5f - 0.001f);
 }
 
 int CalculateInfluenceCost(Array<SurfacePathInfluence> const& influences, AiFlags const& flags, int damagingSurfacesThreshold)
@@ -266,8 +266,8 @@ bool AiSubgrid::WorldToTilePos(AiWorldPos const& pos, glm::ivec2& localPos) cons
         gX = pos.Xglobal - WorldPos.Xglobal;
         gZ = pos.Zglobal - WorldPos.Zglobal;
     } else {
-        auto Xcalc = (int)floor(((pos.Xglobal * CellSize + pos.Xlocal) - WorldPos.Xlocal) / CellSize);
-        auto Zcalc = (int)floor(((pos.Zglobal * CellSize + pos.Zlocal) - WorldPos.Zlocal) / CellSize);
+        auto Xcalc = (int)::floor(((pos.Xglobal * CellSize + pos.Xlocal) - WorldPos.Xlocal) / CellSize);
+        auto Zcalc = (int)::floor(((pos.Zglobal * CellSize + pos.Zlocal) - WorldPos.Zlocal) / CellSize);
         gX = Xcalc - WorldPos.Xglobal;
         gZ = Zcalc - WorldPos.Zglobal;
     }
@@ -341,8 +341,8 @@ AiWorldPos AiGrid::ToWorldPos(glm::vec3 pos)
 
 std::span<AiSubgridId const> AiGrid::GetSubgridsAt(AiWorldPos const& pos) const
 {
-    uint64_t gridKey = (uint32_t)(int32_t)floor(pos.Xglobal / PatchSize)
-        | ((uint64_t)(uint32_t)(int32_t)floor(pos.Zglobal / PatchSize) << 32);
+    uint64_t gridKey = (uint32_t)(int32_t)::floor(pos.Xglobal / PatchSize)
+        | ((uint64_t)(uint32_t)(int32_t)::floor(pos.Zglobal / PatchSize) << 32);
     auto subgrids = SubgridsAtPatch.find(gridKey);
     if (subgrids != SubgridsAtPatch.end()) {
         return std::span<AiSubgridId const>(subgrids.Value().data(), subgrids.Value().data() + subgrids.Value().size());

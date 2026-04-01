@@ -275,21 +275,6 @@ struct DisarmAttemptComponent : public BaseComponent
     Array<DisarmAttempt> Attempts;
 };
 
-struct UnsheathDefaultComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(ServerUnsheath, "esv::unsheath::DefaultComponent")
-
-    int field_0;
-    bool field_4;
-};
-
-struct UnsheathScriptOverrideComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(ServerUnsheathScriptOverride, "esv::unsheath::ScriptOverrideComponent")
-
-    Array<int32_t> field_0;
-};
-
 
 DEFINE_TAG_COMPONENT(esv::cover, IsLightBlockerComponent, ServerIsLightBlocker)
 DEFINE_TAG_COMPONENT(esv::cover, IsVisionBlockerComponent, ServerIsVisionBlocker)
@@ -411,6 +396,35 @@ struct CapabilitiesSystem : public BaseSystem
     bool field_58A;
     bool field_58B;
     bool IsRunning;
+};
+
+END_NS()
+
+BEGIN_NS(esv::unsheath)
+
+struct SpellAnimationLifetimeComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerUnsheathSpellAnimationLifetime, "esv::unsheath::SpellAnimationLifetimeComponent")
+
+    SpellId Spell;
+    Guid SpellCastGuid;
+    uint8_t field_48;
+    float field_4C;
+};
+
+struct DefaultComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerUnsheath, "esv::unsheath::DefaultComponent")
+
+    int field_0;
+    bool field_4;
+};
+
+struct ScriptOverrideComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerUnsheathScriptOverride, "esv::unsheath::ScriptOverrideComponent")
+
+    Array<int32_t> field_0;
 };
 
 END_NS()

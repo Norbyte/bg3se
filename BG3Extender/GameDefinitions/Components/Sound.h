@@ -26,6 +26,49 @@ struct SoundComponent : public BaseComponent
     float field_1C;
 };
 
+struct SoundMaterialComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(SoundMaterial, "ls::SoundMaterialComponent")
+
+    MaterialType Material;
+};
+
+struct SoundRoomCurrentStateComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(SoundRoomCurrentState, "ls::SoundRoomCurrentStateComponent")
+
+    uint8_t State;
+};
+
+struct SkeletonSoundBone
+{
+    FixedString RemapperSlot;
+    int16_t BoneIndex;
+};
+
+struct SkeletonSoundObjectsComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(SkeletonSoundObjects, "ls::SkeletonSoundObjectsComponent")
+
+    std::array<EntityHandle, 9> SoundEntities;
+    std::array<glm::vec3, 9> Positions;
+    std::array<SkeletonSoundBone, 9> Bones;
+};
+
+struct SoundOcclusionDataComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(SoundOcclusionData, "ls::SoundOcclusionDataComponent")
+
+    glm::vec3 field_0;
+    float field_C;
+    float field_10;
+    uint8_t field_14;
+};
+
+
+DEFINE_TAG_COMPONENT(ls, SoundActivatedComponent, SoundActivated)
+DEFINE_TAG_COMPONENT(ls, SoundUsesTransformComponent, SoundUsesTransform)
+
 struct SoundExternalPath
 {
     STDString Path;

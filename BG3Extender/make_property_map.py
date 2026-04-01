@@ -662,6 +662,7 @@ sources = [
     'GameDefinitions/Components/Fade.h',
     'GameDefinitions/Components/Hit.h',
     'GameDefinitions/Components/Item.h',
+    'GameDefinitions/Components/Instancing.h',
     'GameDefinitions/Components/Inventory.h',
     'GameDefinitions/Components/Level.h',
     'GameDefinitions/Components/Visual.h',

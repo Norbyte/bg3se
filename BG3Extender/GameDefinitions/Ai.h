@@ -635,3 +635,53 @@ struct GridStructure
 };
 
 END_NS()
+
+BEGIN_NS(navcloud)
+
+struct TilePos
+{
+    glm::ivec3 field_0;
+    glm::ivec3 field_C;
+
+    inline bool operator == (TilePos const& o) const
+    {
+        return field_0 == o.field_0
+            && field_C == o.field_C;
+    }
+};
+
+struct Tile
+{
+    uint8_t field_0;
+};
+
+struct Region
+{
+    int DensityType;
+    HashMap<glm::ivec3, HashSet<EntityHandle>> field_8;
+    Array<Tile> field_48;
+};
+
+struct TileInfo
+{
+    TilePos Pos;
+    Region* Region;
+    Tile* Tile;
+};
+
+END_NS()
+
+BEGIN_SE()
+
+inline constexpr uint64_t Hash(glm::ivec3 v)
+{
+    return v.x ^ v.y ^ v.z;
+}
+
+template <>
+inline uint64_t HashMapHash<navcloud::TilePos>(navcloud::TilePos const& v)
+{
+    return HashMix(Hash(v.field_0), Hash(v.field_C));
+}
+
+END_SE()

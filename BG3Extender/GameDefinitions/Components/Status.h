@@ -108,6 +108,33 @@ struct PerformingComponent : public BaseComponent
     FixedString PerformEvent;
 };
 
+struct RecoverableStatus
+{
+    FixedString StatusId;
+    FixedString StackId;
+    int StackPriority;
+    int field_C;
+    uint8_t SourceType;
+    EntityHandle SourceEquippedItem;
+    int StoryActionId;
+    FixedString field_24;
+};
+
+struct RecoveryStackState
+{
+    int StackPriority;
+    HashSet<FixedString> StatusIds;
+};
+
+struct RecoverableStatusComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerStatusRecoverable, "esv::status::recovery::RecoverableStatusComponent")
+
+    HashMap<FixedString, RecoveryStackState> Stacks;
+    Array<RecoverableStatus> Statuses;
+};
+
+
 struct Aura
 {
     [[bg3::legacy(field_0)]] FixedString Status;

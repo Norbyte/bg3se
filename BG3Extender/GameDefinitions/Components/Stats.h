@@ -197,6 +197,20 @@ END_SE()
 
 BEGIN_NS(esv)
 
+struct PerItemSpellSource
+{
+    EntityHandle SourceEntity;
+    EntityHandle SourceBoost;
+    FixedString SpellId;
+};
+
+struct PerItemSpellSourceComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(PerItemSpellSource, "esv::PerItemSpellSourceComponent")
+
+    Array<PerItemSpellSource> Sources;
+};
+
 struct [[bg3::hidden]] StatsRollStreamProvider
 {
     void* VMT;

@@ -1063,3 +1063,37 @@ struct VisualsVisibilityStateSystem : public BaseSystem
 };
 
 END_NS()
+
+BEGIN_NS(esv::splatter)
+
+struct SplatterState
+{
+    float Blood;
+    float Bruises;
+    float Dirt;
+    float Sweat;
+};
+
+struct BaseStateComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(SplatterBaseState, "esv::splatter::BaseStateComponent")
+
+    SplatterState State;
+};
+
+struct StateComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(SplatterState, "eoc::splatter::StateComponent")
+
+    SplatterState State;
+    glm::vec3 Translate;
+};
+
+struct SweatChangeComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(SplatterSweatChange, "eoc::splatter::SweatChangeComponent")
+
+    float Sweat;
+};
+
+END_NS()

@@ -79,6 +79,13 @@ struct DownedComponent : public BaseComponent
     Guid Entity;
 };
 
+struct DeadReckoningComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(DeadReckoning, "eoc::DeadReckoningComponent")
+
+    Array<ConditionRoll> Rolls;
+};
+
 END_NS()
 
 

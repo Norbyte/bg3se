@@ -755,3 +755,17 @@ DEFINE_TAG_COMPONENT(esv::trigger, LoadedHandledComponent, ServerTriggerLoadedHa
 DEFINE_TAG_COMPONENT(esv::trigger, TriggerWorldAutoTriggeredComponent, ServerTriggerWorldAutoTriggered)
 
 END_NS()
+
+BEGIN_NS(floor)
+
+struct InfoComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(FloorInfo, "eoc::floor::InfoComponent")
+
+    FixedString BuildingUUID;
+    Guid FloorTrigger;
+    bool IsRoof;
+    int Floor;
+};
+
+END_NS()
