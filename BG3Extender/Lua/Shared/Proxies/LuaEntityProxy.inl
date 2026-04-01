@@ -177,7 +177,12 @@ void EnumerateComponents(ecs::EntitySystemHelpersBase* ecs, EntityHandle entity,
                 if (extType) {
                     auto component = changes->GetComponentChange(comp.ComponentTypeId, comp.Index);
                     if (component) {
-                        f(ecs, *extType, component);
+                        auto const& meta = ecs->GetComponentMeta(*extType);
+                        if (meta.IsProxy) {
+                            f(ecs, *extType, *(void**)component);
+                        } else {
+                            f(ecs, *extType, component);
+                        }
                     }
                 } else if (warnOnMissing) {
                     auto name = ecs->GetComponentName(comp.ComponentTypeId);
