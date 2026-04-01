@@ -78,29 +78,45 @@ Osi = {}
 --- @alias uint32 integer
 --- @alias uint64 integer
 --- @alias uint8 integer
+--- @alias NoesisBaseCollection NoesisBaseObject[]
 --- @alias Version int32[]
+--- @alias avec4 number[]
+--- @alias i16vec2 int16[]
 --- @alias ivec2 int32[]
+--- @alias ivec4 int32[]
 --- @alias mat3 number[]
 --- @alias mat3x4 number[]
 --- @alias mat4 number[]
 --- @alias mat4x3 number[]
+--- @alias quat number[]
 --- @alias vec2 number[]
 --- @alias vec3 number[]
 --- @alias vec4 number[]
+--- @alias FunctionRef function
+
 
 
 --- @class EntityHandle
 --- @field CreateComponent fun(self:EntityHandle, type:ExtComponentType):BaseComponent
+--- @field RemoveComponent fun(self:EntityHandle, type:ExtComponentType)
 --- @field GetComponent fun(self:EntityHandle, type:ExtComponentType):BaseComponent
+--- @field HasRawComponent fun(self:EntityHandle, type:string):boolean
 --- @field GetAllComponents fun(self:EntityHandle, warnOnMissing:boolean?):table<ExtComponentType,BaseComponent>
---- @field GetAllComponentNames fun(self:EntityHandle, mapped:boolean?):table<number,string>
---- @field GetEntityType fun(self:EntityHandle):number
---- @field GetSalt fun(self:EntityHandle):number
---- @field GetIndex fun(self:EntityHandle):number
+--- @field GetAllComponentNames fun(self:EntityHandle, requireMapped:boolean?):table<number,string>
 --- @field IsAlive fun(self:EntityHandle):boolean
+--- @field GetNetId fun(self:EntityHandle):number?
 --- @field GetReplicationFlags fun(self:EntityHandle, type:ExtComponentType, qword:number?):number
 --- @field SetReplicationFlags fun(self:EntityHandle, type:ExtComponentType, flags:number, qword:number?)
 --- @field Replicate fun(self:EntityHandle, type:ExtComponentType)
+--- @field OnCreate fun(self:EntityHandle, type:ExtComponentType, callback:FunctionRef, deferred:boolean?, once: boolean?):number
+--- @field OnCreateDeferred fun(self:EntityHandle, type:ExtComponentType, callback:FunctionRef):number
+--- @field OnCreateOnce fun(self:EntityHandle, type:ExtComponentType, callback:FunctionRef):number
+--- @field OnCreateDeferredOnce fun(self:EntityHandle, type:ExtComponentType, callback:FunctionRef):number
+--- @field OnDestroy fun(self:EntityHandle, type:ExtComponentType, callback:FunctionRef, deferred:boolean?, once: boolean?):number
+--- @field OnDestroyDeferred fun(self:EntityHandle, type:ExtComponentType, callback:FunctionRef):number
+--- @field OnDestroyOnce fun(self:EntityHandle, type:ExtComponentType, callback:FunctionRef):number
+--- @field OnDestroyDeferredOnce fun(self:EntityHandle, type:ExtComponentType, callback:FunctionRef):number
+--- @field OnChanged fun(self:EntityHandle, type:ExtComponentType, callback:FunctionRef, flags:number?):number?
 --- @field Vars table User variables registered using Ext.Vars
 --- @field ACOverrideFormulaBoost ACOverrideFormulaBoostComponent?
 --- @field AbilityBoost AbilityBoostComponent?
@@ -234,6 +250,13 @@ Osi = {}
 --- @field Expertise ExpertiseComponent?
 --- @field Faction FactionComponent?
 --- @field FactionOverrideBoost FactionOverrideBoostComponent?
+--- @field FadeChildrenAdded FadeChildrenAddedOneFrameComponent?
+--- @field FadeChildrenRemoved FadeChildrenRemovedOneFrameComponent?
+--- @field FadeGroup FadeGroupComponent?
+--- @field FadeGroupMapping FadeGroupMappingSingletonComponent?
+--- @field FadeableObstruction FadeableObstructionComponent?
+--- @field FadeableObstructionHierarchy FadeableObstructionHierarchySingletonComponent?
+--- @field FadeableObstructionMapping FadeableObstructionMappingSingletonComponent?
 --- @field FallDamageMultiplierBoost FallDamageMultiplierBoostComponent?
 --- @field FleeCapability FleeCapabilityComponent?
 --- @field Floating FloatingComponent?
@@ -325,6 +348,13 @@ Osi = {}
 --- @field PathingDistanceChanged PathingDistanceChangedOneFrameComponent?
 --- @field PhysicalForceRangeBonusBoost PhysicalForceRangeBonusBoostComponent?
 --- @field Physics PhysicsComponent?
+--- @field PhysicsLoad PhysicsLoadComponent?
+--- @field PhysicsLoaded PhysicsLoadedComponent?
+--- @field PhysicsLoaderRegistered PhysicsLoaderRegisteredComponent?
+--- @field PhysicsPathLoadDesciption PhysicsPathLoadDesciptionComponent?
+--- @field PhysicsReloadOneFrame PhysicsReloadOneFrameComponent?
+--- @field PhysicsResourceLoadDesciption PhysicsResourceLoadDesciptionComponent?
+--- @field PhysicsStreamLoad PhysicsStreamLoadComponent?
 --- @field PickingState PickingStateComponent?
 --- @field Player PlayerComponent?
 --- @field ProficiencyBonusBoost ProficiencyBonusBoostComponent?
@@ -405,6 +435,7 @@ Osi = {}
 --- @field VisualLoadDescription VisualLoadDesciptionComponent?
 --- @field VisualLoadRequests VisualLoadRequestsSingletonComponent?
 --- @field VisualLoaded VisualLoadedComponent?
+--- @field VisualStream VisualStreamComponent?
 --- @field VisualStreamLoad VisualStreamLoadComponent?
 --- @field Voice VoiceComponent?
 --- @field VoiceTag VoiceTagComponent?
@@ -1129,9 +1160,9 @@ Osi = {}
 --- @alias EffectPropertyType string|"Base"|"Boolean"|"ColorARGBKeyFrame"|"FixedFunction"|"FixedString"|"Float"|"FloatKeyFrame"|"FloatRange"|"Integer"|"IntegerRange"|"String"|"Vector3"
 --- @alias EquipmentStatsType string|"Armor"|"Shield"|"Weapon"
 --- @alias ExecuteWeaponFunctorsType string|"BothHands"|"MainHand"|"OffHand"|"Undefined"
---- @alias ExtComponentType string|"ACOverrideFormulaBoost"|"AbilityBoost"|"AbilityCheckEvent"|"AbilityFailedSavingThrowBoost"|"AbilityOverrideMinimumBoost"|"ActionResourceBlockBoost"|"ActionResourceChangeResults"|"ActionResourceConsumeMultiplierBoost"|"ActionResourceEvents"|"ActionResourceMultiplierBoost"|"ActionResourcePreventReductionBoost"|"ActionResourceReplenishTypeOverrideBoost"|"ActionResourceSpendEvent"|"ActionResourceValueBoost"|"ActionResources"|"ActionType"|"ActionUseConditions"|"Active"|"ActiveCharacterLight"|"ActiveCharacterLightBoost"|"ActiveSkeletonSlots"|"AddTagBoost"|"AddedSpells"|"AdvanceSpellsBoost"|"AdvantageBoost"|"AiArchetypeOverrideBoost"|"AlwaysUpdateEffect"|"Ambushing"|"AnimationBlueprint"|"AnimationGameplayEvents"|"AnimationGameplayEventsSingleton"|"AnimationSet"|"AnimationSetUpdateRequest"|"AnimationTextKeyEvents"|"AnimationTextKeyEventsSingleton"|"AnimationTriggeredEvents"|"AnimationUpdate"|"AnimationWaterfall"|"AppearanceOverride"|"ApprovalRatings"|"Armor"|"ArmorAbilityModifierCapOverrideBoost"|"ArmorClassBoost"|"ArmorSetState"|"AttackSpellOverride"|"AttackSpellOverrideBoost"|"AttitudesToPlayers"|"AttributeBoost"|"AttributeFlags"|"AttributeFlagsChangedEvent"|"AvailableLevel"|"Avatar"|"Background"|"BackgroundGoals"|"BackgroundPassives"|"BackgroundTag"|"BaseHp"|"BaseStats"|"BlockAbilityModifierFromACBoost"|"BlockFollow"|"BlockRegainHPBoost"|"BodyType"|"BoostBaseUpdated"|"BoostChangedEvent"|"BoostChangedEventsSingleton"|"BoostCondition"|"BoostConditionalState"|"BoostInfo"|"BoostProvider"|"BoostsContainer"|"Bound"|"CCChangeAppearanceDefinition"|"CCCharacterDefinition"|"CCCompanionDefinition"|"CCCreation"|"CCDefinitionCommon"|"CCDefinitionLevelUp"|"CCFullRespec"|"CCFullRespecDefinition"|"CCLevelUp"|"CCLevelUpDefinition"|"CCPrepareSpell"|"CCRespec"|"CCRespecDefinition"|"CCSessionCommon"|"CCState"|"CalendarDaysPassed"|"CalendarStartingDate"|"Camera"|"CameraArriveWatcher"|"CameraClearScreenFadeRequestManual"|"CameraCombatTarget"|"CameraCombatTargetRequests"|"CameraInSelectorMode"|"CameraInSelectorWhileInactive"|"CameraModeTracker"|"CameraPlatformTarget"|"CameraScreenFadeToRequestManual"|"CameraSelectorMode"|"CameraSpellTracking"|"CameraTarget"|"CampChest"|"CampEndTheDayState"|"CampPresence"|"CampQuality"|"CampSettings"|"CampSupply"|"CampTotalSupplies"|"CanBeDisarmed"|"CanBeInInventory"|"CanBeLooted"|"CanBeWielded"|"CanDeflectProjectiles"|"CanDoActions"|"CanDoRest"|"CanEnterChasm"|"CanInteract"|"CanLevelUp"|"CanModifyHealth"|"CanMove"|"CanSeeThrough"|"CanSeeThroughBoost"|"CanSense"|"CanShootThrough"|"CanShootThroughBoost"|"CanSpeak"|"CanTrade"|"CanTravel"|"CanTriggerRandomCasts"|"CanWalkThrough"|"CanWalkThroughBoost"|"CannotBePickpocketed"|"CannotBeTakenOut"|"CannotHarmCauseEntityBoost"|"CarryCapacityMultiplierBoost"|"CharacterCreationAppearance"|"CharacterCreationStats"|"CharacterCreationTemplateOverride"|"CharacterHasGeneratedTradeTreasure"|"CharacterLight"|"CharacterLightSingleton"|"CharacterUnarmedDamageBoost"|"CharacterWeaponDamageBoost"|"ClassTag"|"Classes"|"ClassesChangedEvent"|"ClientCCBaseDefinitionState"|"ClientCCChangeAppearanceDefinition"|"ClientCCCompanionDefinition"|"ClientCCDefinitionState"|"ClientCCDefinitionStateEx"|"ClientCCDummyDefinition"|"ClientCCFullRespecDefinition"|"ClientCCLevelUpDefinition"|"ClientCharacter"|"ClientCharacterIconRequest"|"ClientCharacterIconResult"|"ClientControl"|"ClientEffectHandler"|"ClientEquipmentVisibilityState"|"ClientEquipmentVisuals"|"ClientInterruptPlayerDecision"|"ClientPaperdoll"|"ClientTimelineActorControl"|"ClientVisualsDesiredState"|"ClimbOn"|"CombatDelayedFanfare"|"CombatFleeRequest"|"CombatFleeSuccess"|"CombatIsThreatened"|"CombatJoinInCurrentRound"|"CombatJoinInCurrentRoundFailedEvent"|"CombatJoining"|"CombatLateJoinPenalty"|"CombatLeftEvent"|"CombatMerge"|"CombatParticipant"|"CombatRequestCompletedEvent"|"CombatScheduledForDelete"|"CombatStartedEvent"|"CombatState"|"CombatSurfaceTeamSingleton"|"CombatSurprisedJoinRequest"|"CombatSurprisedStealthRequest"|"CombatSwitched"|"CombatThreatRangeChangedEvent"|"CombatantJoinEvent"|"CombatantKilledEvent"|"CombinedLight"|"Concentration"|"ConcentrationChanged"|"ConcentrationClearedEvent"|"ConcentrationDamageCheck"|"ConcentrationIgnoreDamageBoost"|"Construction"|"ConstructionFilling"|"ConstructionTile"|"CriticalHitBoost"|"CriticalHitExtraDiceBoost"|"Cull"|"CurrentlyFollowingParty"|"CustomIcon"|"CustomIconsStorage"|"CustomName"|"CustomStats"|"DamageBonusBoost"|"DamageReductionBoost"|"DamageTakenBonusBoost"|"Darkness"|"DarkvisionRangeBoost"|"DarkvisionRangeMinBoost"|"DarkvisionRangeOverrideBoost"|"Data"|"DeadByDefault"|"Death"|"DeathApplyKnockedOut"|"DeathAssignEntityToUserRequest"|"DeathDeadByDefaultRequest"|"DeathState"|"DeathType"|"Decal"|"DefaultCameraBehavior"|"DelayedFanfareRemovedDuringCombatEvent"|"Detached"|"DetectCrimesBlockBoost"|"DialogState"|"DiedEvent"|"DifficultyCheck"|"DisabledEquipment"|"Disarmable"|"DisplayName"|"DodgeAttackRollBoost"|"Downed"|"DownedEvent"|"DownedStatusBoost"|"DropOnDeathBlocked"|"DualWielding"|"DualWieldingBoost"|"DummiesCreatedSingleton"|"Dummy"|"DummyAnimationState"|"DummyAvailableAnimations"|"DummyCharacterVFXInitialization"|"DummyEquipmentVisualsState"|"DummyFootIKState"|"DummyIsCopyingFullPose"|"DummyLoaded"|"DummyMultiEffectCreateRequest"|"DummyOriginalTransform"|"DummySpellVFXInitialization"|"DummySplatter"|"DummyStatusVFXInitialization"|"DummyStoredCloth"|"DummyTransformRequestsSingleton"|"DummyUnsheath"|"DummyVFXEntities"|"DynamicAnimationTags"|"Effect"|"EffectCameraBehavior"|"EffectCreate"|"EncumbranceState"|"EncumbranceStats"|"EntityThrowDamageBoost"|"EocLevel"|"Equipable"|"EquipmentSlotChangedEvent"|"EquipmentVisual"|"EscortFollower"|"EscortHasStragglers"|"EscortLeader"|"EscortLeaderPriority"|"EscortMember"|"EscortStragglersTracker"|"ExamineDisabled"|"Experience"|"Expertise"|"ExpertiseBonusBoost"|"FTBModeChangedEvent"|"FTBParticipant"|"FTBPaused"|"FTBPlayersTurnEndedEvent"|"FTBPlayersTurnStartedEvent"|"FTBRespect"|"FTBRoundEndedEvent"|"FTBSurfaceTeamSingleton"|"FTBTimeFactorRequests"|"FTBTimeFactorResetRequests"|"FTBTurnBasedChangesRequest"|"FTBZone"|"FTBZoneBlockReason"|"FTBZoneInstigator"|"Faction"|"FactionOverrideBoost"|"FallDamageMultiplierBoost"|"FallToProne"|"FleeCapability"|"Floating"|"FogVolumeRequest"|"FullIllithid"|"GameCameraBehavior"|"GameObjectVisual"|"GameplayEffectSetTimeFactorRequests"|"GameplayLight"|"GameplayLightBoost"|"GameplayObscurityBoost"|"GameplayVFX"|"GameplayVFXSetPlayTimeRequests"|"GlobalCombatRequests"|"GlobalLongRestDisabled"|"GlobalShortRestDisabled"|"God"|"GodTag"|"GravityDisabled"|"GravityDisabledUntilMoved"|"GuaranteedChanceRollOutcomeBoost"|"HalfIllithid"|"HalveWeaponDamageBoost"|"HasDummy"|"HasExclamationDialog"|"HasGeneratedTreasure"|"HasOpened"|"HealBlock"|"HealMaxIncoming"|"HealMaxOutgoing"|"Health"|"Hearing"|"HistoryTargetUUID"|"HitAnimationRequest"|"HitAttacker"|"HitJoinCombatRequest"|"HitLifetime"|"HitMeta"|"HitNotification"|"HitNotificationRequest"|"HitProxy"|"HitProxyOwner"|"HitReaction"|"HitResultEvent"|"HitTarget"|"HitThrownObject"|"HitWeapon"|"HorizontalFOVOverrideBoost"|"HotbarContainer"|"HotbarDecks"|"Icon"|"Identity"|"IdentityState"|"IgnoreDamageThresholdMinBoost"|"IgnoreLowGroundPenaltyBoost"|"IgnorePointBlankDisadvantageBoost"|"IgnoreResistanceBoost"|"IgnoreSurfaceCoverBoost"|"IgnoreSurfaces"|"ImprovisedWeaponWielded"|"ImprovisedWeaponWielding"|"IncreaseMaxHPBoost"|"InitiativeBoost"|"InteractionDisabled"|"InteractionFilter"|"InterruptActionState"|"InterruptConditionallyDisabled"|"InterruptContainer"|"InterruptData"|"InterruptDecision"|"InterruptPreferences"|"InterruptPrepared"|"InterruptZone"|"InterruptZoneParticipant"|"InterruptZoneSource"|"InventoryContainer"|"InventoryData"|"InventoryIsOwned"|"InventoryLocked"|"InventoryMember"|"InventoryMemberTransform"|"InventoryOwner"|"InventoryPropertyCanBePickpocketed"|"InventoryPropertyIsDroppedOnDeath"|"InventoryPropertyIsTradable"|"InventoryStack"|"InventoryStackMember"|"InventoryTopOwner"|"InventoryWeight"|"Invisibility"|"IsCharacter"|"IsCombatPaused"|"IsDoor"|"IsFalling"|"IsGlobal"|"IsGold"|"IsInCombat"|"IsInFTB"|"IsInTurnBasedMode"|"IsItem"|"IsMarkedForDeletion"|"IsSeeThrough"|"IsStoryItem"|"IsSummon"|"ItemBoosts"|"ItemCanMove"|"ItemDestroyed"|"ItemDestroying"|"ItemDye"|"ItemHasMoved"|"ItemInUse"|"ItemIsPoisoned"|"ItemPortal"|"ItemTemplateDestroyed"|"JumpFollow"|"JumpMaxDistanceBonusBoost"|"JumpMaxDistanceMultiplierBoost"|"Key"|"Ladder"|"LearnedSpells"|"Level"|"LevelChanged"|"LevelInstance"|"LevelInstanceLoaded"|"LevelInstanceState"|"LevelInstanceTempDestroyed"|"LevelInstanceUnloaded"|"LevelInstanceUnloading"|"LevelIsOwner"|"LevelPrepareUnloadBusy"|"LevelPrepareUnloadEvent"|"LevelRoot"|"LevelUnloadBusy"|"LevelUnloadEvent"|"LevelUnloaded"|"LevelUp"|"Light"|"LoadAnimationSetGameplayRequest"|"LoadAnimationSetRequest"|"Lock"|"LockBoost"|"LongRestInScriptPhase"|"LongRestState"|"LongRestTimeline"|"LongRestTimers"|"LongRestUsers"|"Loot"|"LootingState"|"MapMarkerStyle"|"MaterialParameterOverride"|"Max"|"MaximizeHealingBoost"|"MaximumRollResultBoost"|"MinimumRollResultBoost"|"MonkWeaponDamageDiceOverrideBoost"|"Movement"|"MovementSpeedLimitBoost"|"MultiplayerHost"|"MultiplayerUser"|"Net"|"NewInInventory"|"NewItemsInside"|"NewSpellsAddedEvent"|"NonTradable"|"NullifyAbilityBoost"|"ObjectInteraction"|"ObjectSize"|"ObjectSizeBoost"|"ObjectSizeOverrideBoost"|"OffStage"|"OnDamageSpells"|"Origin"|"OriginAppearanceTag"|"OriginPassives"|"OriginTag"|"OriginalIdentity"|"OriginalTemplate"|"OwnedAsLoot"|"OwneeCurrent"|"PartyComposition"|"PartyFollower"|"PartyMember"|"PartyPortals"|"PartyRecipes"|"PartyView"|"PartyWaypoints"|"Passive"|"PassiveConditionalRollInterruptEvent"|"PassiveContainer"|"PassiveRequestTargetTracking"|"PassiveUpdateTargetTracking"|"PassiveUsageCount"|"PassivesUpdatedEvent"|"PasssiveUsageCountIncrementedEvent"|"Pathing"|"PathingDistanceChanged"|"Pause"|"PauseExcluded"|"PhotoModeCameraBehavior"|"PhotoModeCameraDestructionRequests"|"PhotoModeCameraEnterRequests"|"PhotoModeCameraInput"|"PhotoModeCameraOffset"|"PhotoModeCameraOriginalTransform"|"PhotoModeCameraSavedTransform"|"PhotoModeCameraTilt"|"PhotoModeCameraTracking"|"PhotoModeCameraTransform"|"PhotoModeCameraTransformRequests"|"PhotoModeCapability"|"PhotoModeDummy"|"PhotoModeDummyAnimationState"|"PhotoModeDummyAnimationUpdateSingleton"|"PhotoModeDummyEquipmentSetupOneFrame"|"PhotoModeDummyEquipmentVisual"|"PhotoModeDummyEquipmentVisualUpdateSingleton"|"PhotoModeDummyShowSplatter"|"PhotoModeDummySplatterUpdateSingleton"|"PhotoModeDummyTransform"|"PhotoModeDummyTransformUpdateSingleton"|"PhotoModeExitScreenFadeClearRequests"|"PhotoModeExitScreenFadeCreateRequests"|"PhotoModeInvisibilityRequestSingleton"|"PhotoModeRequestedSingleton"|"PhotoModeSession"|"PhysicalForceRangeBonusBoost"|"Physics"|"PickUpExecuting"|"PickUpRequest"|"PickingState"|"Player"|"PlayerPrepareSpell"|"Proficiency"|"ProficiencyBonusBoost"|"ProficiencyBonusIncreaseBoost"|"ProficiencyBonusOverrideBoost"|"ProficiencyBoost"|"ProficiencyGroup"|"ProgressionAbilityImprovements"|"ProgressionChangedContainers"|"ProgressionContainer"|"ProgressionFeat"|"ProgressionLevelUpChanged"|"ProgressionMeta"|"ProgressionPassives"|"ProgressionReplicatedFeat"|"ProgressionSkills"|"ProgressionSpells"|"ProjectileDeflectBoost"|"ProjectileImpactEvent"|"ProjectileRequestTargetTracking"|"ProjectileSource"|"ProjectileSplitThrowableObjectRequest"|"ProjectileUpdateTargetTracking"|"Race"|"ReadyToBeAddedToInventory"|"ReceivingCriticalDamageOnHitBoost"|"Recruiter"|"RedirectDamageBoost"|"ReduceCriticalAttackThresholdBoost"|"Relation"|"RemoveAnimationSetsGameplayRequest"|"RemoveAnimationSetsRequest"|"Repose"|"RequestedRoll"|"RerollBoost"|"ResistanceBoost"|"Resistances"|"RestingEntities"|"RollBonusBoost"|"RollInProgress"|"RollModifiers"|"Ruleset"|"RulesetModifiers"|"SavantBoost"|"Savegame"|"SavingThrowRolledEvent"|"ScaleMultiplierBoost"|"Scene"|"SceneAttach"|"SceneRoot"|"Scenery"|"ScriptPropertyCanBePickpocketed"|"ScriptPropertyIsDroppedOnDeath"|"ScriptPropertyIsTradable"|"ScriptedExplosion"|"ServerAIHintAreaTrigger"|"ServerActivationGroupContainer"|"ServerAddedStatusAuraEffectEvent"|"ServerAggregatedGameplayLightData"|"ServerAiArchetype"|"ServerAiGridAreaTrigger"|"ServerAiGridViewshed"|"ServerAiInterestedInItems"|"ServerAiInterestingItem"|"ServerAiModifiers"|"ServerAnubisExecutor"|"ServerAnubisTag"|"ServerAtmosphereTrigger"|"ServerAvatarContainerTrigger"|"ServerBaseData"|"ServerBaseProficiency"|"ServerBaseSize"|"ServerBaseStats"|"ServerBaseWeapon"|"ServerBlockBronzeTimelinePlacementTrigger"|"ServerBoostBase"|"ServerBoostTag"|"ServerBreadcrumb"|"ServerCCAppearanceVisualTag"|"ServerCCCustomIcon"|"ServerCCEquipmentSetRequest"|"ServerCCGod"|"ServerCCIsCustom"|"ServerCCUpdates"|"ServerCampChestTrigger"|"ServerCampRegionTrigger"|"ServerCanStartCombat"|"ServerCharacter"|"ServerChasmRegionTrigger"|"ServerChasmSeederTrigger"|"ServerCombatGroupMapping"|"ServerCombatLeaveRequest"|"ServerCrimeAreaTrigger"|"ServerCrimeRegionTrigger"|"ServerCrowdCharacterTrigger"|"ServerDarknessActive"|"ServerDarkvisionRangeChanged"|"ServerDeathContinue"|"ServerDeathRequest"|"ServerDeathState"|"ServerDelayDeath"|"ServerDelayDeathCause"|"ServerDialogTag"|"ServerDisarmAttempt"|"ServerDisplayNameList"|"ServerDynamicLayerOwner"|"ServerEnterRequest"|"ServerEocAreaTrigger"|"ServerEocPointTrigger"|"ServerEventTrigger"|"ServerExperienceGaveOut"|"ServerExplorationTrigger"|"ServerFleeBlocked"|"ServerFloorTrigger"|"ServerGameTimer"|"ServerGameplayLightChanges"|"ServerGameplayLightEquipment"|"ServerHotbarOrder"|"ServerIconList"|"ServerImmediateJoin"|"ServerInterruptActionRequests"|"ServerInterruptAddRemoveRequests"|"ServerInterruptDataSingleton"|"ServerInterruptInitialParticipants"|"ServerInterruptTurnOrderInZone"|"ServerInterruptUsed"|"ServerInterruptZoneRequests"|"ServerInventoryContainerData"|"ServerInventoryGroupCheck"|"ServerInventoryIsReplicatedWith"|"ServerInventoryItemDataPopulated"|"ServerIsCurrentOwner"|"ServerIsLatestOwner"|"ServerIsLightBlocker"|"ServerIsOriginalOwner"|"ServerIsPreviousOwner"|"ServerIsUnsummoning"|"ServerIsVisionBlocker"|"ServerItem"|"ServerKiller"|"ServerLeader"|"ServerLightLosCheckQueue"|"ServerLightingTrigger"|"ServerModifyDelayDeathRequest"|"ServerMusicVolumeTrigger"|"ServerMusicVolumeTriggerState"|"ServerOsirisPingRequestSingleton"|"ServerOsirisTag"|"ServerOwneeHistory"|"ServerOwneeRequest"|"ServerPassiveBase"|"ServerPassiveBoosts"|"ServerPassivePersistentData"|"ServerPeersInRange"|"ServerPickpocket"|"ServerPingCooldownSingleton"|"ServerPingRequestSingleton"|"ServerPortalTrigger"|"ServerProficiencyGroupStats"|"ServerProjectile"|"ServerProjectileAttachment"|"ServerProjectileCache"|"ServerProjectileInitialization"|"ServerProjectileSpell"|"ServerRaceTag"|"ServerRatingsChanged"|"ServerRecruitedBy"|"ServerRegionTrigger"|"ServerRegistrationSettings"|"ServerRemovedStatusAuraEffectEvent"|"ServerReplicationDependency"|"ServerReplicationDependencyOwner"|"ServerRestPendingType"|"ServerRestTypeChosenEvent"|"ServerResurrectedEvent"|"ServerRollFinishedEvent"|"ServerRollInProgress"|"ServerRollStartRequest"|"ServerRollStartSpellRequest"|"ServerRollStreams"|"ServerRoomTrigger"|"ServerSafePosition"|"ServerScriptPassives"|"ServerShapeshiftEquipmentHistory"|"ServerShapeshiftStates"|"ServerShortRestResultEvent"|"ServerSightAggregatedData"|"ServerSightEntityLosCheckQueue"|"ServerSightEntityViewshedContentsChanged"|"ServerSightEventsEnabled"|"ServerSightIgnoreSurfacesChanged"|"ServerSightRangeChanged"|"ServerSoundVolumeTrigger"|"ServerSpellCastCache"|"ServerSpellCastHitDelay"|"ServerSpellCastInterrupt"|"ServerSpellCastMovement"|"ServerSpellCastMovementInfo"|"ServerSpellCastPendingRequests"|"ServerSpellCastProjectilePathfindCache"|"ServerSpellCastRequests"|"ServerSpellCastResponsible"|"ServerSpellCastState"|"ServerSpellCastUnsheathFallbackTimer"|"ServerSpellCastZoneRange"|"ServerSpellClientInitiated"|"ServerSpellExternals"|"ServerSpellHitRegister"|"ServerSpellInterruptRequests"|"ServerSpellInterruptResults"|"ServerStartTrigger"|"ServerStatsAreaTrigger"|"ServerStatus"|"ServerStatusActive"|"ServerStatusAddEvent"|"ServerStatusAddedFromSaveLoad"|"ServerStatusApplyEvent"|"ServerStatusAttemptEvent"|"ServerStatusAttemptFailedEvent"|"ServerStatusAura"|"ServerStatusAuraContainer"|"ServerStatusBoostsProcessed"|"ServerStatusCause"|"ServerStatusDifficultyModifiers"|"ServerStatusDispelRollCheck"|"ServerStatusDownedChangedEvent"|"ServerStatusEvent"|"ServerStatusOwnership"|"ServerStatusPerforming"|"ServerStatusRefreshed"|"ServerStatusRemoveEvent"|"ServerStatusRequests"|"ServerStatusScheduledForDeletion"|"ServerStatusTurnStartEvent"|"ServerStatusUnique"|"ServerStatusUpdateTargetTracking"|"ServerStealthRollCancel"|"ServerStealthRollRequest"|"ServerSurface"|"ServerTeleportTrigger"|"ServerTemplateChangedEvent"|"ServerTemplateTag"|"ServerTemplateTransformedEvent"|"ServerTimelineSceneTrigger"|"ServerToggledPassives"|"ServerTriggerCachedLeaveEvents"|"ServerTriggerEventConfig"|"ServerTriggerLoadedHandled"|"ServerTriggerRegisteredFor"|"ServerTriggerWorldAutoTriggered"|"ServerUnsheath"|"ServerUnsheathScriptOverride"|"ServerUpdatedRegisteredFor"|"ServerUpdatedRegisteredForItems"|"ServerUserSnapshot"|"ServerVariableManager"|"ShapeshiftAnimation"|"ShapeshiftHealthReservation"|"ShapeshiftRecoveryAnimation"|"ShapeshiftReplicatedChanges"|"ShapeshiftSourceCache"|"ShapeshiftState"|"ShootThroughType"|"ShortRest"|"ShortRestConsumeResources"|"ShouldDestroyOnSpellCast"|"Sight"|"SightData"|"SightEntityViewshed"|"SightRangeAdditiveBoost"|"SightRangeMaximumBoost"|"SightRangeMinimumBoost"|"SightRangeOverrideBoost"|"SimpleCharacter"|"SkillBoost"|"SkillCheckEvent"|"Sound"|"SourceAdvantageBoost"|"SpatialGrid"|"Speaker"|"SpellAiConditions"|"SpellBook"|"SpellBookChanged"|"SpellBookCooldowns"|"SpellBookPrepares"|"SpellCastAnimationInfo"|"SpellCastAnimationRequest"|"SpellCastCache"|"SpellCastCanBeTargeted"|"SpellCastCounteredEvent"|"SpellCastDataCache"|"SpellCastDestroyEvent"|"SpellCastEvent"|"SpellCastExecutionTime"|"SpellCastFinishedEvent"|"SpellCastHitEvent"|"SpellCastInterruptResults"|"SpellCastInterruptsUsed"|"SpellCastIsCasting"|"SpellCastJumpStartEvent"|"SpellCastLogicExecutionEndEvent"|"SpellCastLogicExecutionStartEvent"|"SpellCastMoveDuringCastUpdateEvent"|"SpellCastMovement"|"SpellCastMovementAndPrecalculationEndEvent"|"SpellCastOutcome"|"SpellCastPrepareEndEvent"|"SpellCastPrepareStartEvent"|"SpellCastPreviewEndEvent"|"SpellCastRequestTargetTracking"|"SpellCastRolls"|"SpellCastSpellRollAbortEvent"|"SpellCastState"|"SpellCastTargetHitEvent"|"SpellCastTargetHitInterruptEvent"|"SpellCastTargetReactionEvent"|"SpellCastTargetsChangedEvent"|"SpellCastTextKeyEvent"|"SpellCastThrowPickupPositionChangedEvent"|"SpellCastUpdateTargetTracking"|"SpellCastWeaponSetChangeRequest"|"SpellContainer"|"SpellModificationContainer"|"SpellResistanceBoost"|"SpellSaveDCBoost"|"SpellSyncTargeting"|"SpellsLearnedEvent"|"StaticPhysics"|"Stats"|"StatsAppliedEvent"|"StatusBoostsRefreshed"|"StatusCause"|"StatusContainer"|"StatusID"|"StatusImmunities"|"StatusImmunityBoost"|"StatusIncapacitated"|"StatusIndicateDarkness"|"StatusLifetime"|"StatusLoseControl"|"StatusVisualDisabled"|"Stealth"|"Steering"|"StoryShortRestDisabled"|"SummonAddConcentrationRequest"|"SummonAddToExistingConcentrationRequest"|"SummonAttachToProjectileRequest"|"SummonContainer"|"SummonCreatedEvent"|"SummonDespawnRequest"|"SummonExpiredRequest"|"SummonLateJoinPenalty"|"SummonLifetime"|"SummonOwnerSetEvent"|"SummonPlaceInInventoryRequest"|"SummonSetLifetimeRequest"|"SurfacePathInfluences"|"TLPreviewDummy"|"TadpolePowers"|"TadpoleTreeState"|"Tadpoled"|"Tag"|"TagsChangedEvent"|"TemplateAnimationSetOverride"|"TemporaryHPBoost"|"ThreatRange"|"TimeFactor"|"TimelineActorData"|"TradeBuybackData"|"Trader"|"Transform"|"TranslateChanged"|"TranslateChangedEvent"|"TriggerArea"|"TriggerContainer"|"TriggerIsInsideOf"|"TriggerType"|"TriggerUpdatedContainer"|"TriggerUpdatedPhysics"|"TurnBased"|"TurnEndedEvent"|"TurnOrder"|"TurnOrderAssignEntityToUserRequest"|"TurnOrderSkipped"|"TurnOrderTimedOut"|"TurnRoundEndedEvent"|"TurnStartedEvent"|"TurnSurfaceTeamSingleton"|"TurnSurfaceTracking"|"UnlockInterruptBoost"|"UnlockSpellBoost"|"UnlockSpellVariantBoost"|"UnresolvedHitNotification"|"Unsheath"|"Use"|"UseAction"|"UseBoosts"|"UseSocket"|"UserAvatar"|"UserReservedFor"|"Uuid"|"UuidToHandleMapping"|"Value"|"Visual"|"VisualAttachRequest"|"VisualChangeRequest"|"VisualChangedEvent"|"VisualLoad"|"VisualLoadDescription"|"VisualLoadRequests"|"VisualLoaded"|"VisualStreamLoad"|"Voice"|"VoiceTag"|"WalkOn"|"Weapon"|"WeaponAttackRollAbilityOverrideBoost"|"WeaponAttackRollBonusBoost"|"WeaponAttackTypeOverrideBoost"|"WeaponDamageBoost"|"WeaponDamageDieOverrideBoost"|"WeaponDamageResistanceBoost"|"WeaponDamageTypeOverrideBoost"|"WeaponEnchantmentBoost"|"WeaponPropertiesChangedEvent"|"WeaponPropertyBoost"|"WeaponSet"|"WeightBoost"|"WeightCategoryBoost"|"Wielded"|"Wielding"|"WieldingHistory"
+--- @alias ExtComponentType string|"ACOverrideFormulaBoost"|"AbilityBoost"|"AbilityCheckEvent"|"AbilityFailedSavingThrowBoost"|"AbilityOverrideMinimumBoost"|"ActionResourceBlockBoost"|"ActionResourceChangeResults"|"ActionResourceConsumeMultiplierBoost"|"ActionResourceEvents"|"ActionResourceMultiplierBoost"|"ActionResourcePreventReductionBoost"|"ActionResourceReplenishTypeOverrideBoost"|"ActionResourceSpendEvent"|"ActionResourceValueBoost"|"ActionResources"|"ActionType"|"ActionUseConditions"|"Active"|"ActiveCharacterLight"|"ActiveCharacterLightBoost"|"ActiveSkeletonSlots"|"AddTagBoost"|"AddedSpells"|"AdvanceSpellsBoost"|"AdvantageBoost"|"AiArchetypeOverrideBoost"|"AlwaysUpdateEffect"|"Ambushing"|"AnimationBlueprint"|"AnimationGameplayEvents"|"AnimationGameplayEventsSingleton"|"AnimationSet"|"AnimationSetUpdateRequest"|"AnimationTextKeyEvents"|"AnimationTextKeyEventsSingleton"|"AnimationTriggeredEvents"|"AnimationUpdate"|"AnimationWaterfall"|"AppearanceOverride"|"ApprovalRatings"|"Armor"|"ArmorAbilityModifierCapOverrideBoost"|"ArmorClassBoost"|"ArmorSetState"|"AttackSpellOverride"|"AttackSpellOverrideBoost"|"AttitudesToPlayers"|"AttributeBoost"|"AttributeFlags"|"AttributeFlagsChangedEvent"|"AvailableLevel"|"Avatar"|"Background"|"BackgroundGoals"|"BackgroundPassives"|"BackgroundTag"|"BaseHp"|"BaseStats"|"BlockAbilityModifierFromACBoost"|"BlockFollow"|"BlockRegainHPBoost"|"BodyType"|"BoostBaseUpdated"|"BoostChangedEvent"|"BoostChangedEventsSingleton"|"BoostCondition"|"BoostConditionalState"|"BoostInfo"|"BoostProvider"|"BoostsContainer"|"Bound"|"CCChangeAppearanceDefinition"|"CCCharacterDefinition"|"CCCompanionDefinition"|"CCCreation"|"CCDefinitionCommon"|"CCDefinitionLevelUp"|"CCFullRespec"|"CCFullRespecDefinition"|"CCLevelUp"|"CCLevelUpDefinition"|"CCPrepareSpell"|"CCRespec"|"CCRespecDefinition"|"CCSessionCommon"|"CCState"|"CalendarDaysPassed"|"CalendarStartingDate"|"Camera"|"CameraArriveWatcher"|"CameraClearScreenFadeRequestManual"|"CameraCombatTarget"|"CameraCombatTargetRequests"|"CameraInSelectorMode"|"CameraInSelectorWhileInactive"|"CameraModeTracker"|"CameraPlatformTarget"|"CameraScreenFadeToRequestManual"|"CameraSelectorMode"|"CameraSpellTracking"|"CameraTarget"|"CampChest"|"CampEndTheDayState"|"CampPresence"|"CampQuality"|"CampSettings"|"CampSupply"|"CampTotalSupplies"|"CanBeDisarmed"|"CanBeInInventory"|"CanBeLooted"|"CanBeWielded"|"CanDeflectProjectiles"|"CanDoActions"|"CanDoRest"|"CanEnterChasm"|"CanInteract"|"CanLevelUp"|"CanModifyHealth"|"CanMove"|"CanSeeThrough"|"CanSeeThroughBoost"|"CanSense"|"CanShootThrough"|"CanShootThroughBoost"|"CanSpeak"|"CanTrade"|"CanTravel"|"CanTriggerRandomCasts"|"CanWalkThrough"|"CanWalkThroughBoost"|"CannotBePickpocketed"|"CannotBeTakenOut"|"CannotHarmCauseEntityBoost"|"CarryCapacityMultiplierBoost"|"CharacterCreationAppearance"|"CharacterCreationStats"|"CharacterCreationTemplateOverride"|"CharacterHasGeneratedTradeTreasure"|"CharacterLight"|"CharacterLightSingleton"|"CharacterUnarmedDamageBoost"|"CharacterWeaponDamageBoost"|"ClassTag"|"Classes"|"ClassesChangedEvent"|"ClientCCBaseDefinitionState"|"ClientCCChangeAppearanceDefinition"|"ClientCCCompanionDefinition"|"ClientCCDefinitionState"|"ClientCCDefinitionStateEx"|"ClientCCDummyDefinition"|"ClientCCFullRespecDefinition"|"ClientCCLevelUpDefinition"|"ClientCharacter"|"ClientCharacterIconRequest"|"ClientCharacterIconResult"|"ClientControl"|"ClientEffectHandler"|"ClientEquipmentVisibilityState"|"ClientEquipmentVisuals"|"ClientInterruptPlayerDecision"|"ClientPaperdoll"|"ClientTimelineActorControl"|"ClientVisualsDesiredState"|"ClimbOn"|"CombatDelayedFanfare"|"CombatFleeRequest"|"CombatFleeSuccess"|"CombatIsThreatened"|"CombatJoinInCurrentRound"|"CombatJoinInCurrentRoundFailedEvent"|"CombatJoining"|"CombatLateJoinPenalty"|"CombatLeftEvent"|"CombatMerge"|"CombatParticipant"|"CombatRequestCompletedEvent"|"CombatScheduledForDelete"|"CombatStartedEvent"|"CombatState"|"CombatSurfaceTeamSingleton"|"CombatSurprisedJoinRequest"|"CombatSurprisedStealthRequest"|"CombatSwitched"|"CombatThreatRangeChangedEvent"|"CombatantJoinEvent"|"CombatantKilledEvent"|"CombinedLight"|"Concentration"|"ConcentrationChanged"|"ConcentrationClearedEvent"|"ConcentrationDamageCheck"|"ConcentrationIgnoreDamageBoost"|"Construction"|"ConstructionFilling"|"ConstructionTile"|"CriticalHitBoost"|"CriticalHitExtraDiceBoost"|"Cull"|"CurrentlyFollowingParty"|"CustomIcon"|"CustomIconsStorage"|"CustomName"|"CustomStats"|"DamageBonusBoost"|"DamageReductionBoost"|"DamageTakenBonusBoost"|"Darkness"|"DarkvisionRangeBoost"|"DarkvisionRangeMinBoost"|"DarkvisionRangeOverrideBoost"|"Data"|"DeadByDefault"|"Death"|"DeathApplyKnockedOut"|"DeathAssignEntityToUserRequest"|"DeathDeadByDefaultRequest"|"DeathState"|"DeathType"|"Decal"|"DefaultCameraBehavior"|"DelayedFanfareRemovedDuringCombatEvent"|"Detached"|"DetectCrimesBlockBoost"|"DialogState"|"DiedEvent"|"DifficultyCheck"|"DisabledEquipment"|"Disarmable"|"DisplayName"|"DodgeAttackRollBoost"|"Downed"|"DownedEvent"|"DownedStatusBoost"|"DropOnDeathBlocked"|"DualWielding"|"DualWieldingBoost"|"DummiesCreatedSingleton"|"Dummy"|"DummyAnimationState"|"DummyAvailableAnimations"|"DummyCharacterVFXInitialization"|"DummyEquipmentVisualsState"|"DummyFootIKState"|"DummyIsCopyingFullPose"|"DummyLoaded"|"DummyMultiEffectCreateRequest"|"DummyOriginalTransform"|"DummySpellVFXInitialization"|"DummySplatter"|"DummyStatusVFXInitialization"|"DummyStoredCloth"|"DummyTransformRequestsSingleton"|"DummyUnsheath"|"DummyVFXEntities"|"DynamicAnimationTags"|"Effect"|"EffectCameraBehavior"|"EffectCreate"|"EncumbranceState"|"EncumbranceStats"|"EntityThrowDamageBoost"|"EocLevel"|"Equipable"|"EquipmentSlotChangedEvent"|"EquipmentVisual"|"EscortFollower"|"EscortHasStragglers"|"EscortLeader"|"EscortLeaderPriority"|"EscortMember"|"EscortStragglersTracker"|"ExamineDisabled"|"Experience"|"Expertise"|"ExpertiseBonusBoost"|"FTBModeChangedEvent"|"FTBParticipant"|"FTBPaused"|"FTBPlayersTurnEndedEvent"|"FTBPlayersTurnStartedEvent"|"FTBRespect"|"FTBRoundEndedEvent"|"FTBSurfaceTeamSingleton"|"FTBTimeFactorRequests"|"FTBTimeFactorResetRequests"|"FTBTurnBasedChangesRequest"|"FTBZone"|"FTBZoneBlockReason"|"FTBZoneInstigator"|"Faction"|"FactionOverrideBoost"|"FadeChildrenAdded"|"FadeChildrenRemoved"|"FadeGroup"|"FadeGroupMapping"|"FadeableObstruction"|"FadeableObstructionHierarchy"|"FadeableObstructionMapping"|"FallDamageMultiplierBoost"|"FallToProne"|"FleeCapability"|"Floating"|"FogVolumeRequest"|"FullIllithid"|"GameCameraBehavior"|"GameObjectVisual"|"GameplayEffectSetTimeFactorRequests"|"GameplayLight"|"GameplayLightBoost"|"GameplayObscurityBoost"|"GameplayVFX"|"GameplayVFXSetPlayTimeRequests"|"GlobalCombatRequests"|"GlobalLongRestDisabled"|"GlobalShortRestDisabled"|"God"|"GodTag"|"GravityDisabled"|"GravityDisabledUntilMoved"|"GuaranteedChanceRollOutcomeBoost"|"HalfIllithid"|"HalveWeaponDamageBoost"|"HasDummy"|"HasExclamationDialog"|"HasGeneratedTreasure"|"HasOpened"|"HealBlock"|"HealMaxIncoming"|"HealMaxOutgoing"|"Health"|"Hearing"|"HistoryTargetUUID"|"HitAnimationRequest"|"HitAttacker"|"HitJoinCombatRequest"|"HitLifetime"|"HitMeta"|"HitNotification"|"HitNotificationRequest"|"HitProxy"|"HitProxyOwner"|"HitReaction"|"HitResultEvent"|"HitTarget"|"HitThrownObject"|"HitWeapon"|"HorizontalFOVOverrideBoost"|"HotbarContainer"|"HotbarDecks"|"Icon"|"Identity"|"IdentityState"|"IgnoreDamageThresholdMinBoost"|"IgnoreLowGroundPenaltyBoost"|"IgnorePointBlankDisadvantageBoost"|"IgnoreResistanceBoost"|"IgnoreSurfaceCoverBoost"|"IgnoreSurfaces"|"ImprovisedWeaponWielded"|"ImprovisedWeaponWielding"|"IncreaseMaxHPBoost"|"InitiativeBoost"|"InteractionDisabled"|"InteractionFilter"|"InterruptActionState"|"InterruptConditionallyDisabled"|"InterruptContainer"|"InterruptData"|"InterruptDecision"|"InterruptPreferences"|"InterruptPrepared"|"InterruptZone"|"InterruptZoneParticipant"|"InterruptZoneSource"|"InventoryContainer"|"InventoryData"|"InventoryIsOwned"|"InventoryLocked"|"InventoryMember"|"InventoryMemberTransform"|"InventoryOwner"|"InventoryPropertyCanBePickpocketed"|"InventoryPropertyIsDroppedOnDeath"|"InventoryPropertyIsTradable"|"InventoryStack"|"InventoryStackMember"|"InventoryTopOwner"|"InventoryWeight"|"Invisibility"|"IsCharacter"|"IsCombatPaused"|"IsDoor"|"IsFalling"|"IsGlobal"|"IsGold"|"IsInCombat"|"IsInFTB"|"IsInTurnBasedMode"|"IsItem"|"IsMarkedForDeletion"|"IsSeeThrough"|"IsStoryItem"|"IsSummon"|"ItemBoosts"|"ItemCanMove"|"ItemDestroyed"|"ItemDestroying"|"ItemDye"|"ItemHasMoved"|"ItemInUse"|"ItemIsPoisoned"|"ItemPortal"|"ItemTemplateDestroyed"|"JumpFollow"|"JumpMaxDistanceBonusBoost"|"JumpMaxDistanceMultiplierBoost"|"Key"|"Ladder"|"LearnedSpells"|"Level"|"LevelChanged"|"LevelInstance"|"LevelInstanceLoaded"|"LevelInstanceState"|"LevelInstanceTempDestroyed"|"LevelInstanceUnloaded"|"LevelInstanceUnloading"|"LevelIsOwner"|"LevelPrepareUnloadBusy"|"LevelPrepareUnloadEvent"|"LevelRoot"|"LevelUnloadBusy"|"LevelUnloadEvent"|"LevelUnloaded"|"LevelUp"|"Light"|"LoadAnimationSetGameplayRequest"|"LoadAnimationSetRequest"|"Lock"|"LockBoost"|"LongRestInScriptPhase"|"LongRestState"|"LongRestTimeline"|"LongRestTimers"|"LongRestUsers"|"Loot"|"LootingState"|"MapMarkerStyle"|"MaterialParameterOverride"|"Max"|"MaximizeHealingBoost"|"MaximumRollResultBoost"|"MinimumRollResultBoost"|"MonkWeaponDamageDiceOverrideBoost"|"Movement"|"MovementSpeedLimitBoost"|"MultiplayerHost"|"MultiplayerUser"|"Net"|"NewInInventory"|"NewItemsInside"|"NewSpellsAddedEvent"|"NonTradable"|"NullifyAbilityBoost"|"ObjectInteraction"|"ObjectSize"|"ObjectSizeBoost"|"ObjectSizeOverrideBoost"|"OffStage"|"OnDamageSpells"|"Origin"|"OriginAppearanceTag"|"OriginPassives"|"OriginTag"|"OriginalIdentity"|"OriginalTemplate"|"OwnedAsLoot"|"OwneeCurrent"|"PartyComposition"|"PartyFollower"|"PartyMember"|"PartyPortals"|"PartyRecipes"|"PartyView"|"PartyWaypoints"|"Passive"|"PassiveConditionalRollInterruptEvent"|"PassiveContainer"|"PassiveRequestTargetTracking"|"PassiveUpdateTargetTracking"|"PassiveUsageCount"|"PassivesUpdatedEvent"|"PasssiveUsageCountIncrementedEvent"|"Pathing"|"PathingDistanceChanged"|"Pause"|"PauseExcluded"|"PhotoModeCameraBehavior"|"PhotoModeCameraDestructionRequests"|"PhotoModeCameraEnterRequests"|"PhotoModeCameraInput"|"PhotoModeCameraOffset"|"PhotoModeCameraOriginalTransform"|"PhotoModeCameraSavedTransform"|"PhotoModeCameraTilt"|"PhotoModeCameraTracking"|"PhotoModeCameraTransform"|"PhotoModeCameraTransformRequests"|"PhotoModeCapability"|"PhotoModeDummy"|"PhotoModeDummyAnimationState"|"PhotoModeDummyAnimationUpdateSingleton"|"PhotoModeDummyEquipmentSetupOneFrame"|"PhotoModeDummyEquipmentVisual"|"PhotoModeDummyEquipmentVisualUpdateSingleton"|"PhotoModeDummyShowSplatter"|"PhotoModeDummySplatterUpdateSingleton"|"PhotoModeDummyTransform"|"PhotoModeDummyTransformUpdateSingleton"|"PhotoModeExitScreenFadeClearRequests"|"PhotoModeExitScreenFadeCreateRequests"|"PhotoModeInvisibilityRequestSingleton"|"PhotoModeRequestedSingleton"|"PhotoModeSession"|"PhysicalForceRangeBonusBoost"|"Physics"|"PhysicsLoad"|"PhysicsLoaded"|"PhysicsLoaderRegistered"|"PhysicsPathLoadDesciption"|"PhysicsReloadOneFrame"|"PhysicsResourceLoadDesciption"|"PhysicsStreamLoad"|"PickUpExecuting"|"PickUpRequest"|"PickingState"|"Player"|"PlayerPrepareSpell"|"Proficiency"|"ProficiencyBonusBoost"|"ProficiencyBonusIncreaseBoost"|"ProficiencyBonusOverrideBoost"|"ProficiencyBoost"|"ProficiencyGroup"|"ProgressionAbilityImprovements"|"ProgressionChangedContainers"|"ProgressionContainer"|"ProgressionFeat"|"ProgressionLevelUpChanged"|"ProgressionMeta"|"ProgressionPassives"|"ProgressionReplicatedFeat"|"ProgressionSkills"|"ProgressionSpells"|"ProjectileDeflectBoost"|"ProjectileImpactEvent"|"ProjectileRequestTargetTracking"|"ProjectileSource"|"ProjectileSplitThrowableObjectRequest"|"ProjectileUpdateTargetTracking"|"Race"|"ReadyToBeAddedToInventory"|"ReceivingCriticalDamageOnHitBoost"|"Recruiter"|"RedirectDamageBoost"|"ReduceCriticalAttackThresholdBoost"|"Relation"|"RemoveAnimationSetsGameplayRequest"|"RemoveAnimationSetsRequest"|"Repose"|"RequestedRoll"|"RerollBoost"|"ResistanceBoost"|"Resistances"|"RestingEntities"|"RollBonusBoost"|"RollInProgress"|"RollModifiers"|"Ruleset"|"RulesetModifiers"|"SavantBoost"|"Savegame"|"SavingThrowRolledEvent"|"ScaleMultiplierBoost"|"Scene"|"SceneAttach"|"SceneRoot"|"Scenery"|"ScriptPropertyCanBePickpocketed"|"ScriptPropertyIsDroppedOnDeath"|"ScriptPropertyIsTradable"|"ScriptedExplosion"|"ServerAIHintAreaTrigger"|"ServerActivationGroupContainer"|"ServerAddedStatusAuraEffectEvent"|"ServerAggregatedGameplayLightData"|"ServerAiArchetype"|"ServerAiGridAreaTrigger"|"ServerAiGridViewshed"|"ServerAiInterestedInItems"|"ServerAiInterestingItem"|"ServerAiModifiers"|"ServerAnubisExecutor"|"ServerAnubisTag"|"ServerAtmosphereTrigger"|"ServerAvatarContainerTrigger"|"ServerBaseData"|"ServerBaseProficiency"|"ServerBaseSize"|"ServerBaseStats"|"ServerBaseWeapon"|"ServerBlockBronzeTimelinePlacementTrigger"|"ServerBoostBase"|"ServerBoostTag"|"ServerBreadcrumb"|"ServerCCAppearanceVisualTag"|"ServerCCCustomIcon"|"ServerCCEquipmentSetRequest"|"ServerCCGod"|"ServerCCIsCustom"|"ServerCCUpdates"|"ServerCampChestTrigger"|"ServerCampRegionTrigger"|"ServerCanStartCombat"|"ServerCharacter"|"ServerChasmRegionTrigger"|"ServerChasmSeederTrigger"|"ServerCombatGroupMapping"|"ServerCombatLeaveRequest"|"ServerCrimeAreaTrigger"|"ServerCrimeRegionTrigger"|"ServerCrowdCharacterTrigger"|"ServerDarknessActive"|"ServerDarkvisionRangeChanged"|"ServerDeathContinue"|"ServerDeathRequest"|"ServerDeathState"|"ServerDelayDeath"|"ServerDelayDeathCause"|"ServerDialogTag"|"ServerDisarmAttempt"|"ServerDisplayNameList"|"ServerDynamicLayerOwner"|"ServerEnterRequest"|"ServerEocAreaTrigger"|"ServerEocPointTrigger"|"ServerEventTrigger"|"ServerExperienceGaveOut"|"ServerExplorationTrigger"|"ServerFleeBlocked"|"ServerFloorTrigger"|"ServerGameTimer"|"ServerGameplayLightChanges"|"ServerGameplayLightEquipment"|"ServerHotbarOrder"|"ServerIconList"|"ServerImmediateJoin"|"ServerInterruptActionRequests"|"ServerInterruptAddRemoveRequests"|"ServerInterruptDataSingleton"|"ServerInterruptInitialParticipants"|"ServerInterruptTurnOrderInZone"|"ServerInterruptUsed"|"ServerInterruptZoneRequests"|"ServerInventoryContainerData"|"ServerInventoryGroupCheck"|"ServerInventoryIsReplicatedWith"|"ServerInventoryItemDataPopulated"|"ServerIsCurrentOwner"|"ServerIsLatestOwner"|"ServerIsLightBlocker"|"ServerIsOriginalOwner"|"ServerIsPreviousOwner"|"ServerIsUnsummoning"|"ServerIsVisionBlocker"|"ServerItem"|"ServerKiller"|"ServerLeader"|"ServerLightLosCheckQueue"|"ServerLightingTrigger"|"ServerModifyDelayDeathRequest"|"ServerMusicVolumeTrigger"|"ServerMusicVolumeTriggerState"|"ServerOsirisPingRequestSingleton"|"ServerOsirisTag"|"ServerOwneeHistory"|"ServerOwneeRequest"|"ServerPassiveBase"|"ServerPassiveBoosts"|"ServerPassivePersistentData"|"ServerPeersInRange"|"ServerPickpocket"|"ServerPingCooldownSingleton"|"ServerPingRequestSingleton"|"ServerPortalTrigger"|"ServerProficiencyGroupStats"|"ServerProjectile"|"ServerProjectileAttachment"|"ServerProjectileCache"|"ServerProjectileInitialization"|"ServerProjectileSpell"|"ServerRaceTag"|"ServerRatingsChanged"|"ServerRecruitedBy"|"ServerRegionTrigger"|"ServerRegistrationSettings"|"ServerRemovedStatusAuraEffectEvent"|"ServerReplicationDependency"|"ServerReplicationDependencyOwner"|"ServerRestPendingType"|"ServerRestTypeChosenEvent"|"ServerResurrectedEvent"|"ServerRollFinishedEvent"|"ServerRollInProgress"|"ServerRollStartRequest"|"ServerRollStartSpellRequest"|"ServerRollStreams"|"ServerRoomTrigger"|"ServerSafePosition"|"ServerScriptPassives"|"ServerShapeshiftEquipmentHistory"|"ServerShapeshiftStates"|"ServerShortRestResultEvent"|"ServerSightAggregatedData"|"ServerSightEntityLosCheckQueue"|"ServerSightEntityViewshedContentsChanged"|"ServerSightEventsEnabled"|"ServerSightIgnoreSurfacesChanged"|"ServerSightRangeChanged"|"ServerSoundVolumeTrigger"|"ServerSpellCastCache"|"ServerSpellCastHitDelay"|"ServerSpellCastInterrupt"|"ServerSpellCastMovement"|"ServerSpellCastMovementInfo"|"ServerSpellCastPendingRequests"|"ServerSpellCastProjectilePathfindCache"|"ServerSpellCastRequests"|"ServerSpellCastResponsible"|"ServerSpellCastState"|"ServerSpellCastUnsheathFallbackTimer"|"ServerSpellCastZoneRange"|"ServerSpellClientInitiated"|"ServerSpellExternals"|"ServerSpellHitRegister"|"ServerSpellInterruptRequests"|"ServerSpellInterruptResults"|"ServerStartTrigger"|"ServerStatsAreaTrigger"|"ServerStatus"|"ServerStatusActive"|"ServerStatusAddEvent"|"ServerStatusAddedFromSaveLoad"|"ServerStatusApplyEvent"|"ServerStatusAttemptEvent"|"ServerStatusAttemptFailedEvent"|"ServerStatusAura"|"ServerStatusAuraContainer"|"ServerStatusBoostsProcessed"|"ServerStatusCause"|"ServerStatusDifficultyModifiers"|"ServerStatusDispelRollCheck"|"ServerStatusDownedChangedEvent"|"ServerStatusEvent"|"ServerStatusOwnership"|"ServerStatusPerforming"|"ServerStatusRefreshed"|"ServerStatusRemoveEvent"|"ServerStatusRequests"|"ServerStatusScheduledForDeletion"|"ServerStatusTurnStartEvent"|"ServerStatusUnique"|"ServerStatusUpdateTargetTracking"|"ServerStealthRollCancel"|"ServerStealthRollRequest"|"ServerSurface"|"ServerTeleportTrigger"|"ServerTemplateChangedEvent"|"ServerTemplateTag"|"ServerTemplateTransformedEvent"|"ServerTimelineSceneTrigger"|"ServerToggledPassives"|"ServerTriggerCachedLeaveEvents"|"ServerTriggerEventConfig"|"ServerTriggerLoadedHandled"|"ServerTriggerRegisteredFor"|"ServerTriggerWorldAutoTriggered"|"ServerUnsheath"|"ServerUnsheathScriptOverride"|"ServerUpdatedRegisteredFor"|"ServerUpdatedRegisteredForItems"|"ServerUserSnapshot"|"ServerVariableManager"|"ShapeshiftAnimation"|"ShapeshiftHealthReservation"|"ShapeshiftRecoveryAnimation"|"ShapeshiftReplicatedChanges"|"ShapeshiftSourceCache"|"ShapeshiftState"|"ShootThroughType"|"ShortRest"|"ShortRestConsumeResources"|"ShouldDestroyOnSpellCast"|"Sight"|"SightData"|"SightEntityViewshed"|"SightRangeAdditiveBoost"|"SightRangeMaximumBoost"|"SightRangeMinimumBoost"|"SightRangeOverrideBoost"|"SimpleCharacter"|"SkillBoost"|"SkillCheckEvent"|"Sound"|"SourceAdvantageBoost"|"SpatialGrid"|"Speaker"|"SpellAiConditions"|"SpellBook"|"SpellBookChanged"|"SpellBookCooldowns"|"SpellBookPrepares"|"SpellCastAnimationInfo"|"SpellCastAnimationRequest"|"SpellCastCache"|"SpellCastCanBeTargeted"|"SpellCastCounteredEvent"|"SpellCastDataCache"|"SpellCastDestroyEvent"|"SpellCastEvent"|"SpellCastExecutionTime"|"SpellCastFinishedEvent"|"SpellCastHitEvent"|"SpellCastInterruptResults"|"SpellCastInterruptsUsed"|"SpellCastIsCasting"|"SpellCastJumpStartEvent"|"SpellCastLogicExecutionEndEvent"|"SpellCastLogicExecutionStartEvent"|"SpellCastMoveDuringCastUpdateEvent"|"SpellCastMovement"|"SpellCastMovementAndPrecalculationEndEvent"|"SpellCastOutcome"|"SpellCastPrepareEndEvent"|"SpellCastPrepareStartEvent"|"SpellCastPreviewEndEvent"|"SpellCastRequestTargetTracking"|"SpellCastRolls"|"SpellCastSpellRollAbortEvent"|"SpellCastState"|"SpellCastTargetHitEvent"|"SpellCastTargetHitInterruptEvent"|"SpellCastTargetReactionEvent"|"SpellCastTargetsChangedEvent"|"SpellCastTextKeyEvent"|"SpellCastThrowPickupPositionChangedEvent"|"SpellCastUpdateTargetTracking"|"SpellCastWeaponSetChangeRequest"|"SpellContainer"|"SpellModificationContainer"|"SpellResistanceBoost"|"SpellSaveDCBoost"|"SpellSyncTargeting"|"SpellsLearnedEvent"|"StaticPhysics"|"Stats"|"StatsAppliedEvent"|"StatusBoostsRefreshed"|"StatusCause"|"StatusContainer"|"StatusID"|"StatusImmunities"|"StatusImmunityBoost"|"StatusIncapacitated"|"StatusIndicateDarkness"|"StatusLifetime"|"StatusLoseControl"|"StatusVisualDisabled"|"Stealth"|"Steering"|"StoryShortRestDisabled"|"SummonAddConcentrationRequest"|"SummonAddToExistingConcentrationRequest"|"SummonAttachToProjectileRequest"|"SummonContainer"|"SummonCreatedEvent"|"SummonDespawnRequest"|"SummonExpiredRequest"|"SummonLateJoinPenalty"|"SummonLifetime"|"SummonOwnerSetEvent"|"SummonPlaceInInventoryRequest"|"SummonSetLifetimeRequest"|"SurfacePathInfluences"|"TLPreviewDummy"|"TadpolePowers"|"TadpoleTreeState"|"Tadpoled"|"Tag"|"TagsChangedEvent"|"TemplateAnimationSetOverride"|"TemporaryHPBoost"|"ThreatRange"|"TimeFactor"|"TimelineActorData"|"TradeBuybackData"|"Trader"|"Transform"|"TranslateChanged"|"TranslateChangedEvent"|"TriggerArea"|"TriggerContainer"|"TriggerIsInsideOf"|"TriggerType"|"TriggerUpdatedContainer"|"TriggerUpdatedPhysics"|"TurnBased"|"TurnEndedEvent"|"TurnOrder"|"TurnOrderAssignEntityToUserRequest"|"TurnOrderSkipped"|"TurnOrderTimedOut"|"TurnRoundEndedEvent"|"TurnStartedEvent"|"TurnSurfaceTeamSingleton"|"TurnSurfaceTracking"|"UnlockInterruptBoost"|"UnlockSpellBoost"|"UnlockSpellVariantBoost"|"UnresolvedHitNotification"|"Unsheath"|"Use"|"UseAction"|"UseBoosts"|"UseSocket"|"UserAvatar"|"UserReservedFor"|"Uuid"|"UuidToHandleMapping"|"Value"|"Visual"|"VisualAttachRequest"|"VisualChangeRequest"|"VisualChangedEvent"|"VisualLoad"|"VisualLoadDescription"|"VisualLoadRequests"|"VisualLoaded"|"VisualStream"|"VisualStreamLoad"|"Voice"|"VoiceTag"|"WalkOn"|"Weapon"|"WeaponAttackRollAbilityOverrideBoost"|"WeaponAttackRollBonusBoost"|"WeaponAttackTypeOverrideBoost"|"WeaponDamageBoost"|"WeaponDamageDieOverrideBoost"|"WeaponDamageResistanceBoost"|"WeaponDamageTypeOverrideBoost"|"WeaponEnchantmentBoost"|"WeaponPropertiesChangedEvent"|"WeaponPropertyBoost"|"WeaponSet"|"WeightBoost"|"WeightCategoryBoost"|"Wielded"|"Wielding"|"WieldingHistory"
 --- @alias ExtResourceManagerType string|"AbilityDefaultValues"|"AbilityDistributionPreset"|"AbilityList"|"ActionResource"|"ActionResourceGroup"|"AnimationSetPriority"|"AnimationShortName"|"AnimationShortNameCategory"|"ApprovalRating"|"AreaLevelOverride"|"AvatarContainerTemplate"|"Background"|"BackgroundGoal"|"CalendarDayRange"|"CampChestTemplate"|"CharacterCreationAccessorySet"|"CharacterCreationAppearanceMaterial"|"CharacterCreationAppearanceVisual"|"CharacterCreationEquipmentIcons"|"CharacterCreationEyeColor"|"CharacterCreationHairColor"|"CharacterCreationIconSettings"|"CharacterCreationMaterialOverride"|"CharacterCreationPassiveAppearance"|"CharacterCreationPreset"|"CharacterCreationSharedVisual"|"CharacterCreationSkinColor"|"CharacterCreationVOLine"|"CinematicArenaFrequencyGroup"|"ClassDescription"|"ColorDefinition"|"CompanionPreset"|"ConditionError"|"CustomDice"|"DLC"|"DeathTypeEffect"|"DifficultyClass"|"DisturbanceProperty"|"EncumbranceType"|"EquipmentDefaultValues"|"EquipmentList"|"EquipmentType"|"ExperienceReward"|"Faction"|"Feat"|"FeatDefaultValues"|"FeatDescription"|"FeatSoundState"|"FixedHotBarSlot"|"Flag"|"FlagSoundState"|"God"|"GoldReward"|"Gossip"|"ItemThrowParams"|"ItemWallTemplate"|"LevelMap"|"LimbsMapping"|"LongRestCost"|"ManagedStatusVFX"|"Max"|"MultiEffectInfo"|"OneTimeReward"|"Origin"|"OriginIntroEntity"|"PassiveDefaultValues"|"PassiveList"|"PassiveVFX"|"PhotoModeBlueprintOverride"|"PhotoModeColourGrading"|"PhotoModeDecorFrame"|"PhotoModeEmoteAnimation"|"PhotoModeEmoteCollection"|"PhotoModeEmotePose"|"PhotoModeFaceExpression"|"PhotoModeFaceExpressionCollection"|"PhotoModeSticker"|"PhotoModeVignette"|"PreparedSpellDefaultValues"|"Progression"|"ProgressionDescription"|"ProjectileDefault"|"Race"|"RandomCastOutcome"|"Ruleset"|"RulesetModifier"|"RulesetModifierOption"|"RulesetSelectionPreset"|"RulesetValue"|"ScriptMaterialParameterOverride"|"ScriptMaterialPresetOverride"|"ShapeshiftRule"|"SkillDefaultValues"|"SkillList"|"SpellDefaultValues"|"SpellList"|"SpellMetaCondition"|"SpellSoundTrajectory"|"StatusSoundState"|"SurfaceCursorMessage"|"TadpolePower"|"Tag"|"TagSoundState"|"TooltipExtraText"|"TooltipUpcastDescription"|"TrajectoryRules"|"TutorialEntries"|"TutorialEvent"|"TutorialModalEntries"|"TutorialUnifiedEntry"|"VFX"|"VisualLocatorAttachment"|"Voice"|"WeaponAnimationSet"|"WeightCategory"
---- @alias ExtSystemType string|"AnimationBlueprint"|"AnimationSet"|"ClientCharacterIconRender"|"ClientCharacterManager"|"ClientEffectHandler"|"ClientEquipmentVisuals"|"ClientVisual"|"ClientVisualsVisibilityState"|"Effect"|"Light"|"Max"|"PickingHelper"|"ServerActionResource"|"ServerAi"|"ServerAttitude"|"ServerBodyType"|"ServerBoost"|"ServerCapabilities"|"ServerCastRequest"|"ServerCombat"|"ServerConcentration"|"ServerDialog"|"ServerDisplayName"|"ServerDualWielding"|"ServerExperience"|"ServerFTBZone"|"ServerFalling"|"ServerGod"|"ServerGravity"|"ServerHit"|"ServerInterruptDecision"|"ServerInterruptManagement"|"ServerInterruptRequests"|"ServerInventoryCanPlace"|"ServerInventoryEquipment"|"ServerInventoryInteraction"|"ServerInventoryInteractionRequest"|"ServerInventoryLocking"|"ServerInventoryManagement"|"ServerInventoryReceivalNotification"|"ServerInventoryStack"|"ServerLeader"|"ServerLongRest"|"ServerMagicPocketsTracking"|"ServerNewInventoryMember"|"ServerParty"|"ServerPartyTeleport"|"ServerPassive"|"ServerPingRequest"|"ServerPlatform"|"ServerProgression"|"ServerRating"|"ServerRestore"|"ServerRoll"|"ServerRollSave"|"ServerShapeshift"|"ServerShortRest"|"ServerSightViewshed"|"ServerSpell"|"ServerSpellCooldown"|"ServerSpellLearning"|"ServerStats"|"ServerStatusRequest"|"ServerSummonDespawn"|"ServerSummonSpawn"|"ServerTemplateChange"|"ServerTradeBuyback"|"ServerTreasureGeneration"|"ServerTurnOrder"|"ServerVisual"|"SoundRouting"|"Visual"|"VisualChange"|"VisualChanged"
+--- @alias ExtSystemType string|"AnimationBlueprint"|"AnimationSet"|"ClientCharacterIconRender"|"ClientCharacterManager"|"ClientEffectHandler"|"ClientEquipmentVisuals"|"ClientVisual"|"ClientVisualsVisibilityState"|"Effect"|"LevelInstanceAttach"|"Light"|"Max"|"PickingHelper"|"ServerActionResource"|"ServerAi"|"ServerAttitude"|"ServerBodyType"|"ServerBoost"|"ServerCapabilities"|"ServerCastRequest"|"ServerCombat"|"ServerConcentration"|"ServerDialog"|"ServerDisplayName"|"ServerDualWielding"|"ServerExperience"|"ServerFTBZone"|"ServerFalling"|"ServerGod"|"ServerGravity"|"ServerHit"|"ServerInterruptDecision"|"ServerInterruptManagement"|"ServerInterruptRequests"|"ServerInventoryCanPlace"|"ServerInventoryEquipment"|"ServerInventoryInteraction"|"ServerInventoryInteractionRequest"|"ServerInventoryLocking"|"ServerInventoryManagement"|"ServerInventoryReceivalNotification"|"ServerInventoryStack"|"ServerLeader"|"ServerLongRest"|"ServerMagicPocketsTracking"|"ServerNewInventoryMember"|"ServerParty"|"ServerPartyTeleport"|"ServerPassive"|"ServerPingRequest"|"ServerPlatform"|"ServerProgression"|"ServerRating"|"ServerRestore"|"ServerRoll"|"ServerRollSave"|"ServerShapeshift"|"ServerShortRest"|"ServerSightViewshed"|"ServerSpell"|"ServerSpellCooldown"|"ServerSpellLearning"|"ServerStats"|"ServerStatusRequest"|"ServerSummonDespawn"|"ServerSummonSpawn"|"ServerTemplateChange"|"ServerTradeBuyback"|"ServerTreasureGeneration"|"ServerTurnOrder"|"ServerVisual"|"SoundRouting"|"Visual"|"VisualChange"|"VisualChanged"
 --- @alias FleeErrorFlags string|"CantMove"|"Condition"|"Downed"|"EnemyTooClose"|"Incapacitated"|"PartyFollower"|"Region"|"Summon"
 --- @alias ForceFunctorAggression string|"Aggressive"|"Friendly"|"Neutral"|"Undefined"
 --- @alias ForceFunctorOrigin string|"OriginToEntity"|"OriginToTarget"|"TargetToEntity"|"Undefined"
@@ -1214,6 +1245,7 @@ Osi = {}
 --- @alias NsMouseButton string|"MouseButton_Left"|"MouseButton_Middle"|"MouseButton_Right"|"MouseButton_XButton1"|"MouseButton_XButton2"
 --- @alias NsMouseButtonState string|"MouseButtonState_Pressed"|"MouseButtonState_Released"
 --- @alias NsOrientation string|"Orientation_Horizontal"|"Orientation_Vertical"
+--- @alias ObjectSize string|"Gargantuan"|"Huge"|"Large"|"Max"|"Medium"|"Small"|"Tiny"
 --- @alias ObscuredState string|"Clear"|"HeavilyObscured"|"LightlyObscured"|"NoOverride"
 --- @alias ObscurityState string|"Clear"|"HeavilyObscured"|"LightlyObscured"
 --- @alias OsiFunctionType string|"Call"|"DB"|"Event"|"Proc"|"Query"
@@ -1225,8 +1257,8 @@ Osi = {}
 --- @alias PathRotateMode string|"Follow"|"Lerp"|"SLerp"|"Static"
 --- @alias PathTrajectoryType string|"Bezier3"|"Bezier4"|"Pathfind"
 --- @alias PathVelocityMode string|"Constant"|"Linear"|"Mapped"
---- @alias PhysicsExtraFlags string|"BlockAoEDamage"|"ShootThroughType0"|"ShootThroughType1"|"ShootThroughType2"|"ShootThroughType3"|"ShootThroughType4"|"ShootThroughType5"
---- @alias PhysicsGroupFlags string|"AttackableWhenClickThrough"|"CanClickThrough"|"CanClimbOn"|"CanSeeThrough"|"CanSeeThrough2"|"CanShineThrough"|"CanShootThrough"|"CanWalkOn"|"Character"|"ClimbableTileConstruction"|"Dead"|"DisableBoundCollision"|"Dragging"|"Fadeable"|"Falling"|"Group01"|"Group02"|"Group04"|"Group08"|"Group100"|"Group10000000"|"Group40"|"Group80"|"IsDecorative"|"Item"|"PlatformOwner"|"PointerBlocker"|"Scenery"|"Terrain"|"TimelinePreview"|"VisibleItem"|"Wadable"
+--- @alias PhysicsExtraFlags string|"BlockAoEDamage"|"ShootThroughGargantuan"|"ShootThroughHuge"|"ShootThroughLarge"|"ShootThroughMedium"|"ShootThroughSmall"|"ShootThroughTiny"
+--- @alias PhysicsGroupFlags string|"AttackableWhenClickThrough"|"CanClickThrough"|"CanClimbOn"|"CanClimbOnStatic"|"CanSeeThrough"|"CanSeeThrough2"|"CanShineThrough"|"CanShootThrough"|"CanWalkOn"|"Character"|"ClimbableTileConstruction"|"Dead"|"DisableBoundCollision"|"Dragging"|"Fadeable"|"Falling"|"Group01"|"Group02"|"Group04"|"Group08"|"Group100"|"Group10000000"|"Group40"|"Group80"|"IsDecorative"|"Item"|"PlatformOwner"|"PointerBlocker"|"Scenery"|"Terrain"|"TimelinePreview"|"VisibleItem"|"Wadable"
 --- @alias PhysicsHitType string|"DoubleSided"|"Normal"
 --- @alias PhysicsType string|"Dynamic"|"Static"
 --- @alias ProficiencyBonusBoostType string|"Ability"|"AllAbilities"|"AllSavingThrows"|"AllSkills"|"AttackRoll"|"AttackTarget"|"SavingThrow"|"Skill"|"SourceDialogue"|"WeaponActionDC"
@@ -1340,7 +1372,7 @@ Osi = {}
 --- @alias VisualAttachmentFlags string|"Armor"|"DoNotUpdate"|"Effect"|"ExcludeFromBounds"|"Hair"|"HasSkeleton"|"Horns"|"InheritAnimations"|"KeepRot"|"KeepScale"|"Overhead"|"Owned"|"SupportsVertexColorMask"|"TextKeyEffect_M"|"Unknown2"|"UseLocalTransform"|"VisualSet"|"Weapon"|"Wings"
 --- @alias VisualCullFlags string|"CullDecal"|"CullNonProxy"|"CullRenderView1"|"CullRenderView2"|"CullScenery"|"CullShadow"|"CullShadow2"|"CullShadow3"|"CullShadow4"|"CullShadowProxy"
 --- @alias VisualFlags string|"AllowReceiveDecalWhenAnimated"|"AllowTPose"|"CastShadow"|"DisableBoundUpdates"|"DisableCulling"|"DisableLOD"|"HasBlueprint"|"HasSkeleton"|"IsEffect"|"IsScenery"|"IsShadowProxy"|"IsWall"|"PlayingAttachedEffects"|"PreparedDestroyed"|"PreparedDestroyed2"|"ReceiveColorFromParent"|"ReceiveDecal"|"Reflecting"|"SeeThrough"|"ShowMesh"
---- @alias VisualLoadFlags string|"AllowReceiveDecalWhenAnimated"|"AllowTPose"|"BlueprintFlag20"|"CastShadow"|"CreateBlueprint"|"IsScenery"|"IsShadowProxy"|"IsWall"|"MoveAttachedEffects"|"PlayEffects"|"ReceiveDecal"|"Reflecting"|"Swap"|"Unknown400"|"UnsimulatedCloth"
+--- @alias VisualLoadFlags string|"AllowReceiveDecalWhenAnimated"|"AllowTPose"|"BlueprintFlag20"|"CastShadow"|"CreateBlueprint"|"IsScenery"|"IsShadowProxy"|"IsWall"|"MoveAttachedEffects"|"PlayEffects"|"ReceiveDecal"|"Reflecting"|"SeeThrough"|"Swap"|"UnsimulatedCloth"
 --- @alias VisualObjectType string|"Beard"|"Ears"|"Head"|"Horns"|"Type01"|"Type02"|"Type04"
 --- @alias VisualPhysicsFlags string|"ClothAttachment"|"ClothObject"
 --- @alias VisualRequestFlags string|"DestroyOnDetach"|"HasCloth"|"HasMaterialParameters"|"HasSpring"|"Unknown2"|"Unknown8"
@@ -1946,6 +1978,7 @@ Osi = {}
 
 --- @class AnimationReceivedRootMotionEvent
 --- @field Entity EntityHandle
+--- @field LocalPose number[]
 
 
 --- @class AnimationReceivedTextKeyEvent
@@ -3686,7 +3719,42 @@ Osi = {}
 --- @field field_10 uint8
 
 
+--- @class FadeChildrenAddedOneFrameComponent:BaseComponent
+--- @field Children Guid[]
+
+
+--- @class FadeChildrenRemovedOneFrameComponent:BaseComponent
+--- @field Children Guid[]
+
+
+--- @class FadeGroupComponent:BaseComponent
+--- @field Entities Set_EntityHandle
+--- @field Entities2 Set_EntityHandle
+--- @field FadeGroup FixedString
+
+
+--- @class FadeGroupMappingSingletonComponent:BaseComponent
+--- @field Mappings table<FixedString, EntityHandle>
+
+
 --- @class FadeTrigger:AreaTrigger
+
+
+--- @class FadeableObstructionComponent:BaseComponent
+--- @field FadeChildren Set_Guid
+--- @field FadeGroup FixedString
+--- @field HierarchyOnlyFade boolean
+--- @field OnlyFadeChildrenFromGroupChanged boolean
+--- @field Uuid Guid
+
+
+--- @class FadeableObstructionHierarchySingletonComponent:BaseComponent
+--- @field field_0 table<EntityHandle, table<FixedString, Set_EntityHandle>>
+--- @field field_40 table<Guid, EntityHandle[]>
+
+
+--- @class FadeableObstructionMappingSingletonComponent:BaseComponent
+--- @field Mappings table<Guid, EntityHandle>
 
 
 --- @class FallDamageMultiplierBoostComponent:BaseComponent
@@ -4433,6 +4501,10 @@ Osi = {}
 --- @field LevelName FixedString
 --- @field RootLevel EntityHandle
 --- @field field_0 EntityHandle
+
+
+--- @class LevelInstanceAttachRequestSystem:BaseSystem
+--- @field RequestLevelSwap fun(self:LevelInstanceAttachRequestSystem, a1:EntityHandle, a2:EntityHandle)
 
 
 --- @class LevelInstanceComponent:BaseComponent
@@ -5530,15 +5602,43 @@ Osi = {}
 
 
 --- @class PhysicsComponent:BaseComponent
---- @field CollidesWith uint32
---- @field ExtraFlags uint32
+--- @field CollidesWith PhysicsGroupFlags
+--- @field ExtraFlags PhysicsExtraFlags
 --- @field HasPhysics boolean
 --- @field IsClustered boolean
 --- @field Physics PhxPhysicsObject
---- @field PhysicsGroup uint32
+--- @field PhysicsGroup PhysicsGroupFlags
 --- @field field_14 boolean
 --- @field field_15 uint8
 --- @field field_16 boolean
+
+
+--- @class PhysicsLoadComponent:BaseComponent
+--- @field Priority AioPriority
+--- @field field_10 int32
+
+
+--- @class PhysicsLoadedComponent:BaseComponent
+
+
+--- @class PhysicsLoaderRegisteredComponent:BaseComponent
+--- @field field_0 int32
+
+
+--- @class PhysicsPathLoadDesciptionComponent:BaseComponent
+--- @field Path Path
+--- @field field_20 uint32
+
+
+--- @class PhysicsReloadOneFrameComponent:BaseComponent
+
+
+--- @class PhysicsResourceLoadDesciptionComponent:BaseComponent
+--- @field PhysicsTemplate FixedString
+--- @field field_4 boolean
+
+
+--- @class PhysicsStreamLoadComponent:BaseComponent
 
 
 --- @class PickingStateComponent:BaseComponent
@@ -7164,7 +7264,7 @@ Osi = {}
 
 --- @class VisualLoadDesciptionComponent:BaseComponent
 --- @field Flags VisualLoadFlags
---- @field RenderChannel uint8
+--- @field RenderChannel RenderChannel
 --- @field VisualTemplate FixedString
 
 
@@ -7206,6 +7306,13 @@ Osi = {}
 --- @class VisualSetSlotsWrapper
 --- @field Managed boolean
 --- @field Slots VisualSetSlots
+
+
+--- @class VisualStreamComponent:BaseComponent
+--- @field IsHLOD boolean
+--- @field field_0 int32
+--- @field field_4 int32
+--- @field field_8 number
 
 
 --- @class VisualStreamLoadComponent:BaseComponent
@@ -9553,6 +9660,7 @@ Osi = {}
 --- @field OriginThemeAddInstrument boolean
 --- @field ParentNode DlgDialogNode
 --- @field SoundEvent string
+--- @field SoundPerMusicInstrument string[]
 
 
 --- @class DlgDialogInstance
@@ -10663,7 +10771,7 @@ Osi = {}
 --- @field Sound EclSceneryInitSound
 --- @field Uuid Guid
 --- @field Visual FixedString
---- @field VisualLoadFlags uint16
+--- @field VisualLoadFlags VisualLoadFlags
 
 
 --- @class EclSceneryInitSound
@@ -18458,6 +18566,8 @@ Osi = {}
 --- @class PathBezier3Trajectory
 --- @field DistanceMax number
 --- @field DistanceMin number
+--- @field OffsetMax number[]
+--- @field OffsetMin number[]
 --- @field ShiftMax number
 --- @field ShiftMin number
 
@@ -18465,6 +18575,10 @@ Osi = {}
 --- @class PathBezier4Trajectory
 --- @field DistanceMax number
 --- @field DistanceMin number
+--- @field OffsetAMax number[]
+--- @field OffsetAMin number[]
+--- @field OffsetBMax number[]
+--- @field OffsetBMin number[]
 --- @field ShiftAMax number
 --- @field ShiftAMin number
 --- @field ShiftBMax number
@@ -23669,16 +23783,16 @@ Ext_Enums.AiBaseFlags = {
 	ShootBlock = 8,
 	WalkBlockCharacter = 16,
 	ShootBlockCharacter = 32,
-	SubgridEdge = 64,
 	Climbable = 64,
+	SubgridEdge = 64,
 	WalkBlockItem = 128,
 	ShootBlockItem = 256,
 	GroundSurfaceBlock = 512,
 	CloudSurfaceBlock = 1024,
 	Slope = 2048,
 	UnknownBlock1 = 2048,
-	UnknownBlock2 = 4096,
 	SlopeBlock = 4096,
+	UnknownBlock2 = 4096,
 	PaintedBlock = 8192,
 	UnknownBlock3 = 8192,
 	StaticBlock = 16384,
@@ -23698,16 +23812,16 @@ Ext_Enums.AiBaseFlags = {
 	[8] = "ShootBlock",
 	[16] = "WalkBlockCharacter",
 	[32] = "ShootBlockCharacter",
-	[64] = "SubgridEdge",
 	[64] = "Climbable",
+	[64] = "SubgridEdge",
 	[128] = "WalkBlockItem",
 	[256] = "ShootBlockItem",
 	[512] = "GroundSurfaceBlock",
 	[1024] = "CloudSurfaceBlock",
 	[2048] = "Slope",
 	[2048] = "UnknownBlock1",
-	[4096] = "UnknownBlock2",
 	[4096] = "SlopeBlock",
+	[4096] = "UnknownBlock2",
 	[8192] = "PaintedBlock",
 	[8192] = "UnknownBlock3",
 	[16384] = "StaticBlock",
@@ -25966,14 +26080,12 @@ Ext_Enums.ExtComponentType = {
 	CanTravel,
 	Movement,
 	ObjectInteraction,
-	StaticPhysics,
 	Pathing,
 	PathingDistanceChanged,
 	Steering,
 	CanDeflectProjectiles,
 	ActiveSkeletonSlots,
 	Net,
-	Physics,
 	CharacterCreationAppearance,
 	Active,
 	Repose,
@@ -25989,15 +26101,32 @@ Ext_Enums.ExtComponentType = {
 	Sound,
 	PauseExcluded,
 	Pause,
+	Physics,
+	StaticPhysics,
+	PhysicsLoad,
+	PhysicsStreamLoad,
+	PhysicsLoaderRegistered,
+	PhysicsPathLoadDesciption,
+	PhysicsResourceLoadDesciption,
+	PhysicsLoaded,
+	PhysicsReloadOneFrame,
 	Visual,
 	VisualLoadDescription,
 	VisualLoad,
+	VisualStream,
 	VisualStreamLoad,
 	VisualLoadRequests,
 	VisualChangeRequest,
 	VisualAttachRequest,
 	VisualLoaded,
 	VisualChangedEvent,
+	FadeChildrenAdded,
+	FadeChildrenRemoved,
+	FadeableObstructionHierarchy,
+	FadeGroup,
+	FadeGroupMapping,
+	FadeableObstruction,
+	FadeableObstructionMapping,
 	BackgroundGoals,
 	CalendarDaysPassed,
 	CalendarStartingDate,
@@ -26348,6 +26477,7 @@ Ext_Enums.ExtSystemType = {
 	VisualChanged,
 	Visual,
 	Light,
+	LevelInstanceAttach,
 	ServerShapeshift,
 	ServerCastRequest,
 	ServerSpell,
@@ -29645,6 +29775,24 @@ Ext_Enums.NsOrientation = {
 	[1] = "Orientation_Vertical",
 }
 
+--- @enum ObjectSize
+Ext_Enums.ObjectSize = {
+	Tiny = 0,
+	Small = 1,
+	Medium = 2,
+	Large = 3,
+	Huge = 4,
+	Gargantuan = 5,
+	Max = 6,
+	[0] = "Tiny",
+	[1] = "Small",
+	[2] = "Medium",
+	[3] = "Large",
+	[4] = "Huge",
+	[5] = "Gargantuan",
+	[6] = "Max",
+}
+
 --- @enum ObscuredState
 Ext_Enums.ObscuredState = {
 	NoOverride = 0,
@@ -29865,19 +30013,19 @@ Ext_Enums.PathVelocityMode = {
 
 --- @enum PhysicsExtraFlags
 Ext_Enums.PhysicsExtraFlags = {
-	ShootThroughType0 = 1,
-	ShootThroughType1 = 2,
-	ShootThroughType2 = 4,
-	ShootThroughType3 = 8,
-	ShootThroughType4 = 16,
-	ShootThroughType5 = 32,
+	ShootThroughGargantuan = 1,
+	ShootThroughHuge = 2,
+	ShootThroughLarge = 4,
+	ShootThroughMedium = 8,
+	ShootThroughSmall = 16,
+	ShootThroughTiny = 32,
 	BlockAoEDamage = 64,
-	[1] = "ShootThroughType0",
-	[2] = "ShootThroughType1",
-	[4] = "ShootThroughType2",
-	[8] = "ShootThroughType3",
-	[16] = "ShootThroughType4",
-	[32] = "ShootThroughType5",
+	[1] = "ShootThroughGargantuan",
+	[2] = "ShootThroughHuge",
+	[4] = "ShootThroughLarge",
+	[8] = "ShootThroughMedium",
+	[16] = "ShootThroughSmall",
+	[32] = "ShootThroughTiny",
 	[64] = "BlockAoEDamage",
 }
 
@@ -29907,6 +30055,7 @@ Ext_Enums.PhysicsGroupFlags = {
 	IsDecorative = 2097152,
 	CanShootThrough = 4194304,
 	CanSeeThrough2 = 8388608,
+	CanClimbOnStatic = 16777216,
 	ClimbableTileConstruction = 16777216,
 	DisableBoundCollision = 33554432,
 	PlatformOwner = 67108864,
@@ -29939,6 +30088,7 @@ Ext_Enums.PhysicsGroupFlags = {
 	[2097152] = "IsDecorative",
 	[4194304] = "CanShootThrough",
 	[8388608] = "CanSeeThrough2",
+	[16777216] = "CanClimbOnStatic",
 	[16777216] = "ClimbableTileConstruction",
 	[33554432] = "DisableBoundCollision",
 	[67108864] = "PlatformOwner",
@@ -31783,20 +31933,20 @@ Ext_Enums.ShapeshiftSpellSource = {
 
 --- @enum ShootThroughType
 Ext_Enums.ShootThroughType = {
-	AllPassesThrough = 0,
-	GargantuanPassesThrough = 1,
-	HugePassesThrough = 2,
-	LargePassesThrough = 3,
-	MediumPassesThrough = 4,
-	SmallPassesThrough = 5,
-	TinyPassesThrough = 6,
-	[0] = "AllPassesThrough",
-	[1] = "GargantuanPassesThrough",
-	[2] = "HugePassesThrough",
-	[3] = "LargePassesThrough",
-	[4] = "MediumPassesThrough",
-	[5] = "SmallPassesThrough",
-	[6] = "TinyPassesThrough",
+	GargantuanPassesThrough = 0,
+	HugePassesThrough = 1,
+	LargePassesThrough = 2,
+	MediumPassesThrough = 3,
+	SmallPassesThrough = 4,
+	TinyPassesThrough = 5,
+	AllPassesThrough = 6,
+	[0] = "GargantuanPassesThrough",
+	[1] = "HugePassesThrough",
+	[2] = "LargePassesThrough",
+	[3] = "MediumPassesThrough",
+	[4] = "SmallPassesThrough",
+	[5] = "TinyPassesThrough",
+	[6] = "AllPassesThrough",
 }
 
 --- @enum SkillId
@@ -32341,10 +32491,10 @@ Ext_Enums.SpellSourceType = {
 	SpellSet2 = 5,
 	Template = 5,
 	SpellSet = 6,
-	WeaponSpell = 7,
 	WeaponAttack = 7,
-	UnarmedAttack = 8,
+	WeaponSpell = 7,
 	Guaranteed = 8,
+	UnarmedAttack = 8,
 	Osiris = 9,
 	Anubis = 10,
 	Behavior = 11,
@@ -32360,8 +32510,8 @@ Ext_Enums.SpellSourceType = {
 	Learned = 18,
 	Boost2 = 19,
 	Feat = 19,
-	Progression = 20,
 	BaseStats = 20,
+	Progression = 20,
 	RandomCast = 21,
 	TadpoleTree = 22,
 	Sentinel = 23,
@@ -32373,10 +32523,10 @@ Ext_Enums.SpellSourceType = {
 	[5] = "SpellSet2",
 	[5] = "Template",
 	[6] = "SpellSet",
-	[7] = "WeaponSpell",
 	[7] = "WeaponAttack",
-	[8] = "UnarmedAttack",
+	[7] = "WeaponSpell",
 	[8] = "Guaranteed",
+	[8] = "UnarmedAttack",
 	[9] = "Osiris",
 	[10] = "Anubis",
 	[11] = "Behavior",
@@ -32392,8 +32542,8 @@ Ext_Enums.SpellSourceType = {
 	[18] = "Learned",
 	[19] = "Boost2",
 	[19] = "Feat",
-	[20] = "Progression",
 	[20] = "BaseStats",
+	[20] = "Progression",
 	[21] = "RandomCast",
 	[22] = "TadpoleTree",
 	[23] = "Sentinel",
@@ -33821,7 +33971,7 @@ Ext_Enums.VisualLoadFlags = {
 	CreateBlueprint = 128,
 	UnsimulatedCloth = 256,
 	BlueprintFlag20 = 512,
-	Unknown400 = 1024,
+	SeeThrough = 1024,
 	IsScenery = 2048,
 	IsWall = 4096,
 	Swap = 8192,
@@ -33836,7 +33986,7 @@ Ext_Enums.VisualLoadFlags = {
 	[128] = "CreateBlueprint",
 	[256] = "UnsimulatedCloth",
 	[512] = "BlueprintFlag20",
-	[1024] = "Unknown400",
+	[1024] = "SeeThrough",
 	[2048] = "IsScenery",
 	[4096] = "IsWall",
 	[8192] = "Swap",
@@ -33975,77 +34125,78 @@ Ext_Enums.WeaponType = {
 
 
 --- @class Ext_System
---- @field ServerBodyType EsvBodyTypeSystem
---- @field ServerStatusRequest EsvStatusRequestSystem
---- @field ServerHit EsvHitHitSystem
---- @field ServerTreasureGeneration EsvInventoryTreasureGenerationSystem
---- @field ClientCharacterManager EclCharacterManager
---- @field ServerRoll EsvRollRollSystem
---- @field ServerInterruptManagement EsvInterruptManagementSystem
---- @field ServerTradeBuyback EsvInventoryTradeBuybackSystem
---- @field ServerActionResource EsvActionResourceSystem
---- @field ServerTemplateChange EsvTemplatesChangeSystem
---- @field ServerAttitude EsvAttitudeUpdateSystem
---- @field VisualChanged VisualChangedSystem
---- @field ServerLongRest EsvRestLongRestSystem
---- @field ServerRestore EsvRestoreSystem
---- @field ServerMagicPocketsTracking EsvInventoryMagicPocketsTrackingSystem
---- @field ServerSummonSpawn EsvSummonSpawnSystem
---- @field ServerPartyTeleport EsvPartyTeleportSystem
---- @field ServerInterruptDecision EsvInterruptDecisionSystem
---- @field ServerCastRequest EsvSpellCastCastRequestSystem
---- @field ServerInventoryManagement EsvInventoryManagementSystem
---- @field ServerSpell EsvSpellSpellSystem
---- @field ServerRating EsvApprovalRatingSystem
---- @field ServerRollSave EsvRollStreamSaveSystem
---- @field ServerCombat EsvCombatSystem
---- @field Light LightSystem
---- @field ServerGod EsvGodSystem
---- @field ServerShortRest EsvRestShortRestSystem
---- @field ServerAi EsvAiHelpers
---- @field ServerPlatform EsvPlatformSystem
---- @field ServerFalling EsvFallingSystem
---- @field ServerInventoryReceivalNotification EsvInventoryEntityReceivalNotificationSystem
---- @field ClientVisual EclVisualSystem
---- @field ClientEffectHandler EclEffectHandlerSystem
---- @field ServerDualWielding EsvDualWieldingSystem
---- @field ServerInventoryInteraction EsvInventoryInteractionSystem
---- @field ServerSummonDespawn EsvSummonDespawnSystem
---- @field ServerPingRequest EsvPingRequestSystem
---- @field ServerFTBZone EsvFtbZoneSystem
---- @field ServerSightViewshed EsvSightViewshedSystem
---- @field AnimationSet AnimationSetSystem
---- @field SoundRouting SoundRoutingSystem
---- @field ServerShapeshift EsvShapeshiftSystem
---- @field ServerExperience EsvExperienceSystem
---- @field ServerProgression EsvProgressionManagementSystem
---- @field ClientEquipmentVisuals EclEquipmentVisualsSystem
---- @field Effect EffectsManager
---- @field ClientVisualsVisibilityState EclEquipmentVisualsVisibilityStateSystem
---- @field ServerParty EsvPartyPartySystem
---- @field ServerNewInventoryMember EsvInventoryNewInventoryMemberSystem
---- @field ClientCharacterIconRender EclCharacterIconRenderSystem
 --- @field AnimationBlueprint AnimationBlueprintSystem
---- @field ServerStats EsvStatsSystem
---- @field ServerInventoryEquipment EsvInventoryEquipmentSystem
---- @field ServerCapabilities EsvCapabilitiesSystem
---- @field ServerInterruptRequests EsvInterruptRequestsSystem
---- @field ServerInventoryStack EsvInventoryStackSystem
---- @field ServerVisual EsvVisualSystem
---- @field ServerConcentration EsvConcentrationConcentrationSystem
---- @field ServerSpellLearning EsvSpellLearningSystem
---- @field Visual VisualSystem
---- @field ServerInventoryInteractionRequest EsvInventoryInteractionRequestSystem
---- @field VisualChange VisualChangeRequestSystem
---- @field ServerInventoryCanPlace EsvInventoryCanPlaceSystem
---- @field ServerTurnOrder EsvCombatTurnOrderSystem
---- @field ServerDisplayName EsvDisplayNameSystem
+--- @field AnimationSet AnimationSetSystem
+--- @field ClientCharacterIconRender EclCharacterIconRenderSystem
+--- @field ClientCharacterManager EclCharacterManager
+--- @field ClientEffectHandler EclEffectHandlerSystem
+--- @field ClientEquipmentVisuals EclEquipmentVisualsSystem
+--- @field ClientVisual EclVisualSystem
+--- @field ClientVisualsVisibilityState EclEquipmentVisualsVisibilityStateSystem
+--- @field Effect EffectsManager
+--- @field LevelInstanceAttach LevelInstanceAttachRequestSystem
+--- @field Light LightSystem
+--- @field ServerActionResource EsvActionResourceSystem
+--- @field ServerAi EsvAiHelpers
+--- @field ServerAttitude EsvAttitudeUpdateSystem
+--- @field ServerBodyType EsvBodyTypeSystem
 --- @field ServerBoost EsvBoostBoostSystem
---- @field ServerInventoryLocking EsvInventoryLockingSystem
+--- @field ServerCapabilities EsvCapabilitiesSystem
+--- @field ServerCastRequest EsvSpellCastCastRequestSystem
+--- @field ServerCombat EsvCombatSystem
+--- @field ServerConcentration EsvConcentrationConcentrationSystem
+--- @field ServerDisplayName EsvDisplayNameSystem
+--- @field ServerDualWielding EsvDualWieldingSystem
+--- @field ServerExperience EsvExperienceSystem
+--- @field ServerFTBZone EsvFtbZoneSystem
+--- @field ServerFalling EsvFallingSystem
+--- @field ServerGod EsvGodSystem
 --- @field ServerGravity EsvGravitySystem
---- @field ServerPassive EsvPassivePassiveSystem
---- @field ServerSpellCooldown EsvSpellSpellCooldownSystem
+--- @field ServerHit EsvHitHitSystem
+--- @field ServerInterruptDecision EsvInterruptDecisionSystem
+--- @field ServerInterruptManagement EsvInterruptManagementSystem
+--- @field ServerInterruptRequests EsvInterruptRequestsSystem
+--- @field ServerInventoryCanPlace EsvInventoryCanPlaceSystem
+--- @field ServerInventoryEquipment EsvInventoryEquipmentSystem
+--- @field ServerInventoryInteraction EsvInventoryInteractionSystem
+--- @field ServerInventoryInteractionRequest EsvInventoryInteractionRequestSystem
+--- @field ServerInventoryLocking EsvInventoryLockingSystem
+--- @field ServerInventoryManagement EsvInventoryManagementSystem
+--- @field ServerInventoryReceivalNotification EsvInventoryEntityReceivalNotificationSystem
+--- @field ServerInventoryStack EsvInventoryStackSystem
 --- @field ServerLeader EsvLeaderSystem
+--- @field ServerLongRest EsvRestLongRestSystem
+--- @field ServerMagicPocketsTracking EsvInventoryMagicPocketsTrackingSystem
+--- @field ServerNewInventoryMember EsvInventoryNewInventoryMemberSystem
+--- @field ServerParty EsvPartyPartySystem
+--- @field ServerPartyTeleport EsvPartyTeleportSystem
+--- @field ServerPassive EsvPassivePassiveSystem
+--- @field ServerPingRequest EsvPingRequestSystem
+--- @field ServerPlatform EsvPlatformSystem
+--- @field ServerProgression EsvProgressionManagementSystem
+--- @field ServerRating EsvApprovalRatingSystem
+--- @field ServerRestore EsvRestoreSystem
+--- @field ServerRoll EsvRollRollSystem
+--- @field ServerRollSave EsvRollStreamSaveSystem
+--- @field ServerShapeshift EsvShapeshiftSystem
+--- @field ServerShortRest EsvRestShortRestSystem
+--- @field ServerSightViewshed EsvSightViewshedSystem
+--- @field ServerSpell EsvSpellSpellSystem
+--- @field ServerSpellCooldown EsvSpellSpellCooldownSystem
+--- @field ServerSpellLearning EsvSpellLearningSystem
+--- @field ServerStats EsvStatsSystem
+--- @field ServerStatusRequest EsvStatusRequestSystem
+--- @field ServerSummonDespawn EsvSummonDespawnSystem
+--- @field ServerSummonSpawn EsvSummonSpawnSystem
+--- @field ServerTemplateChange EsvTemplatesChangeSystem
+--- @field ServerTradeBuyback EsvInventoryTradeBuybackSystem
+--- @field ServerTreasureGeneration EsvInventoryTreasureGenerationSystem
+--- @field ServerTurnOrder EsvCombatTurnOrderSystem
+--- @field ServerVisual EsvVisualSystem
+--- @field SoundRouting SoundRoutingSystem
+--- @field Visual VisualSystem
+--- @field VisualChange VisualChangeRequestSystem
+--- @field VisualChanged VisualChangedSystem
 
 --- @class Ext
 --- @field Audio Ext_ClientAudio
@@ -34212,15 +34363,15 @@ _P = Ext.Utils.Print
 
 --- Console window helper to get current player character 
 --- This is the host on the server, or the hotbar character on the client  
---- @return EsvCharacter|EclCharacter
+--- @return EntityHandle
 _C = function() end
 
 --- Console window helper to get character being examined on the client-side  
---- @return EclCharacter
+--- @return EntityHandle
 _E = function() end
 
 --- Console window helper to get the host's equipped weapon on the server-side  
---- @return EsvItem
+--- @return EntityHandle
 _W = function() end
 
 --- Helper for dumping variables to the console  
