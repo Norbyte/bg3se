@@ -16,6 +16,7 @@ BEGIN_ENUM(ExtSystemType, uint32_t)
     E(LevelInstanceMove)
     E(LevelInstanceAttach)
     E(LevelInstanceLoad)
+    E(InstancingRequest)
 
     E(ServerShapeshift)
     E(ServerCastRequest)
@@ -1082,6 +1083,16 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
     E(VisualAttachRequest)
     E(VisualLoaded)
     E(VisualChangedEvent)
+
+    // Instancing
+    E(InstancingGroup)
+    E(InstancingGroupVisual)
+    E(InstancingBatch)
+    E(InstancingGroupModifyOneFrame)
+    E(InstancingBatchModifyOneFrame)
+    E(InstancingBatchInitialized)
+    E(InstancingGroupVisualReloadOneFrame)
+    E(InstancingBatchVisualReloadedOneFrame)
 
     // Fade
     E(FadeChildrenAdded)
