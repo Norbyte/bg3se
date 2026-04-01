@@ -123,6 +123,7 @@ namespace bg3se::lua
     inline LuaSerializer& serialize(LuaSerializer& s, ComponentHandle& v) { return s.Visit(v); }
     inline LuaSerializer& serialize(LuaSerializer& s, EntityHandle& v) { return s.Visit(v); }
     inline LuaSerializer& serialize(LuaSerializer& s, glm::ivec2& v) { return s.Visit(v); }
+    inline LuaSerializer& serialize(LuaSerializer& s, glm::ivec3& v) { return s.Visit(v); }
     inline LuaSerializer& serialize(LuaSerializer& s, glm::ivec4& v) { return s.Visit(v); }
     inline LuaSerializer& serialize(LuaSerializer& s, glm::vec2& v) { return s.Visit(v); }
     inline LuaSerializer& serialize(LuaSerializer& s, glm::vec3& v) { return s.Visit(v); }

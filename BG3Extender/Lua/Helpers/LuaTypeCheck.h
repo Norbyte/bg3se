@@ -155,6 +155,11 @@ inline bool do_typecheck(lua_State* L, int index, Overload<glm::ivec2>)
     return do_typecheck_array<int32_t, 2>(L, index);
 }
 
+inline bool do_typecheck(lua_State* L, int index, Overload<glm::ivec3>)
+{    
+    return do_typecheck_array<int32_t, 3>(L, index);
+}
+
 inline bool do_typecheck(lua_State* L, int index, Overload<glm::i16vec2>)
 {
     return do_typecheck_array<int32_t, 2>(L, index);

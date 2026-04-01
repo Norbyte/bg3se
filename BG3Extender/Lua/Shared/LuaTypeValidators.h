@@ -75,6 +75,7 @@ inline bool Validate(double const*, Overload<double>)
 
 // No validation possible for vector types
 inline bool Validate(glm::ivec2 const* b, Overload<glm::ivec2>) {return true; }
+inline bool Validate(glm::ivec3 const* b, Overload<glm::ivec3>) {return true; }
 inline bool Validate(glm::ivec4 const* b, Overload<glm::ivec4>) { return true; }
 inline bool Validate(glm::i16vec2 const* b, Overload<glm::i16vec2>) { return true; }
 

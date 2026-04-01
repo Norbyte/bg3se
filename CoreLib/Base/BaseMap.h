@@ -42,6 +42,12 @@ inline uint64_t HashMapHash<UserId>(UserId const& v)
     return v.Id;
 }
 
+template <>
+inline uint64_t HashMapHash<glm::ivec3>(glm::ivec3 const& v)
+{
+    return (uint64_t)(v.x ^ v.y ^ v.z);
+}
+
 template <class T>
 uint32_t GetHashSizeFor(std::span<T const> const& vals, uint32_t maxCollisions)
 {

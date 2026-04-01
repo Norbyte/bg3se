@@ -31,6 +31,7 @@ BY_VAL(NetId);
 BY_VAL(UserId);
 BY_VAL(Version);
 BY_VAL(glm::ivec2);
+BY_VAL(glm::ivec3);
 BY_VAL(glm::ivec4);
 BY_VAL(glm::vec2);
 BY_VAL(glm::vec3);

@@ -189,6 +189,17 @@ inline glm::ivec2 do_get(lua_State* L, int index, Overload<glm::ivec2>)
     return val;    
 }
 
+inline glm::ivec3 do_get(lua_State* L, int index, Overload<glm::ivec3>)
+{    
+    auto i = lua_absindex(L, index);
+    glm::ivec3 val;
+    luaL_checktype(L, index, LUA_TTABLE);
+    val.x = gettable<int32_t>(L, 1, i);
+    val.y = gettable<int32_t>(L, 2, i);
+    val.z = gettable<int32_t>(L, 3, i);
+    return val;    
+}
+
 inline glm::ivec4 do_get(lua_State* L, int index, Overload<glm::ivec4>)
 {    
     auto i = lua_absindex(L, index);

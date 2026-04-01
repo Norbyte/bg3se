@@ -140,6 +140,7 @@ inline void push(lua_State* L, UserId const& v)
 }
 
 void push(lua_State* L, glm::ivec2 const& v);
+void push(lua_State* L, glm::ivec3 const& v);
 void push(lua_State* L, glm::ivec4 const& v);
 void push(lua_State* L, glm::vec2 const& v);
 void push(lua_State* L, glm::vec3 const& v);
@@ -270,6 +271,14 @@ inline void push(lua_State* L, glm::ivec2 const& v)
     lua_createtable(L, 2, 0);
     settable(L, 1, v.x);
     settable(L, 2, v.y);
+}
+
+inline void push(lua_State* L, glm::ivec3 const& v)
+{
+    lua_createtable(L, 3, 0);
+    settable(L, 1, v.x);
+    settable(L, 2, v.y);
+    settable(L, 3, v.z);
 }
 
 inline void push(lua_State* L, glm::ivec4 const& v)
