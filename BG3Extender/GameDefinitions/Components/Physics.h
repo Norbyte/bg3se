@@ -51,9 +51,9 @@ struct PhysicsComponent : public BaseComponent
     DEFINE_COMPONENT(Physics, "ls::PhysicsComponent")
 
     phx::PhysicsObject* Physics;
-    uint32_t PhysicsGroup;
-    uint32_t CollidesWith;
-    uint32_t ExtraFlags;
+    PhysicsGroupFlags PhysicsGroup;
+    PhysicsGroupFlags CollidesWith;
+    PhysicsExtraFlags ExtraFlags;
     [[bg3::legacy(field_14)]] bool HasPhysics;
     uint8_t field_15;
     [[bg3::legacy(field_16)]] bool IsClustered;
