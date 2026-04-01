@@ -177,6 +177,8 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="GameDefinitions\Components\Death.h" />
     <ClInclude Include="GameDefinitions\Components\Dummy.h" />
     <ClInclude Include="GameDefinitions\Components\Effect.h" />
+    <ClInclude Include="GameDefinitions\Components\Level.h" />
+    <ClInclude Include="GameDefinitions\Components\Physics.h" />
     <ClInclude Include="GameDefinitions\Components\Sound.h" />
     <ClInclude Include="GameDefinitions\Components\SpellCast.h" />
     <ClInclude Include="GameDefinitions\Components\SpellCastShared.h" />
@@ -452,6 +454,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="GameDefinitions\Components\AllSystemTypes.inl" />
     <None Include="GameDefinitions\Components\Effect.inl" />
     <None Include="GameDefinitions\Components\ExposedSystemTypes.inl" />
+    <None Include="GameDefinitions\Components\Level.inl" />
     <None Include="GameDefinitions\Components\Spell.inl" />
     <None Include="GameDefinitions\Controllers\Action.inl" />
     <None Include="GameDefinitions\Controllers\Behaviour.inl" />
