@@ -2,16 +2,6 @@
 
 #include <GameDefinitions/CharacterCreation.h>
 
-BEGIN_NS(aio)
-
-struct Priority
-{
-    int field_0{ 1 };
-    float field_4{ .0f };
-};
-
-END_NS()
-
 BEGIN_SE()
 
 struct CustomIconComponent : public BaseComponent
@@ -414,7 +404,7 @@ struct VisualLoadDesciptionComponent : public BaseComponent
 
     FixedString VisualTemplate;
     VisualLoadFlags Flags;
-    uint8_t RenderChannel;
+    RenderChannel RenderChannel;
 };
 
 struct VisualLoadRequestsSingletonComponent : public BaseComponent

@@ -252,5 +252,4 @@ struct [[bg3::hidden]] PhysXScene : public PhysicsScene
     uint8_t field_270;
 };
 
-
 END_NS()

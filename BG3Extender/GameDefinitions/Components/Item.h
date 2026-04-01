@@ -177,7 +177,7 @@ struct Scenery : public BaseProxyComponent
     Guid Uuid;
     SceneryInitSound* Sound;
     FixedString Visual;
-    uint16_t VisualLoadFlags;
+    VisualLoadFlags VisualLoadFlags;
     // Likely unused
     [[bg3::hidden]] uint64_t field_60;
 };

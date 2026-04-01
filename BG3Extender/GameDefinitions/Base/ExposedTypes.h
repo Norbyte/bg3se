@@ -210,3 +210,13 @@ struct TargetInfo
 };
 
 END_NS()
+
+BEGIN_NS(aio)
+
+struct Priority
+{
+    int field_0{ 1 };
+    float field_4{ .0f };
+};
+
+END_NS()
