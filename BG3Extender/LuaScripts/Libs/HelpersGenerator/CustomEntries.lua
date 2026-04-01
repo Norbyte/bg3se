@@ -8,6 +8,13 @@ local SubscribableEventType = [[--- @class SubscribableEvent<T>:{ (Subscribe:fun
 ]]
 return {
     Specific = {SubscribableEventType = SubscribableEventType},
+
+    Builtins = {
+[[
+--- @alias FunctionRef function
+]]
+    },
+
     Misc = {
 [[--#region Extender Functions / Globals
 
@@ -43,15 +50,15 @@ _P = Ext.Utils.Print
 
 --- Console window helper to get current player character 
 --- This is the host on the server, or the hotbar character on the client  
---- @return EsvCharacter|EclCharacter
+--- @return EntityHandle
 _C = function() end
 
 --- Console window helper to get character being examined on the client-side  
---- @return EclCharacter
+--- @return EntityHandle
 _E = function() end
 
 --- Console window helper to get the host's equipped weapon on the server-side  
---- @return EsvItem
+--- @return EntityHandle
 _W = function() end
 
 --- Helper for dumping variables to the console  

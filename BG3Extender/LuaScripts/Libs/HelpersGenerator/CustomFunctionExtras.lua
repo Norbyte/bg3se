@@ -2,7 +2,7 @@
 
 return {
     ["Ext_Stats.Get"] = {
-        efore = "--- @return StatEntryType"
+        Before = "--- @return StatEntryType"
     },
     ["Ext_ServerOsiris.RegisterListener"] = {
         Replace = [[--- @param name string 
