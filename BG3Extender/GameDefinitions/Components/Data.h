@@ -143,7 +143,7 @@ struct ProficiencyGroupComponent : public BaseComponent
 
 struct AreaLevelComponent : public BaseComponent
 {
-    DEFINE_COMPONENT(AreaLevel, "eoc::stats::AreaLevel")
+    DEFINE_COMPONENT(AreaLevel, "eoc::stats::AreaLevelComponent")
 
     int32_t Level;
 };

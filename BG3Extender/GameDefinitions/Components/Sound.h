@@ -65,9 +65,15 @@ struct SoundOcclusionDataComponent : public BaseComponent
     uint8_t field_14;
 };
 
+struct SoundUsesTransformComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(SoundUsesTransform, "ls::SoundUsesTransformComponent")
+
+    glm::vec3 Transform;
+};
+
 
 DEFINE_TAG_COMPONENT(ls, SoundActivatedComponent, SoundActivated)
-DEFINE_TAG_COMPONENT(ls, SoundUsesTransformComponent, SoundUsesTransform)
 
 struct SoundExternalPath
 {

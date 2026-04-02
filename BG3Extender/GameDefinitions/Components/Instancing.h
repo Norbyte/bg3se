@@ -74,7 +74,8 @@ struct RotateLocalInstances
     glm::vec3 Position;
     float Radius;
     glm::vec3 Rotation;
-    bool field_1C{ true };
+    // Editor only?
+    // bool field_1C{ true };
 };
 
 struct UpdateTransform
@@ -201,13 +202,6 @@ using BatchModifyAction = std::variant<
     SetShadow
 >;
 
-struct InstancingGroupModifyOneFrameComponent : public BaseComponent
-{
-    DEFINE_ONEFRAME_COMPONENT(InstancingGroupModifyOneFrame, "ls::InstancingGroupModifyOneFrameComponent")
-
-    Array<GroupModifyAction> Actions;
-};
-
 struct InstancingBatchModifyOneFrameComponent : public BaseComponent
 {
     DEFINE_ONEFRAME_COMPONENT(InstancingBatchModifyOneFrame, "ls::InstancingBatchModifyOneFrameComponent")
@@ -250,7 +244,6 @@ struct InstancingBatchComponent : public BaseComponent
 };
 
 DEFINE_TAG_COMPONENT(ls, InstancingBatchInitializedComponent, InstancingBatchInitialized)
-DEFINE_ONEFRAME_TAG_COMPONENT(ls, InstancingGroupVisualReloadOneFrameComponent, InstancingGroupVisualReloadOneFrame)
 DEFINE_ONEFRAME_TAG_COMPONENT(ls, InstancingBatchVisualReloadedOneFrameComponent, InstancingBatchVisualReloadedOneFrame)
 
 END_NS()

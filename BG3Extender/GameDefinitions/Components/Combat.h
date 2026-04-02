@@ -550,7 +550,13 @@ struct ModeChangedEventOneFrameComponent : public BaseComponent
     uint8_t field_9;
 };
 
-DEFINE_TAG_COMPONENT(esv::ftb, TurnBasedComponent, FTBTurnBased)
+struct TurnBasedComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(FTBTurnBased, "esv::ftb::TurnBasedComponent")
+
+    uint64_t Entity;
+};
+
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::ftb, PlayersTurnEndedEventOneFrameComponent, FTBPlayersTurnEndedEvent)
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::ftb, PlayersTurnStartedEventOneFrameComponent, FTBPlayersTurnStartedEvent)
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::ftb, RoundEndedEventOneFrameComponent, FTBRoundEndedEvent)
