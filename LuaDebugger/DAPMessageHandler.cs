@@ -272,8 +272,16 @@ namespace NSE.DebuggerFrontend
                 }
                 else
                 {
-                    stkFrame.Source = Path.GetFileName(frame.Source);
-                    stkFrame.Path = frame.Path.Replace("/", "\\");
+                    if (stkFrame.Path == "")
+                    {
+                        stkFrame.Source = "(Inline Code)";
+                        stkFrame.Path = null;
+                    }
+                    else
+                    {
+                        stkFrame.Source = Path.GetFileName(frame.Source);
+                        stkFrame.Path = frame.Path.Replace("/", "\\");
+                    }
                     stkFrame.Line = frame.Line;
                     stkFrame.ScopeFirstLine = frame.ScopeFirstLine;
                     stkFrame.ScopeLastLine = frame.ScopeLastLine;
