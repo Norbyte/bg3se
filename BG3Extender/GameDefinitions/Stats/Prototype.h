@@ -230,7 +230,7 @@ struct InterruptPrototype
     stats::ConditionId Conditions;
     FixedString Container;
     stats::ConditionId RollCondition;
-    [[bg3::hidden]] Array<void*> Costs;
+    Array<ActionResourceCost> Costs;
     FixedString Stack;
     Functors PropertiesFunctors;
     Functors SuccessFunctors;

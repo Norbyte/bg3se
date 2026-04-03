@@ -110,7 +110,7 @@ struct PathSettings
 
 struct TextLine : TranslatedString
 {
-    bool field_10{ false };
+    uint8_t field_10{ 1 };
 };
 
 struct TemplateInfo

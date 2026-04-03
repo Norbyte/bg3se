@@ -14,12 +14,11 @@ struct UpdaterConfig
     std::wstring CachePath;
 #if defined(_DEBUG)
     bool Debug{ true };
-    // Development option, force loading of BG3ScriptExtender.dll from BG3 bin
-    bool DebugLoadSE{ false };
 #else
     bool Debug{ false };
-    bool DebugLoadSE{ false };
 #endif
+    // Development option, force loading of BG3ScriptExtender.dll from BG3 bin
+    bool DebugLoadSE{ false };
     bool ValidateSignature{ true };
     bool IPv4Only{ false };
     bool DisableUpdates{ false };

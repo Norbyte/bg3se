@@ -46,8 +46,9 @@ struct FadeableObstructionComponent : public BaseComponent
 
     Guid Uuid;
     FixedString FadeGroup;
-    bool HierarchyOnlyFade;
-    bool OnlyFadeChildrenFromGroupChanged;
+    // Editor only
+    // bool HierarchyOnlyFade;
+    // bool OnlyFadeChildrenFromGroupChanged;
     HashSet<Guid> FadeChildren;
 };
 

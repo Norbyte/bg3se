@@ -249,4 +249,12 @@ struct InstancingBatchComponent : public BaseComponent
 DEFINE_TAG_COMPONENT(ls, InstancingBatchInitializedComponent, InstancingBatchInitialized)
 DEFINE_ONEFRAME_TAG_COMPONENT(ls, InstancingBatchVisualReloadedOneFrameComponent, InstancingBatchVisualReloadedOneFrame)
 
+struct InstancingRequestSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(InstancingRequest, "ls::InstancingRequestSystem")
+
+    [[bg3::hidden]] SynchronizedMPMCQueueBounded<InstancingRequest> Requests;
+    [[bg3::hidden]] HashMap<EntityHandle, void*> Groups;
+};
+
 END_NS()

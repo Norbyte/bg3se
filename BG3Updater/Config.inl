@@ -32,8 +32,8 @@ void ApplyConfig(UpdaterConfig& config, Document& root)
 #if defined(HAS_DEBUG_LOGGING)
     ConfigGet(root, "Debug", config.Debug);
 #endif
-#if defined(_DEBUG)
     ConfigGet(root, "DebugLoadSE", config.DebugLoadSE);
+#if defined(_DEBUG)
     ConfigGet(root, "ValidateSignature", config.ValidateSignature);
 #endif
     ConfigGet(root, "IPv4Only", config.IPv4Only);
