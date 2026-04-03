@@ -21,8 +21,9 @@ struct InstancingGroupDesc : public ProtectedGameObject<InstancingGroupDesc>
     FixedString VisualID;
     uint16_t GridSize;
     bool Shadow;
-    Path Path;
-    InstancingGroupPaintParams PaintParams;
+    // Editor only
+    // Path Path;
+    // InstancingGroupPaintParams PaintParams;
 };
 
 struct AddWorldInstances
@@ -206,7 +207,8 @@ struct InstancingBatchModifyOneFrameComponent : public BaseComponent
 {
     DEFINE_ONEFRAME_COMPONENT(InstancingBatchModifyOneFrame, "ls::InstancingBatchModifyOneFrameComponent")
 
-    Array<BatchModifyAction> Actions;
+    // Not exposed for now due to variant alignment differences
+    [[bg3::hidden]] Array<BatchModifyAction> Actions;
 };
 
 struct InstancingGroupVisualComponent : public BaseComponent
@@ -225,10 +227,11 @@ struct InstancingGroupComponent : public BaseComponent
 
     InstancingGroupDesc Desc;
     HashMap<glm::ivec3, EntityHandle> Batches;
-    bool field_98;
-    uint8_t field_99;
-    uint8_t field_9A;
-    HashSet<glm::ivec3> BatchCenters;
+    // Editor only
+    //bool field_98;
+    //uint8_t field_99;
+    //uint8_t field_9A;
+    //HashSet<glm::ivec3> BatchCenters;
 };
 
 struct InstancingBatchComponent : public BaseComponent
