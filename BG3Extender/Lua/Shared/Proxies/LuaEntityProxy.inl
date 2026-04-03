@@ -79,7 +79,7 @@ EntityHelper EntityProxyMetatable::GetHelper(lua_State* L, int index)
     return EntityHelper(Get(L, index), GetEntitySystem(L));
 }
 
-UserReturn EntityProxyMetatable::CreateComponent(lua_State* L, EntityHandle entity, ExtComponentType component)
+UserReturn EntityProxyMetatable::CreateComponentImmediate(lua_State* L, EntityHandle entity, ExtComponentType component)
 {
     auto ecs = GetEntitySystem(L);
     auto typeId = *ecs->GetComponentIndex(component);
@@ -88,6 +88,22 @@ UserReturn EntityProxyMetatable::CreateComponent(lua_State* L, EntityHandle enti
     if (ops != nullptr) {
         ops->AddImmediateDefaultComponent(entity.Handle, 0);
         PushComponent(L, ecs, entity, component, GetCurrentLifetime(L));
+        return 1;
+    }
+
+    OsiError("Unable to construct components of this type: " << component);
+    push(L, nullptr);
+    return 1;
+}
+
+UserReturn EntityProxyMetatable::CreateComponent(lua_State* L, EntityHandle entity, ExtComponentType component)
+{
+    auto ecs = GetEntitySystem(L);
+    auto ptr = ecs->CreateComponentRaw(entity, component);
+
+    if (ptr != nullptr) {
+        auto pm = ecs->GetComponentMeta(component).Properties;
+        PushComponent(L, ptr, *pm, GetCurrentLifetime(L));
         return 1;
     }
 
@@ -374,6 +390,7 @@ std::optional<LuaEntitySubscriptionId> EntityProxyMetatable::OnChanged(lua_State
 void EntityProxyMetatable::StaticInitialize()
 {
     ADD_FUNC(CreateComponent);
+    ADD_FUNC(CreateComponentImmediate);
     ADD_FUNC(RemoveComponent);
     ADD_FUNC(GetComponent);
     ADD_FUNC(HasRawComponent);
