@@ -288,7 +288,7 @@ void ScriptExtenderUpdater::UpdateErrorText()
     }
 
     if (showError_) {
-        DEBUG("Update result [%s] - error text: %s", (criticalError_ ? "critical" : "warning"), errorMessage_.c_str());
+        DEBUG("Update result [%s]: %s", (criticalError_ ? "critical" : "warning"), errorMessage_.c_str());
     } else {
         DEBUG("Update result - no error text");
     }
@@ -482,6 +482,13 @@ void ScriptExtenderUpdater::LoadConfig()
         config_.UpdateChannel += UPDATER_CHANNEL_GAME;
     }
 
+#if defined(HAS_DEBUG_LOGGING)
+    // Enable debug logging if shift is down when the game is launched
+    if (GetAsyncKeyState(VK_SHIFT) < 0) {
+        config_.Debug = true;
+    }
+#endif
+
     fetcher_.DebugLogging = config_.Debug;
     fetcher_.IPv4Only = config_.IPv4Only;
 }
@@ -562,3 +569,4 @@ void StartUpdaterThread()
 
 
 END_SE()
+ 
