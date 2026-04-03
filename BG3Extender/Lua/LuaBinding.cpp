@@ -106,6 +106,15 @@ void push(lua_State* L, ImguiHandle const& h)
     }
 }
 
+void push(lua_State* L, EntityOrVec3Variant const& v)
+{
+    if (v.Type) {
+        push(L, v.Position);
+    } else {
+        push(L, v.Entity);
+    }
+}
+
 void push(lua_State* L, extui::Renderable* o)
 {
     if (o) {

@@ -117,6 +117,7 @@ void push(lua_State* L, TypeInformationRef const& h);
 void push(lua_State* L, stats::ConditionId const& h);
 void push(lua_State* L, StatsExpressionRef const& h);
 void push(lua_State* L, ImguiHandle const& h);
+void push(lua_State* L, EntityOrVec3Variant const& h);
 void push(lua_State* L, extui::Renderable* o);
 
 inline void push(lua_State* L, lua_CFunction v)

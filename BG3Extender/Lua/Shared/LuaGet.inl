@@ -317,6 +317,20 @@ StatsExpressionRef do_get(lua_State* L, int index, Overload<StatsExpressionRef>)
     return StatsExpressionRef(expr);
 }
 
+EntityOrVec3Variant do_get(lua_State* L, int index, Overload<EntityOrVec3Variant>)
+{
+    EntityOrVec3Variant v;
+    if (lua_type(L, index) == LUA_TTABLE) {
+        v.Position = do_get(L, index, Overload<glm::vec3>{});
+        v.Type = 1;
+    } else {
+        v.Entity = do_get(L, index, Overload<EntityHandle>{});
+        v.Type = 0;
+    }
+
+    return v;
+}
+
 Ref do_get(lua_State* L, int index, Overload<Ref>)
 {
     return Ref(L, index);

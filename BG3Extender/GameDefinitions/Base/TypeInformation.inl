@@ -259,6 +259,7 @@ void TypeInformationRepository::Initialize()
 
     RegisterStaticType<stats::ConditionId>("stats::ConditionId", LuaTypeId::String);
     RegisterStaticType<StatsExpressionRef>("StatsExpressionRef", LuaTypeId::String);
+    RegisterStaticType<EntityOrVec3Variant>("EntityOrVec3Variant", LuaTypeId::Any);
 
     RegisterObjectProxyTypeInformation();
 

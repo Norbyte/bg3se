@@ -673,6 +673,7 @@ sources = [
     'GameDefinitions/Components/Projectile.h',
     'GameDefinitions/Components/Roll.h',
     'GameDefinitions/Components/Runtime.h',
+    'GameDefinitions/Components/Script.h',
     'GameDefinitions/Components/ServerData.h',
     'GameDefinitions/Components/Shapeshift.h',
     'GameDefinitions/Components/Sound.h',

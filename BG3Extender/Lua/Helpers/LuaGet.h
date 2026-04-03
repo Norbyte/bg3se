@@ -238,6 +238,7 @@ StatsExpressionRef do_get(lua_State* L, int index, Overload<StatsExpressionRef>)
 // Jank, but we can't put it anywhere else for now :(
 LuaSoundObjectId do_get(lua_State* L, int index, Overload<LuaSoundObjectId>);
 gn::GenomeVariant do_get(lua_State* L, int index, Overload<gn::GenomeVariant>);
+EntityOrVec3Variant do_get(lua_State* L, int index, Overload<EntityOrVec3Variant>);
 
 inline Version do_get(lua_State* L, int index, Overload<Version>)
 {

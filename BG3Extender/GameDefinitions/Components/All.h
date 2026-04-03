@@ -20,6 +20,7 @@
 #include <GameDefinitions/Components/Runtime.h>
 #include <GameDefinitions/Components/Events.h>
 #include <GameDefinitions/Components/Party.h>
+#include <GameDefinitions/Components/Script.h>
 #include <GameDefinitions/Components/Spell.h>
 #include <GameDefinitions/Components/SpellCastShared.h>
 #include <GameDefinitions/Components/SpellCast.h>

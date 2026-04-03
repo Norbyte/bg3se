@@ -612,6 +612,18 @@ inline bool Validate(StatsExpressionRef const* s, Overload<StatsExpressionRef>)
     return true;
 }
 
+inline bool Validate(EntityOrVec3Variant const* v, Overload<EntityOrVec3Variant>)
+{
+    CHECK(v->Type == 0 || v->Type == 1);
+    if (v->Type == 0) {
+        CHECK(Validate(&v->Entity, Overload<EntityHandle>{}));
+    } else {
+        CHECK(Validate(&v->Position, Overload<glm::vec3>{}));
+    }
+
+    return true;
+}
+
 template <class... Args>
 bool ValidateRef(std::variant<Args...> const* v, Overload<std::variant<Args...>>)
 {

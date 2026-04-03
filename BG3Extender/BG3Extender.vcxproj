@@ -181,6 +181,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="GameDefinitions\Components\Instancing.h" />
     <ClInclude Include="GameDefinitions\Components\Level.h" />
     <ClInclude Include="GameDefinitions\Components\Physics.h" />
+    <ClInclude Include="GameDefinitions\Components\Script.h" />
     <ClInclude Include="GameDefinitions\Components\Sound.h" />
     <ClInclude Include="GameDefinitions\Components\SpellCast.h" />
     <ClInclude Include="GameDefinitions\Components\SpellCastShared.h" />

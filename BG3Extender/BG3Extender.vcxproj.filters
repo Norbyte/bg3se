@@ -529,6 +529,7 @@
     <ClInclude Include="GameDefinitions\Components\Level.h" />
     <ClInclude Include="GameDefinitions\Components\Fade.h" />
     <ClInclude Include="GameDefinitions\Components\Instancing.h" />
+    <ClInclude Include="GameDefinitions\Components\Script.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

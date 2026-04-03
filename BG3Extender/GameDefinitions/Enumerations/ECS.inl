@@ -970,6 +970,14 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
     E(ServerGameplayLightEquipment)
     E(ServerGameplayLightChanges)
 
+    // Anubis
+    E(AnubisConfig)
+    E(AnubisTree)
+    E(AnubisTree2)
+    E(AnubisRuntime)
+    E(AnubisEnabled)
+    E(Constellation)
+
     // Experimental components
     E(Background)
     E(God)
