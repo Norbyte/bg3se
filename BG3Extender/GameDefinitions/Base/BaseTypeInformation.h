@@ -100,6 +100,7 @@ struct TypeInformation
 
     void DeferredInitialize();
     void Validate();
+    __declspec(noinline) void AddMember(char const* name, TypeInformationRef&& type);
 };
 
 template <class T>

@@ -165,6 +165,11 @@ void TypeInformation::Validate()
     }
 }
 
+__declspec(noinline) void TypeInformation::AddMember(char const* name, TypeInformationRef&& type)
+{
+    Members.insert(std::make_pair(FixedString(name), std::move(type)));
+}
+
 TypeInformationRepository& TypeInformationRepository::GetInstance()
 {
     static std::unique_ptr<TypeInformationRepository> instance = std::make_unique<TypeInformationRepository>();
