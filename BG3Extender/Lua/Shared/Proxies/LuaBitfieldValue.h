@@ -18,7 +18,8 @@ public:
     template <class T>
     inline static void Make(lua_State* L, T value)
     {
-        Make(L, static_cast<EnumUnderlyingType>(value), BitfieldID<T>::ID);
+        static_assert(BitfieldID<T> >= 0, "Not a registered bitfield type");
+        Make(L, static_cast<EnumUnderlyingType>(value), BitfieldID<T>);
     }
 
     static BitfieldInfoStore* GetBitfieldInfo(CppObjectMetadata const& val);

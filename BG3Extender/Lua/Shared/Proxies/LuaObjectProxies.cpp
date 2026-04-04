@@ -258,7 +258,7 @@ inline constexpr StructTypeId CheckedGetParentStructId()
     // FIXME - this check is not constexpr :(
     // static_assert(static_cast<T*>(reinterpret_cast<TBase*>(nullptr)) == reinterpret_cast<T*>(nullptr), "Base and child class should start at same base ptr");
 
-    return StructID<TBase>::ID;
+    return StructID<TBase>;
 }
 
 
@@ -269,8 +269,9 @@ inline constexpr StructTypeId CheckedGetDeclStructId()
     static_assert(!IsByVal<T>, "PropertyMap type should not be a by-val type!");
     static_assert(!IsOptional<T>::Value, "PropertyMap type should not be an optional<T> type!");
     static_assert(!IsArrayLike<T>::Value && !IsSetLike<T>::Value && !IsMapLike<T>::Value && !IsVariantLike<T>::Value, "PropertyMap type should not be a container type!");
+    static_assert(StructID<T> >= 0, "Type should be a registered struct!");
 
-    return StructID<T>::ID;
+    return StructID<T>;
 }
 
 template <class T>
@@ -577,7 +578,7 @@ struct PropertyMapRegistrations;
 #define P_BITMASK_GETTER_SETTER(prop, getter, setter) \
         { .Type = PropertyMapEntryType::Bitfield, .Bitfield = { \
             .Name = #prop, \
-            .TypeId = BitfieldID<decltype(ObjectType::prop)>::ID, \
+            .TypeId = BitfieldID<decltype(ObjectType::prop)>, \
             .Getter = &getter, \
             .Setter = &setter, \
             .Offset = offsetof(ObjectType, prop), \

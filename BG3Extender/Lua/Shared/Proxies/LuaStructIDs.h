@@ -41,17 +41,15 @@ BEGIN_SE()
 
 using StructTypeId = int32_t;
 
-template <class T> struct StructID {
-    static constexpr bool Valid = false;
-};
+template <class T> constexpr StructTypeId StructID = -1;
 
 // Struct ID values
 
-#define DECLARE_CLS(id, ...) template <> struct StructID<__VA_ARGS__> { static constexpr bool Valid = true; static constexpr StructTypeId ID = id; };
-#define DECLARE_CLS_FWD(id, cls) template <> struct StructID<cls> { static constexpr bool Valid = true; static constexpr StructTypeId ID = id; };
-#define DECLARE_CLS_NS_FWD(id, ns, cls) template <> struct StructID<ns::cls> { static constexpr bool Valid = true; static constexpr StructTypeId ID = id; };
-#define DECLARE_CLS_BARE_NS_FWD(id, ns, cls) template <> struct StructID<ns::cls> { static constexpr bool Valid = true; static constexpr StructTypeId ID = id; };
-#define DECLARE_STRUCT_BARE_NS_FWD(id, ns, cls) template <> struct StructID<ns::cls> { static constexpr bool Valid = true; static constexpr StructTypeId ID = id; };
+#define DECLARE_CLS(id, ...) template <> constexpr StructTypeId StructID<__VA_ARGS__> = id;
+#define DECLARE_CLS_FWD(id, cls) template <> constexpr StructTypeId StructID<cls> = id;
+#define DECLARE_CLS_NS_FWD(id, ns, cls) template <> constexpr StructTypeId StructID<ns::cls> = id;
+#define DECLARE_CLS_BARE_NS_FWD(id, ns, cls) template <> constexpr StructTypeId StructID<ns::cls> = id;
+#define DECLARE_STRUCT_BARE_NS_FWD(id, ns, cls) template <> constexpr StructTypeId StructID<ns::cls> = id;
 #include <GameDefinitions/Generated/PropertyMapNames.inl>
 #undef DECLARE_CLS
 #undef DECLARE_CLS_FWD

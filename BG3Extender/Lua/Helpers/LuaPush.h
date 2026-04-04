@@ -230,7 +230,7 @@ inline typename std::enable_if_t<std::is_enum_v<T>, void> push(lua_State* L, T v
     if constexpr (IsIntegralAlias<T>) {
         push(L, static_cast<EnumUnderlyingType>(v));
     } else if constexpr (IsBitfieldV<T>) {
-        push_bitfield_value(L, static_cast<EnumUnderlyingType>(v), BitfieldID<T>::ID);
+        push_bitfield_value(L, static_cast<EnumUnderlyingType>(v), BitfieldID<T>);
     } else {
         push_enum_value(L, static_cast<EnumUnderlyingType>(v), EnumID<T>::ID);
     }

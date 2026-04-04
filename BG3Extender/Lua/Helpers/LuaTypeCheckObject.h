@@ -30,8 +30,8 @@ typename std::enable_if_t<!IsByVal<T> && !std::is_pointer_v<T>, bool> do_typeche
         // TODO - currently no typechecking supported for cppobject assignment or contents of variant array/set types
         return lua_type(L, index) == LUA_TTABLE;
     } else {
-        return lua_typecheck_cppvalue(L, index, MetatableTag::ObjectRef, StructID<T>::ID)
-            || (lua_type(L, index) == LUA_TTABLE && lua_typecheck_struct(L, index, StructID<T>::ID));
+        return lua_typecheck_cppvalue(L, index, MetatableTag::ObjectRef, StructID<T>)
+            || (lua_type(L, index) == LUA_TTABLE && lua_typecheck_struct(L, index, StructID<T>));
     }
 }
 
@@ -42,8 +42,8 @@ typename std::enable_if_t<!IsByVal<T>&& std::is_pointer_v<T>, bool> do_typecheck
     if constexpr (IsArrayLike<TVal>::Value || IsSetLike<TVal>::Value || IsMapLike<TVal>::Value) {
         return false;
     } else {
-        return lua_typecheck_cppvalue(L, index, MetatableTag::ObjectRef, StructID<TVal>::ID)
-            || (lua_type(L, index) == LUA_TTABLE && lua_typecheck_struct(L, index, StructID<TVal>::ID));
+        return lua_typecheck_cppvalue(L, index, MetatableTag::ObjectRef, StructID<TVal>)
+            || (lua_type(L, index) == LUA_TTABLE && lua_typecheck_struct(L, index, StructID<TVal>));
     }
 }
 

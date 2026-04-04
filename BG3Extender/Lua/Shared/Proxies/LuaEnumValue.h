@@ -18,7 +18,8 @@ public:
     template <class T>
     inline static void Make(lua_State* L, T value)
     {
-        Make(L, static_cast<EnumUnderlyingType>(value), EnumID<T>::ID);
+        static_assert(EnumID<T> >= 0, "Not a registered enumeration type");
+        Make(L, static_cast<EnumUnderlyingType>(value), EnumID<T>);
     }
 
     static EnumInfoStore* GetEnumInfo(CppObjectMetadata const& val);

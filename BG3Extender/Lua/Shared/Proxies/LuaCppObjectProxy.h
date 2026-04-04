@@ -32,20 +32,20 @@ public:
     template <class T>
     inline static void Make(lua_State* L, T* object, LifetimeHandle lifetime)
     {
-        lua_push_lightcppobject(L, MetaTag, StructID<T>::ID, object, lifetime);
+        lua_push_lightcppobject(L, MetaTag, StructID<T>, object, lifetime);
     }
 
     template <class T>
     inline static void Make(lua_State* L, T const* object, LifetimeHandle lifetime)
     {
         // TODO - add RO tag
-        lua_push_lightcppobject(L, MetaTag, StructID<T>::ID, object, lifetime);
+        lua_push_lightcppobject(L, MetaTag, StructID<T>, object, lifetime);
     }
 
     template <class T>
     inline static T* Copy(lua_State* L, T&& object)
     {
-        auto p = reinterpret_cast<T*>(lua_push_newcppobject(L, MetaTag, StructID<T>::ID, sizeof(T)));
+        auto p = reinterpret_cast<T*>(lua_push_newcppobject(L, MetaTag, StructID<T>, sizeof(T)));
         *p = std::move(object);
         return p;
     }
@@ -64,7 +64,7 @@ public:
     template <class T>
     static T* Get(lua_State* L, int index)
     {
-        auto ptr = GetGeneric(L, index, StructID<T>::ID);
+        auto ptr = GetGeneric(L, index, StructID<T>);
         return reinterpret_cast<T*>(ptr);
     }
 
@@ -94,7 +94,7 @@ public:
     template <class T>
     inline static void MakeRef(lua_State* L, T* object, LifetimeHandle lifetime)
     {
-        if (!gStructRegistry.ValidateIfNecessary(StructID<std::remove_cv_t<T>>::ID, object)) {
+        if (!gStructRegistry.ValidateIfNecessary(StructID<std::remove_cv_t<T>>, object)) {
             push(L, nullptr);
         } else {
             LightObjectProxyMetatable::Make(L, object, lifetime);
