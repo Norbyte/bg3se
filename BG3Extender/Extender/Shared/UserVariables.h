@@ -50,11 +50,6 @@ enum class UserVariableFlags
     Persistent = 1 << 9
 };
 
-template<> struct IsBitfield<UserVariableFlags>
-{
-    static const bool value = true;
-};
-
 struct UserVariablePrototype
 {
     UserVariableFlags Flags{ (UserVariableFlags)0 };

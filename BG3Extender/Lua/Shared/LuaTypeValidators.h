@@ -302,7 +302,7 @@ template <class T>
 typename std::enable_if_t<std::is_enum_v<T>, bool> Validate(T const* v, Overload<T>)
 {
 #if defined(ENABLE_FLAKY_HEURISTICS)
-    if constexpr (IsBitfieldV<T>) {
+    if constexpr (IsBitfield<T>) {
         // Disabled for now as it causes unmapped enum elements to be flagged all the time
         //CHECK(((uint64_t)*v & ~BitfieldInfo<T>::GetStore().AllowedFlags) == 0);
     } else {

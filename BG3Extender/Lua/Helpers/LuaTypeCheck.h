@@ -97,12 +97,14 @@ inline typename std::enable_if_t<std::is_enum_v<T>, bool> do_typecheck(lua_State
 {
     if constexpr (IsIntegralAlias<T>) {
         return do_typecheck(L, index, Overload<std::underlying_type_t<T>>{});
-    } else if constexpr (IsBitfieldV<T>) {
+    } else if constexpr (IsBitfield<T>) {
         auto propMap = BitfieldRegistry::Get().BitfieldsById[BitfieldID<T>]->RegistryIndex;
         return lua_typecheck_cppvalue(L, index, MetatableTag::BitfieldValue, propMap);
-    } else {
+    } else if constexpr (IsEnum<T>) {
         auto propMap = EnumRegistry::Get().EnumsById[EnumID<T>]->RegistryIndex;
         return lua_typecheck_cppvalue(L, index, MetatableTag::EnumValue, propMap);
+    } else {
+        static_assert(false, "Unsupported enumeration type");
     }
 }
 

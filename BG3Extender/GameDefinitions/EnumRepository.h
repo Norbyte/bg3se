@@ -4,15 +4,15 @@
 
 BEGIN_SE()
 
-template <class T> struct EnumID {};
-template <class T> struct BitfieldID {};
-
-
 // Type used to store enumeration and bitfield values internally.
 // Must be a superset of all enum/bitfield types used ingame.
 using EnumUnderlyingType = uint64_t;
 using EnumTypeId = int32_t;
 using BitfieldTypeId = int32_t;
+
+
+template <class T> constexpr EnumTypeId EnumID = -1;
+template <class T> constexpr BitfieldTypeId BitfieldID = -1;
 
 
 template <class T>
@@ -171,7 +171,8 @@ struct EnumInfo
 {
     inline static EnumInfoStore& GetStore()
     {
-        return *EnumRegistry::Get().EnumsById[EnumID<T>::ID];
+        static_assert(EnumID<T> >= 0, "Type is not a registered enumeration");
+        return *EnumRegistry::Get().EnumsById[EnumID<T>];
     }
 
     inline static std::optional<T> Find(FixedString const& name)
@@ -195,7 +196,8 @@ struct BitfieldInfo
 {
     inline static BitfieldInfoStore& GetStore()
     {
-        return *BitfieldRegistry::Get().BitfieldsById[BitfieldID<T>::ID];
+        static_assert(BitfieldID<T> >= 0, "Type is not a registered bitfield");
+        return *BitfieldRegistry::Get().BitfieldsById[BitfieldID<T>];
     }
 
     static std::optional<T> Find(FixedString const& name)
@@ -214,19 +216,11 @@ struct BitfieldInfo
     }
 };
 
+template <class T>
+concept IsEnum = EnumID<T> >= 0;
 
 template <class T>
-struct IsBitfield {
-    static const bool value = false;
-};
-
-#define MARK_AS_BITFIELD(T) \
-    template<> struct IsBitfield<T> { \
-        static const bool value = true; \
-    };
-
-template <class T>
-constexpr bool IsBitfieldV = IsBitfield<T>::value;
+concept IsBitfield = BitfieldID<T> >= 0;
 
 END_SE()
 
@@ -236,7 +230,7 @@ namespace std
     template <class T>
     inline std::enable_if_t<std::is_enum_v<T>, ostream&> operator << (ostream& out, T const& v)
     {
-        static_assert(!bg3se::IsBitfieldV<T>, "Cannot print bitfields");
+        static_assert(!bg3se::IsBitfield<T>, "Cannot print bitfields");
         auto label = bg3se::EnumInfo<T>::Find(v);
         if (label) {
             out << label.GetString();

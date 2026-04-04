@@ -74,9 +74,3 @@ private:
 };
 
 END_SE()
-
-BEGIN_SE()
-
-MARK_AS_BITFIELD(lua::EntityComponentEvent)
-
-END_SE()

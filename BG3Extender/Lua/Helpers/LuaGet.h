@@ -130,10 +130,12 @@ typename std::enable_if_t<std::is_enum_v<T>, T> do_get(lua_State * L, int index,
 {
     if constexpr (IsIntegralAlias<T>) {
         return (T)do_get(L, index, Overload<std::underlying_type_t<T>>{});
-    } else if constexpr (IsBitfieldV<T>) {
-        return (T)get_bitfield_value(L, index, BitfieldID<T>::ID);
+    } else if constexpr (IsBitfield<T>) {
+        return (T)get_bitfield_value(L, index, BitfieldID<T>);
+    } else if constexpr (IsEnum<T>) {
+        return (T)get_enum_value(L, index, EnumID<T>);
     } else {
-        return (T)get_enum_value(L, index, EnumID<T>::ID);
+        static_assert(false, "Unsupported enumeration type");
     }
 }
 

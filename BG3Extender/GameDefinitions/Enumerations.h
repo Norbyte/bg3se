@@ -35,10 +35,10 @@ BEGIN_SE()
 
 
 
-#define BEGIN_BITMASK_NS(NS, T, luaName, type, id) template <> struct BitfieldID<NS::T> { static constexpr int32_t ID = id; };
-#define BEGIN_ENUM_NS(NS, T, luaName, type, id) template <> struct EnumID<NS::T> { static constexpr int32_t ID = id; };
-#define BEGIN_BITMASK(T, type, id) template <> struct BitfieldID<T> { static constexpr int32_t ID = id; };
-#define BEGIN_ENUM(T, type, id) template <> struct EnumID<T> { static constexpr int32_t ID = id; };
+#define BEGIN_BITMASK_NS(NS, T, luaName, type, id) template <> constexpr BitfieldTypeId BitfieldID<NS::T> = id;
+#define BEGIN_ENUM_NS(NS, T, luaName, type, id) template <> constexpr EnumTypeId EnumID<NS::T> = id;
+#define BEGIN_BITMASK(T, type, id) template <> constexpr BitfieldTypeId BitfieldID<T> = id;
+#define BEGIN_ENUM(T, type, id) template <> constexpr EnumTypeId EnumID<T> = id;
 #define EV(label, value)
 #define END_ENUM_NS()
 #define END_ENUM()
@@ -59,15 +59,9 @@ void InitializeEnumerations();
 void RegisterEnumerationTypeInformation();
 
 
-#define BEGIN_BITMASK_NS(NS, T, luaName, type, id) \
-    template<> struct IsBitfield<NS::T> { \
-        static const bool value = true; \
-    };
+#define BEGIN_BITMASK_NS(NS, T, luaName, type, id)
 #define BEGIN_ENUM_NS(NS, T, luaName, type, id)
-#define BEGIN_BITMASK(T, type, id) \
-    template<> struct IsBitfield<T> { \
-        static const bool value = true; \
-    };
+#define BEGIN_BITMASK(T, type, id)
 #define BEGIN_ENUM(T, type, id)
 #define EV(label, value)
 #define END_ENUM_NS()
