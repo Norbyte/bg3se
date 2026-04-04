@@ -10,7 +10,7 @@ BEGIN_SE()
 
 CoreLibPlatformInterface gCoreLibPlatformInterface;
 
-void AssertionFailed(char const* expr)
+__declspec(noinline) void AssertionFailed(char const* expr)
 {
     if (gCoreLibPlatformInterface.GlobalConsole) {
         gCoreLibPlatformInterface.GlobalConsole->Print(DebugMessageType::Error, "Assertion failed:");
@@ -18,6 +18,7 @@ void AssertionFailed(char const* expr)
     }
 
     DebugBreak();
+    std::terminate();
 }
 
 const Guid Guid::Null{};

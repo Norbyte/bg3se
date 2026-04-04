@@ -27,7 +27,7 @@
 
 BEGIN_SE()
 
-void AssertionFailed(char const* expr);
+__declspec(noinline) void AssertionFailed(char const* expr);
 
 template <class>
 // false value attached to a dependent name (for static_assert)

@@ -312,8 +312,8 @@ struct StructRegistry
 
     inline GenericPropertyMap* Get(StructTypeId id) const
     {
-        se_assert(id < (int)StructsById.size());
-        return StructsById[id];
+        assert(id < (int)StructsById.size());
+        return *(StructsById.data() + id);
     }
 };
 
