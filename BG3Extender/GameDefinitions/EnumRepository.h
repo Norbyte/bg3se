@@ -1,18 +1,12 @@
 #pragma once
 
-#include <cstdint>
+#include <GameDefinitions/Base/TypeMetadata.h>
 
 BEGIN_SE()
 
 // Type used to store enumeration and bitfield values internally.
 // Must be a superset of all enum/bitfield types used ingame.
 using EnumUnderlyingType = uint64_t;
-using EnumTypeId = int32_t;
-using BitfieldTypeId = int32_t;
-
-
-template <class T> constexpr EnumTypeId EnumID = -1;
-template <class T> constexpr BitfieldTypeId BitfieldID = -1;
 
 
 template <class T>
@@ -215,12 +209,6 @@ struct BitfieldInfo
         return GetStore().Find((EnumUnderlyingType)val);
     }
 };
-
-template <class T>
-concept IsEnum = EnumID<T> >= 0;
-
-template <class T>
-concept IsBitfield = BitfieldID<T> >= 0;
 
 END_SE()
 

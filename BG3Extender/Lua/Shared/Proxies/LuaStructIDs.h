@@ -38,11 +38,6 @@ BEGIN_SE()
 #undef DECLARE_CLS_BARE_NS_FWD
 #undef DECLARE_STRUCT_BARE_NS_FWD
 
-
-using StructTypeId = int32_t;
-
-template <class T> constexpr StructTypeId StructID = -1;
-
 // Struct ID values
 
 #define DECLARE_CLS(id, ...) template <> constexpr StructTypeId StructID<__VA_ARGS__> = id;

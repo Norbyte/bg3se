@@ -1,5 +1,7 @@
 #include <stdafx.h>
 
+#include <GameDefinitions/Generated/PropertyMapMeta.h>
+#include <GameDefinitions/Generated/EnumerationMeta.h>
 #include <Lua/Shared/Proxies/PropertyMapDependencies.h>
 
 BEGIN_SE()
@@ -45,6 +47,11 @@ __declspec(noinline) TypeInformation& RegisterClassDefn(char const* typeName, ch
     return ty;
 }
 
+__declspec(noinline) void FinalizeClassDefn(TypeInformation& ty, StructTypeId structId)
+{
+    gStaticTypeInformationRepository.RegisterStruct(ty, structId);
+}
+
 template <class T>
 inline constexpr char const* GetStaticComponentName()
 {
@@ -67,6 +74,8 @@ inline constexpr char const* GetStaticSystemName()
 
 void RegisterObjectProxyTypeInformation()
 {
+    gStaticTypeInformationRepository.Initialize(StructRegistrySize, EnumTypeRegistrySize, BitmaskTypeRegistrySize);
+
 #define GENERATING_TYPE_INFO
 #define ADD_TYPE(prop, type) ty.Members.insert(std::make_pair(FixedString(prop), GetTypeInfoRef<type>()));
 
@@ -77,7 +86,7 @@ void RegisterObjectProxyTypeInformation()
 
 #define BEGIN_CLS(clsName, id) BEGIN_CLS_TN(clsName, clsName, id)
 
-#define END_CLS() GetStaticTypeInfo(Overload<TClass>{}).Type = &ty; })();
+#define END_CLS() FinalizeClassDefn(ty, StructID<TClass>); })();
 #define INHERIT(base) ty.ParentType = GetTypeInfoRef<base>();
 #define P(prop) ty.AddMember(#prop, std::move(GetTypeInfoRef<decltype(TClass::prop)>()));
 #define P_NOTIFY(prop, notification) ty.AddMember(#prop, std::move(GetTypeInfoRef<decltype(TClass::prop)>()));

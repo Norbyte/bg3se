@@ -558,9 +558,10 @@ void ScriptExtender::PostStartup()
     std::lock_guard _(globalStateLock_);
     // We need to initialize the function library here, as GlobalAllocator isn't available in Init().
     if (Libraries.PostStartupFindLibraries()) {
-        lua::RegisterLibraries();
         lua::InitObjectProxyPropertyMaps();
         TypeInformationRepository::GetInstance().Initialize();
+        lua::RegisterLibraries();
+        TypeInformationRepository::GetInstance().Finalize();
 
         // Jank workaround to game bug where the reference count for FixedString 0 (the "Cast" key)
         // gets erroneously decremented during module load.

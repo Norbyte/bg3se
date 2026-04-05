@@ -15,12 +15,6 @@ END_NS();
 
 BEGIN_SE()
 
-template <class T>
-constexpr bool IsIntegralAlias = false;
-
-#define MARK_INTEGRAL_ALIAS(ty) template <> constexpr bool IsIntegralAlias<ty> = true;
-
-
 struct TypeInformation;
 
 struct StaticTypeInformation : Noncopyable<StaticTypeInformation>
@@ -30,7 +24,16 @@ struct StaticTypeInformation : Noncopyable<StaticTypeInformation>
     TypeInformation* Type{ nullptr };
     InitializerProc* Initializer{ nullptr };
 
+    inline StaticTypeInformation() {}
     StaticTypeInformation(TypeInformation* type, InitializerProc* initializer);
+
+    inline StaticTypeInformation(StaticTypeInformation&& o)
+        : Type(o.Type), Initializer(o.Initializer)
+    {
+        // This 'dummy move' should only happen during initialization when types are not yet set up
+        assert(o.Type == nullptr && o.Initializer == nullptr);
+    }
+
     void DeferredInitialize();
 };
 
@@ -102,6 +105,60 @@ struct TypeInformation
     void Validate();
     __declspec(noinline) void AddMember(char const* name, TypeInformationRef&& type);
 };
+
+
+struct StaticTypeInformationRepository
+{
+public:
+    void Initialize(int32_t numStructs, int32_t numEnums, int32_t numBitfields);
+    void RegisterStruct(TypeInformation& ty, StructTypeId id);
+    void RegisterEnum(TypeInformation& ty, EnumTypeId id);
+    void RegisterBitfield(TypeInformation& ty, BitfieldTypeId id);
+
+    inline StaticTypeInformation* GetStructRef(StructTypeId id)
+    {
+        assert(id < (int)structs_.size());
+        return (structs_.data() + id);
+    }
+
+    inline StaticTypeInformation* GetEnumRef(EnumTypeId id)
+    {
+        assert(id < (int)enums_.size());
+        return (enums_.data() + id);
+    }
+
+    inline StaticTypeInformation* GetBitfieldRef(BitfieldTypeId id)
+    {
+        assert(id < (int)bitfields_.size());
+        return (bitfields_.data() + id);
+    }
+
+    inline TypeInformation* GetStruct(StructTypeId id) const
+    {
+        assert(id < (int)structs_.size());
+        return (structs_.data() + id)->Type;
+    }
+
+    inline TypeInformation* GetEnum(EnumTypeId id) const
+    {
+        assert(id < (int)enums_.size());
+        return (enums_.data() + id)->Type;
+    }
+
+    inline TypeInformation* GetBitfield(BitfieldTypeId id) const
+    {
+        assert(id < (int)bitfields_.size());
+        return (bitfields_.data() + id)->Type;
+    }
+
+private:
+    Array<StaticTypeInformation> structs_;
+    Array<StaticTypeInformation> enums_;
+    Array<StaticTypeInformation> bitfields_;
+};
+
+extern StaticTypeInformationRepository gStaticTypeInformationRepository;
+
 
 template <class T>
 inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<T>)
@@ -278,7 +335,25 @@ inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overl
 }
 
 template <class T>
-StaticTypeInformation& GetStaticTypeInfoInternal(Overload<T>)
+inline StaticTypeInformation& GetStaticTypeInfoInternal(Overload<T>) requires IsStruct<T>
+{
+    return *gStaticTypeInformationRepository.GetStructRef(StructID<T>);
+}
+
+template <class T>
+inline StaticTypeInformation& GetStaticTypeInfoInternal(Overload<T>) requires IsEnum<T>
+{
+    return *gStaticTypeInformationRepository.GetEnumRef(EnumID<T>);
+}
+
+template <class T>
+inline StaticTypeInformation& GetStaticTypeInfoInternal(Overload<T>) requires IsBitfield<T>
+{
+    return *gStaticTypeInformationRepository.GetBitfieldRef(BitfieldID<T>);
+}
+
+template <class T>
+StaticTypeInformation& GetStaticTypeInfoInternal(Overload<T>) requires !IsStruct<T> && !IsEnum<T> && !IsBitfield<T>
 {
     static StaticTypeInformation info{ nullptr, MakeDeferredTypeInitializer(Overload<T>{}) };
     return info;
@@ -384,6 +459,7 @@ public:
 
     TypeInformationRepository();
     void Initialize();
+    void Finalize();
     TypeInformation& RegisterType(FixedString const& typeName);
     void RegisterType(TypeInformation* typeInfo);
     void RegisterInitializer(StaticTypeInformation* typeInfo);

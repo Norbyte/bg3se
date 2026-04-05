@@ -256,18 +256,22 @@ void TypeInformationRepository::Initialize()
     auto& version = RegisterStaticType<Version>("Version", LuaTypeId::Array);
     version.ElementType = GetStaticTypeInfo(Overload<int32_t>{});
 
-    auto& typeRef = RegisterStaticType<TypeInformationRef>("TypeInformationRef", LuaTypeId::Object);
-    typeRef.ParentType = GetStaticTypeInfo(Overload<TypeInformation>{});
-
-    auto& nsCollection = RegisterStaticType<Noesis::BaseCollection>("Noesis::BaseCollection", LuaTypeId::Array);
-    nsCollection.ElementType = GetStaticTypeInfo(Overload<Noesis::BaseObject>{});
-
     RegisterStaticType<stats::ConditionId>("stats::ConditionId", LuaTypeId::String);
     RegisterStaticType<StatsExpressionRef>("StatsExpressionRef", LuaTypeId::String);
     RegisterStaticType<EntityOrVec3Variant>("EntityOrVec3Variant", LuaTypeId::Any);
 
     RegisterObjectProxyTypeInformation();
 
+    // Struct refs need to be registered after struct registration is complete
+    auto& typeRef = RegisterStaticType<TypeInformationRef>("TypeInformationRef", LuaTypeId::Object);
+    typeRef.ParentType = GetStaticTypeInfo(Overload<TypeInformation>{});
+
+    auto& nsCollection = RegisterStaticType<Noesis::BaseCollection>("Noesis::BaseCollection", LuaTypeId::Array);
+    nsCollection.ElementType = GetStaticTypeInfo(Overload<Noesis::BaseObject>{});
+}
+
+void TypeInformationRepository::Finalize()
+{
     lua::gModuleRegistry.RegisterTypeInformation();
 
     for (auto type : initializers_) {
@@ -356,6 +360,38 @@ TypeInformation& TypeInformationRepository::RegisterType(char const* name, LuaTy
     ty.Kind = typeId;
     ty.IsBuiltin = true;
     return ty;
+}
+
+
+StaticTypeInformationRepository gStaticTypeInformationRepository;
+
+void StaticTypeInformationRepository::Initialize(int32_t numStructs, int32_t numEnums, int32_t numBitfields)
+{
+    se_assert(structs_.empty());
+    structs_.resize(numStructs);
+    enums_.resize(numEnums);
+    bitfields_.resize(numBitfields);
+}
+
+void StaticTypeInformationRepository::RegisterStruct(TypeInformation& ty, StructTypeId id)
+{
+    se_assert((uint32_t)id < structs_.size());
+    se_assert(structs_[id].Type == nullptr);
+    structs_[id].Type = &ty;
+}
+
+void StaticTypeInformationRepository::RegisterEnum(TypeInformation& ty, EnumTypeId id)
+{
+    se_assert((uint32_t)id < enums_.size());
+    se_assert(enums_[id].Type == nullptr);
+    enums_[id].Type = &ty;
+}
+
+void StaticTypeInformationRepository::RegisterBitfield(TypeInformation& ty, BitfieldTypeId id)
+{
+    se_assert((uint32_t)id < bitfields_.size());
+    se_assert(bitfields_[id].Type == nullptr);
+    bitfields_[id].Type = &ty;
 }
 
 END_SE()

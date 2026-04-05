@@ -308,6 +308,7 @@ struct StructRegistry
         }
     }
 
+    void Initialize(int32_t size);
     void Register(GenericPropertyMap* ei, StructTypeId id);
 
     inline GenericPropertyMap* Get(StructTypeId id) const

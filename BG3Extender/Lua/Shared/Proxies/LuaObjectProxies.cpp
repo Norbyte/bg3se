@@ -4,6 +4,7 @@
 
 #include <Lua/Shared/Proxies/PropertyMapDependencies.h>
 #include <Lua/Shared/Proxies/PolymorphicPush.inl>
+#include <GameDefinitions/Generated/PropertyMapMeta.h>
 
 BEGIN_NS(lua)
 
@@ -676,6 +677,7 @@ void InitObjectProxyPropertyMaps()
     static bool initialized{ false };
     if (initialized) return;
 
+    gStructRegistry.Initialize(StructRegistrySize);
     ProcessClassRegistrations(std::span(AllClassDefns));
     UpdateInheritance();
 

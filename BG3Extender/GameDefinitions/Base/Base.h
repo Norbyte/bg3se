@@ -30,6 +30,7 @@ END_SE()
 
 #include <Extender/Client/IMGUI/IMGUI.h>
 
+#include <GameDefinitions/Base/TypeMetadata.h>
 #include <GameDefinitions/Base/LuaAnnotations.h>
 #include <GameDefinitions/Base/BaseTypeInformation.h>
 #include <GameDefinitions/Base/CommonTypes.h>

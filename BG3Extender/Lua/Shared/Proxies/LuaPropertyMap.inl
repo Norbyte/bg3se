@@ -4,20 +4,21 @@ BEGIN_NS(lua)
 
 StructRegistry gStructRegistry;
 
+void StructRegistry::Initialize(int32_t size)
+{
+    se_assert(StructsById.empty());
+    Validated.EnsureSize(size);
+    StructsById.resize(size);
+    Validated.Clear();
+}
+
 void StructRegistry::Register(GenericPropertyMap* pm, StructTypeId id)
 {
     se_assert(pm->IsInitializing);
-    pm->RegistryIndex = id;
-
-    if (Validated.Size < (uint32_t)id + 1) {
-        Validated.EnsureSize(id + 1);
-    }
-
-    if (StructsById.size() < (uint32_t)id + 1) {
-        StructsById.resize(id + 1);
-    }
-
+    se_assert((uint32_t)id < StructsById.size());
     se_assert(StructsById[id] == nullptr);
+
+    pm->RegistryIndex = id;
     StructsById[id] = pm;
 }
 
