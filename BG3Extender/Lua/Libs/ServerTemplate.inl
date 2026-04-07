@@ -10,7 +10,7 @@ LegacyMap<FixedString, GameObjectTemplate*>* GetAllRootTemplates()
 GameObjectTemplate* GetRootTemplate(FixedString const& templateId)
 {
     auto bank = GetStaticSymbols().GetGlobalTemplateBank();
-    return bank->Templates.try_get(templateId);
+    return bank->Templates.get_or_default(templateId);
 }
 
 HashMap<FixedString, GameObjectTemplate*>* GetAllCacheTemplates()
@@ -37,7 +37,7 @@ GameObjectTemplate* GetLocalTemplate(FixedString const& templateId)
 {
     auto level = GetStaticSymbols().GetCurrentServerLevel();
     if (level) {
-        return level->LocalTemplateManager->Templates.try_get(templateId);
+        return level->LocalTemplateManager->Templates.get_or_default(templateId);
     }
 
     return nullptr;
@@ -47,8 +47,7 @@ GameObjectTemplate* GetCacheTemplate(FixedString const& templateId)
 {
     auto cache = *GetStaticSymbols().esv__CacheTemplateManager;
     if (cache) {
-        auto tmpl = cache->Templates.try_get(templateId);
-        return tmpl ? *tmpl : nullptr;
+        return cache->Templates.get_or_default(templateId);
     }
 
     return nullptr;
@@ -68,8 +67,7 @@ GameObjectTemplate* GetLocalCacheTemplate(FixedString const& templateId)
 {
     auto level = GetStaticSymbols().GetCurrentServerLevel();
     if (level) {
-        auto tmpl = level->CacheTemplateManager->Templates.try_get(templateId);
-        return tmpl ? *tmpl : nullptr;
+        return level->CacheTemplateManager->Templates.get_or_default(templateId);
     }
 
     return nullptr;

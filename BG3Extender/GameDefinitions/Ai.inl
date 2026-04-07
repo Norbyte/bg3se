@@ -80,8 +80,8 @@ void AiPath::SetSourceEntity(ecs::EntitySystemHelpersBase& helpers, EntityHandle
     BoundData* movingBound{ nullptr };
 
     if (bounds) {
-        movingBound = bounds->Bound.AIBounds.try_get_ptr(AIBoundType::Move);
-        standingBound = bounds->Bound.AIBounds.try_get_ptr(AIBoundType::Stand);
+        movingBound = bounds->Bound.AIBounds.try_get(AIBoundType::Move);
+        standingBound = bounds->Bound.AIBounds.try_get(AIBoundType::Stand);
     }
 
     if (transform) {
@@ -358,7 +358,7 @@ bool AiGrid::ToTilePos(AiWorldPos const& pos, AiSubgrid*& pSubgrid, AiTilePos& t
 
     auto subgrids = GetSubgridsAt(pos);
     for (auto subgridId : subgrids) {
-        auto subgrid = Subgrids.try_get(subgridId);
+        auto subgrid = Subgrids.get_or_default(subgridId);
         if (subgrid) {
             if (subgrid->WorldToTilePos(pos, localPos)) {
                 auto tile = subgrid->TileGrid->GetTileAt(localPos.x, localPos.y);
@@ -385,7 +385,7 @@ bool AiGrid::ToTilePos(AiWorldPos const& pos, AiSubgrid*& pSubgrid, AiTilePos& t
 
 AiGridTile const* AiGrid::GetTileAt(AiTilePos const& pos) const
 {
-    auto subgrid = Subgrids.try_get(pos.SubgridId);
+    auto subgrid = Subgrids.get_or_default(pos.SubgridId);
     if (subgrid) {
         return subgrid->TileGrid->GetTileAt(pos.X, pos.Y);
     }
@@ -395,7 +395,7 @@ AiGridTile const* AiGrid::GetTileAt(AiTilePos const& pos) const
 
 AiFlags AiGrid::GetStateInArea(AiTilePos const& pos, int radius) const
 {
-    auto subgrid = Subgrids.try_get(pos.SubgridId);
+    auto subgrid = Subgrids.get_or_default(pos.SubgridId);
     if (subgrid) {
         return subgrid->GetStateInArea(glm::ivec2(pos.X, pos.Y), radius);
     }
@@ -410,7 +410,7 @@ Array<float> AiGrid::GetHeightsAt(AiWorldPos const& pos) const
 
     auto subgrids = GetSubgridsAt(pos);
     for (auto subgridId : subgrids) {
-        auto subgrid = Subgrids.try_get(subgridId);
+        auto subgrid = Subgrids.get_or_default(subgridId);
         if (subgrid) {
             if (subgrid->WorldToTilePos(pos, localPos)) {
                 auto tile = subgrid->TileGrid->GetTileAt(localPos.x, localPos.y);

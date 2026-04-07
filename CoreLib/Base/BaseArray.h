@@ -186,6 +186,8 @@ private:
 template <class TWord, unsigned NumWords>
 struct BitArray
 {
+    using value_type = bool;
+
     static constexpr uint32_t BitsPerWord = sizeof(TWord) * CHAR_BIT;
     static constexpr uint32_t IndexBitsPerWord = (sizeof(TWord) == 4) ? 5 : 6;
     static constexpr uint32_t NumBits = NumWords * BitsPerWord;

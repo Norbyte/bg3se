@@ -58,6 +58,9 @@ public:
     using ValueType = TInternals::ValueType;
     using Node = MapNode<KeyType, ValueType>;
 
+    using key_type = KeyType;
+    using value_type = ValueType;
+
     class Iterator
     {
     public:
@@ -511,7 +514,7 @@ public:
         return end();
     }
 
-    ValueType const* try_get_ptr(KeyType const& key) const
+    ValueType const* try_get(KeyType const& key) const
     {
         auto it = find(key);
         if (it) {
@@ -521,7 +524,7 @@ public:
         }
     }
 
-    ValueType* try_get_ptr(KeyType const& key)
+    ValueType* try_get(KeyType const& key)
     {
         auto it = find(key);
         if (it) {
@@ -531,7 +534,7 @@ public:
         }
     }
 
-    ValueType try_get(KeyType const& key, ValueType defaultValue = {}) const
+    ValueType get_or_default(KeyType const& key, ValueType defaultValue = {}) const
     {
         auto it = find(key);
         if (it) {

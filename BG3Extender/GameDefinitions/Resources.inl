@@ -4,7 +4,7 @@ resource::Resource* ResourceBank::GetResource(ResourceBankType type, FixedString
 {
     if (type >= ResourceBankType::Sentinel) return nullptr;
 
-    return Container.Banks[(unsigned)type]->Resources.try_get(resource);
+    return Container.Banks[(unsigned)type]->Resources.get_or_default(resource);
 }
 
 END_SE()

@@ -320,6 +320,9 @@ template <class TKey, class TValue>
 class HashMap : private HashSet<TKey>
 {
 public:
+    using key_type = TKey;
+    using value_type = TValue;
+
     class ConstIterator
     {
     public:

@@ -719,7 +719,7 @@ void State::OnNetMessageReceived(StringView channel, StringView payload, StringV
 
 void State::OnFindPath(AiGrid* self, AiPathId pathId)
 {
-    auto path = self->PathMap.try_get(pathId);
+    auto path = self->PathMap.get_or_default(pathId);
     if (!path || path->SearchStarted) return;
 
     FindPathEvent params;

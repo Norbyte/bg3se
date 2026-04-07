@@ -59,12 +59,12 @@ bool ImageReference::BindTexture(FixedString const& textureUuid)
 
 bool ImageReference::BindIcon(FixedString const& iconName)
 {
-    auto atlas = (*GetStaticSymbols().ls__gTextureAtlasMap)->IconMap.try_get(iconName);
+    auto atlas = (*GetStaticSymbols().ls__gTextureAtlasMap)->IconMap.get_or_default(iconName);
     if (!atlas) {
         return false;
     }
 
-    auto uvs = atlas->Icons.try_get(iconName);
+    auto uvs = atlas->Icons.get_or_default(iconName);
     if (!uvs) {
         WARN("Failed to find UVs for icon '%s'", iconName.GetString());
         return false;

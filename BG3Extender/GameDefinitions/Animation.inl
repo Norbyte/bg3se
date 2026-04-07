@@ -187,7 +187,7 @@ void GenomeVariant::LuaSetValue(FixedString const& typeName, lua_State* L, int i
     }
 
     auto types = (*GetStaticSymbols().ls__gGlobalResourceManager)->GenomeTypeManager;
-    auto type = types->VarTypes.try_get_ptr(typeName);
+    auto type = types->VarTypes.try_get(typeName);
     if (!type) {
         luaL_error(L, "Genome type does not exist: %s", typeName.GetString());
         return;

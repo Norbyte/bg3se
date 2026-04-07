@@ -104,6 +104,8 @@ template <class T>
 struct [[bg3::hidden]] TGenomeSet
 {
 public:
+    using value_type = T;
+
     TGenomeSet()
     {
         IsOwned = true;
@@ -207,6 +209,16 @@ public:
         if (index < Values->size()) {
             o.SetValue<T>((*Values)[index]);
         }
+    }
+
+    inline T const& operator [] (uint32_t index) const
+    {
+        return (*Values)[index];
+    }
+
+    inline T& operator [] (uint32_t index)
+    {
+        return (*Values)[index];
     }
 
     virtual uint32_t GetTypeHash() const

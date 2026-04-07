@@ -455,7 +455,7 @@ LegacyRefMap<FixedString, ItemColorDefinition>* GetAllItemColors()
 
 ItemColorDefinition* GetItemColor(lua_State* L, FixedString const& colorName)
 {
-    return GetStaticSymbols().GetStats()->Colors.try_get_ptr(colorName);
+    return GetStaticSymbols().GetStats()->Colors.try_get(colorName);
 }
 
 void UpdateItemColor(lua_State* L)
@@ -464,7 +464,7 @@ void UpdateItemColor(lua_State* L)
     auto name = checked_getfield<FixedString>(L, "Name", 1);
 
     auto stats = GetStaticSymbols().GetStats();
-    auto itemColor = stats->Colors.try_get_ptr(name);
+    auto itemColor = stats->Colors.try_get(name);
     bool isNew = (itemColor == nullptr);
 
     lua_pushvalue(L, 1);
@@ -527,7 +527,7 @@ StatusPrototype* GetCachedStatus(lua_State * L, FixedString name)
 
 PassivePrototype* GetCachedPassive(lua_State * L, FixedString name)
 {
-    return (*GetStaticSymbols().eoc__PassivePrototypeManager)->Passives.try_get_ptr(name);
+    return (*GetStaticSymbols().eoc__PassivePrototypeManager)->Passives.try_get(name);
 }
 
 InterruptPrototype* GetCachedInterrupt(lua_State * L, FixedString name)

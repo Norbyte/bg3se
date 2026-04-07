@@ -10,7 +10,7 @@ LegacyMap<FixedString, GameObjectTemplate*>* GetAllRootTemplates()
 GameObjectTemplate* GetRootTemplate(FixedString const& templateId)
 {
     auto bank = GetStaticSymbols().GetGlobalTemplateBank();
-    return bank->Templates.try_get(templateId);
+    return bank->Templates.get_or_default(templateId);
 }
 
 GameObjectTemplate* GetTemplate(FixedString const& templateId)

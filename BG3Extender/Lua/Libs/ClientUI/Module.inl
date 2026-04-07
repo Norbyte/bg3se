@@ -158,7 +158,7 @@ ecl::PlayerDragData* GetDragDrop(uint16_t playerId)
 {
     auto dragDrop = GetStaticSymbols().ls__gDragDropManager;
     if (dragDrop && *dragDrop) {
-        return (*dragDrop)->PlayerData.try_get_ptr(playerId);
+        return (*dragDrop)->PlayerData.try_get(playerId);
     }
 
     return nullptr;

@@ -221,7 +221,7 @@ void ReleasePath(lua_State* L, AiPath* path)
 AiPath* GetPathById(lua_State* L, AiPathId id)
 {
     auto aiGrid = GetAiGrid(L);
-    return aiGrid->PathMap.try_get(id);
+    return aiGrid->PathMap.get_or_default(id);
 }
 
 Array<AiPath*> GetActivePathfindingRequests(lua_State* L)
