@@ -83,6 +83,13 @@ try:
         cur_extenumerations = f.read()
 except FileNotFoundError:
     pass
+    
+cur_enum_meta = ''
+try:
+    with open('GameDefinitions/Generated/EnumerationMeta.h', 'r') as f:
+        cur_enum_meta = f.read()
+except FileNotFoundError:
+    pass
 
 if cur_enumerations != preprocessor.lines:
     with open('GameDefinitions/Generated/Enumerations.inl', 'w') as f:
@@ -95,3 +102,14 @@ if cur_extenumerations != external_preprocessor.lines:
         f.write(external_preprocessor.lines)
 else:
     print("No external enumeration changes detected")
+
+enum_meta = '#pragma once\n'
+enum_meta += 'BEGIN_SE()\n'
+enum_meta += 'static constexpr int EnumTypeRegistrySize = ' + str(shared.next_enum_id) + ';\n'
+enum_meta += 'static constexpr int BitmaskTypeRegistrySize = ' + str(shared.next_bitmask_id) + ';\n'
+enum_meta += 'END_SE()\n'
+if cur_enum_meta != enum_meta:
+    with open('GameDefinitions/Generated/EnumerationMeta.h', 'w') as f:
+        f.write(enum_meta)
+else:
+    print("No enumeration meta changes detected")

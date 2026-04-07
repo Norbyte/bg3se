@@ -71,15 +71,7 @@ PropertyOperationResult GenericPropertyMap::GetRawProperty(lua_State* L, Lifetim
     auto& ah = static_cast<FixedStringUnhashed const&>(prop);
     auto const& entry = PropertiesHot.get(ah);
 
-    if (entry.HasNotifications()) [[unlikely]] {
-        const_cast<RawPropertyAccessorsHotData&>(entry).MarkNotificationsProcessed();
-        ProcessPropertyNotifications(*entry.Cold, false);
-    }
-
-    auto getter = entry.Getter();
-    auto offset = entry.Offset();
-    auto data = reinterpret_cast<uint8_t const*>(object) + offset;
-    auto result = getter(L, lifetime, data, entry);
+    auto result = entry.Get(L, lifetime, object);
 
     if (result == PropertyOperationResult::NoSuchProperty) {
         if (FallbackGetter) {
@@ -105,15 +97,7 @@ PropertyOperationResult GenericPropertyMap::SetRawProperty(lua_State* L, void* o
     auto& ah = static_cast<FixedStringUnhashed const&>(prop);
     auto const& entry = PropertiesHot.get(ah);
 
-    if (entry.HasNotifications()) [[unlikely]] {
-        const_cast<RawPropertyAccessorsHotData&>(entry).MarkNotificationsProcessed();
-        ProcessPropertyNotifications(*entry.Cold, true);
-    }
-
-    auto setter = entry.Setter();
-    auto offset = entry.Offset();
-    auto data = reinterpret_cast<uint8_t*>(object) + offset;
-    auto result = setter(L, data, index, entry);
+    auto result = entry.Set(L, index, object);
 
     if (result == PropertyOperationResult::NoSuchProperty) {
         if (FallbackSetter) {
@@ -199,7 +183,8 @@ bool GenericPropertyMap::ValidatePropertyMap(void const* object)
 bool GenericPropertyMap::ValidateObject(void const* object)
 {
     for (auto const& property : Validators) {
-        if (!property.Validate(object, property.Offset, property.Flag)) {
+        auto value = reinterpret_cast<void const*>((std::uintptr_t)object + property.Offset);
+        if (!property.Validate(value, property.Flag)) {
             ERR("Validation of property '%s' failed on %s %p", property.Name.GetString(), Name.GetString(), object);
             return false;
         }
@@ -337,7 +322,8 @@ void SerializeRawObject(lua_State* L, void const* obj, GenericPropertyMap const&
     for (auto it : pm.IterableProperties) {
         auto const& prop = pm.Properties.values()[it.Value()];
         if (prop.Serialize != nullptr) {
-            auto result = prop.Serialize(L, obj, prop);
+            auto value = reinterpret_cast<void const*>((std::uintptr_t)obj + prop.Offset);
+            auto result = prop.Serialize(L, value, prop);
             if (result == PropertyOperationResult::Success) {
                 lua_setfield(L, -2, it.Key().GetString());
             }

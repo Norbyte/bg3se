@@ -12,7 +12,7 @@ void DisablePropertyWarnings();
 void EnablePropertyWarnings();
 
 template <class T>
-PropertyOperationResult GenericGetOffsetProperty(lua_State* L, LifetimeHandle lifetime, void const* obj, RawPropertyAccessorsHotData const& prop)
+PropertyOperationResult GenericGetValue(lua_State* L, LifetimeHandle lifetime, void const* obj, RawPropertyAccessorsHotData const& prop)
 {
     auto value = reinterpret_cast<T const*>(obj);
     push(L, *value, lifetime);
@@ -20,27 +20,18 @@ PropertyOperationResult GenericGetOffsetProperty(lua_State* L, LifetimeHandle li
 }
 
 template <class T>
-PropertyOperationResult GenericSerializeOffsetProperty(lua_State* L, void const* obj, RawPropertyAccessors const& prop)
+PropertyOperationResult GenericSerializeValue(lua_State* L, void const* value, RawPropertyAccessors const& prop)
 {
-    auto* value = (T*)((std::uintptr_t)obj + prop.Offset);
-    if constexpr (!std::is_pointer_v<T>) {
-        // FIXME FIXME FIXME FIXME FIXME
-        // FIXME FIXME FIXME FIXME FIXME
-        // FIXME FIXME FIXME FIXME FIXME
-        // The top-level serializer needs to default-construct a temporary (or do placement new)
-        // to ensure that the new object starts out from a known good state.
-        Serialize(L, value);
-        return PropertyOperationResult::Success;
-    } else {
-        return PropertyOperationResult::UnsupportedType;
-    }
+    static_assert(!std::is_pointer_v<T>);
+    Serialize(L, reinterpret_cast<T const*>(value));
+    return PropertyOperationResult::Success;
 }
 
 template <class T>
-PropertyOperationResult GenericUnserializeOffsetProperty(lua_State* L, void* obj, int index, RawPropertyAccessors const& prop)
+PropertyOperationResult GenericUnserializeValue(lua_State* L, void* valuePtr, int index, RawPropertyAccessors const& prop)
 {
-    auto* value = (T*)((std::uintptr_t)obj + prop.Offset);
     if constexpr (!std::is_pointer_v<T>) {
+        auto value = reinterpret_cast<T*>(valuePtr);
         return Unserialize(L, index, value);
     } else {
         return PropertyOperationResult::UnsupportedType;
@@ -48,16 +39,14 @@ PropertyOperationResult GenericUnserializeOffsetProperty(lua_State* L, void* obj
 }
 
 template <class T>
-PropertyOperationResult GenericSetOffsetProperty(lua_State* L, void* obj, int index, RawPropertyAccessorsHotData const& prop)
+PropertyOperationResult GenericSetValue(lua_State* L, void* valuePtr, int index, RawPropertyAccessorsHotData const& prop)
 {
+    auto value = reinterpret_cast<T*>(valuePtr);
     if constexpr (IsByVal<T>) {
-        auto value = reinterpret_cast<T*>(obj);
         *value = get<T>(L, index);
         return PropertyOperationResult::Success;
     } else {
-        // TEMP HACK - undo offset math done by caller until Unserialize uses offset properties
-        auto origObj = reinterpret_cast<uint8_t*>(obj) - prop.Offset();
-        return GenericUnserializeOffsetProperty<T>(L, origObj, index, *prop.Cold);
+        return GenericUnserializeValue<T>(L, value, index, *prop.GetCold());
     }
 }
 
@@ -86,10 +75,9 @@ PropertyOperationResult GenericSetOffsetBitmaskFlag(lua_State* L, void* obj, int
 }
 
 template <class T>
-bool GenericValidateOffsetProperty(void const* obj, std::size_t offset, uint64_t flag)
+bool GenericValidateOffsetProperty(void const* value, uint64_t flag)
 {
-    auto value = reinterpret_cast<T const*>((std::uintptr_t)obj + offset);
-    return ValidateAny(value);
+    return ValidateAny(reinterpret_cast<T const*>(value));
 }
 
 void InheritProperties(GenericPropertyMap const& base, GenericPropertyMap& child);

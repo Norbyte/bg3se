@@ -16,7 +16,6 @@ class GenericPropertyMap;
 struct RawPropertyAccessors;
 struct RawPropertyAccessorsHotData;
 
-
 inline PropertyOperationResult GenericHotDataPlaceholderGetter(lua_State* L, LifetimeHandle lifetime, void const* object, RawPropertyAccessorsHotData const& prop)
 {
     return PropertyOperationResult::NoSuchProperty;
@@ -50,60 +49,116 @@ struct RawPropertyAccessors
     }
 };
 
+void ProcessPropertyNotifications(RawPropertyAccessors const& prop, bool isWriting);
+
 struct RawPropertyAccessorsHotData
 {
+    // Position of PendingNotifications flag in get_
+    static constexpr unsigned NotificationFlagOffset = 48;
+    // Position of field offset value in get_
+    static constexpr unsigned FieldPositionOffset = 49;
+    // Position of flag value in set_
+    static constexpr unsigned FlagValueOffset = 48;
+
     inline RawPropertyAccessorsHotData()
-        : Get((uint64_t)&GenericHotDataPlaceholderGetter),
-        Set((uint64_t)&GenericHotDataPlaceholderSetter),
-        Cold(nullptr)
+        : get_((uint64_t)&GenericHotDataPlaceholderGetter),
+        set_((uint64_t)&GenericHotDataPlaceholderSetter),
+        cold_(nullptr)
+    {}
+    
+    inline RawPropertyAccessorsHotData(RawPropertyAccessorsHotData const& props)
+        : get_(props.get_.load()),
+        set_(props.set_),
+        cold_(props.cold_)
     {}
     
     inline RawPropertyAccessorsHotData(RawPropertyAccessors const& props)
-        : Get((uint64_t)props.Get
-            | (((props.PendingNotifications != PropertyNotification::None) ? 1ull : 0ull) << 48)
-            | ((uint64_t)props.Offset << 49)),
-        Set((uint64_t)props.Set
-            | ((uint64_t)props.Flag << 48)),
-        Cold(&props)
+        : get_((uint64_t)props.Get
+            | (((props.PendingNotifications != PropertyNotification::None) ? 1ull : 0ull) << NotificationFlagOffset)
+            | ((uint64_t)props.Offset << FieldPositionOffset)),
+        set_((uint64_t)props.Set
+            | ((uint64_t)props.Flag << FlagValueOffset)),
+        cold_(&props)
     {
         se_assert(props.Offset <= 0x7fff);
         se_assert(props.Flag <= 0xffff);
     }
 
-    uint64_t Get{ 0 };
-    uint64_t Set{ 0 };
-    RawPropertyAccessors const* Cold{ nullptr };
+    inline RawPropertyAccessorsHotData& operator =(RawPropertyAccessorsHotData const& props)
+    {
+        get_ = props.get_.load();
+        set_ = props.set_;
+        cold_ = props.cold_;
+        return *this;
+    }
 
     inline RawPropertyAccessors::Getter* Getter() const
     {
-        return reinterpret_cast<RawPropertyAccessors::Getter*>(Get & 0x0000ffffffffffffull);
+        return reinterpret_cast<RawPropertyAccessors::Getter*>(get_ & 0x0000ffffffffffffull);
     }
 
     inline RawPropertyAccessors::Setter* Setter() const
     {
-        return reinterpret_cast<RawPropertyAccessors::Setter*>(Set & 0x0000ffffffffffffull);
+        return reinterpret_cast<RawPropertyAccessors::Setter*>(set_ & 0x0000ffffffffffffull);
+    }
+
+    inline RawPropertyAccessors const* GetCold() const
+    {
+        return cold_;
     }
 
     inline bool HasNotifications() const
     {
-        return (Get >> 48) & 1;
+        return (get_ >> NotificationFlagOffset) & 1;
     }
 
     inline uint64_t Offset() const
     {
-        return (Get >> 49);
+        return (get_ >> FieldPositionOffset);
     }
 
     inline uint64_t Flag() const
     {
-        auto flag = (Set >> 48);
+        auto flag = (set_ >> FlagValueOffset);
         return (flag & 0x3ff) << (flag >> 10);
     }
 
-    inline void MarkNotificationsProcessed()
+    inline void MarkNotificationsProcessed() const
     {
-        Get = (Get & ~(1ull << 48));
+        get_ &= ~(1ull << NotificationFlagOffset);
     }
+
+    inline PropertyOperationResult Get(lua_State* L, LifetimeHandle lifetime, void const* object) const
+    {
+        if (HasNotifications()) [[unlikely]] {
+            MarkNotificationsProcessed();
+            ProcessPropertyNotifications(*cold_, false);
+        }
+
+        auto getter = Getter();
+        auto offset = Offset();
+        auto data = reinterpret_cast<uint8_t const*>(object) + offset;
+        return getter(L, lifetime, data, *this);
+    }
+
+    inline PropertyOperationResult Set(lua_State* L, int index, void* object) const
+    {
+        if (HasNotifications()) [[unlikely]] {
+            MarkNotificationsProcessed();
+            ProcessPropertyNotifications(*cold_, false);
+        }
+
+        auto setter = Setter();
+        auto offset = Offset();
+        auto data = reinterpret_cast<uint8_t*>(object) + offset;
+        return setter(L, data, index, *this);
+    }
+
+private:
+    // Marked as mutable for notification flag updates
+    mutable std::atomic<uint64_t> get_{ 0 };
+    uint64_t set_{ 0 };
+    RawPropertyAccessors const* cold_{ nullptr };
 };
 
 class GenericPropertyMap : Noncopyable<GenericPropertyMap>
@@ -121,7 +176,7 @@ public:
 
     struct RawPropertyValidators
     {
-        using Validator = bool (void const* object, std::size_t offset, uint64_t flag);
+        using Validator = bool (void const* value, uint64_t flag);
 
         FixedString Name;
         Validator* Validate;

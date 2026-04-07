@@ -490,6 +490,15 @@ void UpdateInheritance()
 template <class T>
 struct PropertyMapRegistrations;
 
+template <class T>
+inline constexpr RawPropertyAccessors::Serializer* PickPropertySerializer()
+{
+    if constexpr (!std::is_pointer_v<T>) {
+        return &(GenericSerializeValue<T>);
+    } else {
+        return &GenericNullSerializeProperty;
+    }
+}
     
 #define GENERATING_PROPMAP
 
@@ -524,10 +533,10 @@ struct PropertyMapRegistrations;
 #define PN(name, prop) \
         { .Type = PropertyMapEntryType::Property, .Property = { \
             .Name = #name, \
-            .Getter = &(GenericGetOffsetProperty<decltype(ObjectType::prop)>), \
-            .Setter = &(GenericSetOffsetProperty<decltype(ObjectType::prop)>), \
+            .Getter = &(GenericGetValue<decltype(ObjectType::prop)>), \
+            .Setter = &(GenericSetValue<decltype(ObjectType::prop)>), \
             .Validate = &(GenericValidateOffsetProperty<decltype(ObjectType::prop)>), \
-            .Serialize = &(GenericSerializeOffsetProperty<decltype(ObjectType::prop)>), \
+            .Serialize = PickPropertySerializer<decltype(ObjectType::prop)>(), \
             .Offset = offsetof(ObjectType, prop), \
             .Flag = 0, \
             .Notification = PropertyNotification::None \
@@ -536,10 +545,10 @@ struct PropertyMapRegistrations;
 #define PN_RO(name, prop) \
         { .Type = PropertyMapEntryType::Property, .Property = { \
             .Name = #name, \
-            .Getter = &(GenericGetOffsetProperty<decltype(ObjectType::prop)>), \
+            .Getter = &(GenericGetValue<decltype(ObjectType::prop)>), \
             .Setter = &GenericSetReadOnlyProperty, \
             .Validate = &(GenericValidateOffsetProperty<decltype(ObjectType::prop)>), \
-            .Serialize = &(GenericSerializeOffsetProperty<decltype(ObjectType::prop)>), \
+            .Serialize = PickPropertySerializer<decltype(ObjectType::prop)>(), \
             .Offset = offsetof(ObjectType, prop), \
             .Flag = 0, \
             .Notification = PropertyNotification::None \
@@ -550,10 +559,10 @@ struct PropertyMapRegistrations;
 #define P_NOTIFY(prop, notify) \
         { .Type = PropertyMapEntryType::Property, .Property = { \
             .Name = #prop, \
-            .Getter = &(GenericGetOffsetProperty<decltype(ObjectType::prop)>), \
-            .Setter = &(GenericSetOffsetProperty<decltype(ObjectType::prop)>), \
+            .Getter = &(GenericGetValue<decltype(ObjectType::prop)>), \
+            .Setter = &(GenericSetValue<decltype(ObjectType::prop)>), \
             .Validate = &(GenericValidateOffsetProperty<decltype(ObjectType::prop)>), \
-            .Serialize = &(GenericSerializeOffsetProperty<decltype(ObjectType::prop)>), \
+            .Serialize = PickPropertySerializer<decltype(ObjectType::prop)>(), \
             .Offset = offsetof(ObjectType, prop), \
             .Flag = 0, \
             .Notification = PropertyNotification::notify \
@@ -563,10 +572,10 @@ struct PropertyMapRegistrations;
         P(prop) \
         { .Type = PropertyMapEntryType::Property, .Property = { \
             .Name = #oldName, \
-            .Getter = &(GenericGetOffsetProperty<decltype(ObjectType::prop)>), \
-            .Setter = &(GenericSetOffsetProperty<decltype(ObjectType::prop)>), \
+            .Getter = &(GenericGetValue<decltype(ObjectType::prop)>), \
+            .Setter = &(GenericSetValue<decltype(ObjectType::prop)>), \
             .Validate = &(GenericValidateOffsetProperty<decltype(ObjectType::prop)>), \
-            .Serialize = &(GenericSerializeOffsetProperty<decltype(ObjectType::prop)>), \
+            .Serialize = PickPropertySerializer<decltype(ObjectType::prop)>(), \
             .Offset = offsetof(ObjectType, prop), \
             .Flag = 0, \
             .Notification = PropertyNotification::Renamed, \

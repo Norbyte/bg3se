@@ -756,6 +756,13 @@ try:
         cur_components = f.read()
 except FileNotFoundError:
     pass
+    
+cur_meta = ''
+try:
+    with open('GameDefinitions/Generated/PropertyMapMeta.h', 'r') as f:
+        cur_meta = f.read()
+except FileNotFoundError:
+    pass
 
 if cur_names != propmap_names + preprocessor.names:
     with open('GameDefinitions/Generated/PropertyMapNames.inl', 'w') as f:
@@ -774,3 +781,13 @@ if cur_components != component_names:
         f.write(component_names)
 else:
     print("No component changes detected")
+
+property_meta = '#pragma once\n'
+property_meta += 'BEGIN_SE()\n'
+property_meta += 'static constexpr int StructRegistrySize = ' + str(shared.next_struct_id) + ';\n'
+property_meta += 'END_SE()\n'
+if cur_meta != property_meta:
+    with open('GameDefinitions/Generated/PropertyMapMeta.h', 'w') as f:
+        f.write(property_meta)
+else:
+    print("No meta changes detected")

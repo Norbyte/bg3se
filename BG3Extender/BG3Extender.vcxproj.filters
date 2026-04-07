@@ -530,6 +530,9 @@
     <ClInclude Include="GameDefinitions\Components\Fade.h" />
     <ClInclude Include="GameDefinitions\Components\Instancing.h" />
     <ClInclude Include="GameDefinitions\Components\Script.h" />
+    <ClInclude Include="GameDefinitions\Generated\EnumerationMeta.h" />
+    <ClInclude Include="GameDefinitions\Generated\PropertyMapMeta.h" />
+    <ClInclude Include="GameDefinitions\Base\TypeMetadata.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
