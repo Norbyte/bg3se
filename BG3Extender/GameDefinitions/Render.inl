@@ -47,7 +47,7 @@ END_SE()
 
 BEGIN_NS(lua)
 
-void LuaPolymorphic<MoveableObject>::MakeRef(lua_State* L, MoveableObject* value, LifetimeHandle lifetime)
+void MakePolymorphicRef(lua_State* L, MoveableObject* value, LifetimeHandle lifetime)
 {
 #define V(type) if ((rtti & type::StaticRTTI) == type::StaticRTTI) { \
             MakeDirectObjectRef(L, static_cast<type*>(value), lifetime); return; }
@@ -72,22 +72,22 @@ void LuaPolymorphic<MoveableObject>::MakeRef(lua_State* L, MoveableObject* value
 #undef V
 }
 
-void LuaPolymorphic<RenderableObject>::MakeRef(lua_State* L, RenderableObject* value, LifetimeHandle lifetime)
+void MakePolymorphicRef(lua_State* L, RenderableObject* value, LifetimeHandle lifetime)
 {
-    LuaPolymorphic<MoveableObject>::MakeRef(L, static_cast<MoveableObject*>(value), lifetime);
+    MakePolymorphicRef(L, static_cast<MoveableObject*>(value), lifetime);
 }
 
-void LuaPolymorphic<AnimatableObject>::MakeRef(lua_State* L, AnimatableObject* value, LifetimeHandle lifetime)
+void MakePolymorphicRef(lua_State* L, AnimatableObject* value, LifetimeHandle lifetime)
 {
-    LuaPolymorphic<MoveableObject>::MakeRef(L, static_cast<MoveableObject*>(value), lifetime);
+    MakePolymorphicRef(L, static_cast<MoveableObject*>(value), lifetime);
 }
 
-void LuaPolymorphic<Visual>::MakeRef(lua_State* L, Visual* value, LifetimeHandle lifetime)
+void MakePolymorphicRef(lua_State* L, Visual* value, LifetimeHandle lifetime)
 {
-    LuaPolymorphic<MoveableObject>::MakeRef(L, static_cast<MoveableObject*>(value), lifetime);
+    MakePolymorphicRef(L, static_cast<MoveableObject*>(value), lifetime);
 }
 
-void LuaPolymorphic<BasicModel>::MakeRef(lua_State* L, BasicModel* value, LifetimeHandle lifetime)
+void MakePolymorphicRef(lua_State* L, BasicModel* value, LifetimeHandle lifetime)
 {
     auto rtti = value->GetRTTI();
     if ((rtti & ModelProxy::StaticRTTI) == ModelProxy::StaticRTTI) {
@@ -108,9 +108,9 @@ void LuaPolymorphic<BasicModel>::MakeRef(lua_State* L, BasicModel* value, Lifeti
     MakeDirectObjectRef(L, value, lifetime);
 }
 
-void LuaPolymorphic<Model>::MakeRef(lua_State* L, Model* value, LifetimeHandle lifetime)
+void MakePolymorphicRef(lua_State* L, Model* value, LifetimeHandle lifetime)
 {
-    LuaPolymorphic<BasicModel>::MakeRef(L, static_cast<BasicModel*>(value), lifetime);
+    MakePolymorphicRef(L, static_cast<BasicModel*>(value), lifetime);
 }
 
 END_NS()

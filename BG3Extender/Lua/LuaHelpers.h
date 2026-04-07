@@ -21,7 +21,6 @@ END_NS()
 
 #include <Lua/Shared/LuaReference.h>
 #include <Lua/Shared/RawComponentRef.h>
-#include <Lua/Shared/LuaTypeTraits.h>
 
 BEGIN_SE()
 

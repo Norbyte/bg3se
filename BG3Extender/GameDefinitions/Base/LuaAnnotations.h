@@ -128,30 +128,20 @@ BEGIN_NS(lua)
 // Indicates that a type should be pushed through the polymorphic MakeObjectRef()
 // implementation, since there are separate property maps for the different subclasses
 template <class T>
-struct LuaPolymorphic {
-    static constexpr bool IsPolymorphic = false;
-};
+constexpr bool IsLuaPolymorphic = false;
 
 #define LUA_POLYMORPHIC(cls) \
-    template <> \
-    struct LuaPolymorphic<cls> { \
-        static constexpr bool IsPolymorphic = true; \
-        static void MakeRef(lua_State* L, cls* value, LifetimeHandle lifetime); \
-    };
+    template <> constexpr bool IsLuaPolymorphic<cls> = true; \
+    void MakePolymorphicRef(lua_State* L, cls* value, LifetimeHandle lifetime);
 
 
 // Indicates that a type should be pushed through the polymorphic MakeObjectRef()
 // implementation, since there are separate property maps for the different subclasses
 template <class T>
-struct LuaLifetimeInfo {
-    static constexpr bool HasInfiniteLifetime = false;
-};
+constexpr bool LuaHasInfiniteLifetime = false;
 
 #define LUA_INFINITE_LIFETIME(cls) \
-    template <> \
-    struct LuaLifetimeInfo<cls> { \
-        static constexpr bool HasInfiniteLifetime = true; \
-    };
+    template <> constexpr bool LuaHasInfiniteLifetime<cls> = true;
 
 
 END_NS()

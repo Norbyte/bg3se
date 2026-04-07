@@ -2,7 +2,7 @@
 
 BEGIN_NS(lua)
 
-void LuaPolymorphic<ecl::CharacterTask>::MakeRef(lua_State* L, ecl::CharacterTask* v, LifetimeHandle lifetime)
+void MakePolymorphicRef(lua_State* L, ecl::CharacterTask* v, LifetimeHandle lifetime)
 {
 #define V(type) case ecl::CharacterTask_##type::Type: \
             MakeDirectObjectRef(L, static_cast<ecl::CharacterTask_##type*>(v), lifetime); break;
@@ -40,7 +40,7 @@ void LuaPolymorphic<ecl::CharacterTask>::MakeRef(lua_State* L, ecl::CharacterTas
 #undef V
 }
 
-void LuaPolymorphic<ecl::CharacterMoveTask>::MakeRef(lua_State* L, ecl::CharacterMoveTask* v, LifetimeHandle lifetime)
+void MakePolymorphicRef(lua_State* L, ecl::CharacterMoveTask* v, LifetimeHandle lifetime)
 {
     return MakeObjectRef(L, static_cast<ecl::CharacterTask*>(v), lifetime);
 }

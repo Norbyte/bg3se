@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameDefinitions/Base/TypeMetadata.h>
+#include <GameDefinitions/Base/TypeId.h>
 
 BEGIN_SE()
 

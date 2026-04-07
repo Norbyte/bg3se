@@ -272,7 +272,7 @@ namespace bg3se
 
 BEGIN_NS(lua)
 
-void LuaPolymorphic<stats::ContextData>::MakeRef(lua_State* L, stats::ContextData* value, LifetimeHandle lifetime)
+void MakePolymorphicRef(lua_State* L, stats::ContextData* value, LifetimeHandle lifetime)
 {
 #define V(type) case FunctorContextType::type: \
             MakeDirectObjectRef(L, static_cast<stats::type##ContextData*>(value), lifetime); break;
@@ -296,7 +296,7 @@ void LuaPolymorphic<stats::ContextData>::MakeRef(lua_State* L, stats::ContextDat
 #undef V
 }
 
-void LuaPolymorphic<stats::Functor>::MakeRef(lua_State* L, stats::Functor* value, LifetimeHandle lifetime)
+void MakePolymorphicRef(lua_State* L, stats::Functor* value, LifetimeHandle lifetime)
 {
 #define V(type) case stats::FunctorId::type: \
             MakeDirectObjectRef(L, static_cast<stats::type##Functor*>(value), lifetime); break;
@@ -374,7 +374,7 @@ void LuaPolymorphic<stats::Functor>::MakeRef(lua_State* L, stats::Functor* value
 #undef V
 }
 
-void LuaPolymorphic<IActionData>::MakeRef(lua_State* L, IActionData* value, LifetimeHandle lifetime)
+void MakePolymorphicRef(lua_State* L, IActionData* value, LifetimeHandle lifetime)
 {
 #define V(type) case ActionDataType::type: \
             MakeDirectObjectRef(L, static_cast<type##ActionData*>(value), lifetime); break;
@@ -421,7 +421,7 @@ void LuaPolymorphic<IActionData>::MakeRef(lua_State* L, IActionData* value, Life
 #undef V
 }
 
-void LuaPolymorphic<TextKeyTypeProperties>::MakeRef(lua_State* L, TextKeyTypeProperties* value, LifetimeHandle lifetime)
+void MakePolymorphicRef(lua_State* L, TextKeyTypeProperties* value, LifetimeHandle lifetime)
 {
 #define V(type) case TextKeyType::type: \
             MakeDirectObjectRef(L, static_cast<TextKey##type##TypeProperties*>(value), lifetime); break;
@@ -450,7 +450,7 @@ void LuaPolymorphic<TextKeyTypeProperties>::MakeRef(lua_State* L, TextKeyTypePro
 #undef V
 }
 
-void LuaPolymorphic<aspk::Property>::MakeRef(lua_State* L, aspk::Property* value, LifetimeHandle lifetime)
+void MakePolymorphicRef(lua_State* L, aspk::Property* value, LifetimeHandle lifetime)
 {
 #define V(type) case aspk::PropertyType::type: \
             MakeDirectObjectRef(L, static_cast<aspk::type##Property*>(value), lifetime); break;
@@ -478,7 +478,7 @@ void LuaPolymorphic<aspk::Property>::MakeRef(lua_State* L, aspk::Property* value
 #undef V
 }
 
-void LuaPolymorphic<aspk::KeyFrameData>::MakeRef(lua_State* L, aspk::KeyFrameData* value, LifetimeHandle lifetime)
+void MakePolymorphicRef(lua_State* L, aspk::KeyFrameData* value, LifetimeHandle lifetime)
 {
     switch (value->GetType()) {
     case 0:
@@ -498,7 +498,7 @@ void LuaPolymorphic<aspk::KeyFrameData>::MakeRef(lua_State* L, aspk::KeyFrameDat
 #undef V
 }
 
-void LuaPolymorphic<resource::PhysicsResource::ObjectTemplate::PhysicsObject>::MakeRef(lua_State* L, resource::PhysicsResource::ObjectTemplate::PhysicsObject* value, LifetimeHandle lifetime)
+void MakePolymorphicRef(lua_State* L, resource::PhysicsResource::ObjectTemplate::PhysicsObject* value, LifetimeHandle lifetime)
 {
     if (value->GetType().GetStringView() == "box")
     {
@@ -514,7 +514,7 @@ void LuaPolymorphic<resource::PhysicsResource::ObjectTemplate::PhysicsObject>::M
     }
 }
 
-void LuaPolymorphic<dlg::DialogNode>::MakeRef(lua_State* L, dlg::DialogNode* value, LifetimeHandle lifetime)
+void MakePolymorphicRef(lua_State* L, dlg::DialogNode* value, LifetimeHandle lifetime)
 {
 #define V(type) if (value->ConstructorID == GFS.str##type) { MakeDirectObjectRef(L, static_cast<dlg::type##Node*>(value), lifetime); return; }
 
@@ -548,7 +548,7 @@ void LuaPolymorphic<dlg::DialogNode>::MakeRef(lua_State* L, dlg::DialogNode* val
     MakeDirectObjectRef(L, value, lifetime);
 }
 
-void LuaPolymorphic<aspk::Component>::MakeRef(lua_State* L, aspk::Component* value, LifetimeHandle lifetime)
+void MakePolymorphicRef(lua_State* L, aspk::Component* value, LifetimeHandle lifetime)
 {
     auto componentType = value->GetTypeName().GetStringView();
 #define V(type) else if (componentType == #type) \
@@ -653,7 +653,7 @@ void LuaPolymorphic<aspk::Component>::MakeRef(lua_State* L, aspk::Component* val
 #undef V
 }
 
-void LuaPolymorphic<aspk::TLMaterialComponent::Parameter>::MakeRef(lua_State* L, aspk::TLMaterialComponent::Parameter* value, LifetimeHandle lifetime)
+void MakePolymorphicRef(lua_State* L, aspk::TLMaterialComponent::Parameter* value, LifetimeHandle lifetime)
 {
     aspk::TLMaterialComponent::Parameter::Range range;
     value->getRange(range);

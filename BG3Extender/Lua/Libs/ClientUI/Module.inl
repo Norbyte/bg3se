@@ -29,14 +29,14 @@ void NoesisPush(lua_State* L, Noesis::BaseObject* obj, LifetimeHandle lifetime)
 
 #undef FOR_NOESIS_TYPE
 
-#define FOR_NOESIS_TYPE(T) void LuaPolymorphic<T>::MakeRef(lua_State* L, T* value, LifetimeHandle lifetime) { \
+#define FOR_NOESIS_TYPE(T) void MakePolymorphicRef(lua_State* L, T* value, LifetimeHandle lifetime) { \
     NoesisPush(L, value, lifetime); \
 }
 
 FOR_EACH_NOESIS_TYPE()
 #undef FOR_NOESIS_TYPE
 
-void LuaPolymorphic<Noesis::RoutedEventArgs>::MakeRef(lua_State* L, Noesis::RoutedEventArgs* value, LifetimeHandle lifetime)
+void MakePolymorphicRef(lua_State* L, Noesis::RoutedEventArgs* value, LifetimeHandle lifetime)
 {
     auto evtName = value->routedEvent->GetName();
     auto const& events = Noesis::gStaticSymbols.Events;

@@ -546,32 +546,32 @@ inline PropertyOperationResult Unserialize(lua_State* L, int index, T* obj)
         *obj = get<T>(L, index);
     } else {
         bool isTable = lua_type(L, index) == LUA_TTABLE;
-        if constexpr (IsArrayLike<T>::Value) {
+        if constexpr (IsArray<T>) {
             if (isTable) {
                 return UnserializeArrayFromTable(L, index, obj);
             } else {
                 return UnserializeArrayFromUserdata(L, index, obj);
             }
-        } else if constexpr (IsMapLike<T>::Value) {
+        } else if constexpr (IsMap<T>) {
             if (isTable) {
                 return UnserializeMapFromTable(L, index, obj);
             } else {
                 return UnserializeMapFromUserdata(L, index, obj);
             }
-        } else if constexpr (IsSetLike<T>::Value) {
+        } else if constexpr (IsSet<T>) {
             if (isTable) {
                 return UnserializeSetFromTable(L, index, obj);
             } else {
                 return UnserializeSetFromUserdata(L, index, obj);
             }
-        } else if constexpr (IsVariantLike<T>::Value) {
+        } else if constexpr (IsVariant<T>) {
             return UnserializeVariant(L, index, obj);
-        } else if constexpr (IsOptional<T>::Value) {
-            if constexpr (std::is_default_constructible_v<typename IsOptional<T>::ValueType>) {
+        } else if constexpr (IsOptional<T>) {
+            if constexpr (std::is_default_constructible_v<typename T::value_type>) {
                 if (lua_type(L, index) == LUA_TNIL) {
                     *obj = {};
                 } else {
-                    *obj = typename IsOptional<T>::ValueType{};
+                    *obj = typename T::value_type{};
                     return Unserialize(L, index, &obj->value());
                 }
             } else {

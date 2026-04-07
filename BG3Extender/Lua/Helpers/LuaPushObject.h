@@ -14,13 +14,13 @@ inline void MakeObjectRef(lua_State* L, T* value, LifetimeHandle lifetime)
         return;
     }
 
-    if constexpr (LuaPolymorphic<TVal>::IsPolymorphic) {
-        return LuaPolymorphic<TVal>::MakeRef(L, value, lifetime);
-    } else if constexpr (IsArrayLike<TVal>::Value) {
+    if constexpr (IsLuaPolymorphic<TVal>) {
+        return MakePolymorphicRef(L, value, lifetime);
+    } else if constexpr (IsArray<TVal>) {
         ArrayProxyMetatable::Make(L, value, lifetime);
-    } else if constexpr (IsMapLike<TVal>::Value) {
+    } else if constexpr (IsMap<TVal>) {
         MapProxyMetatable::Make(L, value, lifetime);
-    } else if constexpr (IsSetLike<TVal>::Value) {
+    } else if constexpr (IsSet<TVal>) {
         SetProxyMetatable::Make(L, value, lifetime);
     } else if constexpr (std::is_pointer_v<T>) {
         if constexpr (std::is_const_v<std::remove_pointer_t<T>>) {
@@ -28,14 +28,14 @@ inline void MakeObjectRef(lua_State* L, T* value, LifetimeHandle lifetime)
         } else {
             MakeObjectRef(L, *value, lifetime);
         }
-    } else if constexpr (IsOptional<TVal>::Value) {
+    } else if constexpr (IsOptional<TVal>) {
         if (value->has_value()) {
             MakeObjectRef(L, &value->value(), lifetime);
         } else {
             push(L, nullptr);
         }
     } else {
-        if constexpr (LuaLifetimeInfo<TVal>::HasInfiniteLifetime) {
+        if constexpr (LuaHasInfiniteLifetime<TVal>) {
             ObjectProxy::MakeRef<T>(L, value, LifetimeHandle{});
         } else {
             ObjectProxy::MakeRef<T>(L, value, lifetime);
@@ -48,9 +48,9 @@ inline void MakeObjectCopy(lua_State* L, T&& value)
 {
     using TVal = std::remove_cv_t<T>;
 
-    static_assert(!LuaPolymorphic<TVal>::IsPolymorphic, "Copying polymorphic types not supported");
+    static_assert(!IsLuaPolymorphic<TVal>, "Copying polymorphic types not supported");
     static_assert(
-        !IsArrayLike<TVal>::Value && !IsMapLike<TVal>::Value && !IsSetLike<TVal>::Value && !std::is_pointer_v<T> && !IsOptional<TVal>::Value,
+        !IsArray<TVal> && !IsMap<TVal> && !IsSet<TVal> && !std::is_pointer_v<T> && !IsOptional<TVal>,
         "Copying special types not supported");
     // FIXME - ObjectProxy::MakeRef<T>(L, std::move(value));
 }
@@ -69,7 +69,7 @@ inline void MakeDirectObjectRef(lua_State* L, T* value, LifetimeHandle lifetime)
 {
     if (value == nullptr) {
         push(L, nullptr);
-    } else if constexpr (LuaLifetimeInfo<T>::HasInfiniteLifetime) {
+    } else if constexpr (LuaHasInfiniteLifetime<T>) {
         ObjectProxy::MakeRef<T>(L, value, LifetimeHandle{});
     } else {
         ObjectProxy::MakeRef<T>(L, value, lifetime);

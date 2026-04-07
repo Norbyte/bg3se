@@ -268,8 +268,8 @@ inline constexpr StructTypeId CheckedGetDeclStructId()
 {
     static_assert(!std::is_pointer_v<T>, "PropertyMap type should not be a pointer type!");
     static_assert(!IsByVal<T>, "PropertyMap type should not be a by-val type!");
-    static_assert(!IsOptional<T>::Value, "PropertyMap type should not be an optional<T> type!");
-    static_assert(!IsArrayLike<T>::Value && !IsSetLike<T>::Value && !IsMapLike<T>::Value && !IsVariantLike<T>::Value, "PropertyMap type should not be a container type!");
+    static_assert(!IsOptional<T>, "PropertyMap type should not be an optional<T> type!");
+    static_assert(!IsArray<T> && !IsSet<T> && !IsMap<T> && !IsVariant<T>, "PropertyMap type should not be a container type!");
     static_assert(StructID<T> >= 0, "Type should be a registered struct!");
 
     return StructID<T>;

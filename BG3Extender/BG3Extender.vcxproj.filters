@@ -401,7 +401,6 @@
     <ClInclude Include="Extender\Shared\Hooks.h" />
     <ClInclude Include="Lua\Shared\LuaTypeValidators.h" />
     <ClInclude Include="GameDefinitions\Base\Serialization.h" />
-    <ClInclude Include="Lua\Shared\LuaTypeTraits.h" />
     <ClInclude Include="Lua\Helpers\LuaPush.h" />
     <ClInclude Include="Lua\Helpers\LuaGet.h" />
     <ClInclude Include="Lua\Helpers\LuaGetObject.h" />
@@ -533,6 +532,7 @@
     <ClInclude Include="GameDefinitions\Generated\EnumerationMeta.h" />
     <ClInclude Include="GameDefinitions\Generated\PropertyMapMeta.h" />
     <ClInclude Include="GameDefinitions\Base\TypeMetadata.h" />
+    <ClInclude Include="GameDefinitions\Base\TypeId.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

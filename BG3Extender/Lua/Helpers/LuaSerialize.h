@@ -188,15 +188,15 @@ inline void Serialize(lua_State* L, T const* obj)
         }
     } else if constexpr (IsByVal<T>) {
         push(L, *obj);
-    } else if constexpr (IsArrayLike<T>::Value) {
+    } else if constexpr (IsArray<T>) {
         SerializeArray(L, obj);
-    } else if constexpr (IsMapLike<T>::Value) {
+    } else if constexpr (IsMap<T>) {
         SerializeMap(L, obj);
-    } else if constexpr (IsSetLike<T>::Value) {
+    } else if constexpr (IsSet<T>) {
         SerializeSet(L, obj);
-    } else if constexpr (IsVariantLike<T>::Value) {
+    } else if constexpr (IsVariant<T>) {
         SerializeVariant(L, obj);
-    } else if constexpr (IsOptional<T>::Value) {
+    } else if constexpr (IsOptional<T>) {
         if (obj->has_value()) {
             Serialize(L, &obj->value());
         } else {

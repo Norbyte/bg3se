@@ -170,6 +170,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="GameDefinitions\Base\Serialization.h" />
     <ClInclude Include="GameDefinitions\Base\BaseTypeInformation.h" />
     <ClInclude Include="GameDefinitions\Base\ForwardDeclarations.h" />
+    <ClInclude Include="GameDefinitions\Base\TypeId.h" />
     <ClInclude Include="GameDefinitions\Base\TypeMetadata.h" />
     <ClInclude Include="GameDefinitions\Character.h" />
     <ClInclude Include="GameDefinitions\Base\CommonTypes.h" />
@@ -316,7 +317,6 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="Lua\Shared\LuaModule.h" />
     <ClInclude Include="Lua\Shared\LuaStats.h" />
     <ClInclude Include="Lua\Shared\LuaTraits.h" />
-    <ClInclude Include="Lua\Shared\LuaTypeTraits.h" />
     <ClInclude Include="Lua\Shared\LuaTypeValidators.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaArrayProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaBitfieldValue.h" />

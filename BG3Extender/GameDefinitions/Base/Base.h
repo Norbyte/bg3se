@@ -4,6 +4,7 @@
 #include <CoreLib/Utils.h>
 // Needed for enum definitions
 #include <NsGui/GridLength.h>
+#include <GameDefinitions/Base/TypeId.h>
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/Base/ForwardDeclarations.h>
 

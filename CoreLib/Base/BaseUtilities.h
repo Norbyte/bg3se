@@ -89,17 +89,6 @@ constexpr bool IsByVal = ByVal<T>::Value;
     }
 
 
-template <class T>
-struct IsOptional { 
-    static constexpr bool Value = false;
-};
-
-template <class T>
-struct IsOptional<std::optional<T>> { 
-    static constexpr bool Value = true;
-    using ValueType = T;
-};
-
 inline constexpr uint64_t Hash(uint8_t v)
 {
     return v;
