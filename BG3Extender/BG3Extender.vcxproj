@@ -172,6 +172,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="GameDefinitions\Base\ForwardDeclarations.h" />
     <ClInclude Include="GameDefinitions\Base\TypeId.h" />
     <ClInclude Include="GameDefinitions\Base\TypeMetadata.h" />
+    <ClInclude Include="GameDefinitions\Base\WindowsSlim.h" />
     <ClInclude Include="GameDefinitions\Character.h" />
     <ClInclude Include="GameDefinitions\Base\CommonTypes.h" />
     <ClInclude Include="GameDefinitions\CharacterCreation.h" />

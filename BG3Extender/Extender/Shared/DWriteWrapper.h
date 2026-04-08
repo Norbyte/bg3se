@@ -1,5 +1,6 @@
 #pragma once
 
+#define LOGFONTW void
 #include <dwrite.h>
 #include <memory>
 

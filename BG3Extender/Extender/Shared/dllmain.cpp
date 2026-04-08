@@ -3,9 +3,6 @@
 #include <Extender/Shared/ExtenderConfig.h>
 #include <Extender/ScriptExtender.h>
 #include <CoreLib/JsonLibs.h>
-#include <ShellAPI.h>
-#include <KnownFolders.h>
-#include <ShlObj.h>
 #include <sstream>
 #include <fstream>
 #include <Extender/Shared/ExtenderConfig.inl>
