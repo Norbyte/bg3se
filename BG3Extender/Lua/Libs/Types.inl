@@ -34,7 +34,7 @@ TypeInformation const* GetCppObjectType(lua_State * L, int index)
     switch (meta.MetatableTag) {
     case MetatableTag::ObjectRef:
     {
-        auto propertyMap = gStructRegistry.Get(meta.PropertyMapTag);
+        auto propertyMap = gStructRegistry.Get(StructTypeId(meta.PropertyMapTag));
         return propertyMap->TypeInfo;
     }
 
@@ -340,7 +340,7 @@ bool AddCustomFunction(lua_State* L, FixedString const& typeName, FixedString co
     
     if (type.Kind != LuaTypeId::Object 
         || type.PropertyMap == nullptr 
-        || type.PropertyMap->RegistryIndex == -1) {
+        || (int32_t)type.PropertyMap->RegistryIndex == -1) {
         luaL_error(L, "Cannot extend non-object type: %s", typeName.GetString());
         return false;
     }
@@ -359,7 +359,7 @@ bool AddCustomProperty(lua_State* L, FixedString const& typeName, FixedString co
     
     if (type.Kind != LuaTypeId::Object 
         || type.PropertyMap == nullptr 
-        || type.PropertyMap->RegistryIndex == -1) {
+        || (int32_t)type.PropertyMap->RegistryIndex == -1) {
         luaL_error(L, "Cannot extend non-object type: %s", typeName.GetString());
         return false;
     }

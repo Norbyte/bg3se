@@ -2,57 +2,6 @@
 
 BEGIN_SE()
 
-BY_VAL(uint8_t);
-BY_VAL(int16_t);
-BY_VAL(uint16_t);
-BY_VAL(int32_t);
-BY_VAL(uint32_t);
-BY_VAL(int64_t);
-BY_VAL(uint64_t);
-BY_VAL(float);
-BY_VAL(double);
-BY_VAL(bool);
-BY_VAL(ComponentHandle);
-BY_VAL(EntityHandle);
-BY_VAL(ecs::EntityRef);
-BY_VAL(FixedString);
-BY_VAL(STDString);
-BY_VAL(STDWString);
-BY_VAL(StringView);
-BY_VAL(WStringView);
-BY_VAL(LSStringView);
-BY_VAL(Noesis::String);
-BY_VAL(Noesis::Symbol);
-BY_VAL(ScratchBuffer);
-BY_VAL(ScratchString);
-BY_VAL(Guid);
-BY_VAL(Path);
-BY_VAL(NetId);
-BY_VAL(UserId);
-BY_VAL(Version);
-BY_VAL(glm::ivec2);
-BY_VAL(glm::ivec3);
-BY_VAL(glm::ivec4);
-BY_VAL(glm::vec2);
-BY_VAL(glm::vec3);
-BY_VAL(glm::vec4);
-BY_VAL(glm::aligned_highp_vec4);
-BY_VAL(glm::quat);
-BY_VAL(glm::mat3);
-BY_VAL(glm::mat3x4);
-BY_VAL(glm::mat4x3);
-BY_VAL(glm::mat4);
-BY_VAL(TypeInformationRef);
-BY_VAL(lua::Ref);
-BY_VAL(lua::RegistryEntry);
-BY_VAL(lua::PersistentRegistryEntry);
-
-template <class T> 
-struct ByVal<lua::LuaDelegate<T>> { static constexpr bool Value = true; };
-
-template <class T> 
-struct ByVal<OverrideableProperty<T>> { static constexpr bool Value = IsByVal<T>; };
-
 END_SE()
 
 BEGIN_NS(lua)

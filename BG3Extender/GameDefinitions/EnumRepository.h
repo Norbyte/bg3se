@@ -17,7 +17,7 @@ struct BitfieldInfoStoreBase
     T AllowedFlags{ 0 };
     FixedString EnumName;
     FixedString LuaName;
-    int RegistryIndex{ -1 };
+    BitfieldTypeId RegistryIndex{ -1 };
 
     BitfieldInfoStoreBase(unsigned sizeHint, FixedString const& enumName, FixedString const& luaName)
     {
@@ -89,7 +89,7 @@ struct EnumInfoStoreBase
     LegacyMap<FixedString, T> Values;
     FixedString EnumName;
     FixedString LuaName;
-    int RegistryIndex{ -1 };
+    EnumTypeId RegistryIndex{ -1 };
 
     EnumInfoStoreBase(unsigned sizeHint, FixedString const& enumName, FixedString const& luaName)
     {
@@ -147,6 +147,11 @@ struct EnumRegistry
     Array<EnumInfoStore*> EnumsById;
 
     void Register(EnumInfoStore* ei, EnumTypeId id);
+
+    EnumInfoStore const* Get(EnumTypeId typeId) const
+    {
+        return EnumsById[(uint32_t)typeId];
+    }
 };
 
 struct BitfieldRegistry
@@ -157,16 +162,21 @@ struct BitfieldRegistry
     Array<BitfieldInfoStore*> BitfieldsById;
 
     void Register(BitfieldInfoStore* ei, BitfieldTypeId id);
+
+    BitfieldInfoStore const* Get(BitfieldTypeId typeId) const
+    {
+        return BitfieldsById[(uint32_t)typeId];
+    }
 };
 
 
 template <class T>
 struct EnumInfo
 {
-    inline static EnumInfoStore& GetStore()
+    inline static EnumInfoStore const& GetStore()
     {
-        static_assert(EnumID<T> >= 0, "Type is not a registered enumeration");
-        return *EnumRegistry::Get().EnumsById[EnumID<T>];
+        static_assert(IsEnum<T>, "Type is not a registered enumeration");
+        return *EnumRegistry::Get().Get(EnumID<T>);
     }
 
     inline static std::optional<T> Find(FixedString const& name)
@@ -188,10 +198,10 @@ struct EnumInfo
 template <class T>
 struct BitfieldInfo
 {
-    inline static BitfieldInfoStore& GetStore()
+    inline static BitfieldInfoStore const& GetStore()
     {
-        static_assert(BitfieldID<T> >= 0, "Type is not a registered bitfield");
-        return *BitfieldRegistry::Get().BitfieldsById[BitfieldID<T>];
+        static_assert(IsBitfield<T>, "Type is not a registered bitfield");
+        return *BitfieldRegistry::Get().Get(BitfieldID<T>);
     }
 
     static std::optional<T> Find(FixedString const& name)

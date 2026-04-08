@@ -16,10 +16,10 @@ void StructRegistry::Register(GenericPropertyMap* pm, StructTypeId id)
 {
     se_assert(pm->IsInitializing);
     se_assert((uint32_t)id < StructsById.size());
-    se_assert(StructsById[id] == nullptr);
+    se_assert(StructsById[(int32_t)id] == nullptr);
 
     pm->RegistryIndex = id;
-    StructsById[id] = pm;
+    StructsById[(int32_t)id] = pm;
 }
 
 void GenericPropertyMap::Init()
@@ -163,8 +163,8 @@ bool GenericPropertyMap::ValidatePropertyMap(void const* object)
         if (Validated == ValidationState::Unknown) {
             if (ValidateObject(object)) {
                 Validated = ValidationState::Valid;
-                se_assert(RegistryIndex >= 0);
-                gStructRegistry.Validated.Set(RegistryIndex);
+                se_assert((int32_t)RegistryIndex >= 0);
+                gStructRegistry.Validated.Set((uint32_t)RegistryIndex);
             } else {
                 ERR("Object class %s failed validation; proxying of this class is disabled", Name.GetString());
                 Validated = ValidationState::Invalid;
@@ -193,7 +193,7 @@ bool GenericPropertyMap::ValidateObject(void const* object)
     return true;
 }
 
-bool GenericPropertyMap::IsA(int typeRegistryIndex) const
+bool GenericPropertyMap::IsA(StructTypeId typeRegistryIndex) const
 {
     if (RegistryIndex == typeRegistryIndex) {
         return true;
@@ -215,8 +215,8 @@ CustomPropertyManager::CustomPropertyManager()
 
 bool CustomPropertyManager::PropertyCheck(GenericPropertyMap const& pm, FixedStringUnhashed const& name)
 {
-    if (!PropertyMaps[pm.RegistryIndex]) {
-        PropertyMaps[pm.RegistryIndex] = std::make_unique<CustomPropertyMap>();
+    if (!PropertyMaps[(int32_t)pm.RegistryIndex]) {
+        PropertyMaps[(int32_t)pm.RegistryIndex] = std::make_unique<CustomPropertyMap>();
     }
 
     auto prop = pm.Properties.find(name);
@@ -225,7 +225,7 @@ bool CustomPropertyManager::PropertyCheck(GenericPropertyMap const& pm, FixedStr
         return false;
     }
 
-    auto& customProps = PropertyMaps[pm.RegistryIndex];
+    auto& customProps = PropertyMaps[(int32_t)pm.RegistryIndex];
     auto customProp = customProps->Properties.try_get(name);
     if (customProp) {
         LuaError("Type " << pm.Name << " already has a custom property named '" << name << "'");
@@ -241,7 +241,7 @@ bool CustomPropertyManager::RegisterProperty(lua_State* L, GenericPropertyMap co
         return false;
     }
 
-    auto& customProps = PropertyMaps[pm.RegistryIndex];
+    auto& customProps = PropertyMaps[(uint32_t)pm.RegistryIndex];
     customProps->Properties.set(name, CustomProperty{
         .Value = RegistryEntry(L, value)
     });
@@ -254,7 +254,7 @@ bool CustomPropertyManager::RegisterProperty(lua_State* L, GenericPropertyMap co
         return false;
     }
 
-    auto& customProps = PropertyMaps[pm.RegistryIndex];
+    auto& customProps = PropertyMaps[(uint32_t)pm.RegistryIndex];
     customProps->Properties.set(name, CustomProperty{
         .Getter = RegistryEntry(L, getter),
         .Setter = RegistryEntry(L, setter)
@@ -264,7 +264,7 @@ bool CustomPropertyManager::RegisterProperty(lua_State* L, GenericPropertyMap co
 
 PropertyOperationResult CustomPropertyManager::GetProperty(lua_State* L, GenericPropertyMap const& pm, LifetimeHandle lifetime, void const* object, FixedStringId const& prop) const
 {
-    auto& customProps = PropertyMaps[pm.RegistryIndex];
+    auto& customProps = PropertyMaps[(int32_t)pm.RegistryIndex];
     if (!customProps) {
         return PropertyOperationResult::NoSuchProperty;
     }
@@ -290,7 +290,7 @@ PropertyOperationResult CustomPropertyManager::GetProperty(lua_State* L, Generic
 
 PropertyOperationResult CustomPropertyManager::SetProperty(lua_State* L, GenericPropertyMap const& pm, void* object, FixedStringId const& prop, int index) const
 {
-    auto& customProps = PropertyMaps[pm.RegistryIndex];
+    auto& customProps = PropertyMaps[(int32_t)pm.RegistryIndex];
     if (!customProps) {
         return PropertyOperationResult::NoSuchProperty;
     }

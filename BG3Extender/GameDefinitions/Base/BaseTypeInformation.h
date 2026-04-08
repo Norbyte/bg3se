@@ -76,6 +76,8 @@ private:
     StaticTypeInformation* ref_{ nullptr };
 };
 
+MARK_BY_VALUE_TYPE(TypeInformationRef)
+
 struct TypeInformation
 {
     FixedString TypeName;
@@ -117,44 +119,46 @@ public:
 
     inline StaticTypeInformation* GetStructRef(StructTypeId id)
     {
-        assert(id < (int)structs_.size());
-        return (structs_.data() + id);
+        assert((int)id >= 0 && (int)id < (int)structs_.size());
+        return (structs_.data() + (int32_t)id);
     }
 
     inline StaticTypeInformation* GetEnumRef(EnumTypeId id)
     {
-        assert(id < (int)enums_.size());
-        return (enums_.data() + id);
+        assert((int)id >= 0 && (int)id < (int)enums_.size());
+        return (enums_.data() + (int32_t)id);
     }
 
     inline StaticTypeInformation* GetBitfieldRef(BitfieldTypeId id)
     {
-        assert(id < (int)bitfields_.size());
-        return (bitfields_.data() + id);
+        assert((int)id >= 0 && (int)id < (int)bitfields_.size());
+        return (bitfields_.data() + (int32_t)id);
     }
 
     inline TypeInformation* GetStruct(StructTypeId id) const
     {
-        assert(id < (int)structs_.size());
-        return (structs_.data() + id)->Type;
+        assert((int)id >= 0 && (int)id < (int)structs_.size());
+        return (structs_.data() + (int32_t)id)->Type;
     }
 
     inline TypeInformation* GetEnum(EnumTypeId id) const
     {
-        assert(id < (int)enums_.size());
-        return (enums_.data() + id)->Type;
+        assert((int)id >= 0 && (int)id < (int)enums_.size());
+        return (enums_.data() + (int32_t)id)->Type;
     }
 
     inline TypeInformation* GetBitfield(BitfieldTypeId id) const
     {
-        assert(id < (int)bitfields_.size());
-        return (bitfields_.data() + id)->Type;
+        assert((int)id >= 0 && (int)id < (int)bitfields_.size());
+        return (bitfields_.data() + (int32_t)id)->Type;
     }
 
 private:
+    Array<StaticTypeInformation> builtins_;
     Array<StaticTypeInformation> structs_;
     Array<StaticTypeInformation> enums_;
     Array<StaticTypeInformation> bitfields_;
+    Array<StaticTypeInformation> dynamics_;
 };
 
 extern StaticTypeInformationRepository gStaticTypeInformationRepository;
@@ -247,6 +251,7 @@ inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overl
     return &MakeDeferredArrayType<T>;
 }
 
+/*
 inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<Noesis::BaseCollection>)
 {
     return &MakeDeferredArrayType<Noesis::BaseComponent*>;
@@ -261,6 +266,7 @@ inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overl
 {
     return &MakeDeferredArrayType<Noesis::UIElement*>;
 }
+*/
 
 template <class T, class Allocator, bool StoreSize>
 inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<Set<T, Allocator, StoreSize>>)

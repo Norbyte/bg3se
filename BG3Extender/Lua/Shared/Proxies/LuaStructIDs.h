@@ -40,11 +40,11 @@ BEGIN_SE()
 
 // Struct ID values
 
-#define DECLARE_CLS(id, ...) template <> constexpr StructTypeId StructID<__VA_ARGS__> = id;
-#define DECLARE_CLS_FWD(id, cls) template <> constexpr StructTypeId StructID<cls> = id;
-#define DECLARE_CLS_NS_FWD(id, ns, cls) template <> constexpr StructTypeId StructID<ns::cls> = id;
-#define DECLARE_CLS_BARE_NS_FWD(id, ns, cls) template <> constexpr StructTypeId StructID<ns::cls> = id;
-#define DECLARE_STRUCT_BARE_NS_FWD(id, ns, cls) template <> constexpr StructTypeId StructID<ns::cls> = id;
+#define DECLARE_CLS(id, ...) template <> constexpr StructTypeId StructID<__VA_ARGS__> = StructTypeId(id);
+#define DECLARE_CLS_FWD(id, cls) template <> constexpr StructTypeId StructID<cls> = StructTypeId(id);
+#define DECLARE_CLS_NS_FWD(id, ns, cls) template <> constexpr StructTypeId StructID<ns::cls> = StructTypeId(id);
+#define DECLARE_CLS_BARE_NS_FWD(id, ns, cls) template <> constexpr StructTypeId StructID<ns::cls> = StructTypeId(id);
+#define DECLARE_STRUCT_BARE_NS_FWD(id, ns, cls) template <> constexpr StructTypeId StructID<ns::cls> = StructTypeId(id);
 #include <GameDefinitions/Generated/PropertyMapNames.inl>
 #undef DECLARE_CLS
 #undef DECLARE_CLS_FWD

@@ -78,7 +78,7 @@ private:
     StatsExpressionPooled* expression_;
 };
 
-BY_VAL(StatsExpressionRef);
+MARK_BY_VALUE_TYPE(StatsExpressionRef);
 
 struct StatsExpressionWithMetadata : public StatsExpressionInternal
 {

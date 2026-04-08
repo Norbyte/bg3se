@@ -20,39 +20,39 @@ public:
 
     inline static void Make(lua_State* L, GenericPropertyMap const& pm, void* object, LifetimeHandle lifetime)
     {
-        lua_push_lightcppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);
+        lua_push_lightcppobject(L, MetaTag, (int32_t)pm.RegistryIndex, object, lifetime);
     }
 
     inline static void Make(lua_State* L, GenericPropertyMap const& pm, void const* object, LifetimeHandle lifetime)
     {
         // TODO - add RO tag
-        lua_push_lightcppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);
+        lua_push_lightcppobject(L, MetaTag, (int32_t)pm.RegistryIndex, object, lifetime);
     }
 
     template <class T>
     inline static void Make(lua_State* L, T* object, LifetimeHandle lifetime)
     {
-        lua_push_lightcppobject(L, MetaTag, StructID<T>, object, lifetime);
+        lua_push_lightcppobject(L, MetaTag, (int32_t)StructID<T>, object, lifetime);
     }
 
     template <class T>
     inline static void Make(lua_State* L, T const* object, LifetimeHandle lifetime)
     {
         // TODO - add RO tag
-        lua_push_lightcppobject(L, MetaTag, StructID<T>, object, lifetime);
+        lua_push_lightcppobject(L, MetaTag, (int32_t)StructID<T>, object, lifetime);
     }
 
     template <class T>
     inline static T* Copy(lua_State* L, T&& object)
     {
-        auto p = reinterpret_cast<T*>(lua_push_newcppobject(L, MetaTag, StructID<T>, sizeof(T)));
+        auto p = reinterpret_cast<T*>(lua_push_newcppobject(L, MetaTag, (int32_t)StructID<T>, sizeof(T)));
         *p = std::move(object);
         return p;
     }
 
     static GenericPropertyMap& GetPropertyMap(CppObjectMetadata const& meta);
-    static void* TryGetGeneric(lua_State* L, int index, int propertyMapIndex);
-    static void* GetGeneric(lua_State* L, int index, int propertyMapIndex);
+    static void* TryGetGeneric(lua_State* L, int index, StructTypeId typeId);
+    static void* GetGeneric(lua_State* L, int index, StructTypeId typeId);
 
     template <class T>
     static T* TryGet(lua_State* L, int index)

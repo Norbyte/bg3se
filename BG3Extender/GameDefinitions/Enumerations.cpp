@@ -58,11 +58,11 @@ void InitializeEnumerations()
         if (entry.Type == EnumRegistrationType::EnumType) {
             enumInfo = new EnumInfoStore(61, FixedString(entry.Name), FixedString(entry.LuaName));
             bitfieldInfo = nullptr;
-            EnumRegistry::Get().Register(enumInfo, entry.TypeId);
+            EnumRegistry::Get().Register(enumInfo, EnumTypeId(entry.TypeId));
         } else if (entry.Type == EnumRegistrationType::BitfieldType) {
             enumInfo = nullptr;
             bitfieldInfo = new BitfieldInfoStore(61, FixedString(entry.Name), FixedString(entry.LuaName));
-            BitfieldRegistry::Get().Register(bitfieldInfo, entry.TypeId);
+            BitfieldRegistry::Get().Register(bitfieldInfo, BitfieldTypeId(entry.TypeId));
         } else if (entry.Type == EnumRegistrationType::Value) {
             if (enumInfo != nullptr) {
                 enumInfo->Add(entry.Value, entry.Name);

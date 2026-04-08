@@ -315,7 +315,7 @@ char const* GetDebugName(MetatableTag tag, int propertyMapIdx)
 {
     switch (tag) {
     case MetatableTag::ObjectRef:
-        return gStructRegistry.Get(propertyMapIdx)->Name.GetString();
+        return gStructRegistry.Get(StructTypeId(propertyMapIdx))->Name.GetString();
 
     case MetatableTag::Array:
         return gExtender->GetPropertyMapManager().GetArrayProxy(propertyMapIdx)->GetContainerType().TypeName.GetString();

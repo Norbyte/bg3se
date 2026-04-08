@@ -45,21 +45,21 @@ int EnumValueMetatable::ToString(lua_State* L, CppObjectMetadata& self)
 bool EnumValueMetatable::IsEqual(lua_State* L, CppObjectMetadata& self, int otherIndex)
 {
     auto ei = GetEnumInfo(self);
-    auto other = try_get_enum_value(L, otherIndex, self.PropertyMapTag);
+    auto other = try_get_enum_value(L, otherIndex, EnumTypeId(self.PropertyMapTag));
     return other && *other == self.Value;
 }
 
 bool EnumValueMetatable::IsLessThan(lua_State* L, CppObjectMetadata& self, int otherIndex)
 {
     auto ei = GetEnumInfo(self);
-    auto other = try_get_enum_value(L, otherIndex, self.PropertyMapTag);
+    auto other = try_get_enum_value(L, otherIndex, EnumTypeId(self.PropertyMapTag));
     return other && self.Value < *other;
 }
 
 bool EnumValueMetatable::IsLessThan(lua_State* L, int selfIndex, CppObjectMetadata& other)
 {
     auto ei = GetEnumInfo(other);
-    auto self = try_get_enum_value(L, selfIndex, other.PropertyMapTag);
+    auto self = try_get_enum_value(L, selfIndex, EnumTypeId(other.PropertyMapTag));
     return self && *self < other.Value;
 }
 
@@ -71,7 +71,7 @@ char const* EnumValueMetatable::GetTypeName(lua_State* L, CppObjectMetadata& sel
 
 EnumUnderlyingType get_enum_value(lua_State* L, int index, EnumTypeId typeId)
 {
-    auto const& store = *EnumRegistry::Get().EnumsById[typeId];
+    auto const& store = *EnumRegistry::Get().Get(typeId);
 
     switch (lua_type(L, index)) {
     case LUA_TSTRING:
@@ -119,7 +119,7 @@ EnumUnderlyingType get_enum_value(lua_State* L, int index, EnumTypeId typeId)
 
 std::optional<EnumUnderlyingType> try_get_enum_value(lua_State* L, int index, EnumTypeId typeId)
 {
-    auto const& store = *EnumRegistry::Get().EnumsById[typeId];
+    auto const& store = *EnumRegistry::Get().Get(typeId);
 
     switch (lua_type(L, index)) {
     case LUA_TSTRING:

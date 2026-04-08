@@ -153,7 +153,7 @@ void AddBitfieldProperty(GenericPropertyMap& pm, BitfieldTypeId typeId, std::siz
     RawPropertyAccessors::Getter* getter,
     RawPropertyAccessors::Setter* setter)
 {
-    auto store = BitfieldRegistry::Get().BitfieldsById[typeId];
+    auto store = BitfieldRegistry::Get().Get(typeId);
     for (auto const& label : store->Values) {
         pm.AddRawProperty(label.Key.GetString(),
             getter,
@@ -266,12 +266,8 @@ inline constexpr StructTypeId CheckedGetParentStructId()
 template <class T>
 inline constexpr StructTypeId CheckedGetDeclStructId()
 {
-    static_assert(!std::is_pointer_v<T>, "PropertyMap type should not be a pointer type!");
     static_assert(!IsByVal<T>, "PropertyMap type should not be a by-val type!");
-    static_assert(!IsOptional<T>, "PropertyMap type should not be an optional<T> type!");
-    static_assert(!IsArray<T> && !IsSet<T> && !IsMap<T> && !IsVariant<T>, "PropertyMap type should not be a container type!");
-    static_assert(StructID<T> >= 0, "Type should be a registered struct!");
-
+    static_assert(IsStruct<T>, "Type should be a registered struct!");
     return StructID<T>;
 }
 
@@ -423,8 +419,8 @@ bool IsResolved(PropertyMapRegistrationEntry const* defn)
 {
     while (defn->Type != PropertyMapEntryType::End) {
         if (defn->Type == PropertyMapEntryType::Inheritance) {
-            if (defn->Inherit.ParentId >= (int)gStructRegistry.StructsById.size()
-                || gStructRegistry.StructsById[defn->Inherit.ParentId] == nullptr) {
+            if ((int32_t)defn->Inherit.ParentId >= (int32_t)gStructRegistry.StructsById.size()
+                || gStructRegistry.StructsById[(int32_t)defn->Inherit.ParentId] == nullptr) {
                 return false;
             }
         }

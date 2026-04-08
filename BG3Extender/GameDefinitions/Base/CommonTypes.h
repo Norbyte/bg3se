@@ -41,6 +41,8 @@ struct Version
     uint64_t Ver;
 };
 
+MARK_BY_VALUE_TYPE(Version)
+
 struct GameRandom
 {
     int* FixedRollList;
@@ -159,7 +161,7 @@ struct EntityOrVec3Variant
 };
 #pragma pack(pop)
 
-BY_VAL(EntityOrVec3Variant);
+MARK_BY_VALUE_TYPE(EntityOrVec3Variant);
 
 END_SE()
 
@@ -183,3 +185,9 @@ struct EntityRef
 };
 
 END_NS()
+
+BEGIN_SE()
+
+MARK_BY_VALUE_TYPE(ecs::EntityRef)
+
+END_SE()

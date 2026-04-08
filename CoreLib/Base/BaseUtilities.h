@@ -69,25 +69,6 @@ protected:
     //~ProtectedGameObject() = delete;
 };
 
-// Tag indicating whether a specific type should be handled as a value (by-val) 
-// or as an object via an object/array proxy (by-ref)
-template <class T>
-struct ByVal {
-    static constexpr bool Value = std::is_integral_v<T> || std::is_floating_point_v<T> || std::is_enum_v<T>;
-};
-
-template <class T>
-struct ByVal<std::optional<T>> { static constexpr bool Value = ByVal<T>::Value; };
-
-template <class T>
-constexpr bool IsByVal = ByVal<T>::Value;
-
-#define BY_VAL(cls) template<> \
-    struct ByVal<cls> { \
-        static_assert(std::is_default_constructible_v<cls>, "By-value types must be default constructible"); \
-        static constexpr bool Value = true; \
-    }
-
 
 inline constexpr uint64_t Hash(uint8_t v)
 {

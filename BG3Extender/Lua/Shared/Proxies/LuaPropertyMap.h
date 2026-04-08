@@ -207,7 +207,7 @@ public:
         typename RawPropertyAccessors::Setter* setter, typename RawPropertyValidators::Validator* validate, 
         typename RawPropertyAccessors::Serializer* serialize, std::size_t offset, uint64_t flag, 
         PropertyNotification notification, char const* newName = nullptr, bool iterable = true);
-    bool IsA(int typeRegistryIndex) const;
+    bool IsA(StructTypeId typeRegistryIndex) const;
     bool ValidatePropertyMap(void const* object);
     bool ValidateObject(void const* object);
 
@@ -221,7 +221,7 @@ public:
     HashMap<FixedStringUnhashed, uint32_t> IterableProperties;
     Array<RawPropertyValidators> Validators;
     Array<FixedString> Parents;
-    Array<int> ParentRegistryIndices;
+    Array<StructTypeId> ParentRegistryIndices;
     TFallbackGetter* FallbackGetter{ nullptr };
     TFallbackSetter* FallbackSetter{ nullptr };
     TFallbackNext* FallbackNext{ nullptr };
@@ -356,7 +356,7 @@ struct StructRegistry
 
     inline bool ValidateIfNecessary(StructTypeId id, void const* object) const
     {
-        if (Validated[id]) [[likely]] {
+        if (Validated[(int32_t)id]) [[likely]] {
             return true;
         } else {
             return Get(id)->ValidateIfNecessary(object);
@@ -368,8 +368,8 @@ struct StructRegistry
 
     inline GenericPropertyMap* Get(StructTypeId id) const
     {
-        assert(id < (int)StructsById.size());
-        return *(StructsById.data() + id);
+        assert((int)id >= 0 && (int)id < (int)StructsById.size());
+        return *(StructsById.data() + (int32_t)id);
     }
 };
 
@@ -379,7 +379,7 @@ extern StructRegistry gStructRegistry;
 template <class T>
 inline GenericPropertyMap& GetStaticPropertyMap()
 {
-    static_assert(StructID<std::remove_cv_t<T>> >= 0, "Type does not have a Lua structure definition!");
+    static_assert(StructID<std::remove_cv_t<T>> >= StructTypeId(0), "Type does not have a Lua structure definition!");
     return *gStructRegistry.Get(StructID<std::remove_cv_t<T>>);
 }
 

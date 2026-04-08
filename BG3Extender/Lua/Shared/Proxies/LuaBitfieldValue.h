@@ -10,9 +10,9 @@ class BitfieldValueMetatable : public LightCppValueMetatable<BitfieldValueMetata
 public:
     static constexpr MetatableTag MetaTag = MetatableTag::BitfieldValue;
 
-    inline static void Make(lua_State* L, EnumUnderlyingType value, int registryIndex)
+    inline static void Make(lua_State* L, EnumUnderlyingType value, BitfieldTypeId registryIndex)
     {
-        lua_push_cppvalue(L, MetaTag, registryIndex, static_cast<uint64_t>(value));
+        lua_push_cppvalue(L, MetaTag, (int32_t)registryIndex, static_cast<uint64_t>(value));
     }
 
     template <class T>

@@ -255,5 +255,7 @@ LUA_INFINITE_LIFETIME(stats::Object)
 END_NS()
 
 BEGIN_SE()
-BY_VAL(stats::ConditionId);
+
+MARK_BY_VALUE_TYPE(stats::ConditionId);
+
 END_SE()

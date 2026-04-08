@@ -376,22 +376,22 @@ void StaticTypeInformationRepository::Initialize(int32_t numStructs, int32_t num
 void StaticTypeInformationRepository::RegisterStruct(TypeInformation& ty, StructTypeId id)
 {
     se_assert((uint32_t)id < structs_.size());
-    se_assert(structs_[id].Type == nullptr);
-    structs_[id].Type = &ty;
+    se_assert(structs_[(int32_t)id].Type == nullptr);
+    structs_[(int32_t)id].Type = &ty;
 }
 
 void StaticTypeInformationRepository::RegisterEnum(TypeInformation& ty, EnumTypeId id)
 {
     se_assert((uint32_t)id < enums_.size());
-    se_assert(enums_[id].Type == nullptr);
-    enums_[id].Type = &ty;
+    se_assert(enums_[(int32_t)id].Type == nullptr);
+    enums_[(int32_t)id].Type = &ty;
 }
 
 void StaticTypeInformationRepository::RegisterBitfield(TypeInformation& ty, BitfieldTypeId id)
 {
     se_assert((uint32_t)id < bitfields_.size());
-    se_assert(bitfields_[id].Type == nullptr);
-    bitfields_[id].Type = &ty;
+    se_assert(bitfields_[(int32_t)id].Type == nullptr);
+    bitfields_[(int32_t)id].Type = &ty;
 }
 
 END_SE()

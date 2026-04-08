@@ -134,7 +134,7 @@ int BitfieldValueMetatable::ToString(lua_State* L, CppObjectMetadata& self)
 bool BitfieldValueMetatable::IsEqual(lua_State* L, CppObjectMetadata& self, int otherIndex)
 {
     auto ei = GetBitfieldInfo(self);
-    auto other = try_get_bitfield_value(L, otherIndex, self.PropertyMapTag, false);
+    auto other = try_get_bitfield_value(L, otherIndex, BitfieldTypeId(self.PropertyMapTag), false);
     return other && *other == self.Value;
 }
 
@@ -170,29 +170,29 @@ int BitfieldValueMetatable::Next(lua_State* L, CppObjectMetadata& self)
 
 int BitfieldValueMetatable::BAnd(lua_State* L, CppObjectMetadata& self, int otherIndex)
 {
-    auto other = get_bitfield_value(L, otherIndex, self.PropertyMapTag, true);
-    Make(L, self.Value & other, self.PropertyMapTag);
+    auto other = get_bitfield_value(L, otherIndex, BitfieldTypeId(self.PropertyMapTag), true);
+    Make(L, self.Value & other, BitfieldTypeId(self.PropertyMapTag));
     return 1;
 }
 
 int BitfieldValueMetatable::BOr(lua_State* L, CppObjectMetadata& self, int otherIndex)
 {
-    auto other = get_bitfield_value(L, otherIndex, self.PropertyMapTag, false);
-    Make(L, self.Value | other, self.PropertyMapTag);
+    auto other = get_bitfield_value(L, otherIndex, BitfieldTypeId(self.PropertyMapTag), false);
+    Make(L, self.Value | other, BitfieldTypeId(self.PropertyMapTag));
     return 1;
 }
 
 int BitfieldValueMetatable::BXor(lua_State* L, CppObjectMetadata& self, int otherIndex)
 {
-    auto other = get_bitfield_value(L, otherIndex, self.PropertyMapTag, false);
-    Make(L, self.Value ^ other, self.PropertyMapTag);
+    auto other = get_bitfield_value(L, otherIndex, BitfieldTypeId(self.PropertyMapTag), false);
+    Make(L, self.Value ^ other, BitfieldTypeId(self.PropertyMapTag));
     return 1;
 }
 
 int BitfieldValueMetatable::BNot(lua_State* L, CppObjectMetadata& self)
 {
     auto ei = GetBitfieldInfo(self);
-    Make(L, (~self.Value & ei->AllowedFlags), self.PropertyMapTag);
+    Make(L, (~self.Value & ei->AllowedFlags), BitfieldTypeId(self.PropertyMapTag));
     return 1;
 }
 
@@ -204,7 +204,7 @@ char const* BitfieldValueMetatable::GetTypeName(lua_State* L, CppObjectMetadata&
 
 EnumUnderlyingType get_bitfield_value(lua_State* L, int index, BitfieldTypeId typeId, bool maskInvalidBits)
 {
-    auto const& store = *BitfieldRegistry::Get().BitfieldsById[typeId];
+    auto const& store = *BitfieldRegistry::Get().Get(typeId);
 
     switch (lua_type(L, index)) {
     case LUA_TSTRING:
@@ -271,7 +271,7 @@ EnumUnderlyingType get_bitfield_value(lua_State* L, int index, BitfieldTypeId ty
 
 std::optional<EnumUnderlyingType> try_get_bitfield_value(lua_State* L, int index, BitfieldTypeId typeId, bool maskInvalidBits)
 {
-    auto const& store = *BitfieldRegistry::Get().BitfieldsById[typeId];
+    auto const& store = *BitfieldRegistry::Get().Get(typeId);
 
     switch (lua_type(L, index)) {
     case LUA_TSTRING:

@@ -19,18 +19,18 @@ namespace bg3se
         return reg;
     }
 
-    void EnumRegistry::Register(EnumInfoStore* ei, int32_t id)
+    void EnumRegistry::Register(EnumInfoStore* ei, EnumTypeId id)
     {
         se_assert(EnumsByName.find(ei->EnumName) == EnumsByName.end());
         EnumsByName.insert(ei->EnumName, ei);
         ei->RegistryIndex = id;
 
         if (EnumsById.size() < (uint32_t)id + 1) {
-            EnumsById.resize(id + 1);
+            EnumsById.resize((uint32_t)id + 1);
         }
 
-        se_assert(EnumsById[id] == nullptr);
-        EnumsById[id] = ei;
+        se_assert(Get(id) == nullptr);
+        EnumsById[(uint32_t)id] = ei;
     }
 
 
@@ -40,18 +40,18 @@ namespace bg3se
         return reg;
     }
     
-    void BitfieldRegistry::Register(BitfieldInfoStore* ei, int32_t id)
+    void BitfieldRegistry::Register(BitfieldInfoStore* ei, BitfieldTypeId id)
     {
         se_assert(BitfieldsByName.find(ei->EnumName) == BitfieldsByName.end());
         BitfieldsByName.insert(ei->EnumName, ei);
         ei->RegistryIndex = id;
 
         if (BitfieldsById.size() < (uint32_t)id + 1) {
-            BitfieldsById.resize(id + 1);
+            BitfieldsById.resize((uint32_t)id + 1);
         }
 
-        se_assert(BitfieldsById[id] == nullptr);
-        BitfieldsById[id] = ei;
+        se_assert(Get(id) == nullptr);
+        BitfieldsById[(uint32_t)id] = ei;
     }
 
     StaticSymbols* gStaticSymbols{ nullptr };

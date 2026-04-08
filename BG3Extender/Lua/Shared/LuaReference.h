@@ -189,3 +189,11 @@ private:
 };
 
 END_NS()
+
+BEGIN_SE()
+
+MARK_BY_VALUE_TYPE(lua::RegistryEntry)
+MARK_BY_VALUE_TYPE(lua::PersistentRegistryEntry)
+MARK_BY_VALUE_TYPE(lua::Ref)
+
+END_SE()
