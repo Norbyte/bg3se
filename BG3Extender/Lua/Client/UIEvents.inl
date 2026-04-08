@@ -166,3 +166,9 @@ void DeferredUIEvents::OnPropertyChanged(lua::PersistentRegistryEntry const& han
 }
 
 END_NS()
+
+BEGIN_NS(ecl::lua::ui)
+
+void ReleasePropertyChangeHandlers();
+
+END_NS()

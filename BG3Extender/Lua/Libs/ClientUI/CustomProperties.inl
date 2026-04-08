@@ -359,6 +359,17 @@ struct DynamicClassType
         }
     }
 
+    void ReleaseHandlers()
+    {
+        for (auto const& prop : Properties) {
+            if (prop.Type->SupportsNotifications()) {
+                auto typeProp = static_cast<Noesis::TypePropertyOffsetSE<bool>*>(prop.Property);
+                typeProp->EnablePropertyChangedNotification(false);
+                typeProp->SetWriteCallback(lua::PersistentRegistryEntry{});
+            }
+        }
+    }
+
     bool ValidateWrappedContext(Noesis::BaseComponent*& wrappedContext)
     {
         if (WrappedContextType == nullptr) {
@@ -445,6 +456,13 @@ void InitializeDynamicPropertyTypes()
     gDynamicPropertyTypes.set(FixedString("Object"), GameAlloc<DynamicPropertyTypeImplRW<Noesis::Ptr<Noesis::BaseComponent>>>());
     gDynamicPropertyTypes.set(FixedString("Collection"), GameAlloc<DynamicPropertyTypeImplRORef<Noesis::ObservableCollection<Noesis::BaseComponent>>>());
     gDynamicPropertyTypes.set(FixedString("Command"), GameAlloc<DynamicPropertyTypeImplRORef<Noesis::LuaDelegateCommand>>());
+}
+
+void ReleasePropertyChangeHandlers()
+{
+    for (auto const& cls : gDynamicClasses) {
+        cls.Value()->ReleaseHandlers();
+    }
 }
 
 class ClassDefinitionBuilder

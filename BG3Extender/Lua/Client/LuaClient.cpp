@@ -94,6 +94,13 @@ void ClientState::Initialize()
     }
 }
 
+void ClientState::Shutdown()
+{
+    ecl::lua::ui::ReleasePropertyChangeHandlers();
+
+    State::Shutdown();
+}
+
 bool ClientState::IsClient()
 {
     return true;
