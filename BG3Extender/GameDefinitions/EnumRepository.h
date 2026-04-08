@@ -225,8 +225,8 @@ END_SE()
 
 namespace std
 {
-    template <class T>
-    inline std::enable_if_t<std::is_enum_v<T>, ostream&> operator << (ostream& out, T const& v)
+    template <class T> requires std::is_enum_v<T>
+    inline ostream& operator << (ostream& out, T const& v)
     {
         static_assert(!bg3se::IsBitfield<T>, "Cannot print bitfields");
         auto label = bg3se::EnumInfo<T>::Find(v);

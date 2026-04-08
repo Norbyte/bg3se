@@ -31,8 +31,8 @@ inline bool Validate(bool const* b, Overload<bool>)
 }
 
 // No validation needed/possible for numeric types
-template <class T>
-inline typename std::enable_if_t<std::is_integral_v<T>, bool> Validate(T const*, Overload<T>)
+template <class T> requires std::is_integral_v<T>
+inline bool Validate(T const*, Overload<T>)
 {
     return true;
 }
@@ -298,8 +298,8 @@ inline bool Validate(bg3se::stats::ConditionId const* s, Overload<bg3se::stats::
     return true;
 }
 
-template <class T>
-typename std::enable_if_t<std::is_enum_v<T>, bool> Validate(T const* v, Overload<T>)
+template <class T> requires std::is_enum_v<T>
+typename bool Validate(T const* v, Overload<T>)
 {
 #if defined(ENABLE_FLAKY_HEURISTICS)
     if constexpr (IsBitfield<T>) {

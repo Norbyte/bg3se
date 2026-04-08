@@ -8,8 +8,8 @@ inline void push(lua_State* L, nullptr_t v)
 }
 
 // Prevent implicit typecast to bool from pointer types
-template <class T>
-inline typename std::enable_if_t<std::is_same_v<T, bool>, void> push(lua_State* L, T v)
+template <class T> requires std::same_as<T, bool>
+inline void push(lua_State* L, T v)
 {
     lua_pushboolean(L, v ? 1 : 0);
 }
@@ -224,8 +224,8 @@ inline void push(lua_State* L, Noesis::Vector3 const& v)
     push(L, glm::vec3(v.x, v.y, v.z));
 }
 
-template <class T>
-inline typename std::enable_if_t<std::is_enum_v<T>, void> push(lua_State* L, T v)
+template <class T> requires std::is_enum_v<T>
+inline void push(lua_State* L, T v)
 {
     if constexpr (IsIntegralAlias<T>) {
         push(L, static_cast<EnumUnderlyingType>(v));

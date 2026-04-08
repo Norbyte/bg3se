@@ -113,20 +113,20 @@ inline OverrideableProperty<T> do_get(lua_State* L, int index, Overload<Override
     return OverrideableProperty<T>{get<T>(L, index), true};
 }
 
-template <class T>
-inline typename std::enable_if_t<std::is_integral_v<T>, T> do_get(lua_State * L, int index, Overload<T>)
+template <class T> requires std::is_integral_v<T>
+inline T do_get(lua_State * L, int index, Overload<T>)
 {
     return (T)luaL_checkinteger(L, index);
 }
 
-template <class T>
-inline typename std::enable_if_t<std::is_floating_point_v<T>, T> do_get(lua_State* L, int index, Overload<T>)
+template <class T> requires std::is_floating_point_v<T>
+inline T do_get(lua_State* L, int index, Overload<T>)
 {
     return (T)luaL_checknumber(L, index);
 }
 
-template <class T>
-typename std::enable_if_t<std::is_enum_v<T>, T> do_get(lua_State * L, int index, Overload<T>)
+template <class T> requires std::is_enum_v<T>
+typename T do_get(lua_State * L, int index, Overload<T>)
 {
     if constexpr (IsIntegralAlias<T>) {
         return (T)do_get(L, index, Overload<std::underlying_type_t<T>>{});
@@ -292,11 +292,11 @@ inline typename std::optional<T> do_get(lua_State* L, int index, Overload<std::o
     }
 }
 
-template <class T>
-typename std::enable_if_t<!IsByVal<T> && !std::is_pointer_v<T>, T> do_get(lua_State* L, int index, Overload<T>);
+template <class T> requires !IsByVal<T> && !std::is_pointer_v<T>
+T do_get(lua_State* L, int index, Overload<T>);
 
-template <class T>
-typename std::enable_if_t<!IsByVal<T> && std::is_pointer_v<T>, T> do_get(lua_State* L, int index, Overload<T>);
+template <class T> requires !IsByVal<T> && std::is_pointer_v<T>
+T do_get(lua_State* L, int index, Overload<T>);
 
 // Overload helper for fetching a parameter for a Lua -> C++ function call
 template <class T>

@@ -476,8 +476,8 @@ namespace bg3se::lua
     }
 
     
-    template <class T>
-    typename std::enable_if_t<std::is_pointer_v<T>, LuaSerializer&> serialize(LuaSerializer& s, T& v)
+    template <class T> requires std::is_pointer_v<T>
+    typename LuaSerializer& serialize(LuaSerializer& s, T& v)
     {
         if (s.IsWriting) {
             if (v == nullptr) {
@@ -501,8 +501,8 @@ namespace bg3se::lua
     }
 
 
-    template <class T>
-    typename std::enable_if_t<std::is_enum_v<T>, LuaSerializer&> serialize(LuaSerializer& s, T& v)
+    template <class T> requires std::is_enum_v<T>
+    typename LuaSerializer& serialize(LuaSerializer& s, T& v)
     {
         if (s.IsWriting) {
             push(s.L, v);
@@ -513,8 +513,8 @@ namespace bg3se::lua
         return s;
     }
 
-    template <class T>
-    std::enable_if_t<!IsByVal<T>, LuaSerializer&> serialize(LuaSerializer& s, T* v)
+    template <class T> requires !IsByVal<T>
+    LuaSerializer& serialize(LuaSerializer& s, T* v)
     {
         MakeObjectRef(s.L, v);
         return s;

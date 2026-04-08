@@ -23,8 +23,8 @@ typename bool do_typecheck(lua_State* L, int index, Overload<std::variant<Args..
     return do_typecheck_variant<std::variant<Args...>, 0>(L, index);
 }
 
-template <class T>
-typename std::enable_if_t<!IsByVal<T> && !std::is_pointer_v<T>, bool> do_typecheck(lua_State* L, int index, Overload<T>)
+template <class T> requires !IsByVal<T> && !std::is_pointer_v<T>
+bool do_typecheck(lua_State* L, int index, Overload<T>)
 {
     if constexpr (IsArray<T> || IsSet<T> || IsMap<T>) {
         // TODO - currently no typechecking supported for cppobject assignment or contents of variant array/set types
@@ -35,8 +35,8 @@ typename std::enable_if_t<!IsByVal<T> && !std::is_pointer_v<T>, bool> do_typeche
     }
 }
 
-template <class T>
-typename std::enable_if_t<!IsByVal<T>&& std::is_pointer_v<T>, bool> do_typecheck(lua_State* L, int index, Overload<T>)
+template <class T> requires !IsByVal<T>&& std::is_pointer_v<T>
+bool do_typecheck(lua_State* L, int index, Overload<T>)
 {
     using TVal = std::remove_pointer_t<T>;
     if constexpr (IsArray<TVal> || IsSet<TVal> || IsMap<TVal>) {

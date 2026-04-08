@@ -107,14 +107,14 @@ inline constexpr uint64_t Hash(float v)
     return (uint32_t)(int32_t)v;
 }
 
-template <class T>
-inline typename std::enable_if_t<std::is_enum_v<T>, uint64_t> Hash(T v)
+template <class T> requires std::is_enum_v<T>
+inline uint64_t Hash(T v)
 {
     return Hash(std::underlying_type_t<T>(v));
 }
 
-template <class T>
-inline typename std::enable_if_t<std::is_pointer_v<T>, uint64_t> Hash(T v)
+template <class T> requires std::is_pointer_v<T>
+inline uint64_t Hash(T v)
 {
     return Hash(std::uintptr_t(v));
 }

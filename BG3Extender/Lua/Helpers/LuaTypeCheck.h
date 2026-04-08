@@ -80,20 +80,20 @@ inline bool do_typecheck(lua_State* L, int index, Overload<OverrideableProperty<
     return do_typecheck<T>(L, index);
 }
 
-template <class T>
-inline typename std::enable_if_t<std::is_integral_v<T>, bool> do_typecheck(lua_State * L, int index, Overload<T>)
+template <class T> requires std::is_integral_v<T>
+inline bool do_typecheck(lua_State * L, int index, Overload<T>)
 {
     return lua_isinteger(L, index);
 }
 
-template <class T>
-inline typename std::enable_if_t<std::is_floating_point_v<T>, bool> do_typecheck(lua_State* L, int index, Overload<T>)
+template <class T> requires std::is_floating_point_v<T>
+inline bool do_typecheck(lua_State* L, int index, Overload<T>)
 {
     return lua_isnumber(L, index);
 }
 
-template <class T>
-inline typename std::enable_if_t<std::is_enum_v<T>, bool> do_typecheck(lua_State * L, int index, Overload<T>)
+template <class T> requires std::is_enum_v<T>
+inline bool do_typecheck(lua_State * L, int index, Overload<T>)
 {
     if constexpr (IsIntegralAlias<T>) {
         return do_typecheck(L, index, Overload<std::underlying_type_t<T>>{});
