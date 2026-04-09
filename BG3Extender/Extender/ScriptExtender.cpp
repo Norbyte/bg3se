@@ -376,10 +376,11 @@ ExtensionStateBase* ScriptExtender::GetCurrentExtensionState()
         if (client_.HasExtensionState()) {
             return &client_.GetExtensionState();
         } else {
+            ERR("GetCurrentExtensionState() called from client thread %d, but no client state is available!", GetCurrentThreadId());
             return nullptr;
         }
     } else {
-        ERR("Called from thread %d that is not bound to any context!", GetCurrentThreadId());
+        ERR("GetCurrentExtensionState() called from thread %d that is not bound to any context!", GetCurrentThreadId());
         if (client_.HasExtensionState()) {
             return &client_.GetExtensionState();
         } else {

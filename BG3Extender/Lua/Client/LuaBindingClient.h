@@ -30,7 +30,6 @@ public:
     ~ClientState();
 
     void Initialize() override;
-    void Shutdown() override;
     bool IsClient() override;
     void OnUpdate(GameTime const& time) override;
 

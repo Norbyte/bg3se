@@ -38,14 +38,14 @@ int32_t GlobalRefManager::AddGlobalIndex(lua_State* L, int global)
     return index;
 }
 
-void GlobalRefManager::IncRef(int32_t i)
+uint32_t GlobalRefManager::IncRef(int32_t i)
 {
     se_assert(i >= 0 && i < ref_.size());
     se_assert(ref_[i].RefCount > 0);
-    ++ref_[i].RefCount;
+    return ++ref_[i].RefCount;
 }
 
-void GlobalRefManager::DecRef(int32_t i)
+uint32_t GlobalRefManager::DecRef(int32_t i)
 {
     se_assert(i >= 0 && i < ref_.size());
     se_assert(ref_[i].RefCount > 0);
@@ -55,6 +55,8 @@ void GlobalRefManager::DecRef(int32_t i)
         luaL_unref(L_, LUA_REGISTRYINDEX, ref_[i].Index);
         freeList_.push(i);
     }
+
+    return ref_[i].RefCount;
 }
 
 void GlobalRefManager::Push(lua_State* L, int32_t i)
@@ -299,6 +301,11 @@ void PersistentRegistryEntry::Bind(lua_State* L, Ref const& ref)
     } else {
         global_ = -1;
     }
+}
+
+void PersistentRegistryEntry::Reset(lua_State* L)
+{
+    Release(L);
 }
 
 

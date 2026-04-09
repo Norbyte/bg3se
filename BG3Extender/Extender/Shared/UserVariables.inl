@@ -23,6 +23,10 @@ void ExtenderProtocolBase::SyncUserVars(MsgUserVars const& msg)
 {
     USER_VAR_DBG("Received sync message from peer");
     auto state = gExtender->GetCurrentExtensionState();
+    if (!state) {
+        ERR("Tried to sync user vars without the extension state being initialized!");
+        return;
+    }
 
     if (state->GetUserVariables().HasCache()) {
         LuaVirtualPin lua(state);

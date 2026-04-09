@@ -64,6 +64,8 @@ ClientState::~ClientState()
 {
     auto & sym = GetStaticSymbols();
 
+    ecl::lua::ui::ReleasePropertyChangeHandlers(L);
+
     if (imgui_) {
         gExtender->IMGUI().SetObjects(nullptr);
         delete imgui_;
@@ -92,13 +94,6 @@ void ClientState::Initialize()
     if (debugger) {
         debugger->ClientStateCreated(this);
     }
-}
-
-void ClientState::Shutdown()
-{
-    ecl::lua::ui::ReleasePropertyChangeHandlers();
-
-    State::Shutdown();
 }
 
 bool ClientState::IsClient()

@@ -151,6 +151,11 @@ public:
         writeCallback_ = std::move(writeCallback);
     }
 
+    void ReleaseWriteCallback(lua_State* L)
+    {
+        writeCallback_.Reset(L);
+    }
+
 private:
     bool notify_{ false };
     bg3se::lua::PersistentRegistryEntry writeCallback_;
@@ -359,13 +364,13 @@ struct DynamicClassType
         }
     }
 
-    void ReleaseHandlers()
+    void ReleaseHandlers(lua_State* L)
     {
         for (auto const& prop : Properties) {
             if (prop.Type->SupportsNotifications()) {
                 auto typeProp = static_cast<Noesis::TypePropertyOffsetSE<bool>*>(prop.Property);
                 typeProp->EnablePropertyChangedNotification(false);
-                typeProp->SetWriteCallback(lua::PersistentRegistryEntry{});
+                typeProp->ReleaseWriteCallback(L);
             }
         }
     }
@@ -458,10 +463,10 @@ void InitializeDynamicPropertyTypes()
     gDynamicPropertyTypes.set(FixedString("Command"), GameAlloc<DynamicPropertyTypeImplRORef<Noesis::LuaDelegateCommand>>());
 }
 
-void ReleasePropertyChangeHandlers()
+void ReleasePropertyChangeHandlers(lua_State* L)
 {
     for (auto const& cls : gDynamicClasses) {
-        cls.Value()->ReleaseHandlers();
+        cls.Value()->ReleaseHandlers(L);
     }
 }
 

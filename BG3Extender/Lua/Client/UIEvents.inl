@@ -169,6 +169,6 @@ END_NS()
 
 BEGIN_NS(ecl::lua::ui)
 
-void ReleasePropertyChangeHandlers();
+void ReleasePropertyChangeHandlers(lua_State* L);
 
 END_NS()
