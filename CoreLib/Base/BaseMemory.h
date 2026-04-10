@@ -10,28 +10,28 @@ namespace bg3se
     using ls__GlobalAllocator__AllocProc = void* (void* globalAllocator, std::size_t size, int pool, int unused2, uint64_t alignment);
     using ls__GlobalAllocator__FreeProc = void (void* globalAllocator, void* ptr);
 
-    void* GameAllocRaw(std::size_t size);
-    void GameFree(void*);
+    _Post_writable_byte_size_(size) void* GameAllocRaw(std::size_t size);
+    void GameFree(_Post_ptr_invalid_ _Pre_valid_ void*) noexcept;
 
     template <class T, class ...Args>
-    T* GameAlloc(Args... args)
+    _Post_writable_size_(1) T* GameAlloc(Args... args)
     {
-        auto ptr = reinterpret_cast<T*>(GameAllocRaw(sizeof(T)));
+        auto ptr = static_cast<T*>(GameAllocRaw(sizeof(T)));
         new (ptr) T(args...);
         return ptr;
     }
 
     template <class T>
-    void GameDelete(T* obj)
+    void GameDelete(_Post_ptr_invalid_ _Pre_valid_ T* obj)
     {
         obj->~T();
         GameFree(obj);
     }
 
     template <class T, class ...Args>
-    T* GameAllocArray(std::size_t n, Args... args)
+    _Post_writable_size_(n) T* GameAllocArray(std::size_t n, Args... args)
     {
-        auto ptr = reinterpret_cast<T*>(GameAllocRaw(sizeof(T) * n));
+        auto ptr = static_cast<T*>(GameAllocRaw(sizeof(T) * n));
         for (auto i = 0; i < n; i++) {
             new (ptr + i) T(args...);
         }
@@ -39,7 +39,7 @@ namespace bg3se
     }
 
     template <class T>
-    void GameDeleteArray(T* ptr, std::size_t n)
+    void GameDeleteArray(_Post_ptr_invalid_ _Pre_writable_size_(n) T* ptr, std::size_t n)
     {
         for (std::size_t i = 0; i < n; i++) {
             ptr[i].~T();
@@ -63,12 +63,12 @@ namespace bg3se
         template <class U>
         inline GameAllocator(GameAllocator<U> const&) noexcept {}
 
-        inline T* allocate(std::size_t cnt)
+        _Post_writable_size_(cnt) inline T* allocate(std::size_t cnt)
         {
-            return reinterpret_cast<T*>(GameAllocRaw(cnt * sizeof(T)));
+            return static_cast<T*>(GameAllocRaw(cnt * sizeof(T)));
         }
 
-        inline void deallocate(T* p, std::size_t cnt) noexcept
+        inline void deallocate(_Post_ptr_invalid_ _Pre_writable_size_(cnt) T* p, std::size_t cnt) noexcept
         {
             GameFree(p);
         }
@@ -84,35 +84,14 @@ namespace bg3se
         template <class U>
         inline GameStdAllocator(GameStdAllocator<U> const&) noexcept {}
 
-        inline T* allocate(std::size_t cnt)
+        _Post_writable_size_(cnt) inline T* allocate(std::size_t cnt)
         {
-            return reinterpret_cast<T*>(GameAllocRaw(cnt * sizeof(T)));
+            return static_cast<T*>(GameAllocRaw(cnt * sizeof(T)));
         }
 
-        inline void deallocate(T* p, std::size_t cnt) noexcept
+        inline void deallocate(_Post_ptr_invalid_ _Pre_writable_size_(cnt) T* p, std::size_t cnt) noexcept
         {
             GameFree(p);
-        }
-    };
-
-    template <class T>
-    class MSVCAllocator
-    {
-    public:
-        using value_type = T;
-
-        inline MSVCAllocator() noexcept {}
-        template <class U>
-        inline MSVCAllocator(MSVCAllocator<U> const&) noexcept {}
-
-        inline T* allocate(std::size_t cnt)
-        {
-            return (T*)CrtAllocRaw(cnt * sizeof(T));
-        }
-
-        inline void deallocate(T* p, std::size_t cnt) noexcept
-        {
-            CrtFree(p);
         }
     };
 
@@ -142,43 +121,43 @@ namespace bg3se
 
     struct GameMemoryAllocator
     {
-        static void* Alloc(std::size_t size)
+        static _Post_writable_byte_size_(size) void* Alloc(std::size_t size)
         {
             return GameAllocRaw(size);
         }
 
         template <class T>
-        static T* New()
+        static _Post_writable_size_(1) T* New()
         {
             return GameAlloc<T>();
         }
 
         template <class T>
-        static T* New(std::size_t count)
+        static _Post_writable_size_(count) T* New(std::size_t count)
         {
             return GameAllocArray<T>(count);
         }
 
         template <class T>
-        static T* NewRaw()
+        static _Post_writable_size_(1) T* NewRaw()
         {
-            return reinterpret_cast<T*>(GameAllocRaw(sizeof(T)));
+            return static_cast<T*>(GameAllocRaw(sizeof(T)));
         }
 
         template <class T>
-        static T* NewRaw(std::size_t count)
+        static _Post_writable_size_(count) T* NewRaw(std::size_t count)
         {
-            return reinterpret_cast<T*>(GameAllocRaw(count * sizeof(T)));
+            return static_cast<T*>(GameAllocRaw(count * sizeof(T)));
         }
 
         template <class T>
-        static void Free(T* ptr)
+        static void Free(_Post_ptr_invalid_ _Pre_valid_ T* ptr)
         {
             return GameFree(ptr);
         }
 
         template <class T>
-        static void FreeArray(T* ptr)
+        static void FreeArray(_Post_ptr_invalid_ _Pre_valid_ T* ptr)
         {
             return GameFree(ptr);
         }

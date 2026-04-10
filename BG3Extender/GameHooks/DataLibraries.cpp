@@ -12,7 +12,7 @@
 
 namespace bg3se
 {
-    void* BG3Alloc(std::size_t size)
+    _Post_writable_byte_size_(size) void* BG3Alloc(std::size_t size)
     {
         auto const& sym = GetStaticSymbols();
         // Fallback in case allocator is not available
@@ -23,7 +23,7 @@ namespace bg3se
         }
     }
 
-    void BG3Free(void* ptr)
+    void BG3Free(_Post_ptr_invalid_ _Pre_valid_ void* ptr) noexcept
     {
         auto const& sym = GetStaticSymbols();
         if (sym.ls__GlobalAllocator__Alloc && sym.ls__GlobalAllocator__Free && sym.ls__GlobalAllocator__Get) {

@@ -150,7 +150,7 @@ bool VirtualTextureHelpers::Stitch()
             auto gts = GameAlloc<vt::GTSFile>();
             gts->Path = path;
             gts->Buf.resize((uint32_t)reader.Size());
-            std::copy(reinterpret_cast<uint8_t*>(reader.Buf()), reinterpret_cast<uint8_t*>(reader.Buf()) + reader.Size(), gts->Buf.begin());
+            std::copy(static_cast<uint8_t*>(reader.Buf()), static_cast<uint8_t*>(reader.Buf()) + reader.Size(), gts->Buf.begin());
             char const* reason{ nullptr };
             if (!gts->Read(reason)) {
                 ERR("Failed to load '%s': %s", path.GetString(), reason ? reason : "");

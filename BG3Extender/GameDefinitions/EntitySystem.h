@@ -675,7 +675,7 @@ struct ComponentFrameStorage
     {
         se_assert(index.PageIndex < Pages.size());
         auto page = Pages[index.PageIndex];
-        return reinterpret_cast<uint8_t*>(page) + (index.EntryIndex * ComponentSizeInBytes);
+        return static_cast<uint8_t*>(page) + (index.EntryIndex * ComponentSizeInBytes);
     }
 
 private:

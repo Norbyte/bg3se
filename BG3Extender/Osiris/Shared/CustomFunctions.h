@@ -160,7 +160,7 @@ namespace bg3se
 
         virtual bool Call(OsiArgumentDesc const & params) = 0;
 
-        inline virtual FunctionType GetType() override
+        inline FunctionType GetType() override
         {
             return FunctionType::Call;
         }
@@ -174,7 +174,7 @@ namespace bg3se
             : CustomCallBase(name, std::move(params)), handler_(handler)
         {}
 
-        virtual bool Call(OsiArgumentDesc const & params) override;
+        bool Call(OsiArgumentDesc const & params) override;
 
     private:
         std::function<void(OsiArgumentDesc const &)> handler_;
@@ -189,7 +189,7 @@ namespace bg3se
 
         virtual bool Query(OsiArgumentDesc & params) = 0;
 
-        inline virtual FunctionType GetType() override
+        inline FunctionType GetType() override
         {
             return FunctionType::Query;
         }
@@ -203,7 +203,7 @@ namespace bg3se
             : CustomQueryBase(name, std::move(params)), handler_(handler)
         {}
 
-        virtual bool Query(OsiArgumentDesc & params) override;
+        bool Query(OsiArgumentDesc & params) override;
 
     private:
         std::function<bool(OsiArgumentDesc &)> handler_;
@@ -216,7 +216,7 @@ namespace bg3se
             : CustomFunction(name, std::move(params))
         {}
 
-        inline virtual FunctionType GetType() override
+        inline FunctionType GetType() override
         {
             return FunctionType::Event;
         }

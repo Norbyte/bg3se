@@ -28,17 +28,17 @@ public:
         return false;
     }
 
-    virtual Array<Guid> GetAll()
+    Array<Guid> GetAll() override
     {
         return {};
     }
 
-    virtual HashMap<Guid, Array<Guid>>* GetSources()
+    HashMap<Guid, Array<Guid>>* GetSources() override
     {
         return &dummySources_;
     }
 
-    virtual Array<Guid>* GetByModId(Guid modGuid)
+    Array<Guid>* GetByModId(Guid modGuid) override
     {
         return &dummyResources_;
     }
@@ -106,17 +106,17 @@ public:
         return true;
     }
 
-    virtual Array<Guid> GetAll()
+    Array<Guid> GetAll() override
     {
         return bank_->Resources.keys();
     }
 
-    virtual HashMap<Guid, Array<Guid>>* GetSources()
+    HashMap<Guid, Array<Guid>>* GetSources() override
     {
         return &bank_->ResourceGuidsByMod;
     }
 
-    virtual Array<Guid>* GetByModId(Guid modGuid)
+    Array<Guid>* GetByModId(Guid modGuid) override
     {
         return bank_->ResourceGuidsByMod.try_get(modGuid);
     }

@@ -88,7 +88,7 @@ PropertyOperationResult GenericPropertyMap::GetRawProperty(lua_State* L, Lifetim
 
 PropertyOperationResult GenericPropertyMap::GetRawProperty(lua_State* L, LifetimeHandle lifetime, void const* object, RawPropertyAccessors const& prop) const
 {
-    auto data = reinterpret_cast<uint8_t const*>(object) + prop.Offset;
+    auto data = static_cast<uint8_t const*>(object) + prop.Offset;
     return prop.Get(L, lifetime, data, prop);
 }
 
@@ -114,7 +114,7 @@ PropertyOperationResult GenericPropertyMap::SetRawProperty(lua_State* L, void* o
 
 PropertyOperationResult GenericPropertyMap::SetRawProperty(lua_State* L, void* object, RawPropertyAccessors const& prop, int index) const
 {
-    auto data = reinterpret_cast<uint8_t*>(object) + prop.Offset;
+    auto data = static_cast<uint8_t*>(object) + prop.Offset;
     return prop.Set(L, data, index, prop);
 }
 

@@ -233,7 +233,7 @@ void OsirisWrappers::FindOsirisGlobals(FARPROC CtorProc)
     auto addr = (uint8_t const *)ResolveRealFunctionAddress((void const *)CtorProc);
 
     // Try to find pointers of Osiris globals
-    const unsigned NumGlobals = 10;
+    constexpr unsigned NumGlobals = 10;
     uint8_t * globals[NumGlobals];
     unsigned foundGlobals = 0;
     for (auto ptr = addr; ptr < addr + 0x500; ptr++)

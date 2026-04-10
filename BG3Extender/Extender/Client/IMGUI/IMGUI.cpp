@@ -250,7 +250,7 @@ void StyledRenderable::HandleDragDrop(DrawingContext& context)
     {
         auto payload = ImGui::AcceptDragDropPayload(DragDropType.GetString());
         if (payload) {
-            auto source = *reinterpret_cast<HandleType*>(payload->Data);
+            auto source = *static_cast<HandleType*>(payload->Data);
             Manager->GetEventQueue().Call(OnDragDrop, lua::ImguiHandle(Handle), lua::ImguiHandle(source));
         }
         ImGui::EndDragDropTarget();
@@ -1454,7 +1454,7 @@ InputText::InputText()
 
 int InputTextCallback(ImGuiInputTextCallbackData* data)
 {
-    auto input = reinterpret_cast<InputText*>(data->UserData);
+    auto input = static_cast<InputText*>(data->UserData);
     if (data->EventFlag == ImGuiInputTextFlags_CallbackResize) {
         input->Text.resize(std::min(data->BufTextLen, (int)InputText::MaxSize));
         data->Buf = input->Text.data();

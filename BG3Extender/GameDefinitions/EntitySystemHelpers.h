@@ -207,19 +207,19 @@ public:
     template <class T>
     T* GetComponent(FixedString const& guid)
     {
-        return reinterpret_cast<T*>(GetRawComponent(guid, T::ComponentType));
+        return static_cast<T*>(GetRawComponent(guid, T::ComponentType));
     }
 
     template <class T>
     T* GetComponent(Guid const& guid)
     {
-        return reinterpret_cast<T*>(GetRawComponent(guid, T::ComponentType));
+        return static_cast<T*>(GetRawComponent(guid, T::ComponentType));
     }
 
     template <class T>
     T* GetComponent(EntityHandle entityHandle)
     {
-        return reinterpret_cast<T*>(GetRawComponent(entityHandle, T::ComponentType));
+        return static_cast<T*>(GetRawComponent(entityHandle, T::ComponentType));
     }
 
     template <class T>
@@ -236,7 +236,7 @@ public:
     template <class T>
     T* GetSystem()
     {
-        return reinterpret_cast<T*>(GetRawSystem(T::SystemType));
+        return static_cast<T*>(GetRawSystem(T::SystemType));
     }
 
     template <class T>
@@ -295,7 +295,7 @@ public:
     {
         auto p = GetRawSingleton(T::ComponentType);
         if (p != nullptr) {
-            return reinterpret_cast<T*>(p);
+            return static_cast<T*>(p);
         } else {
             return nullptr;
         }

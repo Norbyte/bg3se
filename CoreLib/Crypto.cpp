@@ -130,7 +130,7 @@ bool CryptoUtils::VerifySignedFile(std::wstring const& zipPath, std::string& rea
         return false;
     }
 
-    if (!EccVerify(reinterpret_cast<uint8_t*>(contents.data()), contents.size() - sizeof(PackageSignature), UpdaterPublicKey, sig->EccSignature)) {
+    if (!EccVerify(contents.data(), contents.size() - sizeof(PackageSignature), UpdaterPublicKey, sig->EccSignature)) {
         reason = "Cryptographic signature on update package is incorrect";
         return false;
     }

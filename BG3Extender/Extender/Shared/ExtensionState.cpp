@@ -365,7 +365,7 @@ namespace bg3se
         auto length = f.tellg();
         f.seekg(0, std::ios::beg);
         STDString s((uint32_t)length, '\0');
-        f.read(const_cast<char *>(s.data()), length);
+        f.read(s.data(), length);
         f.close();
 
         LuaVirtualPin lua(*this);

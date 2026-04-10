@@ -252,7 +252,7 @@ public:
 
     bool GetElement(lua_State* L, CppObjectMetadata& self, unsigned arrayIndex) override
     {
-        auto obj = reinterpret_cast<TContainer*>(self.Ptr);
+        auto obj = static_cast<TContainer*>(self.Ptr);
         if (arrayIndex > 0 && arrayIndex <= (unsigned)obj->Count()) {
             auto ref = obj->GetComponent(arrayIndex - 1);
             push(L, ref.GetPtr(), self.Lifetime);
@@ -264,7 +264,7 @@ public:
 
     bool SetElement(lua_State* L, CppObjectMetadata& self, unsigned arrayIndex, int luaIndex) override
     {
-        auto obj = reinterpret_cast<TContainer*>(self.Ptr);
+        auto obj = static_cast<TContainer*>(self.Ptr);
         if constexpr (std::is_default_constructible_v<T>) {
             auto size = (unsigned)obj->Count();
             if (arrayIndex > 0 && arrayIndex <= size) {
@@ -289,13 +289,13 @@ public:
 
     unsigned Length(CppObjectMetadata& self) override
     {
-        auto obj = reinterpret_cast<TContainer*>(self.Ptr);
+        auto obj = static_cast<TContainer*>(self.Ptr);
         return (unsigned)obj->Count();
     }
 
     bool Unserialize(lua_State* L, CppObjectMetadata& self, int index) override
     {
-        auto obj = reinterpret_cast<TContainer*>(self.Ptr);
+        auto obj = static_cast<TContainer*>(self.Ptr);
         if constexpr (std::is_default_constructible_v<T>) {
             lua::Unserialize(L, index, obj);
             return true;
@@ -306,13 +306,13 @@ public:
 
     void Serialize(lua_State* L, CppObjectMetadata& self) override
     {
-        auto obj = reinterpret_cast<TContainer*>(self.Ptr);
+        auto obj = static_cast<TContainer*>(self.Ptr);
         lua::Serialize(L, obj);
     }
 
     int Next(lua_State* L, CppObjectMetadata& self, int key) override
     {
-        auto obj = reinterpret_cast<TContainer*>(self.Ptr);
+        auto obj = static_cast<TContainer*>(self.Ptr);
         if (key >= 0 && key < obj->Count()) {
             push(L, key + 1);
             auto ref = obj->GetComponent(key);
@@ -351,7 +351,7 @@ public:
 
     bool GetElement(lua_State* L, CppObjectMetadata& self, unsigned arrayIndex) override
     {
-        auto obj = reinterpret_cast<TContainer*>(self.Ptr);
+        auto obj = static_cast<TContainer*>(self.Ptr);
         if (arrayIndex > 0 && arrayIndex <= obj->size()) {
             push(L, &(*obj)[arrayIndex - 1], self.Lifetime);
             return true;
@@ -362,7 +362,7 @@ public:
 
     bool SetElement(lua_State* L, CppObjectMetadata& self, unsigned arrayIndex, int luaIndex) override
     {
-        auto obj = reinterpret_cast<TContainer*>(self.Ptr);
+        auto obj = static_cast<TContainer*>(self.Ptr);
         if constexpr (std::is_default_constructible_v<T>) {
             if (arrayIndex > 0 && arrayIndex <= obj->size()) {
                 lua::Unserialize(L, luaIndex, &(*obj)[arrayIndex - 1]);
@@ -377,13 +377,13 @@ public:
 
     unsigned Length(CppObjectMetadata& self) override
     {
-        auto obj = reinterpret_cast<TContainer*>(self.Ptr);
+        auto obj = static_cast<TContainer*>(self.Ptr);
         return (unsigned)obj->size();
     }
 
     bool Unserialize(lua_State* L, CppObjectMetadata& self, int index) override
     {
-        auto obj = reinterpret_cast<TContainer*>(self.Ptr);
+        auto obj = static_cast<TContainer*>(self.Ptr);
         if constexpr (std::is_default_constructible_v<T>) {
             lua::Unserialize(L, index, obj);
             return true;
@@ -394,13 +394,13 @@ public:
 
     void Serialize(lua_State* L, CppObjectMetadata& self) override
     {
-        auto obj = reinterpret_cast<TContainer*>(self.Ptr);
+        auto obj = static_cast<TContainer*>(self.Ptr);
         lua::Serialize(L, obj);
     }
 
     int Next(lua_State* L, CppObjectMetadata& self, int key) override
     {
-        auto obj = reinterpret_cast<TContainer*>(self.Ptr);
+        auto obj = static_cast<TContainer*>(self.Ptr);
         if (key >= 0 && (decltype(obj->size()))key < obj->size()) {
             push(L, key + 1);
             push(L, &(*obj)[key], self.Lifetime);
@@ -436,7 +436,7 @@ public:
 
     bool GetElement(lua_State* L, CppObjectMetadata& self, unsigned arrayIndex) override
     {
-        auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+        auto obj = static_cast<ContainerType*>(self.Ptr);
         if (arrayIndex > 0 && arrayIndex <= obj->size()) {
             bool isSet = obj->IsSet(arrayIndex - 1);
             push(L, &isSet, self.Lifetime);
@@ -448,7 +448,7 @@ public:
 
     bool SetElement(lua_State* L, CppObjectMetadata& self, unsigned arrayIndex, int luaIndex) override
     {
-        auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+        auto obj = static_cast<ContainerType*>(self.Ptr);
         if (arrayIndex > 0 && arrayIndex <= obj->size()) {
             if (get<bool>(L, luaIndex)) {
                 obj->Set(arrayIndex - 1);
@@ -463,26 +463,26 @@ public:
 
     unsigned Length(CppObjectMetadata& self) override
     {
-        auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+        auto obj = static_cast<ContainerType*>(self.Ptr);
         return (unsigned)obj->size();
     }
 
     bool Unserialize(lua_State* L, CppObjectMetadata& self, int index) override
     {
-        auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+        auto obj = static_cast<ContainerType*>(self.Ptr);
         lua::Unserialize(L, index, obj);
         return true;
     }
 
     void Serialize(lua_State* L, CppObjectMetadata& self) override
     {
-        auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+        auto obj = static_cast<ContainerType*>(self.Ptr);
         lua::Serialize(L, obj);
     }
 
     int Next(lua_State* L, CppObjectMetadata& self, int key) override
     {
-        auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+        auto obj = static_cast<ContainerType*>(self.Ptr);
         if (key >= 0 && (decltype(obj->size()))key < obj->size()) {
             push(L, key + 1);
             bool isSet = obj->IsSet(key);
@@ -678,7 +678,7 @@ public:
     inline static typename T::ContainerType* Get(lua_State* L, int index)
     {
         auto ptr = GetRaw(L, index, GetImplementation<T>()->GetRegistryIndex());
-        return reinterpret_cast<T::ContainerType*>(ptr);
+        return static_cast<T::ContainerType*>(ptr);
     }
 
     inline static ArrayProxyImplBase* GetImpl(CppObjectMetadata const& meta)

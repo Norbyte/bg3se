@@ -82,16 +82,20 @@ RegistryEntry::RegistryEntry()
 RegistryEntry::RegistryEntry(lua_State* L, int index)
     : manager_(L ? &State::FromLua(L)->GetGlobals() : nullptr)
 {
-    EnterVMCheck(L);
-    lua_pushvalue(L, index);
-    auto ref = luaL_ref(L, LUA_REGISTRYINDEX);
-    global_ = manager_->AddGlobalIndex(L, ref);
+    if (L) {
+        EnterVMCheck(L);
+        lua_pushvalue(L, index);
+        auto ref = luaL_ref(L, LUA_REGISTRYINDEX);
+        global_ = manager_->AddGlobalIndex(L, ref);
+    } else {
+        global_ = -1;
+    }
 }
 
 RegistryEntry::RegistryEntry(lua_State* L, Ref const& local)
     : manager_(L ? &State::FromLua(L)->GetGlobals() : nullptr)
 {
-    if ((bool)local) {
+    if (L && (bool)local) {
         local.Push(L);
         EnterVMCheck(L);
         auto ref = luaL_ref(L, LUA_REGISTRYINDEX);

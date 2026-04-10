@@ -14,7 +14,7 @@ void EnablePropertyWarnings();
 template <class T>
 PropertyOperationResult GenericGetValue(lua_State* L, LifetimeHandle lifetime, void const* obj, RawPropertyAccessorsHotData const& prop)
 {
-    auto value = reinterpret_cast<T const*>(obj);
+    auto value = static_cast<T const*>(obj);
     push(L, *value, lifetime);
     return PropertyOperationResult::Success;
 }
@@ -23,7 +23,7 @@ template <class T>
 PropertyOperationResult GenericSerializeValue(lua_State* L, void const* value, RawPropertyAccessors const& prop)
 {
     static_assert(!std::is_pointer_v<T>);
-    Serialize(L, reinterpret_cast<T const*>(value));
+    Serialize(L, static_cast<T const*>(value));
     return PropertyOperationResult::Success;
 }
 
@@ -31,7 +31,7 @@ template <class T>
 PropertyOperationResult GenericUnserializeValue(lua_State* L, void* valuePtr, int index, RawPropertyAccessors const& prop)
 {
     if constexpr (!std::is_pointer_v<T>) {
-        auto value = reinterpret_cast<T*>(valuePtr);
+        auto value = static_cast<T*>(valuePtr);
         return Unserialize(L, index, value);
     } else {
         return PropertyOperationResult::UnsupportedType;
@@ -41,7 +41,7 @@ PropertyOperationResult GenericUnserializeValue(lua_State* L, void* valuePtr, in
 template <class T>
 PropertyOperationResult GenericSetValue(lua_State* L, void* valuePtr, int index, RawPropertyAccessorsHotData const& prop)
 {
-    auto value = reinterpret_cast<T*>(valuePtr);
+    auto value = static_cast<T*>(valuePtr);
     if constexpr (IsByVal<T>) {
         *value = get<T>(L, index);
         return PropertyOperationResult::Success;
@@ -53,7 +53,7 @@ PropertyOperationResult GenericSetValue(lua_State* L, void* valuePtr, int index,
 template <class UnderlyingType>
 PropertyOperationResult GenericGetOffsetBitmaskFlag(lua_State* L, LifetimeHandle lifetime, void const* obj, RawPropertyAccessorsHotData const& prop)
 {
-    auto value = *reinterpret_cast<UnderlyingType const*>(obj);
+    auto value = *static_cast<UnderlyingType const*>(obj);
     auto flag = (UnderlyingType)prop.Flag();
     push(L, (value & flag) == flag);
     return PropertyOperationResult::Success;
@@ -62,7 +62,7 @@ PropertyOperationResult GenericGetOffsetBitmaskFlag(lua_State* L, LifetimeHandle
 template <class UnderlyingType>
 PropertyOperationResult GenericSetOffsetBitmaskFlag(lua_State* L, void* obj, int index, RawPropertyAccessorsHotData const& prop)
 {
-    auto value = reinterpret_cast<UnderlyingType*>(obj);
+    auto value = static_cast<UnderlyingType*>(obj);
     auto flag = (UnderlyingType)prop.Flag();
     auto set = get<bool>(L, index);
     if (set) {
@@ -77,7 +77,7 @@ PropertyOperationResult GenericSetOffsetBitmaskFlag(lua_State* L, void* obj, int
 template <class T>
 bool GenericValidateOffsetProperty(void const* value, uint64_t flag)
 {
-    return ValidateAny(reinterpret_cast<T const*>(value));
+    return ValidateAny(static_cast<T const*>(value));
 }
 
 void InheritProperties(GenericPropertyMap const& base, GenericPropertyMap& child);

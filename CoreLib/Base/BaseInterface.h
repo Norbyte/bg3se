@@ -4,8 +4,8 @@ class Console;
 
 struct CoreLibPlatformInterface
 {
-    using AllocProc = void* (std::size_t size);
-    using FreeProc = void(void* ptr);
+    using AllocProc = _Post_writable_byte_size_(size) void* (std::size_t size);
+    using FreeProc = void (_Post_ptr_invalid_ _Pre_valid_ void* ptr) noexcept;
 
     AllocProc* Alloc{ nullptr };
     FreeProc* Free{ nullptr };
@@ -18,9 +18,9 @@ struct CoreLibPlatformInterface
     GlobalStringTable::MainTable::CreateFromStringProc* ls__GlobalStringTable__MainTable__CreateFromString{ nullptr };
     GlobalStringTable::MainTable::DecRefProc* ls__GlobalStringTable__MainTable__DecRef{ nullptr };
 
-    void* StaticSymbols{ NULL };
+    void* StaticSymbols{ nullptr };
     HMODULE ThisModule{ NULL };
-    Console* GlobalConsole{ NULL };
+    Console* GlobalConsole{ nullptr };
     bool EnableDebugBreak{ true };
 };
 

@@ -249,7 +249,7 @@ void StoredValueHelpers::PushRawValue(lua_State* L, Type const* type, void* val)
 template <class T>
 void StoredValueHelpers::PushPtrValue(lua_State* L, Type const* type, void* val)
 {
-    lua::push(L, *reinterpret_cast<T*>(val));
+    lua::push(L, *static_cast<T*>(val));
 }
 
 void StoredValueHelpers::PushValue(lua_State* L, TypeEnum const* type, uint64_t val)
@@ -343,16 +343,16 @@ void StoredValueHelpers::PushValue(lua_State* L, Type const* type, void* val, Ty
     } else if (type == types.String.Type) {
         PushPtrValue<String>(L, type, val);
     } else if (type == types.ICommand.Type) {
-        lua::MakeObjectRef(L, reinterpret_cast<ICommand*>(val));
+        lua::MakeObjectRef(L, static_cast<ICommand*>(val));
     } else if (type == types.IValueConverter.Type) {
         lua::push(L, nullptr); // IValueConverter unsupported for now
     } else if (type == types.IMultiValueConverter.Type) {
         lua::push(L, nullptr); // IMultiValueConverter unsupported for now
     } else if (type == types.Uri.Type) {
-        lua::push(L, reinterpret_cast<Uri*>(val)->mUri.Str());
+        lua::push(L, static_cast<Uri*>(val)->mUri.Str());
 
     } else if (TypeHelpers::IsDescendantOf(type, classes.BaseObject.Type)) {
-        auto obj = reinterpret_cast<BaseObject*>(val);
+        auto obj = static_cast<BaseObject*>(val);
 
         if (objectType != nullptr
             && obj != nullptr
@@ -377,7 +377,7 @@ void StoredValueHelpers::PushValue(lua_State* L, Type const* type, void* val, Ty
         if (obj == nullptr) {
             lua::push(L, nullptr);
         } else if (obj->GetClassType()->GetBase() == classes.BoxedValue.Type) {
-            auto boxed = reinterpret_cast<BoxedValue*>(val);
+            auto boxed = static_cast<BoxedValue*>(val);
             PushValue(L, boxed->GetValueType(), const_cast<void*>(boxed->GetValuePtr()), objectType, propertyName);
         } else if (TypeHelpers::IsDescendantOf(type, classes.BaseCollection.Type)) {
             auto coll = static_cast<BaseCollection*>(val);
@@ -414,7 +414,7 @@ void PushTyped(lua_State* L, TypeProperty const* prop, BaseObject const* obj)
 template <class T>
 void PushTypedRef(lua_State* L, TypeProperty const* prop, BaseObject const* obj)
 {
-    auto value = reinterpret_cast<T*>(const_cast<void*>(prop->Get(obj)));
+    auto value = static_cast<T*>(const_cast<void*>(prop->Get(obj)));
     lua::push(L, *value);
 }
 
@@ -443,7 +443,7 @@ void StoredValueHelpers::PushProperty(lua_State* L, BaseObject const* obj, TypeC
         lua::MakeObjectRef(L, value);
 
     } else if (typeOfType == types.TypePtr.Type) {
-        auto propValue = reinterpret_cast<Ptr<BaseRefCounted>*>(const_cast<void*>(prop->Get(obj)));
+        auto propValue = static_cast<Ptr<BaseRefCounted>*>(const_cast<void*>(prop->Get(obj)));
         PushValue(L, static_cast<TypePtr const*>(type)->GetStaticContentType(), propValue->GetPtr(), objType, &propertyName);
 
     } else if (typeOfType == types.TypePointer.Type) {
@@ -501,7 +501,7 @@ void StoredValueHelpers::PushProperty(lua_State* L, BaseObject const* obj, TypeC
         } else if (type == types.CornerRadius.Type) {
             PushTypedRef<CornerRadius>(L, prop, obj);
         } else if (type == types.ICommand.Type) {
-            lua::MakeObjectRef(L, *reinterpret_cast<ICommand**>(const_cast<void*>(prop->Get(obj))));
+            lua::MakeObjectRef(L, *static_cast<ICommand**>(const_cast<void*>(prop->Get(obj))));
         } else if (type == types.IValueConverter.Type) {
             lua::push(L, nullptr); // IValueConverter unsupported for now
         } else if (type == types.IMultiValueConverter.Type) {
@@ -509,15 +509,15 @@ void StoredValueHelpers::PushProperty(lua_State* L, BaseObject const* obj, TypeC
         } else if (type == types.GridLength.Type) {
             PushTypedRef<GridLengthHelper>(L, prop, obj);
         } else if (type == types.String.Type) {
-            auto value = reinterpret_cast<String const*>(prop->Get(obj));
+            auto value = static_cast<String const*>(prop->Get(obj));
             lua::push(L, *value);
             
         } else if (type == types.Uri.Type) {
-            auto value = reinterpret_cast<Uri const*>(prop->Get(obj));
+            auto value = static_cast<Uri const*>(prop->Get(obj));
             lua::push(L, value->mUri.Str());
             
         } else if (type == types.LocaString.Type) {
-            auto str = reinterpret_cast<TranslatedString const*>(prop->Get(obj));
+            auto str = static_cast<TranslatedString const*>(prop->Get(obj));
             lua::push(L, str->Handle.Handle);
 
         } else {

@@ -371,16 +371,16 @@ public:
             T* newBuf;
             if (newSize > 0) {
                 newBuf = GameMemoryAllocator::NewRaw<T>(newSize);
+
+                for (size_type i = 0; i < std::min(size_, newSize); i++) {
+                    new (newBuf + i) T(std::move(buf_[i]));
+                }
+            
+                for (size_type i = std::min(size_, newSize); i < newSize; i++) {
+                    new (newBuf + i) T(initval);
+                }
             } else {
                 newBuf = nullptr;
-            }
-
-            for (size_type i = 0; i < std::min(size_, newSize); i++) {
-                new (newBuf + i) T(std::move(buf_[i]));
-            }
-            
-            for (size_type i = std::min(size_, newSize); i < newSize; i++) {
-                new (newBuf + i) T(initval);
             }
 
             if (buf_ != nullptr) {
@@ -402,16 +402,16 @@ public:
             T* newBuf;
             if (newSize > 0) {
                 newBuf = GameMemoryAllocator::NewRaw<T>(newSize);
+
+                for (size_type i = 0; i < std::min(size_, newSize); i++) {
+                    new (newBuf + i) T(std::move(buf_[i]));
+                }
+
+                for (size_type i = std::min(size_, newSize); i < newSize; i++) {
+                    new (newBuf + i) T();
+                }
             } else {
                 newBuf = nullptr;
-            }
-
-            for (size_type i = 0; i < std::min(size_, newSize); i++) {
-                new (newBuf + i) T(std::move(buf_[i]));
-            }
-            
-            for (size_type i = std::min(size_, newSize); i < newSize; i++) {
-                new (newBuf + i) T();
             }
 
             if (buf_ != nullptr) {

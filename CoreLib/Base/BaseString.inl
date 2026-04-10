@@ -3,7 +3,7 @@ BEGIN_SE()
 uint32_t FixedStringBase::CreateFixedString(StringView const& str)
 {
     if (str.size() >= 2047) {
-        ERR("Tried to create FixedString of length %d - this will crash! %s", str.size(), str.data());
+        ERR("Tried to create FixedString of length %lld - this will crash! %s", str.size(), str.data());
         return NullIndex;
     }
     
@@ -98,6 +98,8 @@ bool FixedStringBase::IsValid() const
 
     auto gst = gCoreLibPlatformInterface.ls__gGlobalStringTable;
     auto subTableIdx = (Index & 0x0F);
+    if (subTableIdx >= std::size((*gst)->SubTables)) return false;
+
     auto& subTable = (*gst)->SubTables[subTableIdx];
 
     if (header->RefCount > 0x1000000) return false;

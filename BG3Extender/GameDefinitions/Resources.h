@@ -368,16 +368,14 @@ struct Resource : public ProtectedGameObject<Resource>
     virtual STDString* ToLogString(STDString&) = 0;
     virtual void SetUUID(FixedString const&) = 0;
     virtual void VMT18(FixedString const&) = 0;
-    virtual void Destroy(ResourceManager* mgr) = 0;
-    virtual bool Load(ResourceManager* mgr) = 0;
-    virtual bool Release(ResourceManager* mgr) = 0;
+    virtual void ForceUnload(ResourceManager* mgr) = 0;
+    virtual bool AcquireRef(ResourceManager* mgr) = 0;
+    virtual bool ReleaseRef(ResourceManager* mgr) = 0;
     virtual bool IsLoaded() = 0;
     virtual bool IsLoadFailed() = 0;
     virtual uint32_t GetType() = 0;
     virtual Resource* Clone() = 0;
     virtual bool Visit(ObjectVisitor& visitor) = 0;
-    virtual bool DoLoad(ResourceManager* mgr) = 0;
-    virtual bool DoUnload(ResourceManager* mgr) = 0;
 
     Path SourceFile;
     [[bg3::readonly]] FixedString Guid;

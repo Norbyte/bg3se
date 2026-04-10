@@ -137,7 +137,7 @@ struct RawPropertyAccessorsHotData
 
         auto getter = Getter();
         auto offset = Offset();
-        auto data = reinterpret_cast<uint8_t const*>(object) + offset;
+        auto data = static_cast<uint8_t const*>(object) + offset;
         return getter(L, lifetime, data, *this);
     }
 
@@ -150,7 +150,7 @@ struct RawPropertyAccessorsHotData
 
         auto setter = Setter();
         auto offset = Offset();
-        auto data = reinterpret_cast<uint8_t*>(object) + offset;
+        auto data = static_cast<uint8_t*>(object) + offset;
         return setter(L, data, index, *this);
     }
 
@@ -308,20 +308,20 @@ inline bool GenericValidateNoopProperty(void const* obj, std::size_t offset, uin
 template <class T>
 void DefaultConstruct(void* ptr)
 {
-    new (reinterpret_cast<T*>(ptr)) T();
+    new (static_cast<T*>(ptr)) T();
 }
 
 template <class T>
 void DefaultDestroy(void* ptr)
 {
-    (reinterpret_cast<T*>(ptr))->~T();
+    (static_cast<T*>(ptr))->~T();
 }
 
 template <class T>
 void DefaultProxyDestroy(void** ptr)
 {
     if (*ptr) {
-        (reinterpret_cast<T*>(*ptr))->~T();
+        (static_cast<T*>(*ptr))->~T();
         GameFree(*ptr);
         *ptr = nullptr;
     }
@@ -330,13 +330,13 @@ void DefaultProxyDestroy(void** ptr)
 template <class T>
 void DefaultSerialize(lua_State* L, void const* ptr)
 {
-    Serialize(L, reinterpret_cast<T const*>(ptr));
+    Serialize(L, static_cast<T const*>(ptr));
 }
 
 template <class T>
 void DefaultUnserialize(lua_State* L, int index, void* ptr)
 {
-    auto result = Unserialize(L, index, reinterpret_cast<T*>(ptr));
+    auto result = Unserialize(L, index, static_cast<T*>(ptr));
     if (result != PropertyOperationResult::Success) {
         luaL_error(L, "Failed to unserialize value");
     }
@@ -345,7 +345,7 @@ void DefaultUnserialize(lua_State* L, int index, void* ptr)
 template <class T>
 void DefaultAssign(void* object, void* rhs)
 {
-    *reinterpret_cast<T*>(object) = *reinterpret_cast<T*>(rhs);
+    *static_cast<T*>(object) = *static_cast<T*>(rhs);
 }
 
 

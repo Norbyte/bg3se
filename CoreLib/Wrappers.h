@@ -333,20 +333,20 @@ namespace bg3se {
 
         static R NoContextHook(void* ctx, BaseFuncType* fun, Params... args)
         {
-            auto hook = reinterpret_cast<NoContextHookFuncType*>(gHook->func_);
+            auto hook = static_cast<NoContextHookFuncType*>(gHook->func_);
             return hook(fun, std::forward<Params>(args)...);
         }
 
         static R StaticPreHook(void* ctx, BaseFuncType* fun, Params... args)
         {
-            auto hook = reinterpret_cast<PreHookFuncType*>(gHook->func_);
+            auto hook = static_cast<PreHookFuncType*>(gHook->func_);
             hook(ctx, std::forward<Params>(args)...);
             return gHook->CallOriginal(std::forward<Params>(args)...);
         }
 
         static R StaticPostHook(void* ctx, BaseFuncType* fun, Params... args)
         {
-            auto hook = reinterpret_cast<PostHookFuncType*>(gHook->func_);
+            auto hook = static_cast<PostHookFuncType*>(gHook->func_);
             if constexpr (std::is_same_v<R, void>) {
                 gHook->CallOriginal(std::forward<Params>(args)...);
                 hook(ctx, std::forward<Params>(args)...);
@@ -359,10 +359,10 @@ namespace bg3se {
 
         static R StaticPrePostHook(void* ctx, BaseFuncType* fun, Params... args)
         {
-            auto preHook = reinterpret_cast<PreHookFuncType*>(gHook->func_);
+            auto preHook = static_cast<PreHookFuncType*>(gHook->func_);
             preHook(ctx, std::forward<Params>(args)...);
 
-            auto postHook = reinterpret_cast<PostHookFuncType*>(gHook->func2_);
+            auto postHook = static_cast<PostHookFuncType*>(gHook->func2_);
             if constexpr (std::is_same_v<R, void>) {
                 gHook->CallOriginal(std::forward<Params>(args)...);
                 postHook(ctx, std::forward<Params>(args)...);

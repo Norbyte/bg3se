@@ -112,7 +112,7 @@ public:
     template <class T>
     inline static T* Get(lua_State* L, int index)
     {
-        return reinterpret_cast<T*>(GetRaw(L, index, GetStaticPropertyMap<T>()));
+        return static_cast<T*>(GetRaw(L, index, GetStaticPropertyMap<T>()));
     }
 };
 

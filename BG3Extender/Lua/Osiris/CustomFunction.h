@@ -16,7 +16,7 @@ public:
         : CustomCallBase(name, std::move(params)), handler_(std::move(handler))
     {}
 
-    virtual bool Call(OsiArgumentDesc const & params) override;
+    bool Call(OsiArgumentDesc const & params) override;
 
 private:
     RegistryEntry handler_;
@@ -31,7 +31,7 @@ public:
         : CustomQueryBase(name, std::move(params)), handler_(std::move(handler))
     {}
 
-    virtual bool Query(OsiArgumentDesc & params) override;
+    bool Query(OsiArgumentDesc & params) override;
 
 private:
     RegistryEntry handler_;

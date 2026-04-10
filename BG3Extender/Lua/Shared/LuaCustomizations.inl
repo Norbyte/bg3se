@@ -295,7 +295,7 @@ void* lua_push_newcppobject(lua_State* L, MetatableTag metatableTag, StructTypeI
     se_assert((int32_t)propertyMapIndex >= 0);
     auto sz = size + sizeof(CppObjectUdata);
     auto extra = CppLightObjectVal::MakeExtra(metatableTag, (uint16_t)propertyMapIndex, LifetimeHandle());
-    auto obj = reinterpret_cast<CppObjectUdata*>(lua_newcppobject(L, extra, sz));
+    auto obj = static_cast<CppObjectUdata*>(lua_newcppobject(L, extra, sz));
     obj->Metatable = metatableTag;
     obj->PropertyMap = propertyMapIndex;
     return obj + 1;
@@ -749,7 +749,7 @@ char const* lua_get_function_location(lua_State* L, Ref const& reg, int& line)
 
 void* LuaCppCanonicalize(lua_State* L, void* val)
 {
-    auto v = reinterpret_cast<TValue*>(val);
+    auto v = static_cast<TValue*>(val);
     auto meta = lua_get_cppvalue(L, v);
     if (meta.MetatableTag != MetatableTag::EnumValue) {
         return nullptr;

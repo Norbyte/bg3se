@@ -293,15 +293,15 @@ struct StaticBitSet
 
         if (newSize > 0) {
             Buf = Allocator::template New<uint64_t>(newSize);
+
+            for (uint32_t i = 0; i < std::min(newSize / 64, oldSize / 64); i++) {
+                Buf[i] = oldBuf[i];
+            }
         } else {
             Buf = nullptr;
         }
 
         Size = newSize;
-
-        for (uint32_t i = 0; i < std::min(Size/64, oldSize/64); i++) {
-            Buf[i] = oldBuf[i];
-        }
                 
         if (oldBuf) {
             Allocator::Free(oldBuf);

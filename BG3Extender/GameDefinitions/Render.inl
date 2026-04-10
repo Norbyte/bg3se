@@ -25,10 +25,10 @@ BlendShapeWeights* RenderableObject::LuaGetBlendShape() const
     if (!BlendShape) return nullptr;
 
     if (gExtender->GetLibraryManager().IsDX11()) {
-        auto blend = reinterpret_cast<BlendShapeObjectDataDX11*>(BlendShape);
+        auto blend = static_cast<BlendShapeObjectDataDX11*>(BlendShape);
         return &blend->Weights;
     } else {
-        auto blend = reinterpret_cast<BlendShapeObjectDataVK*>(BlendShape);
+        auto blend = static_cast<BlendShapeObjectDataVK*>(BlendShape);
         return &blend->Weights;
     }
 }

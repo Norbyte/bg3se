@@ -57,7 +57,7 @@ public:
 
     bool GetValue(lua_State* L, CppObjectMetadata& self, int luaKeyIndex) override
     {
-        auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+        auto obj = static_cast<ContainerType*>(self.Ptr);
         auto key = get<TKey>(L, luaKeyIndex);
         auto value = obj->try_get(key);
         if (value) {
@@ -70,7 +70,7 @@ public:
 
     bool SetValue(lua_State* L, CppObjectMetadata& self, int luaKeyIndex, int luaValueIndex) override
     {
-        auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+        auto obj = static_cast<ContainerType*>(self.Ptr);
         if constexpr (std::is_default_constructible_v<TValue>) {
             auto key = get<TKey>(L, luaKeyIndex);
             if (lua_type(L, luaValueIndex) == LUA_TNIL) {
@@ -88,13 +88,13 @@ public:
 
     unsigned Length(CppObjectMetadata& self) override
     {
-        auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+        auto obj = static_cast<ContainerType*>(self.Ptr);
         return obj->keys().size();
     }
 
     int Next(lua_State* L, CppObjectMetadata& self, int luaKeyIndex) override
     {
-        auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+        auto obj = static_cast<ContainerType*>(self.Ptr);
         if (lua_type(L, luaKeyIndex) == LUA_TNIL) {
             if (!obj->empty()) {
                 // TODO - jank, but const proxies are not supported yet
@@ -118,7 +118,7 @@ public:
 
     bool Unserialize(lua_State* L, CppObjectMetadata& self, int index) override
     {
-        auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+        auto obj = static_cast<ContainerType*>(self.Ptr);
         if constexpr (std::is_default_constructible_v<TValue>) {
             lua::Unserialize(L, index, obj);
             return true;
@@ -129,7 +129,7 @@ public:
 
     void Serialize(lua_State* L, CppObjectMetadata& self) override
     {
-        auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+        auto obj = static_cast<ContainerType*>(self.Ptr);
         lua::Serialize(L, obj);
     }
 
@@ -138,9 +138,9 @@ public:
         return true;
     }
 
-    bool GetValueAt(lua_State* L, CppObjectMetadata& self, unsigned index)
+    bool GetValueAt(lua_State* L, CppObjectMetadata& self, unsigned index) override
     {
-        auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+        auto obj = static_cast<ContainerType*>(self.Ptr);
         if (index < obj->values().size()) {
             push(L, obj->values()[index], self.Lifetime);
             return true;
@@ -180,7 +180,7 @@ public:
 
     bool GetValue(lua_State* L, CppObjectMetadata& self, int luaKeyIndex) override
     {
-        auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+        auto obj = static_cast<ContainerType*>(self.Ptr);
         auto key = get<TKey>(L, luaKeyIndex);
         auto value = obj->find(key);
         if (value != obj->end()) {
@@ -193,7 +193,7 @@ public:
 
     bool SetValue(lua_State* L, CppObjectMetadata& self, int luaKeyIndex, int luaValueIndex) override
     {
-        auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+        auto obj = static_cast<ContainerType*>(self.Ptr);
         if constexpr (std::is_default_constructible_v<TValue>) {
             auto key = get<TKey>(L, luaKeyIndex);
             if (lua_type(L, luaValueIndex) == LUA_TNIL) {
@@ -213,13 +213,13 @@ public:
 
     unsigned Length(CppObjectMetadata& self) override
     {
-        auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+        auto obj = static_cast<ContainerType*>(self.Ptr);
         return obj->size();
     }
 
     int Next(lua_State* L, CppObjectMetadata& self, int luaKeyIndex) override
     {
-        auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+        auto obj = static_cast<ContainerType*>(self.Ptr);
         if (lua_type(L, luaKeyIndex) == LUA_TNIL) {
             auto it = obj->begin();
             if (it != obj->end()) {
@@ -245,7 +245,7 @@ public:
 
     bool Unserialize(lua_State* L, CppObjectMetadata& self, int index) override
     {
-        auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+        auto obj = static_cast<ContainerType*>(self.Ptr);
         if constexpr (std::is_default_constructible_v<TValue>) {
             lua::Unserialize(L, index, obj);
             return true;
@@ -256,7 +256,7 @@ public:
 
     void Serialize(lua_State* L, CppObjectMetadata& self) override
     {
-        auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+        auto obj = static_cast<ContainerType*>(self.Ptr);
         lua::Serialize(L, obj);
     }
 
@@ -265,7 +265,7 @@ public:
         return false;
     }
 
-    bool GetValueAt(lua_State* L, CppObjectMetadata& self, unsigned index)
+    bool GetValueAt(lua_State* L, CppObjectMetadata& self, unsigned index) override
     {
         throw std::runtime_error("Not implemented");
     }
@@ -336,7 +336,7 @@ public:
     inline static typename T::ContainerType* Get(lua_State* L, int index)
     {
         auto ptr = GetRaw(L, index, GetImplementation<T>()->GetRegistryIndex());
-        return reinterpret_cast<T::ContainerType*>(ptr);
+        return static_cast<T::ContainerType*>(ptr);
     }
 
     inline static MapProxyImplBase* GetImpl(CppObjectMetadata const& meta)

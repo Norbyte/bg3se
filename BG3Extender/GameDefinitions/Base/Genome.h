@@ -92,7 +92,7 @@ public:
         if (sizeof(T) <= sizeof(Value)) {
             return *reinterpret_cast<T const*>(&Value);
         } else {
-            return *reinterpret_cast<T const*>(Value);
+            return *static_cast<T const*>(Value);
         }
     }
 

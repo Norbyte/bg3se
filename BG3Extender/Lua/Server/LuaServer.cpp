@@ -127,7 +127,7 @@ namespace bg3se::esv::lua
 
     ServerState* ServerState::FromLua(lua_State* L)
     {
-        return *reinterpret_cast<ServerState**>(lua_getextraspace(L));
+        return *static_cast<ServerState**>(lua_getextraspace(L));
     }
 
     ServerState::ServerState(ExtensionState& state, uint32_t generationId)

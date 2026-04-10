@@ -273,7 +273,7 @@ struct ProtectedFunctionCaller : public ProtectedFunctionCallerBase
 
     static int ProtectedCtx(lua_State* L)
     {
-        auto self = reinterpret_cast<ProtectedFunctionCaller<TArgs, TReturn>*>(lua_touserdata(L, 1));
+        auto self = static_cast<ProtectedFunctionCaller<TArgs, TReturn>*>(lua_touserdata(L, 1));
 
         StackCheck _(L);
 
