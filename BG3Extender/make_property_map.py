@@ -10,7 +10,7 @@ static_property_re = r'^static\s+constexpr\s+(?P<type>.+)\s+(?P<name>.+)\s*=\s*(
 typedef_re = r'^using\s+.*=.*;?$'
 attributes_re = r'^(\[\[(\s*[a-zA-Z0-9:_]+\s*(\([^)]*\))?\s*,?\s*)+\]\])$'
 attribute_re = r'(?P<name>[a-zA-Z0-9:_]+)\s*(\(\s*(?P<args>[^)]*)\s*\))?'
-property_re = r'^(?P<attributes>\[\[(\s*[a-zA-Z0-9:_]+\s*(\([^)]*\))?\s*,?\s*)+\]\])?\s*(?P<type>[a-zA-Z0-9_<>*:, ]+)\s+(?P<name>[a-zA-Z0-9_]+)\s*(?P<initval>{.*})?\s*;\s*(?P<comment>//.*)?$'
+property_re = r'^(?P<attributes>\[\[(\s*[a-zA-Z0-9:_]+\s*(\([^)]*\))?\s*,?\s*)+\]\])?\s*(?P<type>[a-zA-Z0-9_<>*:, ]+)\s+(?P<name>[a-zA-Z0-9_]+)\s*(?P<initval>{.*})?\s*;\s*$'
 tag_component_re = r'^(DEFINE_TAG_COMPONENT|DEFINE_ONEFRAME_TAG_COMPONENT)\((?P<ns>[^,]+), (?P<name>[^,]+), (?P<type>[^,]+)\)$'
 boost_re = r'^DEFN_BOOST\(\s*(?P<name>[^,]+),\s*(?P<boostType>[^,]+),\s*{$'
 ignore_re = r'^(BEGIN_SE|END_SE).*$'
@@ -290,7 +290,7 @@ class DefinitionLoader:
                 line = line.strip()
                 loader.parse_line(line)
         if len(self.ns_stack) > 0 or len(self.struct_stack) > 0 or len(self.next_attributes) > 0 or self.cur_struct is not None:
-            raise Exception("Partially parsed namespace or struct after EOF")
+            raise Exception("Partially parsed namespace or struct after EOF in file: " + path)
 
     def parse_attributes(self, line):
         if line is not None:
@@ -471,6 +471,18 @@ class DefinitionLoader:
         
         if line == '' or line[0] == '/' or line[0] == '#' or re.match(ignore_re, line) is not None:
             return
+
+        comment = line.find('//')
+        if comment != -1:
+            line = line[:comment]
+
+        comment = line.find('/*')
+        if comment != -1:
+            comment_end = line.find('*/', comment+1)
+            if comment_end == -1:
+                line = line[:comment]
+            else:
+                line = line[:comment] + line[comment_end+2:]
         
         match = re.match(ns_start_re, line)
         if match is not None:

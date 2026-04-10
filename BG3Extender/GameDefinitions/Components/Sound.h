@@ -114,7 +114,7 @@ struct SoundSetSwitchRequest
 struct SoundSeekRequest
 {
     EntityHandle Entity;
-    SoundEventType Type{ SoundEventType::Sound };;
+    SoundEventType Type{ SoundEventType::Sound };
     std::variant<FixedString, SoundEvent*, STDString> Event;
     float Seek{ -1.0f };
     uint8_t PlayerIndex{ 0 };
