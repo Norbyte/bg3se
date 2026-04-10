@@ -237,6 +237,13 @@ inline bool do_typecheck(lua_State* L, int index, Overload<AnyRef>)
 TYPECHECK(FunctionRef, LUA_TFUNCTION)
 TYPECHECK(AnyUserdataRef, LUA_TLIGHTCPPOBJECT)
 
+
+template <class T> requires !IsByVal<T> && !std::is_pointer_v<T>
+bool do_typecheck(lua_State* L, int index, Overload<T>);
+
+template <class T> requires !IsByVal<T> && std::is_pointer_v<T>
+bool do_typecheck(lua_State* L, int index, Overload<T>);
+
 template <class T>
 inline bool do_typecheck(lua_State* L, int index, Overload<std::optional<T>>)
 {
