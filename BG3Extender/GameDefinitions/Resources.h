@@ -262,15 +262,15 @@ struct [[bg3::hidden]] TextureManager
     HashMap<FixedString, TrackedTexture*> Textures;
 };
 
-struct [[bg3::hidden]] UVValues
+struct UVValues
 {
     glm::vec2 UV0;
     glm::vec2 UV1;
 };
 
-struct [[bg3::hidden]] TextureAtlas
+struct TextureAtlas : public ProtectedGameObject<TextureAtlas>
 {
-    void* VMT;
+    [[bg3::hidden]] void* VMT;
     LegacyMap<FixedString, UVValues*> Icons;
     STDString Path;
     STDString TexturePath;
@@ -282,12 +282,12 @@ struct [[bg3::hidden]] TextureAtlas
     resource::TextureResource* Texture;
 };
 
-struct [[bg3::hidden]] TextureAtlasMap
+struct TextureAtlasMap : public ProtectedGameObject<TextureAtlasMap>
 {
-    void* VMT;
+    [[bg3::hidden]] void* VMT;
     LegacyRefMap<STDString, TextureAtlas*> AtlasMap;
     LegacyMap<FixedString, TextureAtlas*> IconMap;
-    uint32_t Unknown;
+    [[bg3::hidden]] uint32_t Unknown;
 };
 
 struct [[bg3::hidden]] Bank : public ProtectedGameObject<Bank>
