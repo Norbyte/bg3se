@@ -376,11 +376,11 @@ bool ImmediateWorldCache::RemoveComponent(EntityHandle entity, ComponentTypeInde
             new (change) ComponentChange();
             return true;
         } else {
-            WARN("Tried to remove component [%d] that does not exist on entity [%08x]!", type, entity.Handle);
+            WARN("Tried to remove component [%d] that does not exist on entity [%016llx]!", type, entity.Handle);
             return false;
         }
     } else {
-        WARN("A change for component [%d] already exists on entity [%08x]!", type, entity.Handle);
+        WARN("A change for component [%d] already exists on entity [%016llx]!", type, entity.Handle);
         return false;
     }
 }
@@ -1361,7 +1361,7 @@ void EntitySystemHelpersBase::ValidateEntityChanges(ImmediateWorldCache::Changes
                 auto name = ecsComponentData_.Get(componentInfo.ComponentIndex).Name;
                 auto componentSize = componentInfo.IsProxy ? sizeof(void*) : componentInfo.Size;
                 if (pool.FrameStorage.ComponentSizeInBytes != componentSize) {
-                    ERR("[ECS INTEGRITY CHECK] Component size mismatch (%s): local %d, ECS %d", name->c_str(), componentSize, pool.FrameStorage.ComponentSizeInBytes);
+                    ERR("[ECS INTEGRITY CHECK] Component size mismatch (%s): local %lld, ECS %d", name->c_str(), componentSize, pool.FrameStorage.ComponentSizeInBytes);
                 }
             }
         }

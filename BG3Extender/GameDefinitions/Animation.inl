@@ -12,7 +12,7 @@ using namespace bg3se::lua;
 GenomeVariant::GenomeVariant()
 {}
 
-GenomeVariant::GenomeVariant(GenomeVariant&& o)
+GenomeVariant::GenomeVariant(GenomeVariant&& o) noexcept
 {
     Value = o.Value;
     Type = o.Type;
@@ -47,7 +47,7 @@ GenomeVariant& GenomeVariant::operator = (GenomeVariant const& o)
     return *this;
 }
 
-GenomeVariant& GenomeVariant::operator = (GenomeVariant&& o)
+GenomeVariant& GenomeVariant::operator = (GenomeVariant&& o) noexcept
 {
     if (Type && (!o.Type || Type->TypeName != o.Type->TypeName)) {
         ERR("Tried to change type of GenomeVariant from %s to %s!", Type->TypeName.GetString(), (o.Type ? o.Type->TypeName.GetString() : "(Untyped)"));

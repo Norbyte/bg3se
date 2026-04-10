@@ -44,7 +44,7 @@ void DumpStack(lua_State* L)
     for (int idx = 1; idx <= top; idx++) {
         switch (lua_type(L, idx)) {
         case LUA_TNIL:
-            INFO("<%d> nil");
+            INFO("<%d> nil", idx);
             break;
 
         case LUA_TBOOLEAN:

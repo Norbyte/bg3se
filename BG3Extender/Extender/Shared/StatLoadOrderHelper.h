@@ -15,7 +15,7 @@ public:
         FixedString FirstMod;
         // Most recent mod we've seen this entry in
         FixedString LastMod;
-        void* PreParseBuf;
+        void* PreParseBuf{ nullptr };
     };
 
     void OnLoadStarted();

@@ -54,7 +54,7 @@ namespace bg3se::osidbg
     {
         auto mapping = ruleActionMappings_.find(action);
         if (mapping == ruleActionMappings_.end()) {
-            WARN("Debugger::FindActionMapping(%016x): Could not find action mapping for rule action", action);
+            WARN("Debugger::FindActionMapping(%p): Could not find action mapping for rule action", action);
             return nullptr;
         }
 
@@ -106,7 +106,7 @@ namespace bg3se::osidbg
         uint64_t breakpointId;
         if (actionIndex == -1) {
             if (nodeId == 0) {
-                WARN("Debugger::AddBreakpoint(): Node ID must be nonzero for node actions", nodeId);
+                WARN("Debugger::AddBreakpoint(): Node ID (%d) must be nonzero for node actions", nodeId);
                 return ResultCode::InvalidNodeId;
             }
 
@@ -130,7 +130,7 @@ namespace bg3se::osidbg
             }
         }
 
-        DEBUG("Debugger::AddBreakpoint(): Set on key %016x to %08x", breakpointId, type);
+        DEBUG("Debugger::AddBreakpoint(): Set on key %016llx to %08x", breakpointId, type);
         Breakpoint bp;
         bp.nodeId = nodeId;
         bp.goalId = goalId;
@@ -608,7 +608,7 @@ namespace bg3se::osidbg
         auto const & sig = node->Function->Signature;
         if (params.column_size() != sig->Params->Params.Size) {
             WARN("Debugger::EvaluateInServerThread(): Got %d params, but node %d has %d!",
-                params.column_size(), nodeId, sig->Params->Params.Size);
+                params.column_size(), nodeId, (unsigned)sig->Params->Params.Size);
             return ResultCode::InvalidParamTupleArity;
         }
 

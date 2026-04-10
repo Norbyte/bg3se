@@ -5,25 +5,8 @@
 
 BEGIN_SE()
 
-template <typename... Args>
-void Debug(DebugMessageType type, _Printf_format_string_ char const * fmt, Args... args)
-{
-    if (gCoreLibPlatformInterface.GlobalConsole) {
-        char buf[1024];
-        _snprintf_s(buf, std::size(buf), _TRUNCATE, fmt, args...);
-        gCoreLibPlatformInterface.GlobalConsole->Print(type, buf);
-    }
-}
-
-template <typename... Args>
-void DebugLocal(DebugMessageType type, _Printf_format_string_ char const * fmt, Args... args)
-{
-    if (gCoreLibPlatformInterface.GlobalConsole) {
-        char buf[1024];
-        _snprintf_s(buf, std::size(buf), _TRUNCATE, fmt, args...);
-        gCoreLibPlatformInterface.GlobalConsole->LocalPrint(type, buf);
-    }
-}
+void Debug(DebugMessageType type, _In_z_ _Printf_format_string_ char const* fmt, ...);
+void DebugLocal(DebugMessageType type, _In_z_ _Printf_format_string_ char const* fmt, ...);
 
 #define DEBUG(msg, ...) Debug(DebugMessageType::Debug, msg, __VA_ARGS__)
 #define INFO(msg, ...) Debug(DebugMessageType::Info, msg, __VA_ARGS__)

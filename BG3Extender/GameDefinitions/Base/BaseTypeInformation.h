@@ -27,7 +27,7 @@ struct StaticTypeInformation : Noncopyable<StaticTypeInformation>
     inline StaticTypeInformation() {}
     StaticTypeInformation(TypeInformation* type, InitializerProc* initializer);
 
-    inline StaticTypeInformation(StaticTypeInformation&& o)
+    inline StaticTypeInformation(StaticTypeInformation&& o) noexcept
         : Type(o.Type), Initializer(o.Initializer)
     {
         // This 'dummy move' should only happen during initialization when types are not yet set up

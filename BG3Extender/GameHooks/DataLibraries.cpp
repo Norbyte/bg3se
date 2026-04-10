@@ -103,7 +103,7 @@ namespace bg3se
 
         auto initEnd = std::chrono::high_resolution_clock::now();
         auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(initEnd - initStart).count();
-        DEBUG("LibraryManager::PostStartupFindLibraries() took %d ms", ms);
+        DEBUG("LibraryManager::PostStartupFindLibraries() took %lld ms", ms);
 
         PostLoaded = true;
         return !CriticalInitFailed;

@@ -79,7 +79,7 @@ struct FunctionStorage<R (Args...)>
     ~FunctionStorage()
     {}
 
-    R operator ()(Args&&... args) const
+    R operator ()(Args... args) const
     {
         if constexpr (std::is_same_v<R, void>) {
             call_(*this, std::forward<Args>(args)...);
@@ -173,7 +173,7 @@ public:
         return pStorage_ != nullptr;
     }
 
-    inline R operator ()(Args&&... args) const
+    inline R operator ()(Args... args) const
     {
         if constexpr (std::is_same_v<R, void>) {
             storage_(std::forward<Args>(args)...);
@@ -471,7 +471,7 @@ struct Signal
     void Invoke(Args... args)
     {
         for (auto const& conn : Connections) {
-            conn.Handler(std::forward<Args>(args)...);
+            conn.Handler(args...);
         }
     }
 };

@@ -90,7 +90,7 @@ int UserVariableHolderMetatable::Next(lua_State* L, CppObjectMetadata& self)
 int UserVariableHolderMetatable::ToString(lua_State* L, CppObjectMetadata& self)
 {
     char name[100];
-    sprintf_s(name, "UserVariables(%16llx)", self.Value);
+    sprintf_s(name, "UserVariables(%016llx)", self.Value);
     push(L, name);
     return 1;
 }

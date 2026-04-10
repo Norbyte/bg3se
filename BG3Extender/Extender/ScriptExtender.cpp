@@ -150,7 +150,7 @@ void ScriptExtender::Initialize()
 
     auto initEnd = std::chrono::high_resolution_clock::now();
     auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(initEnd - initStart).count();
-    DEBUG("Library startup took %d ms", ms);
+    DEBUG("Library startup took %lld ms", ms);
 
     auto app = GetStaticSymbols().AppInstance;
     if (app && *app) {
@@ -250,7 +250,7 @@ void ScriptExtender::OnStatsLoadGuarded(stats::RPGStats::LoadProc* wrapped, stat
 
     statLoadOrderHelper_.OnLoadStarted();
     client_.LoadExtensionState(ExtensionStateContext::Load);
-    
+
     {
         ecl::LuaClientPin lua(client_.GetExtensionState());
         if (lua) {

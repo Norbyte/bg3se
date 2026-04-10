@@ -35,9 +35,9 @@ private:
 
         Ptr<UIElement> Target;
         bg3se::FixedString Event;
-        RoutedEvent const* EventType;
+        RoutedEvent const* EventType{ nullptr };
         RegistryEntry Handler;
-        SubscriptionIndex Index;
+        SubscriptionIndex Index{ 0 };
         bool IsActive{ false };
     };
 

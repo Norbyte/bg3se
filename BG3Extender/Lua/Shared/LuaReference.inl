@@ -227,7 +227,7 @@ PersistentRegistryEntry& PersistentRegistryEntry::operator = (PersistentRegistry
     return *this;
 }
 
-PersistentRegistryEntry& PersistentRegistryEntry::operator = (PersistentRegistryEntry&& other)
+PersistentRegistryEntry& PersistentRegistryEntry::operator = (PersistentRegistryEntry&& other) noexcept
 {
     Release();
 

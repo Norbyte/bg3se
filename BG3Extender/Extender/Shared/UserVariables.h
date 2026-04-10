@@ -205,7 +205,7 @@ private:
     Guid moduleUuid_;
     VariableMap vars_;
     HashMap<FixedString, UserVariablePrototype> prototypes_;
-    bool isServer_;
+    bool isServer_{ false };
 };
 
 class ModVariableManager : public UserVariableInterface

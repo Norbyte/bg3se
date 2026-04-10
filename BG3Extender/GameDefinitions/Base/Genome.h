@@ -50,11 +50,11 @@ public:
 
     GenomeVariant();
     GenomeVariant(lua_State* L, int index);
-    GenomeVariant(GenomeVariant&&);
+    GenomeVariant(GenomeVariant&&) noexcept;
     GenomeVariant(GenomeVariant const&);
     ~GenomeVariant();
     GenomeVariant& operator = (GenomeVariant const&);
-    GenomeVariant& operator = (GenomeVariant&&);
+    GenomeVariant& operator = (GenomeVariant&&) noexcept;
 
     bool operator == (GenomeVariant const& o) const;
 
@@ -112,7 +112,7 @@ public:
         Values = GameAlloc<TrackedCompactSet<T>>();
     }
 
-    TGenomeSet(TGenomeSet&& o)
+    TGenomeSet(TGenomeSet&& o) noexcept
     {
         IsOwned = o.IsOwned;
         Values = o.Values;
@@ -129,7 +129,7 @@ public:
         }
     }
 
-    TGenomeSet& operator = (TGenomeSet&& o)
+    TGenomeSet& operator = (TGenomeSet&& o) noexcept
     {
         Release();
         IsOwned = o.IsOwned;

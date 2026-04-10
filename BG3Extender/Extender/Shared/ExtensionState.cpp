@@ -69,7 +69,7 @@ namespace bg3se
                     }
 
                     INFO("    '%s': SE v%d; flags: %s", mod.Info.Name.c_str(),
-                        config.MinimumVersion, featureFlags.str());
+                        config.MinimumVersion, featureFlags.str().c_str());
 
                     if (config.MinimumVersion == 0) {
                         OsiError("Module '" << mod.Info.Name << ":");
@@ -110,7 +110,7 @@ namespace bg3se
             }
 
             DEBUG("Merged config: SE v%d; flags: %s",
-                MergedConfig.MinimumVersion, featureFlags.str());
+                MergedConfig.MinimumVersion, featureFlags.str().c_str());
         }
 
         if (CurrentVersion < MergedConfig.MinimumVersion && HighestVersionMod != nullptr) {
@@ -577,7 +577,7 @@ namespace bg3se
             lua->LoadBootstrap(bootstrapFileName, config.ModTable);
             auto took = timer.time();
             if (PERF_SHOULD_REPORT(Load, took)) {
-                PERF_REPORT(Load, took, "Loading %s for mod %s took %ld ms", bootstrapFileName, mod.Info.Name.c_str(), took / 1000);
+                PERF_REPORT(Load, took, "Loading %s for mod %s took %lld ms", bootstrapFileName, mod.Info.Name.c_str(), took / 1000);
             }
 
             lua::push(L, nullptr);
@@ -605,7 +605,7 @@ namespace bg3se
         lua->LoadBootstrap(bootstrapFileName, config.ModTable);
         auto took = timer.time();
         if (PERF_SHOULD_REPORT(Load, took)) {
-            PERF_REPORT(Load, took, "Loading %s for mod %s took %ld ms", bootstrapFileName, mod.Info.Name.c_str(), took / 1000);
+            PERF_REPORT(Load, took, "Loading %s for mod %s took %lld ms", bootstrapFileName, mod.Info.Name.c_str(), took / 1000);
         }
 
         lua::push(L, nullptr);

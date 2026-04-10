@@ -282,7 +282,7 @@ private:
     SymbolMappings& mappings_;
     std::unordered_map<std::string, ModuleInfo> modules_;
     std::unordered_map<std::string, std::function<MappingResult(uint8_t const*)>> engineCallbacks_;
-    uint32_t gameRevision_;
+    uint32_t gameRevision_{ 0 };
     bool hasFailedMappings_{ false };
     bool hasFailedCriticalMappings_{ false };
 

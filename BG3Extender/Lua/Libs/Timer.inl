@@ -181,7 +181,7 @@ void TimerManager::Update(double time)
     pendingRestore_.clear();
 
     while (!queue_.empty() && queue_.top().Time <= time) {
-        auto entry = queue_.top();
+        TimerQueueEntry entry = queue_.top();
         queue_.pop();
 
         FireTimer(entry);

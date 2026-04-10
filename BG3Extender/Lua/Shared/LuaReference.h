@@ -88,7 +88,7 @@ public:
     PersistentRegistryEntry(PersistentRegistryEntry&&) noexcept;
 
     PersistentRegistryEntry& operator = (PersistentRegistryEntry const &);
-    PersistentRegistryEntry& operator = (PersistentRegistryEntry&&);
+    PersistentRegistryEntry& operator = (PersistentRegistryEntry&&) noexcept;
 
     bool IsValid(lua_State* L) const;
     bool TryPush(lua_State* L) const;

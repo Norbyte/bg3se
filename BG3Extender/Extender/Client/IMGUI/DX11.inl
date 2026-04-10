@@ -267,7 +267,7 @@ private:
     void WINAPI CreateDXGIFactory1Hooked(REFIID riid, void** ppFactory, HRESULT result)
     {
         IMGUI_DEBUG("CreateDXGIFactory1 -> %p, %d", *ppFactory, result);
-        IMGUI_DEBUG("RIID: %08x %04x %04x %16llx", riid.Data1, riid.Data2, riid.Data3, *(uint64_t*)&riid.Data4[0]);
+        IMGUI_DEBUG("RIID: %08x %04x %04x %016llx", riid.Data1, riid.Data2, riid.Data3, *(uint64_t*)&riid.Data4[0]);
 
         if (!SUCCEEDED(result)) return;
         if (riid != IID_IDXGIFactory1) return;
