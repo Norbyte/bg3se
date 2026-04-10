@@ -7,7 +7,7 @@ struct AppearanceMaterialSetting
     Guid Material;
     Guid Color;
     float ColorIntensity;
-    uint32_t MetallicTint;
+    float MetallicTint;
     float GlossyTint;
 };
 
