@@ -21,12 +21,12 @@ BEGIN_SE()
 
 std::unique_ptr<GameHelpers> gGameHelpers;
 
-void* OSAlloc(std::size_t size)
+_Post_writable_byte_size_(size) void* OSAlloc(std::size_t size)
 {
     return malloc(size);
 }
 
-void OSFree(void* ptr)
+void OSFree(_Post_ptr_invalid_ _Pre_valid_ void* ptr) noexcept
 {
     return free(ptr);
 }

@@ -331,9 +331,9 @@ struct VisualSetSlots
     bool ShowEquipmentVisuals;
 };
 
-struct VisualSetSlotsWrapper
+struct VisualSetSlotsWrapper : public ProtectedGameObject<VisualSetSlotsWrapper>
 {
-    VisualSetSlots Slots;
+    VisualSetSlots* Slots;
     bool Managed;
 };
 

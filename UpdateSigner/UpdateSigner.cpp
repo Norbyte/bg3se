@@ -139,12 +139,12 @@ int ComputePathDigest(int argc, char** argv)
     return 0;
 }
 
-void* OSAlloc(std::size_t size)
+_Post_writable_byte_size_(size) void* OSAlloc(std::size_t size)
 {
     return malloc(size);
 }
 
-void OSFree(void* ptr)
+void OSFree(_Post_ptr_invalid_ _Pre_valid_ void* ptr) noexcept
 {
     return free(ptr);
 }
