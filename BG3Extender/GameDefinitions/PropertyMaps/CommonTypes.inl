@@ -55,6 +55,9 @@ END_CLS()
 
 BEGIN_CLS(StatsExpressionPooled)
 INHERIT(StatsExpressionInternal)
+P_GETTER_SETTER(Params, GetParams, SetParams)
+P_GETTER_SETTER(Code, GetCode, SetCode)
+P_GETTER(RefCount, GetRefCount)
 END_CLS()
 
 

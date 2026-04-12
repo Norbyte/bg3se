@@ -201,12 +201,12 @@ public:
     PropertyOperationResult SetRawProperty(lua_State* L, void* object, RawPropertyAccessors const& prop, int index) const;
     void AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter, typename RawPropertyAccessors::Setter* setter,
         typename RawPropertyAccessors::Serializer* serialize, std::size_t offset, uint64_t flag, 
-        PropertyNotification notification, char const* newName = nullptr, bool iterable = true);
+        PropertyNotification notification, char const* newName, bool iterable, bool inherited);
     void AddRawValidator(char const* prop, typename RawPropertyValidators::Validator* validate, std::size_t offset, uint64_t flag);
     void AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,
         typename RawPropertyAccessors::Setter* setter, typename RawPropertyValidators::Validator* validate, 
         typename RawPropertyAccessors::Serializer* serialize, std::size_t offset, uint64_t flag, 
-        PropertyNotification notification, char const* newName = nullptr, bool iterable = true);
+        PropertyNotification notification, char const* newName, bool iterable, bool inherited);
     bool IsA(StructTypeId typeRegistryIndex) const;
     bool ValidatePropertyMap(void const* object);
     bool ValidateObject(void const* object);

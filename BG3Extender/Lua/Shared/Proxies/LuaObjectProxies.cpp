@@ -101,7 +101,7 @@ void InheritProperties(GenericPropertyMap const& base, GenericPropertyMap& child
     for (auto prop : base.Properties) {
         auto const& p = prop.Value();
         child.AddRawProperty(prop.Key().GetString(), p.Get, p.Set, p.Serialize, p.Offset, p.Flag, 
-            p.PendingNotifications, p.NewName, p.Iterable);
+            p.PendingNotifications, p.NewName, p.Iterable, true);
     }
 
     for (auto const& prop : base.Validators) {
@@ -162,7 +162,10 @@ void AddBitfieldProperty(GenericPropertyMap& pm, BitfieldTypeId typeId, std::siz
             nullptr,
             offset,
             BitfieldValueToFlag(label.Value),
-            PropertyNotification::None
+            PropertyNotification::None,
+            nullptr,
+            true,
+            false
         );
     }
 }
@@ -390,7 +393,7 @@ void ProcessPropertyMapDefinitions(PropertyMapRegistrationEntry const* defn)
             auto const& p = entry.Property;
             pm->AddRawProperty(p.Name, p.Getter, p.Setter,
                 p.Validate, p.Serialize, p.Offset, p.Flag,
-                p.Notification, p.NewName, p.Iterable
+                p.Notification, p.NewName, p.Iterable, false
             );
             break;
         }

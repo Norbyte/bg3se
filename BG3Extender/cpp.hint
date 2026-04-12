@@ -20,6 +20,12 @@
 #define END_ENUM() };
 #define TYPECHECK(ty, luaty) inline bool do_check_strict(lua_State * L, int index, Overload<ty>) { return lua_type(L, index) == luaty; }
 
+#define se_assert assert
+
+#define DEBUG(msg, ...) Debug(DebugMessageType::Debug, msg, __VA_ARGS__)
+#define INFO(msg, ...) Debug(DebugMessageType::Info, msg, __VA_ARGS__)
+#define WARN(msg, ...) Debug(DebugMessageType::Warning, msg, __VA_ARGS__)
+#define ERR(msg, ...) Debug(DebugMessageType::Error, msg, __VA_ARGS__)
 
 #define DEFINE_COMPONENT(componentType, cls) \
     static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \

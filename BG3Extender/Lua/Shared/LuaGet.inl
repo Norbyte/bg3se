@@ -307,8 +307,7 @@ StatsExpressionRef do_get(lua_State* L, int index, Overload<StatsExpressionRef>)
     auto str = get<std::optional<StringView>>(L, index);
     if (str) {
         auto manager = GetStaticSymbols().eoc__DynamicStatsExpressionManager;
-        Guid hash;
-        MurmurHash3_x64_128(str->data(), (int)str->size(), 0, &hash);
+        Guid hash = StatsExpressionInternal::Hash(*str);
         return (*manager)->CreateStatsExpression(hash, *str);
     }
 

@@ -502,10 +502,17 @@ namespace bg3se
         return h.Val[0] ^ h.Val[1];
     }
 
+    inline uint64_t Hash(StringView const& s)
+    {
+        uint64_t hash[2];
+        MurmurHash3_x64_128(s.data(), (int)s.size(), 0, hash);
+        return hash[0];
+    }
+
     inline uint64_t Hash(STDString const& s)
     {
         uint64_t hash[2];
-        MurmurHash3_x64_128(s.data(), s.size(), 0, hash);
+        MurmurHash3_x64_128(s.data(), (int)s.size(), 0, hash);
         return hash[0];
     }
 }

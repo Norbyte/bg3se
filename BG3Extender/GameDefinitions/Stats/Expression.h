@@ -10,14 +10,24 @@ struct StatsExpressionInternal
     Array<Param> Params;
     STDString Code;
 
-    // Lua call helpers
-    //# P_FUN(Parse, StatsExpressionInternal::Parse)
-    void Parse(StringView code);
+    static Guid Hash(StringView code);
 };
 
 struct StatsExpressionPooled : public StatsExpressionInternal
 {
     [[bg3::hidden]] std::atomic<int32_t> RefCount;
+
+    // Lua property helpers
+    //# P_GETTER_SETTER(Params, GetParams, SetParams)
+    //# P_GETTER_SETTER(Code, GetCode, SetCode)
+    //# P_GETTER(RefCount, GetRefCount)
+    Array<Param>* GetParams() const;
+    void SetParams(lua_State* L, Array<Param> params);
+
+    StringView GetCode() const;
+    void SetCode(lua_State* L, StringView code);
+
+    int32_t GetRefCount() const;
 };
 
 class [[bg3::hidden]] StatsExpressionRef

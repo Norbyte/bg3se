@@ -120,12 +120,25 @@ PropertyOperationResult GenericPropertyMap::SetRawProperty(lua_State* L, void* o
 
 void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,
     typename RawPropertyAccessors::Setter* setter, typename RawPropertyAccessors::Serializer* serialize, 
-    std::size_t offset, uint64_t flag, PropertyNotification notification, char const* newName, bool iterable)
+    std::size_t offset, uint64_t flag, PropertyNotification notification, char const* newName, bool iterable, bool inherited)
 {
     se_assert((!Initialized || !InheritanceUpdated) && IsInitializing);
     FixedStringUnhashed key{ prop };
     FixedString newNameKey{ newName ? newName : "" };
-    se_assert(Properties.find(key) == Properties.end());
+    
+    auto existingProp = Properties.try_get(key);
+    if (existingProp) {
+        if (inherited) {
+#if defined(_DEBUG)
+            WARN("Property '%s' defined in type '%s' shadows same property defined in parent type", prop, Name.GetString());
+#endif
+            return;
+        } else {
+            ERR("Property '%s' defined in type '%s' shadows same property defined in parent type", prop, Name.GetString());
+            se_assert(false);
+        }
+    }
+
     Properties.set(key, RawPropertyAccessors{ key, offset, flag, getter, setter, serialize, notification, this, newNameKey, iterable });
 
     if (iterable) {
@@ -133,7 +146,8 @@ void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAc
     }
 }
 
-void GenericPropertyMap::AddRawValidator(char const* prop, typename RawPropertyValidators::Validator* validate, std::size_t offset, uint64_t flag)
+void GenericPropertyMap::AddRawValidator(char const* prop, typename RawPropertyValidators::Validator* validate, std::size_t offset, 
+    uint64_t flag)
 {
     se_assert((!Initialized || !InheritanceUpdated) && IsInitializing);
     Validators.push_back(RawPropertyValidators{ FixedString(prop), validate, offset, flag });
@@ -142,10 +156,10 @@ void GenericPropertyMap::AddRawValidator(char const* prop, typename RawPropertyV
 void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,
     typename RawPropertyAccessors::Setter* setter, typename RawPropertyValidators::Validator* validate, 
     typename RawPropertyAccessors::Serializer* serialize, std::size_t offset, uint64_t flag, 
-    PropertyNotification notification, char const* newName, bool iterable)
+    PropertyNotification notification, char const* newName, bool iterable, bool inherited)
 {
     if (getter != nullptr || setter != nullptr) {
-        AddRawProperty(prop, getter, setter, serialize, offset, flag, notification, newName, iterable);
+        AddRawProperty(prop, getter, setter, serialize, offset, flag, notification, newName, iterable, inherited);
     }
 
     if (validate != nullptr) {
