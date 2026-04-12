@@ -19,7 +19,7 @@ Array<StatsExpressionInternal::Param>* StatsExpressionPooled::GetParams() const
 void StatsExpressionPooled::SetParams(lua_State* L, Array<StatsExpressionInternal::Param> params)
 {
     if (RefCount > 1) {
-        WARN("Changing 'Params' field of stats expression ('%s') that is refernced %d times; "
+        WARN("Changing 'Params' field of stats expression ('%s') that is referenced %d times; "
             "this can cause unintended changes in other places where the same expression is used. "
             "Consider reassigning the stats expression instead.", Code.c_str(), RefCount.load());
     }
@@ -35,7 +35,7 @@ StringView StatsExpressionPooled::GetCode() const
 void StatsExpressionPooled::SetCode(lua_State* L, StringView code)
 {
     if (RefCount > 1 && code != Code) {
-        WARN("Changing 'Code' field of stats expression ('%s') that is refernced %d times; "
+        WARN("Changing 'Code' field of stats expression ('%s') that is referenced %d times; "
             "this can cause unintended changes in other places where the same expression is used. "
             "Consider reassigning the stats expression instead.", Code.c_str(), RefCount.load());
     }

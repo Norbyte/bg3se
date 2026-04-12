@@ -748,11 +748,11 @@ struct EquipmentVisualRequest
 };
 
 
-struct EquipmentSubVisualRequest
+struct EquipmentVisualCallbackLoadDesc : public ProtectedGameObject<EquipmentVisualCallbackLoadDesc>
 {
     FixedString VisualTemplate;
     EntityHandle VisualEntity;
-    [[bg3::hidden]] void* LoadRequest_M;
+    [[bg3::hidden]] void* Callback;
     bool Processed;
 };
 
@@ -760,7 +760,7 @@ struct EquipmentSubVisualRequest
 struct EquipmentVisualSlotRequest
 {
     Array<EntityHandle> Item;
-    Array<EquipmentSubVisualRequest> SubRequests;
+    Array<EquipmentVisualCallbackLoadDesc*> Callbacks;
     EquipmentVisualRequest Data;
     EntityHandle field_90;
 };
