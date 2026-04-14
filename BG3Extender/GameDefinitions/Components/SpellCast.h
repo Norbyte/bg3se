@@ -109,7 +109,7 @@ struct SyncTargetingComponent : public BaseComponent
 
     BaseTarget Target;
     Array<InitialTarget> Targets;
-    [[bg3::legacy(field_40)]] uint8_t CanMoveToThrowTarget;
+    [[bg3::legacy(field_40), bg3::legacy(CanMoveToThrowTarget)]] uint8_t SpellTargetingState;
     int field_44;
     std::optional<glm::vec3> field_48;
     [[bg3::legacy(field_58)]] std::optional<glm::vec3> HoverPosition;
@@ -935,5 +935,232 @@ struct ConcentrationSystem : public BaseSystem
     Array<ConcentrationRequest> ConcentrationRequests;
 };
 
+
+END_NS()
+
+
+BEGIN_NS(ecl::spell_cast)
+
+using namespace bg3se::spell_cast;
+
+struct CacheComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClientSpellCastCache, "ecl::spell_cast::CacheComponent")
+
+    AbilityId SpellCastingAbility;
+    uint32_t Flags;
+    HashMap<int, bool> CastHitEventsFired;
+    int NextHitIndex;
+    bool HasInterruptReplacement;
+    int NextInterruptIndex;
+    int field_54;
+    int LastInterruptIndex;
+};
+
+struct AnimationCastInfo
+{
+    uint8_t Event;
+    std::optional<glm::vec3> TargetPosition;
+    glm::vec3 TargetRotation;
+    EntityHandle Target;
+    uint8_t field_28;
+    uint8_t field_29;
+    bool LoopingCastAnimation;
+    uint8_t field_2B;
+    bool DualWielding;
+    bool HasWeapon;
+    bool ObjectSize;
+};
+
+struct CachedAnimationRequestsComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClientSpellCastCachedAnimationRequests, "ecl::spell_cast::CachedAnimationRequestsComponent")
+
+    HashMap<uint8_t, AnimationCastInfo> field_0; // EAnimationCastEvent
+    HashSet<uint8_t> field_40; // EAnimationCastEvent
+};
+
+struct EffectTimeFactorRequestsSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClientSpellCastEffectTimeFactorRequests, "ecl::spell_cast::EffectTimeFactorRequestsSingletonComponent")
+
+    HashMap<EntityHandle, float> Requests;
+};
+
+struct CastEffectContainer
+{
+    uint8_t field_0;
+    EffectHandler* Effect;
+};
+
+struct EffectsComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClientSpellCastEffects, "ecl::spell_cast::EffectsComponent")
+
+    EffectHandler* Effect;
+    Array<EffectHandler*> EffectHandlers;
+    Array<CastEffectContainer> EffectContainers;
+    Array<EffectHandler*> EffectHandlers2;
+    Array<EffectHandler*> EffectHandlers3;
+    bool ShouldPlayCastEffectsOnLogicStart;
+};
+
+struct InterruptPauseRequestsComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClientSpellCastInterruptPauseRequests, "ecl::spell_cast::InterruptPauseRequestsComponent")
+
+    HashSet<EntityHandle> Requests;
+};
+
+struct MoveDuringCastUpdateEventOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(ClientSpellCastMoveDuringCastUpdate, "ecl::spell_cast::MoveDuringCastUpdateEventOneFrameComponent")
+
+    int field_0;
+    int field_4;
+    int field_8;
+    glm::vec3 Position;
+};
+
+struct MovementComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClientSpellCastMovement, "ecl::spell_cast::MovementComponent")
+
+    bool MoveDuringCast;
+    FixedString field_4;
+    glm::vec3 Position;
+};
+
+struct PlaySoundRequest
+{
+    EntityHandle Entity;
+    BYTE field_8;
+    FixedString SoundEvent;
+    int field_10;
+    int field_14;
+};
+
+struct PlaySoundRequestOneFrameComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClientSpellCastPlaySoundRequest, "ecl::spell_cast::PlaySoundRequestOneFrameComponent")
+
+    Array<PlaySoundRequest> Requests;
+};
+
+struct RollsComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClientSpellCastRolls, "ecl::spell_cast::RollsComponent")
+
+    Array<SpellRollData> Rolls;
+};
+
+struct SetSoundSwitchRequest
+{
+    EntityHandle Entity;
+    uint8_t field_8;
+    FixedString Switch;
+    FixedString Value;
+};
+
+struct SetSoundSwitchesRequestOneFrameComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClientSpellCastSetSoundSwitchesRequest, "ecl::spell_cast::SetSoundSwitchesRequestOneFrameComponent")
+
+    Array<SetSoundSwitchRequest> Requests;
+};
+
+struct SharedToClientEntityComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClientSpellCastSharedToClientEntity, "ecl::spell_cast::SharedToClientEntityComponent")
+
+    EntityHandle Entity;
+};
+
+struct SoundImpactEventOneFrameComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClientSpellCastSoundImpactEvent, "ecl::spell_cast::SoundImpactEventOneFrameComponent")
+
+    Array<InitialTarget> Targets;
+    SpellId Spell;
+    EntityHandle field_48;
+};
+
+struct SoundsComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClientSpellCastSounds, "ecl::spell_cast::SoundsComponent")
+
+    FixedString TargetSound;
+    FixedString CastSound;
+    uint8_t CastSoundType;
+    uint8_t field_9;
+};
+
+struct StateComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClientSpellCastState, "ecl::spell_cast::StateComponent")
+
+    EntityHandle Caster;
+    SpellCastPhase CastPhase;
+    SpellId Spell;
+    SpellCastOptions CastOptions;
+    Array<InitialTarget> Targets;
+    std::optional<glm::vec3> CastEndPosition;
+    std::optional<glm::vec3> CasterStartPosition;
+    EntityHandle field_80;
+    uint32_t field_88;
+    Guid SpellCastGuid;
+    float field_A0;
+    uint8_t field_A4;
+};
+
+struct TargetingComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClientSpellCastTargeting, "ecl::spell_cast::TargetingComponent")
+
+    BaseTarget Target;
+    std::optional<BaseTarget> AdjustedTarget;
+    Array<InitialTarget> Targets;
+    uint8_t SpellTargetingState;
+    int32_t CurrentTargetIndex;
+    int32_t PathId;
+    Array<AiPathNode> Path;
+    std::optional<glm::vec3> PickupEntityPosition;
+    bool IsPreviewing;
+    std::optional<navigation::TargetInfo> TargetInfo;
+    std::optional<PathSettings> PathSettings;
+    std::optional<glm::vec3> CastStartPosition;
+    std::optional<glm::vec3> CastEndPosition;
+    std::optional<glm::vec3> field_154;
+    std::optional<glm::vec3> field_164;
+    std::optional<glm::vec3> field_174;
+};
+
+
+struct TempSoundEvent
+{
+    FixedString EventType;
+    FixedString LevelName;
+    FixedString TargetSound;
+    glm::vec3 Position;
+    float field_18;
+    int field_1C;
+};
+
+struct TempSoundEventRequestsOneFrameComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClientSpellCastTempSoundEventRequests, "ecl::spell_cast::TempSoundEventRequestsOneFrameComponent")
+
+    Array<TempSoundEvent> Events;
+};
+
+struct ZoneRangeComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClientSpellCastZoneRange, "ecl::spell_cast::ZoneRangeComponent")
+
+    float ZoneRange;
+    glm::vec3 Position;
+};
+
+DEFINE_ONEFRAME_TAG_COMPONENT(ecl::spell_cast, SpellRollsChangedOneFrameComponent, ClientSpellCastRollsChanged)
 
 END_NS()

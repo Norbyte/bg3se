@@ -769,9 +769,9 @@ struct EquipmentVisualSlot
 {
     EntityHandle Item;
     Array<EntityHandle> SubVisuals;
-    EquipmentVisualSlotRequest* VisualRequest;
+    EquipmentVisualSlotRequest* VisualRequest{ nullptr };
     std::optional<EquipmentVisualRequest> VisualData;
-    [[bg3::legacy(field_20)]] bool Loaded;
+    [[bg3::legacy(field_20)]] bool Loaded{ false };
 };
 
 struct EquipmentVisualsComponent : public BaseComponent
