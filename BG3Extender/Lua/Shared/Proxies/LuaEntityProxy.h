@@ -82,6 +82,7 @@ private:
     static std::optional<NetId> GetNetId(lua_State* L, EntityHandle entity);
 
     static void Replicate(lua_State* L, EntityHandle entity, ExtComponentType component);
+    static bool MarkChanged(lua_State* L, EntityHandle entity, ExtComponentType component);
     static void SetReplicationFlags(lua_State* L, EntityHandle entity, ExtComponentType component, uint64_t flags, std::optional<uint32_t> qword);
     static uint64_t GetReplicationFlags(lua_State* L, EntityHandle entity, ExtComponentType component, std::optional<uint32_t> qword);
     

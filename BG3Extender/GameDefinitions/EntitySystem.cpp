@@ -320,6 +320,28 @@ void* EntityStorageData::GetComponent(ComponentFrameStorageIndex const& entityPt
     }
 }
 
+bool EntityStorageData::MarkComponentAsChanged(EntityHandle entity, ComponentTypeIndex component)
+{
+    auto componentSlot = ComponentTypeToIndex.try_get(component);
+    if (componentSlot) {
+        auto storageIndex = InstanceToPageMap.try_get(entity);
+        if (storageIndex) {
+            auto& page = Components[storageIndex->PageIndex]->Components[*componentSlot];
+            uint64_t entryMask = 1ull << (storageIndex->EntryIndex & 0x3f);
+            if (!(page.ModifiedEntities & entryMask)) {
+                page.ModifiedEntities |= entryMask;
+
+                if (!ModifiedComponents[*componentSlot]) {
+                    ModifiedComponents.AtomicSet(*componentSlot);
+                }
+            }
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void* ImmediateWorldCache::Changes::GetChange(EntityHandle entityHandle, ComponentTypeIndex type) const
 {
     auto typeIdx = (uint16_t)type;
@@ -545,6 +567,21 @@ void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex
     }
 
     return nullptr;
+}
+
+bool EntityWorld::MarkComponentAsChanged(EntityHandle entity, ComponentTypeIndex component)
+{
+    auto storage = GetEntityStorage(entity);
+    if (storage) {
+        if (storage->MarkComponentAsChanged(entity, component)) {
+            if (!Storage->UsedFrameDataStorages[storage->StorageIndex]) {
+                Storage->UsedFrameDataStorages.Set(storage->StorageIndex);
+            }
+            return true;
+        }
+    }
+
+    return false;
 }
 
 bool EntityWorld::IsValid(EntityHandle entityHandle) const
@@ -983,6 +1020,21 @@ void* EntitySystemHelpersBase::GetRawComponent(EntityHandle entityHandle, ExtCom
         return world->GetRawComponent(entityHandle, meta.ComponentIndex, meta.Size, meta.IsProxy);
     } else {
         return nullptr;
+    }
+}
+
+bool EntitySystemHelpersBase::MarkComponentAsChanged(EntityHandle entityHandle, ExtComponentType type)
+{
+    auto world = GetEntityWorld();
+    if (!world) {
+        return false;
+    }
+
+    auto const& meta = GetComponentMeta(type);
+    if (meta.ComponentIndex != UndefinedComponent) {
+        return world->MarkComponentAsChanged(entityHandle, meta.ComponentIndex);
+    } else {
+        return false;
     }
 }
 

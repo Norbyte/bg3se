@@ -54,7 +54,7 @@ constexpr unsigned QueryMapSize = 0xB00;
 using ComponentTypeMask = BitArray<uint64_t, ComponentMapSize/64>;
 using OneFrameComponentTypeMask = BitArray<uint64_t, OneFrameComponentMapSize /64>;
 using QueryMask = BitArray<uint64_t, QueryMapSize/64>;
-using EntityTypeMask = BitArray<uint64_t, 4>;
+using StorageComponentTypeMask = BitArray<uint64_t, 4>;
 
 // Component type index, registered statically during game startup
 using TComponentTypeIndex = uint16_t;
@@ -205,7 +205,7 @@ struct ComponentTypeEntry : public ProtectedGameObject<ComponentTypeEntry>
 
 struct StorageComponentMap : public ProtectedGameObject<StorageComponentMap>
 {
-    EntityTypeMask WriteMask;
+    StorageComponentTypeMask WriteMask;
     union {
         uint8_t* ComponentIndices;
         std::array<uint8_t, 8> InlineComponentIndices;
@@ -478,7 +478,7 @@ struct EntityStorageComponentPage
     struct ComponentInfo
     {
         void* ComponentBuffer;
-        void* ModificationInfo;
+        std::atomic<uint64_t> ModifiedEntities;
     };
 
     std::array<ComponentInfo, 256> Components;
@@ -526,7 +526,7 @@ struct EntityStorageData : public ProtectedGameObject<EntityStorageData>
     uint64_t EntityTypesMask;
     uint16_t* ComponentSizes;
     ComponentEntry* ComponentDtors;
-    uint16_t EntityClassId;
+    uint16_t StorageIndex;
     uint16_t TotalSize;
     uint16_t ComponentIndexListSize;
     bool SomeQueryFlag;
@@ -548,7 +548,7 @@ struct EntityStorageData : public ProtectedGameObject<EntityStorageData>
     HashMap<ComponentTypeIndex, HashMap<EntityHandle, void*>> OneFrameComponents;
     bool HasOneFrameComponents;
     __int64 field_2C8;
-    EntityTypeMask ComponentMask; // Valid indices into Components pool
+    StorageComponentTypeMask ModifiedComponents; // Index of components that were changed
     Array<QueryIndex> RegisteredQueries;
     Array<QueryIndex> AddComponentQueries;
     QueryMask AddComponentQueryMap;
@@ -559,6 +559,7 @@ struct EntityStorageData : public ProtectedGameObject<EntityStorageData>
     void* GetOneFrameComponent(EntityHandle entityHandle, ComponentTypeIndex type) const;
     void* GetComponent(ComponentFrameStorageIndex const& entityPtr, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const;
     void* GetComponent(ComponentFrameStorageIndex const& entityPtr, uint8_t componentSlot, std::size_t componentSize, bool isProxy) const;
+    bool MarkComponentAsChanged(EntityHandle entity, ComponentTypeIndex component);
 
     inline bool HasComponent(ComponentTypeIndex type) const
     {
@@ -853,6 +854,7 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
 #endif
 
     void* GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy);
+    bool MarkComponentAsChanged(EntityHandle entity, ComponentTypeIndex component);
 
     EntityStorageData* GetEntityStorage(EntityHandle entityHandle) const;
     bool IsValid(EntityHandle entityHandle) const;

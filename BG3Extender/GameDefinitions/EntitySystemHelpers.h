@@ -283,6 +283,7 @@ public:
     void NotifyReplicationFlagsDirtied();
 
     void* GetRawComponent(EntityHandle entityHandle, ExtComponentType type);
+    bool MarkComponentAsChanged(EntityHandle entityHandle, ExtComponentType tyoe);
     void* GetRawSingleton(ExtComponentType type);
     EntityHandle GetSingletonEntity(ExtComponentType type);
     ecs::SystemTypeEntry* GetSystemEntry(ExtSystemType type);
