@@ -159,7 +159,7 @@ struct CharacterDefinitionComponent : public BaseComponent
     CharacterDefinition Definition;
     uint8_t field_288;
     [[bg3::legacy(field_28C)]] int ChangeId;
-    [[bg3::legacy(field_290)]] bool Synced;
+    [[bg3::legacy(field_290), bg3::legacy(NeedsSync)]] bool Synced;
 };
 
 

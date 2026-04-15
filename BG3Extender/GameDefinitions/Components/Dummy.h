@@ -8,14 +8,14 @@ BEGIN_NS(ecl::dummy)
 
 struct AnimationState
 {
-    FixedString Pose;
-    FixedString FaceAnimation;
-    PhotoModeAnimationState PhotoModeState;
-    int StaticPoseGenomeParam;
+    [[bg3::legacy(field_0)]] FixedString Pose;
+    [[bg3::legacy(field_4)]] FixedString FaceAnimation;
+    [[bg3::legacy(field_8)]] PhotoModeAnimationState PhotoModeState;
+    [[bg3::legacy(field_C)]] int StaticPoseGenomeParam;
     float field_10;
-    bool PhotoModeLookAt;
-    bool FaceAnimationPoseGenomeParam;
-    bool AnimationPlayingPoseGenomeParam;
+    [[bg3::legacy(field_14)]] bool PhotoModeLookAt;
+    [[bg3::legacy(field_15)]] bool FaceAnimationPoseGenomeParam;
+    [[bg3::legacy(field_16)]] bool AnimationPlayingPoseGenomeParam;
 };
 
 struct AnimationStateComponent : public BaseComponent
@@ -27,27 +27,27 @@ struct AnimationStateComponent : public BaseComponent
 
 struct Emote
 {
-    TranslatedString DisplayName;
-    FixedString AnimationShortName;
-    int Timing;
+    [[bg3::legacy(field_0)]] TranslatedString DisplayName;
+    [[bg3::legacy(field_10)]] FixedString AnimationShortName;
+    [[bg3::legacy(field_14)]] int Timing;
     int field_18;
 };
 
 struct EmoteCollection
 {
-    TranslatedString DisplayName;
+    [[bg3::legacy(field_0)]] TranslatedString DisplayName;
     Array<Emote> Emotes;
 };
 
 struct FaceExpression
 {
-    TranslatedString DisplayName;
-    FixedString AnimationShortName;
+    [[bg3::legacy(field_0)]] TranslatedString DisplayName;
+    [[bg3::legacy(field_10)]] FixedString AnimationShortName;
 };
 
 struct FaceExpressionCollection
 {
-    TranslatedString DisplayName;
+    [[bg3::legacy(field_0)]] TranslatedString DisplayName;
     Array<FaceExpression> FaceExpressions;
 };
 
@@ -138,7 +138,7 @@ struct SplatterComponent : public BaseComponent
     DEFINE_COMPONENT(DummySplatter, "ecl::dummy::SplatterComponent")
 
     esv::splatter::SplatterState State;
-    bool DisableSplatter;
+    [[bg3::legacy(byte10)]] bool DisableSplatter;
 };
 
 struct AttachmentClothData
@@ -194,14 +194,14 @@ struct DummyAnimationStateComponent : public BaseComponent
 {
     DEFINE_COMPONENT(PhotoModeDummyAnimationState, "eoc::photo_mode::DummyAnimationStateComponent")
 
-    FixedString Pose;
-    FixedString FaceAnimation;
-    PhotoModeAnimationState PhotoModeState;
-    int StaticPoseGenomeParam;
+    [[bg3::legacy(field_0)]] FixedString Pose;
+    [[bg3::legacy(field_4)]] FixedString FaceAnimation;
+    [[bg3::legacy(field_8)]] PhotoModeAnimationState PhotoModeState;
+    [[bg3::legacy(field_C)]] int StaticPoseGenomeParam;
     float field_10;
-    bool PhotoModeLookAt;
-    bool FaceAnimationPoseGenomeParam;
-    bool AnimationPlayingPoseGenomeParam;
+    [[bg3::legacy(field_14)]] bool PhotoModeLookAt;
+    [[bg3::legacy(field_15)]] bool FaceAnimationPoseGenomeParam;
+    [[bg3::legacy(field_16)]] bool AnimationPlayingPoseGenomeParam;
 };
 
 struct CameraOffsetComponent : public BaseComponent
