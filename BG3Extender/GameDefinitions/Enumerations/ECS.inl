@@ -2436,3 +2436,11 @@ BEGIN_ENUM_NS(esv::concentration, ConcentrationRequestType, ServerConcentrationR
     EV(RemoveTarget, 0x1)
     EV(AddTarget, 0x2)
 END_ENUM_NS()
+
+
+BEGIN_ENUM(PhotoModeAnimationState, uint8_t)
+    EV(None, 0)
+    EV(StaticPose, 1)
+    EV(AnimationPlaying, 2)
+    EV(AnimationPaused, 3)
+END_ENUM()

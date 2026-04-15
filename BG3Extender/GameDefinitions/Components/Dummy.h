@@ -8,14 +8,14 @@ BEGIN_NS(ecl::dummy)
 
 struct AnimationState
 {
-    FixedString field_0;
-    FixedString field_4;
-    uint8_t field_8;
-    int field_C;
-    int qwordC;
-    uint8_t field_14;
-    uint8_t field_15;
-    uint8_t field_16;
+    FixedString Pose;
+    FixedString FaceAnimation;
+    PhotoModeAnimationState PhotoModeState;
+    int StaticPoseGenomeParam;
+    float field_10;
+    bool PhotoModeLookAt;
+    bool FaceAnimationPoseGenomeParam;
+    bool AnimationPlayingPoseGenomeParam;
 };
 
 struct AnimationStateComponent : public BaseComponent
@@ -27,27 +27,27 @@ struct AnimationStateComponent : public BaseComponent
 
 struct Emote
 {
-    TranslatedString field_0;
-    FixedString field_10;
-    int field_14;
+    TranslatedString DisplayName;
+    FixedString AnimationShortName;
+    int Timing;
     int field_18;
 };
 
 struct EmoteCollection
 {
-    TranslatedString field_0;
+    TranslatedString DisplayName;
     Array<Emote> Emotes;
 };
 
 struct FaceExpression
 {
-    TranslatedString field_0;
-    FixedString field_10;
+    TranslatedString DisplayName;
+    FixedString AnimationShortName;
 };
 
 struct FaceExpressionCollection
 {
-    TranslatedString field_0;
+    TranslatedString DisplayName;
     Array<FaceExpression> FaceExpressions;
 };
 
@@ -137,11 +137,8 @@ struct SplatterComponent : public BaseComponent
 {
     DEFINE_COMPONENT(DummySplatter, "ecl::dummy::SplatterComponent")
 
-    int field_0;
-    int field_4;
-    int field_8;
-    int field_C;
-    uint8_t byte10;
+    esv::splatter::SplatterState State;
+    bool DisableSplatter;
 };
 
 struct AttachmentClothData
@@ -197,14 +194,14 @@ struct DummyAnimationStateComponent : public BaseComponent
 {
     DEFINE_COMPONENT(PhotoModeDummyAnimationState, "eoc::photo_mode::DummyAnimationStateComponent")
 
-    FixedString field_0;
-    FixedString field_4;
-    uint8_t field_8;
-    int qwordC;
-    int field_10;
-    uint8_t word14;
-    uint8_t field_15;
-    uint8_t field_16;
+    FixedString Pose;
+    FixedString FaceAnimation;
+    PhotoModeAnimationState PhotoModeState;
+    int StaticPoseGenomeParam;
+    float field_10;
+    bool PhotoModeLookAt;
+    bool FaceAnimationPoseGenomeParam;
+    bool AnimationPlayingPoseGenomeParam;
 };
 
 struct CameraOffsetComponent : public BaseComponent
