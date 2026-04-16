@@ -580,6 +580,7 @@ struct Construction : public ProtectedGameObject<Construction>
     ConstructionTemplate* Template;
 };
 
+// Editor only system :(
 struct ConstructionSystem : public BaseSystem
 {
     DEFINE_SYSTEM(Construction, "ls::ConstructionSystem")

@@ -662,7 +662,7 @@ struct CombatLogSystem : public BaseSystem
     [[bg3::hidden]] void* EocServer;
     Array<AutomaticDialogRequest> OnDialogNodeStarted;
     Array<DialogStartRequest> OnDialogStarted;
-    Array<DialogStartRequest> qword40;
+    Array<DialogStartRequest> field_40;
     [[bg3::hidden]] void* SpellPrototypeManager;
     [[bg3::hidden]] void* pICombatLogHelper;
     Array<HealedRequest> HealedEntries;

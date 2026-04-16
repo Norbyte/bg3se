@@ -2,6 +2,23 @@
 
 BEGIN_SE()
 
+
+StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<Noesis::BaseCollection>)
+{
+    return &MakeDeferredArrayType<Noesis::BaseComponent*>;
+}
+
+StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<Noesis::BaseObservableCollection>)
+{
+    return &MakeDeferredArrayType<Noesis::BaseComponent*>;
+}
+
+StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<Noesis::UIElementCollection>)
+{
+    return &MakeDeferredArrayType<Noesis::UIElement*>;
+}
+
+
 TypeInformation const& TypeInformationRef::Get() const
 {
     if (ref_ && ref_->Type) {

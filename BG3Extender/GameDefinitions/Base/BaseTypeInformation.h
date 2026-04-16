@@ -251,22 +251,9 @@ inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overl
     return &MakeDeferredArrayType<T>;
 }
 
-/*
-inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<Noesis::BaseCollection>)
-{
-    return &MakeDeferredArrayType<Noesis::BaseComponent*>;
-}
-
-inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<Noesis::BaseObservableCollection>)
-{
-    return &MakeDeferredArrayType<Noesis::BaseComponent*>;
-}
-
-inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<Noesis::UIElementCollection>)
-{
-    return &MakeDeferredArrayType<Noesis::UIElement*>;
-}
-*/
+StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<Noesis::BaseCollection>);
+StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<Noesis::BaseObservableCollection>);
+StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<Noesis::UIElementCollection>);
 
 template <class T, class Allocator, bool StoreSize>
 inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<Set<T, Allocator, StoreSize>>)
