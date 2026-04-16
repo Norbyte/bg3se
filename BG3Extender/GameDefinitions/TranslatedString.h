@@ -48,9 +48,33 @@ struct TranslatedString
 struct TranslatedFSString
 {
     RuntimeStringHandle Handle;
-    void* ArgumentString;
+    struct TranslatedFSArgumentString* ArgumentString{ nullptr };
 
     std::optional<StringView> Get() const;
+};
+
+struct TranslatedFSArgumentString : private ProtectedGameObject<TranslatedFSArgumentString>
+{
+    struct Argument
+    {
+        uint32_t Type;
+        TranslatedFSString TranslatedValue;
+        STDString StringValue;
+    };
+    
+    struct ArgumentPosition
+    {
+        uint32_t Start;
+        uint32_t End;
+    };
+
+    LegacyRefMap<FixedString, Argument>* Arguments;
+    RuntimeStringHandle String;
+    char* Buffer;
+    STDString ParsedString;
+    uint32_t BufferLength;
+    bool NeedsParsing;
+    LegacyRefMap<FixedString, ArgumentPosition> ArgPositions;
 };
 
 template <class Pred>

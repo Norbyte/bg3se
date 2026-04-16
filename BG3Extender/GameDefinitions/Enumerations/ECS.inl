@@ -75,6 +75,7 @@ BEGIN_ENUM(ExtSystemType, uint32_t)
     E(ServerAi)
     E(ServerSightViewshed)
     E(ServerRollSave)
+    E(ServerCombatLog)
 
     E(ClientEquipmentVisuals)
     E(ClientVisual)
