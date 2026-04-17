@@ -83,7 +83,19 @@ struct DeadReckoningComponent : public BaseComponent
 {
     DEFINE_COMPONENT(DeadReckoning, "eoc::DeadReckoningComponent")
 
-    Array<ConditionRoll> Rolls;
+    float MovementAcceleration;
+    float DistanceXZ;
+    float field_8;
+    float SpeedMultiplier;
+};
+
+struct DeadReckoningSyncComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(DeadReckoningSync, "eoc::DeadReckoningSyncComponent")
+
+    glm::vec3 Position;
+    float Speed;
+    float Speed2;
 };
 
 END_NS()
