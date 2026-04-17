@@ -16,6 +16,7 @@ local _I = Ext._Internal
 --- @field IdPrefix number
 --- @field Name string
 --- @field PendingDeletions number[]
+--- @field PendingAdds SubscriptionData[]
 --- @field EnterCount number
 local SubscribableEvent = {}
 
@@ -29,6 +30,7 @@ function SubscribableEvent:Instantiate(name, idPrefix)
         IdPrefix = idPrefix or Ext.Math.Random(1, 0xfffffff),
         Name = name,
         PendingDeletions = {},
+        PendingAdds = {},
         EnterCount = 0
     }
 end
@@ -46,7 +48,12 @@ function SubscribableEvent:Subscribe(handler, opts)
         Options = opts
     }
 
-    self:DoSubscribe(sub)
+    if self.EnterCount == 0 then
+        self:DoSubscribe(sub)
+    else
+        table.insert(self.PendingAdds, sub)
+    end
+
     return index | (self.IdPrefix << 32)
 end
 
@@ -140,13 +147,21 @@ function SubscribableEvent:DoUnsubscribe(handlerIndex)
     Ext.Log.PrintWarning("Attempted to remove subscriber index " .. handlerIndex .. " for event '" .. self.Name .. "', but no such subscriber exists (maybe it was removed already?)")
 end
 
-function SubscribableEvent:ProcessUnsubscriptions()
-    if self.EnterCount == 0 and #self.PendingDeletions > 0 then
+function SubscribableEvent:ProcessDeferredSubscriptions()
+    if #self.PendingDeletions > 0 then
         for i,handlerIndex in pairs(self.PendingDeletions) do
             self:DoUnsubscribe(handlerIndex)
         end
 
         self.PendingDeletions = {}
+    end
+
+    if #self.PendingAdds > 0 then
+        for i,sub in pairs(self.PendingAdds) do
+            self:DoSubscribe(sub)
+        end
+
+        self.PendingAdds = {}
     end
 end
 
@@ -208,7 +223,10 @@ function SubscribableEvent:Throw(event)
     end
 
     self.EnterCount = self.EnterCount - 1
-    self:ProcessUnsubscriptions()
+
+    if self.EnterCount == 0 then
+        self:ProcessDeferredSubscriptions()
+    end
 end
 
 return Class.Create(SubscribableEvent)
