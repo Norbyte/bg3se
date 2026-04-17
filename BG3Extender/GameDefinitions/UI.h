@@ -244,6 +244,8 @@ struct TypePropertyHelpers
     static Symbol GetName(TypeProperty const* o);
     static Type* GetContentType(TypeProperty const* o);
     static Vector<TypeMetaData*> const* GetMeta(TypeProperty const* o);
+    // Variant of GetMeta() for Lua calls (Noesis::Vector is not exposed to Lua as a container type)
+    static Array<TypeMetaData*> GetMetaLua(TypeProperty const* o);
     static bool IsReadOnly(TypeProperty const* o);
 };
 

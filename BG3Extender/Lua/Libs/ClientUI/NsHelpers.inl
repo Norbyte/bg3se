@@ -838,6 +838,13 @@ Vector<TypeMetaData*> const* TypePropertyHelpers::GetMeta(TypeProperty const* o)
     return &o->mMetaData;
 }
 
+Array<TypeMetaData*> TypePropertyHelpers::GetMetaLua(TypeProperty const* o)
+{
+    Array<TypeMetaData*> meta;
+    std::copy(o->mMetaData.Begin(), o->mMetaData.End(), std::back_inserter(meta));
+    return meta;
+}
+
 bool TypePropertyHelpers::IsReadOnly(TypeProperty const* o)
 {
     return o->IsReadOnly();

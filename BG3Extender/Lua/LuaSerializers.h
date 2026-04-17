@@ -456,6 +456,25 @@ namespace bg3se::lua
     }
 
     template <class T>
+    LuaSerializer& serialize(LuaSerializer& s, std::span<T>& v)
+    {
+        s.BeginObject();
+        if (s.IsWriting) {
+            int i = 1;
+            for (auto& val : v) {
+                StackCheck _(s.L);
+                push(s.L, i++);
+                serialize(s, val);
+                lua_rawset(s.L, -3);
+            }
+        } else {
+            luaL_error(s.L, "Cannot unserialize spans");
+        }
+        s.EndObject();
+        return s;
+    }
+
+    template <class T>
     LuaSerializer& serialize(LuaSerializer& s, std::optional<T>& v)
     {
         if (s.IsWriting) {

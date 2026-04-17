@@ -94,6 +94,7 @@ public:
     template <class T>
     inline static void MakeRef(lua_State* L, T* object, LifetimeHandle lifetime)
     {
+        static_assert(IsStruct<std::remove_cv_t<T>>, "Can only use object proxies on registered struct types");
         if (!gStructRegistry.ValidateIfNecessary(StructID<std::remove_cv_t<T>>, object)) {
             push(L, nullptr);
         } else {
