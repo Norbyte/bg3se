@@ -51,6 +51,12 @@ function EventManager:RegisterEvents()
         self:NetMessageReceived(e.Channel, e.Payload, e.UserID)
     end)
 
+    local oldSubscribe = self.Events.NetMessage.Subscribe
+    self.Events.NetMessage.Subscribe = function (self, handler, opts)
+        _PW("Ext.Events.NetMessage.Subscribe() is deprecated; consider using Ext.Net.CreateChannel() instead")
+        return oldSubscribe(self, handler, opts)
+    end
+
     NetworkManager:RegisterEvents()
 end
 
@@ -61,6 +67,7 @@ function EventManager:RegisterNetListener(channel, fn)
     end
 
     table.insert(self.NetListeners[channel], fn)
+    _PW("Ext.RegisterNetListener(" .. channel .. ") is deprecated; consider using Ext.Net.CreateChannel() instead")
 end
 
 if Ext.Config.PerfMessagesEnabled then
