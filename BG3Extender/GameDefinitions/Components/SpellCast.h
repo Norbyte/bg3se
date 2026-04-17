@@ -969,7 +969,7 @@ struct AnimationCastInfo
     uint8_t field_2B;
     bool DualWielding;
     bool HasWeapon;
-    bool ObjectSize;
+    int8_t ObjectSize;
 };
 
 struct CachedAnimationRequestsComponent : public BaseComponent
