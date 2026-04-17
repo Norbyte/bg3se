@@ -330,6 +330,12 @@ bool EntityProxyMetatable::MarkChanged(lua_State* L, EntityHandle entity, ExtCom
     return ecs->MarkComponentAsChanged(entity, component);
 }
 
+bool EntityProxyMetatable::WasChanged(lua_State* L, EntityHandle entity, ExtComponentType component)
+{
+    auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
+    return ecs->WasComponentChanged(entity, component);
+}
+
 LuaEntitySubscriptionId EntityProxyMetatable::OnCreate(lua_State* L, EntityHandle entity, ExtComponentType component, 
     FunctionRef func, std::optional<bool> deferred, std::optional<bool> once)
 {
@@ -410,6 +416,7 @@ void EntityProxyMetatable::StaticInitialize()
     ADD_FUNC(SetReplicationFlags);
     ADD_FUNC(Replicate);
     ADD_FUNC(MarkChanged);
+    ADD_FUNC(WasChanged);
 
     ADD_FUNC(OnCreate);
     ADD_FUNC(OnCreateDeferred);

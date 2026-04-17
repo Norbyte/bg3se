@@ -342,6 +342,21 @@ bool EntityStorageData::MarkComponentAsChanged(EntityHandle entity, ComponentTyp
     return false;
 }
 
+bool EntityStorageData::WasComponentChanged(EntityHandle entity, ComponentTypeIndex component)
+{
+    auto componentSlot = ComponentTypeToIndex.try_get(component);
+    if (componentSlot && ModifiedComponents[*componentSlot]) {
+        auto storageIndex = InstanceToPageMap.try_get(entity);
+        if (storageIndex) {
+            auto& page = Components[storageIndex->PageIndex]->Components[*componentSlot];
+            uint64_t entryMask = 1ull << (storageIndex->EntryIndex & 0x3f);
+            return (page.ModifiedEntities & entryMask) != 0;
+        }
+    }
+
+    return false;
+}
+
 void* ImmediateWorldCache::Changes::GetChange(EntityHandle entityHandle, ComponentTypeIndex type) const
 {
     auto typeIdx = (uint16_t)type;
@@ -582,6 +597,14 @@ bool EntityWorld::MarkComponentAsChanged(EntityHandle entity, ComponentTypeIndex
     }
 
     return false;
+}
+
+bool EntityWorld::WasComponentChanged(EntityHandle entity, ComponentTypeIndex component)
+{
+    auto storage = GetEntityStorage(entity);
+    return storage
+        && Storage->UsedFrameDataStorages[storage->StorageIndex]
+        && storage->WasComponentChanged(entity, component);
 }
 
 bool EntityWorld::IsValid(EntityHandle entityHandle) const
@@ -1033,6 +1056,21 @@ bool EntitySystemHelpersBase::MarkComponentAsChanged(EntityHandle entityHandle, 
     auto const& meta = GetComponentMeta(type);
     if (meta.ComponentIndex != UndefinedComponent) {
         return world->MarkComponentAsChanged(entityHandle, meta.ComponentIndex);
+    } else {
+        return false;
+    }
+}
+
+bool EntitySystemHelpersBase::WasComponentChanged(EntityHandle entityHandle, ExtComponentType type)
+{
+    auto world = GetEntityWorld();
+    if (!world) {
+        return false;
+    }
+
+    auto const& meta = GetComponentMeta(type);
+    if (meta.ComponentIndex != UndefinedComponent) {
+        return world->WasComponentChanged(entityHandle, meta.ComponentIndex);
     } else {
         return false;
     }

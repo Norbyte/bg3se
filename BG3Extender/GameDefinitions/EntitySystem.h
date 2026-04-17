@@ -560,6 +560,7 @@ struct EntityStorageData : public ProtectedGameObject<EntityStorageData>
     void* GetComponent(ComponentFrameStorageIndex const& entityPtr, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const;
     void* GetComponent(ComponentFrameStorageIndex const& entityPtr, uint8_t componentSlot, std::size_t componentSize, bool isProxy) const;
     bool MarkComponentAsChanged(EntityHandle entity, ComponentTypeIndex component);
+    bool WasComponentChanged(EntityHandle entity, ComponentTypeIndex component);
 
     inline bool HasComponent(ComponentTypeIndex type) const
     {
@@ -855,6 +856,7 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
 
     void* GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy);
     bool MarkComponentAsChanged(EntityHandle entity, ComponentTypeIndex component);
+    bool WasComponentChanged(EntityHandle entity, ComponentTypeIndex component);
 
     EntityStorageData* GetEntityStorage(EntityHandle entityHandle) const;
     bool IsValid(EntityHandle entityHandle) const;
