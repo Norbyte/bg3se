@@ -80,6 +80,11 @@ void SavegameSerializer::SerializePersistentVariables(ObjectVisitor* visitor, ui
             for (auto const& modId : mods) {
                 auto vars = state.GetModPersistentVars(modId);
                 if (vars) {
+                    // Warn about deprecation if mod is storing anything substantial in PersistentVars
+                    if (vars->size() > 3) {
+                        WARN("Mod %s: PersistentVars is deprecated; consider using ModVars/UserVars instead", modId.GetString());
+                    }
+
                     if (visitor->EnterNode(GFS.strMod, GFS.strModId)) {
                         FixedString modIdTemp = modId;
                         visitor->VisitFixedString(GFS.strModId, modIdTemp, GFS.strEmpty);

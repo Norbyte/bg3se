@@ -52,7 +52,7 @@ END_CLS()
 BEGIN_CLS(Noesis::TypeProperty)
 P_FREE_GETTER(Name, Noesis::TypePropertyHelpers::GetName)
 P_FREE_GETTER(ContentType, Noesis::TypePropertyHelpers::GetContentType)
-P_FREE_GETTER(Meta, Noesis::TypePropertyHelpers::GetMeta)
+P_FREE_GETTER(Meta, Noesis::TypePropertyHelpers::GetMetaLua)
 P_FREE_GETTER(IsReadOnly, Noesis::TypePropertyHelpers::IsReadOnly)
 END_CLS()
 
