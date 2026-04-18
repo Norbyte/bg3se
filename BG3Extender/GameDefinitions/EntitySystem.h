@@ -754,7 +754,9 @@ public:
     EntityHandle CreateEntityImmediate();
     bool DestroyEntity(EntityHandle entity);
     void* GetComponentChange(ComponentTypeIndex type, ComponentFrameStorageIndex const& index) const;
+    ComponentFrameStorage* GetStorage(ComponentTypeIndex type, uint16_t componentSize, void* dtor);
     void* CreateComponentRaw(EntityHandle entity, ComponentTypeIndex type, uint16_t componentSize, ComponentFrameStorageIndex& index, void* dtor);
+    void RemoveComponent(EntityHandle entity, ComponentTypeIndex type, uint16_t componentSize, void* dtor);
 };
 
 struct GroupAllocator : public ProtectedGameObject<GroupAllocator>

@@ -246,6 +246,7 @@ public:
     }
 
     void* CreateComponentRaw(EntityHandle entity, ExtComponentType type);
+    bool RemoveComponent(EntityHandle entity, ExtComponentType type);
 
     virtual EntityWorld* GetEntityWorld() const = 0;
     virtual ExtensionStateBase* GetExtensionState() const = 0;

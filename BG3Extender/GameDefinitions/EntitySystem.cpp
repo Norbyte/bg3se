@@ -536,7 +536,7 @@ void* EntityCommandBuffer::GetComponentChange(ComponentTypeIndex type, Component
     return nullptr;
 }
 
-void* EntityCommandBuffer::CreateComponentRaw(EntityHandle entity, ComponentTypeIndex type, uint16_t componentSize, ComponentFrameStorageIndex& index, void* dtor)
+ComponentFrameStorage* EntityCommandBuffer::GetStorage(ComponentTypeIndex type, uint16_t componentSize, void* dtor)
 {
     auto storage = Data.ComponentPools.Find(type);
     if (!storage) {
@@ -546,6 +546,13 @@ void* EntityCommandBuffer::CreateComponentRaw(EntityHandle entity, ComponentType
         storage->DestructorProc = dtor;
     }
 
+    return storage;
+}
+
+void* EntityCommandBuffer::CreateComponentRaw(EntityHandle entity, ComponentTypeIndex type, uint16_t componentSize, ComponentFrameStorageIndex& index, void* dtor)
+{
+    auto storage = GetStorage(type, componentSize, dtor);
+
     auto component = storage->Allocate(index);
     auto changes = Data.GetOrAddEntityChange(entity);
     auto change = changes->Store.add();
@@ -553,6 +560,16 @@ void* EntityCommandBuffer::CreateComponentRaw(EntityHandle entity, ComponentType
     change->ComponentTypeId = type;
 
     return component;
+}
+
+void EntityCommandBuffer::RemoveComponent(EntityHandle entity, ComponentTypeIndex type, uint16_t componentSize, void* dtor)
+{
+    auto storage = GetStorage(type, componentSize, dtor);
+
+    auto changes = Data.GetOrAddEntityChange(entity);
+    auto change = changes->Store.add();
+    change->Index = ComponentFrameStorageIndex{};
+    change->ComponentTypeId = type;
 }
 
 void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy)
@@ -755,6 +772,24 @@ void* EntitySystemHelpersBase::CreateComponentRaw(EntityHandle entity, ExtCompon
         meta.Properties->Construct(ptr);
         return ptr;
     }
+}
+
+bool EntitySystemHelpersBase::RemoveComponent(EntityHandle entity, ExtComponentType type)
+{
+    auto const& meta = GetComponentMeta(type);
+    if (meta.ComponentIndex == UndefinedComponent
+        || meta.Properties == nullptr
+        || meta.Properties->ProxyDestroy == nullptr) {
+        return false;
+    }
+
+    if (meta.IsProxy) {
+        GetEntityWorld()->Deferred()->RemoveComponent(entity, meta.ComponentIndex, sizeof(void*), meta.Properties->ProxyDestroy);
+    } else {
+        GetEntityWorld()->Deferred()->RemoveComponent(entity, meta.ComponentIndex, meta.Size, meta.Properties->ProxyDestroy);
+    }
+
+    return true;
 }
 
 BitSet<>* EntitySystemHelpersBase::GetReplicationFlags(EntityHandle const& entity, ExtComponentType type)
