@@ -523,7 +523,7 @@ struct EntityStorageData : public ProtectedGameObject<EntityStorageData>
 
 
     ComponentTypeMask ComponentsInClass;
-    uint64_t EntityTypesMask;
+    uint64_t GroupMask;
     uint16_t* ComponentSizes;
     ComponentEntry* ComponentDtors;
     uint16_t StorageIndex;
@@ -594,19 +594,21 @@ struct EntityStorageContainer : public ProtectedGameObject<EntityStorageContaine
     EntityStorageData* GetEntityStorage(EntityHandle entityHandle) const;
 };
 
+struct ComponentCallbacks;
+
 struct ComponentOps : public ProtectedGameObject<ComponentOps>
 {
     virtual ~ComponentOps() = 0;
-    virtual void fun_08() = 0;
-    virtual void fun_10() = 0;
+    virtual void FireConstructCallbacks(void*, void*) = 0;
+    virtual void FireDestructCallbacks(void*, void*) = 0;
     virtual void DefaultConstructComponents() = 0;
     virtual void AddImmediateDefaultComponent(uint64_t entity, int retryCount) = 0;
 
-    __int64 field_8;
-    __int64 field_10;
-    __int64 field_18;
-    __int64 field_20;
-    __int16 TypeId;
+    ComponentRegistry* Registry;
+    ComponentCallbacks* Callbacks;
+    EntityStorageContainer* Storage;
+    EntityWorld* World;
+    ComponentTypeIndex TypeId;
 };
 
 struct ComponentPool : public ProtectedGameObject<ComponentPool>
