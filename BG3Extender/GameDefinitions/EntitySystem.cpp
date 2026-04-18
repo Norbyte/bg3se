@@ -421,18 +421,39 @@ bool ImmediateWorldCache::RemoveComponent(EntityHandle entity, ComponentTypeInde
     }
 }
 
-            change = changes->Components.add_uninitialized(entity);
-            // Default change means deletion
-            new (change) ComponentChange();
-            return true;
-        } else {
-            WARN("Tried to remove component [%d] that does not exist on entity [%016llx]!", type, entity.Handle);
-            return false;
-        }
+bool ImmediateWorldCache::PrepareAddComponent(EntityHandle entity, ComponentTypeIndex type, void*& component)
+{
+    auto typeInfo = EntityWorld->ComponentRegistry_.Get(type);
+    if (EntityWorld->GetRawComponent(entity, type, typeInfo->InlineSize, false)) {
+        return false;
+    }
+
+    auto changes = GetOrAddComponentChanges(type);
+    auto change = changes->Components.find(entity);
+
+    if (!change) {
+        ComponentFrameStorageIndex index;
+        component = changes->FrameStorage.Allocate(index);
+        change = changes->Components.add(entity, ComponentChange{
+            .Ptr = component,
+            .StorageIndex = index
+        });
+        return true;
     } else {
         WARN("A change for component [%d] already exists on entity [%016llx]!", type, entity.Handle);
         return false;
     }
+}
+
+void ImmediateWorldCache::FinalizeAddComponent(EntityHandle entity, ComponentTypeIndex type, void* component)
+{
+    // TODO - different behavior for proxy objects?
+    auto& onConstruct = Callbacks->Get(type)->OnConstruct;
+    EntityRef e{
+        .Handle = entity,
+        .World = EntityWorld
+    };
+    onConstruct.Invoke(&e, component);
 }
 
 ECSComponentDataMap::ECSComponentDataMap()
@@ -787,12 +808,44 @@ void* EntitySystemHelpersBase::CreateComponentRaw(EntityHandle entity, ExtCompon
     }
 }
 
-bool EntitySystemHelpersBase::RemoveComponent(EntityHandle entity, ExtComponentType type)
+void* EntitySystemHelpersBase::CreateComponentImmediateRaw(EntityHandle entity, ExtComponentType type)
 {
     auto const& meta = GetComponentMeta(type);
     if (meta.ComponentIndex == UndefinedComponent
         || meta.Properties == nullptr
-        || meta.Properties->ProxyDestroy == nullptr) {
+        || meta.Properties->Construct == nullptr) {
+        return nullptr;
+    }
+
+    ComponentFrameStorageIndex index;
+    void* ptr;
+    auto iwc = GetEntityWorld()->Cache;
+    if (iwc->PrepareAddComponent(entity, meta.ComponentIndex, ptr)) {
+        if (meta.IsProxy) {
+            auto comp = (void**)ptr;
+            *comp = GameAllocRaw(meta.Size);
+            memset(*comp, 0, meta.Size);
+            meta.Properties->Construct(*comp);
+            return *comp;
+        } else {
+            // Ensure we're using zeroed memory since not every component has proper default constructors
+            // and could end up using leftover garbage from memory
+            memset(ptr, 0, meta.Size);
+            meta.Properties->Construct(ptr);
+            return ptr;
+        }
+
+        iwc->FinalizeAddComponent(entity, meta.ComponentIndex, ptr);
+    }
+
+    return nullptr;
+}
+
+bool EntitySystemHelpersBase::RemoveComponent(EntityHandle entity, ExtComponentType type)
+{
+    auto const& meta = GetComponentMeta(type);
+    if (meta.ComponentIndex == UndefinedComponent
+        || meta.Properties == nullptr) {
         return false;
     }
 

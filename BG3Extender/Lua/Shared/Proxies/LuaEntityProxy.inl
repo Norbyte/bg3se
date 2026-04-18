@@ -82,12 +82,11 @@ EntityHelper EntityProxyMetatable::GetHelper(lua_State* L, int index)
 UserReturn EntityProxyMetatable::CreateComponentImmediate(lua_State* L, EntityHandle entity, ExtComponentType component)
 {
     auto ecs = GetEntitySystem(L);
-    auto typeId = *ecs->GetComponentIndex(component);
-    auto ops = ecs->GetEntityWorld()->ComponentOps.Get(typeId);
+    auto ptr = ecs->CreateComponentImmediateRaw(entity, component);
 
-    if (ops != nullptr) {
-        ops->AddImmediateDefaultComponent(entity.Handle, 0);
-        PushComponent(L, ecs, entity, component, GetCurrentLifetime(L));
+    if (ptr != nullptr) {
+        auto pm = ecs->GetComponentMeta(component).Properties;
+        PushComponent(L, ptr, *pm, GetCurrentLifetime(L));
         return 1;
     }
 

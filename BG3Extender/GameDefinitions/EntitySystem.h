@@ -730,6 +730,8 @@ struct ImmediateWorldCache : public ProtectedGameObject<ImmediateWorldCache>
 
     ComponentChanges* GetOrAddComponentChanges(ComponentTypeIndex type);
     bool RemoveComponent(EntityHandle entity, ComponentTypeIndex type);
+    bool PrepareAddComponent(EntityHandle entity, ComponentTypeIndex type, void*& component);
+    void FinalizeAddComponent(EntityHandle entity, ComponentTypeIndex type, void* component);
 };
 
 struct ECBData : public ProtectedGameObject<ECBData>

@@ -245,7 +245,14 @@ public:
         return static_cast<T*>(CreateComponentRaw(entity, T::ComponentType));
     }
 
+    template <class T>
+    inline T* CreateComponentImmediate(EntityHandle entity)
+    {
+        return static_cast<T*>(CreateComponentImmediateRaw(entity, T::ComponentType));
+    }
+
     void* CreateComponentRaw(EntityHandle entity, ExtComponentType type);
+    void* CreateComponentImmediateRaw(EntityHandle entity, ExtComponentType type);
     bool RemoveComponent(EntityHandle entity, ExtComponentType type);
 
     virtual EntityWorld* GetEntityWorld() const = 0;
