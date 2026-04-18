@@ -370,7 +370,7 @@ void* ImmediateWorldCache::Changes::GetChange(EntityHandle entityHandle, Compone
     return nullptr;
 }
 
-ImmediateWorldCache::ComponentChanges* ImmediateWorldCache::Changes::AddComponentChanges(ComponentTypeEntry const* type, FrameAllocator* allocator)
+ImmediateWorldCache::ComponentChanges* ImmediateWorldCache::Changes::GetOrAddComponentChanges(ComponentTypeEntry const* type, FrameAllocator* allocator)
 {
     auto typeIdx = (uint16_t)type->TypeId;
     auto components = ComponentsByType + typeIdx;
@@ -385,28 +385,41 @@ ImmediateWorldCache::ComponentChanges* ImmediateWorldCache::Changes::AddComponen
     return components;
 }
 
-ImmediateWorldCache::ComponentChanges* ImmediateWorldCache::AddComponentChanges(ComponentTypeIndex type)
+ImmediateWorldCache::ComponentChanges* ImmediateWorldCache::GetOrAddComponentChanges(ComponentTypeIndex type)
 {
     auto typeIdx = (uint16_t)type;
     auto typeInfo = EntityWorld->ComponentRegistry_.Get(type);
-    return WriteChanges.AddComponentChanges(typeInfo, Allocator);
+    return WriteChanges.GetOrAddComponentChanges(typeInfo, Allocator);
 }
 
 bool ImmediateWorldCache::RemoveComponent(EntityHandle entity, ComponentTypeIndex type)
 {
-    auto changes = AddComponentChanges(type);
+    auto typeInfo = EntityWorld->ComponentRegistry_.Get(type);
+    auto component = EntityWorld->GetRawComponent(entity, type, typeInfo->InlineSize, false);
+    if (!component) {
+        return false;
+    }
+
+    auto changes = GetOrAddComponentChanges(type);
     auto change = changes->Components.find(entity);
+
     if (!change) {
-        auto typeInfo = EntityWorld->ComponentRegistry_.Get(type);
         // TODO - different behavior for proxy objects?
-        auto component = EntityWorld->GetRawComponent(entity, type, typeInfo->InlineSize, false);
-        if (component) {
-            auto& onDestroy = Callbacks->Get(type)->OnDestroy;
-            EntityRef e{
-                .Handle = entity,
-                .World = EntityWorld
-            };
-            onDestroy.Invoke(&e, component);
+        auto& onDestroy = Callbacks->Get(type)->OnDestroy;
+        EntityRef e{
+            .Handle = entity,
+            .World = EntityWorld
+        };
+        onDestroy.Invoke(&e, component);
+
+        // Default change means deletion
+        change = changes->Components.add(entity, ComponentChange{});
+        return true;
+    } else {
+        WARN("A change for component [%d] already exists on entity [%016llx]!", type, entity.Handle);
+        return false;
+    }
+}
 
             change = changes->Components.add_uninitialized(entity);
             // Default change means deletion

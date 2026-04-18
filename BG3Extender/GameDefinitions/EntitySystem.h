@@ -654,8 +654,8 @@ struct ECBEntityChangeSet
     {}
 
     PagedArray<ECBEntityComponentChange, ECBFrameAllocator> Store;
-    uint64_t X{ 0 };
-    uint64_t Y{ 0 };
+    uint64_t AddGroupMask{ 0 };
+    uint64_t RemoveGroupMask{ 0 };
     EntityChangeFlags Flags{ 0 };
     int16_t field_2A{ -1 };
 };
@@ -717,7 +717,7 @@ struct ImmediateWorldCache : public ProtectedGameObject<ImmediateWorldCache>
         uint64_t Unknown;
 
         void* GetChange(EntityHandle entityHandle, ComponentTypeIndex type) const;
-        ComponentChanges* AddComponentChanges(ComponentTypeEntry const* type, FrameAllocator* allocator);
+        ComponentChanges* GetOrAddComponentChanges(ComponentTypeEntry const* type, FrameAllocator* allocator);
     };
 
     Changes WriteChanges;
@@ -728,7 +728,7 @@ struct ImmediateWorldCache : public ProtectedGameObject<ImmediateWorldCache>
     EntityHandleGenerator* HandleGenerator;
     __int64 field_158;
 
-    ComponentChanges* AddComponentChanges(ComponentTypeIndex type);
+    ComponentChanges* GetOrAddComponentChanges(ComponentTypeIndex type);
     bool RemoveComponent(EntityHandle entity, ComponentTypeIndex type);
 };
 
