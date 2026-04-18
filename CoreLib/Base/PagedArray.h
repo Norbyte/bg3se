@@ -70,8 +70,6 @@ struct PagedOps
                 if (oldAllocBuckets < newAllocBuckets) {
                     auto newBuckets = allocator.allocArray<T*>(newAllocBuckets);
                     if (pages) {
-                        if (layout.NumPages < newNumBuckets)
-                            layout.NumPages = (uint16_t)newNumBuckets;
                         memcpy(newBuckets, pages, sizeof(T*) * std::min(newNumBuckets, (uint32_t)layout.NumPages));
                         allocator.free(pages);
                     }
@@ -93,9 +91,9 @@ struct PagedOps
                 if (pages != nullptr) {
                     allocator.free(pages);
                 }
-            }
 
-            layout.NumPages = 0;
+                layout.NumPages = 0;
+            }
         }
     }
 };
