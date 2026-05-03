@@ -340,6 +340,64 @@ bool EntityProxyMetatable::WasChanged(lua_State* L, EntityHandle entity, ExtComp
     return ecs->WasComponentChanged(entity, component);
 }
 
+bool EntityProxyMetatable::WasAdded(lua_State* L, EntityHandle entity, ExtComponentType component)
+{
+    auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
+    auto ecb = ecs->GetEntityWorld()->Deferred();
+    auto componentIndex = ecs->GetComponentIndex(component);
+    if (!componentIndex) return false;
+
+    auto entityChange = ecb->Data.EntityChanges.find(entity);
+    if (entityChange) {
+        for (unsigned i = 0; i < entityChange->Store.size(); i++) {
+            auto const& change = entityChange->Store[i];
+            if (change.ComponentTypeId == *componentIndex) {
+                return (bool)change.Index;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool EntityProxyMetatable::WasRemoved(lua_State* L, EntityHandle entity, ExtComponentType component)
+{
+    auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
+    auto ecb = ecs->GetEntityWorld()->Deferred();
+    auto componentIndex = ecs->GetComponentIndex(component);
+    if (!componentIndex) return false;
+
+    auto entityChange = ecb->Data.EntityChanges.find(entity);
+    if (entityChange) {
+        for (unsigned i = 0; i < entityChange->Store.size(); i++) {
+            auto const& change = entityChange->Store[i];
+            if (change.ComponentTypeId == *componentIndex) {
+                return !(bool)change.Index;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool EntityProxyMetatable::WasEntityAdded(lua_State* L, EntityHandle entity)
+{
+    auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
+    auto ecb = ecs->GetEntityWorld()->Deferred();
+    auto entityChange = ecb->Data.EntityChanges.find(entity);
+    return entityChange
+        && (entityChange->Flags & ecs::EntityChangeFlags::Create) == ecs::EntityChangeFlags::Create;
+}
+
+bool EntityProxyMetatable::WasEntityRemoved(lua_State* L, EntityHandle entity)
+{
+    auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
+    auto ecb = ecs->GetEntityWorld()->Deferred();
+    auto entityChange = ecb->Data.EntityChanges.find(entity);
+    return entityChange
+        && (entityChange->Flags & ecs::EntityChangeFlags::Destroy) == ecs::EntityChangeFlags::Destroy;
+}
+
 LuaEntitySubscriptionId EntityProxyMetatable::OnCreate(lua_State* L, EntityHandle entity, ExtComponentType component, 
     FunctionRef func, std::optional<bool> deferred, std::optional<bool> once)
 {
@@ -422,6 +480,10 @@ void EntityProxyMetatable::StaticInitialize()
     ADD_FUNC(Replicate);
     ADD_FUNC(MarkChanged);
     ADD_FUNC(WasChanged);
+    ADD_FUNC(WasAdded);
+    ADD_FUNC(WasRemoved);
+    ADD_FUNC(WasEntityAdded);
+    ADD_FUNC(WasEntityRemoved);
 
     ADD_FUNC(OnCreate);
     ADD_FUNC(OnCreateDeferred);

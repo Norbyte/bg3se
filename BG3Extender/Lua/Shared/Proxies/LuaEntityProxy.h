@@ -85,6 +85,10 @@ private:
     static void Replicate(lua_State* L, EntityHandle entity, ExtComponentType component);
     static bool MarkChanged(lua_State* L, EntityHandle entity, ExtComponentType component);
     static bool WasChanged(lua_State* L, EntityHandle entity, ExtComponentType component);
+    static bool WasAdded(lua_State* L, EntityHandle entity, ExtComponentType component);
+    static bool WasRemoved(lua_State* L, EntityHandle entity, ExtComponentType component);
+    static bool WasEntityAdded(lua_State* L, EntityHandle entity);
+    static bool WasEntityRemoved(lua_State* L, EntityHandle entity);
     static void SetReplicationFlags(lua_State* L, EntityHandle entity, ExtComponentType component, uint64_t flags, std::optional<uint32_t> qword);
     static uint64_t GetReplicationFlags(lua_State* L, EntityHandle entity, ExtComponentType component, std::optional<uint32_t> qword);
     

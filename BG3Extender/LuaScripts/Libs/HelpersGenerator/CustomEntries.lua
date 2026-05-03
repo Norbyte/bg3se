@@ -87,7 +87,15 @@ function Ext.RegisterConsoleCommand(cmd, handler) end
     Entity = [[
 --- @class EntityHandle
 --- @field CreateComponent fun(self:EntityHandle, type:ExtComponentType):BaseComponent
---- @field RemoveComponent fun(self:EntityHandle, type:ExtComponentType)
+--- @field CreateComponentImmediate fun(self:EntityHandle, type:ExtComponentType):BaseComponent
+--- @field RemoveComponent fun(self:EntityHandle, type:ExtComponentType):boolean
+--- @field RemoveComponentImmediate fun(self:EntityHandle, type:ExtComponentType):boolean
+--- @field MarkChanged fun(self:EntityHandle, type:ExtComponentType)
+--- @field WasChanged fun(self:EntityHandle, type:ExtComponentType)
+--- @field WasAdded fun(self:EntityHandle, type:ExtComponentType)
+--- @field WasRemoved fun(self:EntityHandle, type:ExtComponentType)
+--- @field WasEntityAdded fun(self:EntityHandle)
+--- @field WasEntityRemoved fun(self:EntityHandle)
 --- @field GetComponent fun(self:EntityHandle, type:ExtComponentType):BaseComponent
 --- @field HasRawComponent fun(self:EntityHandle, type:string):boolean
 --- @field GetAllComponents fun(self:EntityHandle, warnOnMissing:boolean?):table<ExtComponentType,BaseComponent>
