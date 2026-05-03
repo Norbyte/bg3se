@@ -1659,7 +1659,7 @@ struct Timeline : public ProtectedGameObject<Timeline>
     bool PlayToEnd;
     bool IsPaused;
     bool field_23;
-    bool field_24;
+    bool IsHoldingAtPhaseEnd;
     bool NeedsPostUpdate_M;
     float PlayingSpeed;
     float TimePlayed;
