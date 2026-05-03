@@ -423,10 +423,10 @@ struct ArchetypeComponent : public BaseComponent
 {
     DEFINE_COMPONENT(ServerAiArchetype, "esv::ai::combat::ArchetypeComponent")
 
-    FixedString field_0;
-    FixedString field_4;
-    FixedString field_8;
-    FixedString field_C;
+    [[bg3::legacy(field_0)]] FixedString ActiveArchetype;
+    [[bg3::legacy(field_4)]] FixedString BaseArchetype;
+    [[bg3::legacy(field_8)]] FixedString ShapeshiftArchetype;
+    [[bg3::legacy(field_C)]] FixedString ArchetypeOverride;
 };
 
 struct ModifierChange
@@ -442,7 +442,8 @@ struct AiModifiersComponent : public BaseComponent
 
     uint8_t field_0;
     HashMap<FixedString, float> Modifiers;
-    //HashMap<FixedString, HashMap<int, ModifierChange>> Changes;
+    // Editor only
+    // HashMap<FixedString, HashMap<int, ModifierChange>> Changes;
 };
 
 END_NS()

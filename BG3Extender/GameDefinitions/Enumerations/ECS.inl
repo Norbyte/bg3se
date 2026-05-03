@@ -1896,6 +1896,17 @@ BEGIN_BITMASK_NS(ecs, ComponentChangeFlags, ECSComponentChangeFlags, uint8_t)
     EV(ReplicatedComponent, 0x10)
 END_ENUM_NS()
 
+BEGIN_BITMASK(InterruptInteractionTypes, uint8_t)
+    EV(Ask, 1)
+    EV(Enabled, 2)
+END_ENUM()
+
+BEGIN_ENUM(InterruptDecision, uint8_t)
+    EV(Use, 0)
+    EV(Ignore, 1)
+    EV(Ask, 2)
+END_ENUM()
+
 BEGIN_ENUM(DynamicModifierType, uint8_t)
     EV(None, 0)
     EV(Consumable, 1)

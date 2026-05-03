@@ -202,14 +202,6 @@ struct HitDesc
     Array<DamagePair> DamageList;
 };
 
-struct HitResultData
-{
-    Array<int32_t> field_0;
-    Array<int32_t> field_10;
-    Array<uint8_t> field_20;
-    Array<int32_t> field_30;
-};
-
 struct SpellFunctorResult
 {
     HitDesc Hit;
@@ -221,7 +213,7 @@ struct HitResult
 {
     HitDesc Hit;
     AttackDesc Attack;
-    HitResultData Results;
+    HashMap<stats::FunctorId, int32_t> Results;
     uint32_t NumConditionRolls{ 0 };
 };
 

@@ -42,14 +42,14 @@ struct DecisionComponent : public BaseComponent
 {
     DEFINE_COMPONENT(InterruptDecision, "eoc::interrupt::DecisionComponent")
 
-    HashMap<InterruptEvent, uint8_t> Decisions;
+    HashMap<InterruptEvent, InterruptDecision> Decisions;
 };
 
 struct PreferencesComponent : public BaseComponent
 {
     DEFINE_COMPONENT(InterruptPreferences, "eoc::interrupt::PreferencesComponent")
 
-    HashMap<FixedString, uint8_t> Preferences;
+    HashMap<FixedString, InterruptInteractionTypes> Preferences;
 };
 
 struct PreparedComponent : public BaseComponent
@@ -231,7 +231,7 @@ struct DecisionSystem : public BaseSystem
 {
     DEFINE_SYSTEM(ServerInterruptDecision, "esv::interrupt::DecisionSystem")
 
-    HashMap<EntityHandle, uint8_t> Decisions;
+    HashMap<EntityHandle, InterruptDecision> Decisions;
 };
 
 struct InterruptRequest
@@ -271,7 +271,7 @@ struct PlayerDecisionComponent : public BaseComponent
 {
     DEFINE_COMPONENT(ClientInterruptPlayerDecision, "ecl::interrupt::PlayerDecisionComponent")
 
-    HashMap<EntityHandle, uint8_t> Decisions;
+    HashMap<EntityHandle, InterruptDecision> Decisions;
 };
 
 END_NS()
