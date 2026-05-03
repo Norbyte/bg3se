@@ -83,6 +83,7 @@ BEGIN_ENUM(ExtSystemType, uint32_t)
     E(ClientCharacterManager)
     E(ClientVisualsVisibilityState)
     E(ClientEffectHandler)
+    E(ClientTimeline)
 
     E(SoundRouting)
     E(Max)
