@@ -625,12 +625,16 @@ void EntityCommandBuffer::RemoveComponent(EntityHandle entity, ComponentTypeInde
 
 void* EntityWorld::ResolveRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy)
 {
-    auto component = GetRawComponent(entityHandle, type, componentSize);
-    if (isProxy && component) {
-        component = DereferenceProxyComponent(component);
+    if (isProxy) {
+        auto component = GetRawComponent(entityHandle, type, sizeof(void*));
+        if (component) {
+            return DereferenceProxyComponent(component);
+        } else {
+            return nullptr;
+        }
+    } else {
+        return GetRawComponent(entityHandle, type, componentSize);
     }
-
-    return component;
 }
 
 void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize)

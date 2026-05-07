@@ -154,9 +154,11 @@ void EnumerateComponents(ecs::EntitySystemHelpersBase* ecs, EntityHandle entity,
                 auto extType = ecs->GetComponentType(typeInfo.Key());
                 if (extType) {
                     auto const& meta = ecs->GetComponentMeta(*extType);
-                    auto component = storage->GetComponent(*componentPtr, typeInfo.Value(), meta.Size);
+                    void* component;
                     if (meta.IsProxy) {
-                        component = ecs::DereferenceProxyComponent(component);
+                        component = ecs::DereferenceProxyComponent(storage->GetComponent(*componentPtr, typeInfo.Value(), sizeof(void*)));
+                    } else {
+                        component = storage->GetComponent(*componentPtr, typeInfo.Value(), meta.Size);
                     }
 
                     f(ecs, *extType, component);
