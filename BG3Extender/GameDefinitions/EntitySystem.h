@@ -129,6 +129,11 @@ END_SE()
 
 BEGIN_NS(ecs)
 
+inline void* DereferenceProxyComponent(void* component)
+{
+    return *static_cast<void**>(component);
+}
+
 struct alignas(64) FrameAllocator : public ProtectedGameObject<FrameAllocator>
 {
     struct FrameBuffer
@@ -348,7 +353,7 @@ struct QueryDescription : public ProtectedGameObject<QueryDescription>
         return std::span(ComponentIndices + Writes, ComponentIndices + WriteEnd);
     }
 
-    void* GetFirstMatchingComponent(std::size_t componentSize, bool isProxy);
+    void* GetFirstMatchingComponent(std::size_t componentSize);
     void DebugPrint(QueryIndex index, EntitySystemHelpersBase& eh) const;
 };
 
@@ -555,10 +560,10 @@ struct EntityStorageData : public ProtectedGameObject<EntityStorageData>
     Array<QueryIndex> RemoveComponentQueries;
     QueryMask RemoveComponentQueryMap;
 
-    void* GetComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const;
+    void* GetComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize) const;
     void* GetOneFrameComponent(EntityHandle entityHandle, ComponentTypeIndex type) const;
-    void* GetComponent(ComponentFrameStorageIndex const& entityPtr, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const;
-    void* GetComponent(ComponentFrameStorageIndex const& entityPtr, uint8_t componentSlot, std::size_t componentSize, bool isProxy) const;
+    void* GetComponent(ComponentFrameStorageIndex const& entityPtr, ComponentTypeIndex type, std::size_t componentSize) const;
+    void* GetComponent(ComponentFrameStorageIndex const& entityPtr, uint8_t componentSlot, std::size_t componentSize) const;
     bool MarkComponentAsChanged(EntityHandle entity, ComponentTypeIndex component);
     bool WasComponentChanged(EntityHandle entity, ComponentTypeIndex component);
 
@@ -756,6 +761,7 @@ public:
     EntityHandle CreateEntityImmediate();
     bool DestroyEntity(EntityHandle entity);
     void* GetComponentChange(ComponentTypeIndex type, ComponentFrameStorageIndex const& index) const;
+    void* GetComponentChange(EntityHandle entity, ComponentTypeIndex type) const;
     ComponentFrameStorage* GetStorage(ComponentTypeIndex type, uint16_t componentSize, void* dtor);
     void* CreateComponentRaw(EntityHandle entity, ComponentTypeIndex type, uint16_t componentSize, ComponentFrameStorageIndex& index, void* dtor);
     void RemoveComponent(EntityHandle entity, ComponentTypeIndex type, uint16_t componentSize, void* dtor);
@@ -860,7 +866,11 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
     CRITICAL_SECTION CS2;
 #endif
 
-    void* GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy);
+    void* ResolveRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy);
+    void* GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize);
+    void* GetCommittedComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize);
+    void* GetImmediateComponent(EntityHandle entityHandle, ComponentTypeIndex type);
+    void* GetECBComponent(EntityHandle entityHandle, ComponentTypeIndex type);
     bool MarkComponentAsChanged(EntityHandle entity, ComponentTypeIndex component);
     bool WasComponentChanged(EntityHandle entity, ComponentTypeIndex component);
 

@@ -137,7 +137,7 @@ bool EntityProxyMetatable::HasRawComponent(lua_State* L, EntityHandle entity, ST
     if (!index) {
         return false;
     } else {
-        auto ptr = ecs->GetEntityWorld()->GetRawComponent(entity, *index, 1, false);
+        auto ptr = ecs->GetEntityWorld()->GetRawComponent(entity, *index, 1);
         return ptr != nullptr;
     }
 }
@@ -154,7 +154,10 @@ void EnumerateComponents(ecs::EntitySystemHelpersBase* ecs, EntityHandle entity,
                 auto extType = ecs->GetComponentType(typeInfo.Key());
                 if (extType) {
                     auto const& meta = ecs->GetComponentMeta(*extType);
-                    auto component = storage->GetComponent(*componentPtr, typeInfo.Value(), meta.Size, meta.IsProxy);
+                    auto component = storage->GetComponent(*componentPtr, typeInfo.Value(), meta.Size);
+                    if (meta.IsProxy) {
+                        component = ecs::DereferenceProxyComponent(component);
+                    }
 
                     f(ecs, *extType, component);
                 } else if (warnOnMissing) {
@@ -199,10 +202,9 @@ void EnumerateComponents(ecs::EntitySystemHelpersBase* ecs, EntityHandle entity,
                     if (component) {
                         auto const& meta = ecs->GetComponentMeta(*extType);
                         if (meta.IsProxy) {
-                            f(ecs, *extType, *(void**)component);
-                        } else {
-                            f(ecs, *extType, component);
+                            component = ecs::DereferenceProxyComponent(component);
                         }
+                        f(ecs, *extType, component);
                     }
                 } else if (warnOnMissing) {
                     auto name = ecs->GetComponentName(comp.ComponentTypeId);

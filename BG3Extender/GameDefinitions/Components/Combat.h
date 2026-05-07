@@ -661,9 +661,10 @@ struct CombatLogSystem : public BaseSystem
 
     [[bg3::hidden]] void* DialogEventListenerAdapter_VMT;
     [[bg3::hidden]] void* EocServer;
+    [[bg3::hidden]] void* FactionContainer;
+    [[bg3::hidden]] void* GlobalSwitches;
     Array<AutomaticDialogRequest> OnDialogNodeStarted;
     Array<DialogStartRequest> OnDialogStarted;
-    Array<DialogStartRequest> field_40;
     [[bg3::hidden]] void* SpellPrototypeManager;
     [[bg3::hidden]] void* pICombatLogHelper;
     Array<HealedRequest> HealedEntries;
