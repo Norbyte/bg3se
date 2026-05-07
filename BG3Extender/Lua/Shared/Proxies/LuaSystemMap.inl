@@ -15,7 +15,8 @@ int SystemMapMetatable::Index(lua_State* L, CppObjectMetadata& self)
 #include <GameDefinitions/Components/ExposedSystemTypes.inl>
 
     default:
-        luaL_error(L, "System not supported: %s", EnumInfo<ExtSystemType>::Find(type).GetString());
+        WARN("Trying to access system that is not mapped: %s", EnumInfo<ExtSystemType>::Find(type).GetString());
+        push(L, nullptr);
         break;
     }
 
