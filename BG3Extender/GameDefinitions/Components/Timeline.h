@@ -500,8 +500,8 @@ struct TimelineActorDataCreateDestroyRequest
 {
     EntityHandle Entity;
     Guid Timeline;
-    bool Synced;
-    uint8_t field_19;
+    bool Synced{ false };
+    uint8_t field_19{ 0 };
 };
 
 
@@ -516,11 +516,11 @@ struct TimelineActorJoinedEventRequest
 struct TimelineActorLeaveRequest
 {
     EntityHandle Entity;
-    uint8_t TimelineType;
+    uint8_t TimelineType{ 0 };
     Guid Actor;
     Guid Timeline;
-    bool IsDummy;
-    bool IsListening;
+    bool IsDummy{ false };
+    bool IsListening{ false };
 };
 
 
@@ -530,7 +530,7 @@ struct TimelineActorLeftEventRequest
     PlayerId PlayerIndex;
     EntityHandle Actor;
     Guid ActorGuid;
-    int DialogInstanceId;
+    int DialogInstanceId{ 0 };
 };
 
 
@@ -551,8 +551,8 @@ struct TimelineDataCreateDestroyRequest
 {
     EntityHandle Entity;
     Guid Timeline;
-    bool Synced;
-    char Create;
+    bool Synced{ false };
+    bool Create{ false };
 };
 
 
@@ -560,6 +560,52 @@ struct TimelineUnloadActorsRequest
 {
     Guid Actor;
 };
+
+
+struct TimelineControlCreateDestroyRequest
+{
+    EntityHandle Entity;
+    Guid Timeline;
+    int DialogInstanceId{ 0 };
+    int field_1C{ 0 };
+    __int64 field_20{ 0 };
+    __int64 field_28{ 0 };
+    __int64 field_30{ 0 };
+    __int64 field_38{ 0 };
+    int field_40{ 0 };
+    uint8_t TimelineType{ 0 };
+    bool Create{ false };
+};
+
+
+struct TimelineCinematicAnimationRequest
+{
+    EntityHandle Entity;
+    bool ActivateTimeline{ false };
+};
+
+
+struct TimelineAutoContinueRequest
+{
+    Guid Timeline;
+};
+
+
+struct TimelineCharacterAssignedRequest
+{
+    EntityHandle Entity;
+    EntityHandle Actor;
+    PlayerId PlayerId;
+};
+
+
+struct TimelineVisibilityRequest
+{
+    Guid Timeline;
+    PlayerId PlayerId;
+    bool Visible;
+};
+
 
 
 struct TimelineSystem : public BaseSystem
@@ -609,16 +655,16 @@ struct TimelineSystem : public BaseSystem
     TimelineEmotionalMaterials EmotionalMaterials;
     Array<TimelineActorDataCreateDestroyRequest> ActorDataCreateDestroyRequests;
     Array<TimelineActorLeaveRequest> ActorLeaveRequests;
-    [[bg3::hidden]] Array<void*> Arr_TimelineControlCreateDestroyRequest;
+    Array<TimelineControlCreateDestroyRequest> TimelineControlCreateDestroyRequests;
     Array<ClientOnlyTimelineDestroyRequest> ClientOnlyTimelineDestroyRequests;
     Array<TimelineDataCreateDestroyRequest> TimelineDataCreateDestroyRequests;
     HashMap<Guid, int32_t> RequestContentForTimelines;
     [[bg3::hidden]] SynchronizedMPMCQueueBounded<void*> TimelineDataCreateDestroyRequestQueue;
-    [[bg3::hidden]] Array<void*> Arr_CinematicAnimationRequest;
-    [[bg3::hidden]] Array<void*> Arr_AutoContinueRequest;
+    Array<TimelineCinematicAnimationRequest> CinematicAnimationRequests;
+    Array<TimelineAutoContinueRequest> AutoContinueRequests;
     [[bg3::hidden]] Array<void*> Arr_AnimationTextKeyRequest;
-    [[bg3::hidden]] Array<void*> Arr_CharacterAssignedRequest;
-    [[bg3::hidden]] Array<void*> Arr_TimelineVisibilityRequest;
+    Array<TimelineCharacterAssignedRequest> CharacterAssignedRequests;
+    Array<TimelineVisibilityRequest> TimelineVisibilityRequests;
     [[bg3::hidden]] Array<void*> SetClientControlPlaybackState_Arr_PlaybackStateChangeRequest;
     [[bg3::hidden]] Array<void*> SetClientControlCreationState_Arr_CreationStateChangeRequest;
     [[bg3::hidden]] Array<void*> LevelUnloaded_Arr_UnloadRequest;
