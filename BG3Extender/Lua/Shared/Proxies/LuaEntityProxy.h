@@ -77,7 +77,10 @@ private:
     static UserReturn GetComponent(lua_State* L, EntityHandle entity, ExtComponentType component);
     static bool HasRawComponent(lua_State* L, EntityHandle entity, STDString componentName);
     static UserReturn GetAllComponents(lua_State* L, EntityHandle entity, std::optional<bool> warnOnMissing);
-    static Array<STDString> GetAllComponentNames(lua_State* L, EntityHandle entity, std::optional<bool> requireMapped);
+    static UserReturn GetChangedComponents(lua_State* L, EntityHandle entity);
+    static UserReturn GetAddedComponentsCurrentFrame(lua_State* L, EntityHandle entity);
+    static Array<ExtComponentType> GetRemovedComponentsCurrentFrame(lua_State* L, EntityHandle entity);
+    static Array<StringView> GetAllComponentNames(lua_State* L, EntityHandle entity, std::optional<bool> requireMapped);
 
     static bool IsAlive(lua_State* L, EntityHandle entity);
     static std::optional<NetId> GetNetId(lua_State* L, EntityHandle entity);

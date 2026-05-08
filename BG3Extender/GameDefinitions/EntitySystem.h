@@ -565,7 +565,8 @@ struct EntityStorageData : public ProtectedGameObject<EntityStorageData>
     void* GetComponent(ComponentFrameStorageIndex const& entityPtr, ComponentTypeIndex type, std::size_t componentSize) const;
     void* GetComponent(ComponentFrameStorageIndex const& entityPtr, uint8_t componentSlot, std::size_t componentSize) const;
     bool MarkComponentAsChanged(EntityHandle entity, ComponentTypeIndex component);
-    bool WasComponentChanged(EntityHandle entity, ComponentTypeIndex component);
+    bool WasComponentChanged(EntityHandle entity, ComponentTypeIndex component) const;
+    bool WasComponentChanged(ComponentFrameStorageIndex storageIndex, uint8_t componentSlot) const;
 
     inline bool HasComponent(ComponentTypeIndex type) const
     {
@@ -579,7 +580,7 @@ struct EntityStorageContainer : public ProtectedGameObject<EntityStorageContaine
     struct TypeSalt
     {
         int32_t Salt;
-        uint16_t EntityClassIndex;
+        uint16_t StorageIndex;
     };
 
     struct ThreadSalts : public ProtectedGameObject<ThreadSalts>
@@ -588,7 +589,7 @@ struct EntityStorageContainer : public ProtectedGameObject<EntityStorageContaine
         uint32_t Size;
     };
 
-    Array<EntityStorageData*> Entities;
+    Array<EntityStorageData*> Storages;
     HashMap<uint64_t, uint16_t> TypeHashToEntityTypeIndex;
     ThreadSalts Salts;
     HashMap<uint64_t, uint64_t> field_458;
@@ -596,6 +597,9 @@ struct EntityStorageContainer : public ProtectedGameObject<EntityStorageContaine
     ComponentRegistry* ComponentRegistry;
     QueryRegistry* Queries;
 
+    std::optional<uint16_t> GetEntityStorageIndex(EntityHandle entityHandle) const;
+    bool IsEntityStorageDirty(uint16_t storageIndex) const;
+    EntityStorageData* GetEntityStorage(uint16_t storageIndex) const;
     EntityStorageData* GetEntityStorage(EntityHandle entityHandle) const;
 };
 

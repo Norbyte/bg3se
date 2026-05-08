@@ -337,19 +337,24 @@ bool EntityStorageData::MarkComponentAsChanged(EntityHandle entity, ComponentTyp
     return false;
 }
 
-bool EntityStorageData::WasComponentChanged(EntityHandle entity, ComponentTypeIndex component)
+bool EntityStorageData::WasComponentChanged(EntityHandle entity, ComponentTypeIndex component) const
 {
     auto componentSlot = ComponentTypeToIndex.try_get(component);
     if (componentSlot && ModifiedComponents[*componentSlot]) {
         auto storageIndex = InstanceToPageMap.try_get(entity);
         if (storageIndex) {
-            auto& page = Components[storageIndex->PageIndex]->Components[*componentSlot];
-            uint64_t entryMask = 1ull << (storageIndex->EntryIndex & 0x3f);
-            return (page.ModifiedEntities & entryMask) != 0;
+            return WasComponentChanged(*storageIndex, *componentSlot);
         }
     }
 
     return false;
+}
+
+bool EntityStorageData::WasComponentChanged(ComponentFrameStorageIndex storageIndex, uint8_t componentSlot) const
+{
+    uint64_t entryMask = 1ull << (storageIndex.EntryIndex & 0x3f);
+    auto const& changeMask = Components[storageIndex.PageIndex]->Components[componentSlot].ModifiedEntities;
+    return (changeMask & entryMask) != 0;
 }
 
 void* ImmediateWorldCache::Changes::GetChange(EntityHandle entityHandle, ComponentTypeIndex type) const
@@ -733,21 +738,41 @@ EntityCommandBuffer* EntityWorld::Deferred()
     return &CommandBuffers[ThreadRegistry::RequestThreadIndex()];
 }
 
-EntityStorageData* EntityStorageContainer::GetEntityStorage(EntityHandle entityHandle) const
+std::optional<uint16_t> EntityStorageContainer::GetEntityStorageIndex(EntityHandle entityHandle) const
 {
     if (entityHandle.GetThreadIndex() >= Salts.Buckets.size()) {
-        return nullptr;
+        return {};
     }
 
     auto& componentSalts = Salts.Buckets[entityHandle.GetThreadIndex()];
     if (entityHandle.GetIndex() < componentSalts.size()) {
         auto const& salt = componentSalts[entityHandle.GetIndex()];
         if (salt.Salt == entityHandle.GetSalt()) {
-            return Entities[salt.EntityClassIndex];
+            return salt.StorageIndex;
         }
     }
 
-    return nullptr;
+    return {};
+}
+
+bool EntityStorageContainer::IsEntityStorageDirty(uint16_t storageIndex) const
+{
+    return UsedFrameDataStorages[storageIndex];
+}
+
+EntityStorageData* EntityStorageContainer::GetEntityStorage(uint16_t storageIndex) const
+{
+    return Storages[storageIndex];
+}
+
+EntityStorageData* EntityStorageContainer::GetEntityStorage(EntityHandle entityHandle) const
+{
+    auto storageIdx = GetEntityStorageIndex(entityHandle);
+    if (storageIdx) {
+        return GetEntityStorage(*storageIdx);
+    } else {
+        return nullptr;
+    }
 }
 
 EntityStorageData* EntityWorld::GetEntityStorage(EntityHandle entityHandle) const

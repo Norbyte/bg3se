@@ -107,7 +107,7 @@ Array<EntityHandle> GetAllEntitiesWithComponent(lua_State* L, ExtComponentType c
         }
     } else {
         if (ecs::IsOneFrame(*componentType)) {
-            for (auto cls : world->Storage->Entities) {
+            for (auto cls : world->Storage->Storages) {
                 if (cls->HasOneFrameComponents) {
                     auto pool = cls->OneFrameComponents.try_get(*componentType);
                     if (pool) {
@@ -116,7 +116,7 @@ Array<EntityHandle> GetAllEntitiesWithComponent(lua_State* L, ExtComponentType c
                 }
             }
         } else {
-            for (auto cls : world->Storage->Entities) {
+            for (auto cls : world->Storage->Storages) {
                 if (cls->ComponentTypeToIndex.try_get(*componentType)) {
                     std::copy(cls->InstanceToPageMap.keys().begin(), cls->InstanceToPageMap.keys().end(), std::back_inserter(entities));
                 }
@@ -134,7 +134,7 @@ Array<EntityHandle> GetAllEntities(lua_State* L)
     Array<EntityHandle> entities;
 
     auto world = State::FromLua(L)->GetEntitySystemHelpers()->GetEntityWorld();
-    for (auto cls : world->Storage->Entities) {
+    for (auto cls : world->Storage->Storages) {
         std::copy(cls->InstanceToPageMap.keys().begin(), cls->InstanceToPageMap.keys().end(), std::back_inserter(entities));
     }
 
