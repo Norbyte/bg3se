@@ -120,7 +120,6 @@ struct AnimationBlueprintComponent : public BaseProxyComponent
     [[bg3::hidden]] void* LoadCallback;
     [[bg3::readonly]] int InstanceId;
     [[bg3::readonly]] uint8_t Flags;
-    [[bg3::readonly]] uint64_t field_40;
 };
 
 struct AnimationWaterfallElement
@@ -159,7 +158,6 @@ struct AnimationSetComponent : public BaseComponent
 
     MiniCompactSet<AnimationSetEntry> Entries;
     FixedString FallbackSubSet;
-    [[bg3::hidden]] void* PAD;
 };
 
 DEFINE_TAG_COMPONENT(ls, AnimationUpdateComponent, AnimationUpdate)
@@ -481,7 +479,6 @@ struct DecalComponent : public BaseProxyComponent
     DEFINE_COMPONENT(Decal, "ls::DecalComponent")
 
     DecalObject* Decal;
-    __int64 field_8;
 };
 
 struct CullComponent : public BaseComponent

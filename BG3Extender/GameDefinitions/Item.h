@@ -33,7 +33,6 @@ struct Item : public BaseProxyComponent
     int32_t TreasureLevel;
     int32_t Amount;
     ItemFlags2 Flags2;
-    [[bg3::hidden]] void* _PAD;
 
     RefReturn<Item> LuaGetSelf() const;
 };

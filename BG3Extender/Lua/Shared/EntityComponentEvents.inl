@@ -43,9 +43,11 @@ void EntityComponentEventHooks::FireDeferredEvents()
         for (auto& e : events) {
             auto hook = subscriptions_.Find(e.Index);
             if (hook != nullptr) {
-                auto componentType = ecs->GetComponentType(e.Type);
-                auto component = ecs->GetRawComponent(e.Entity, *componentType);
-                CallHandlerUnsafe(e.Entity, e.Type, e.Event, component, *hook, e.Index);
+                auto meta = ecs->GetComponentMeta(e.Type);
+                if (meta) {
+                    auto component = ecs->GetRawComponent(e.Entity, *meta);
+                    CallHandlerUnsafe(e.Entity, e.Type, e.Event, component, *hook, e.Index);
+                }
             }
         }
     }

@@ -124,7 +124,6 @@ struct Character : public BaseProxyComponent
     uint8_t NumConsumables;
     CharacterFlags2 Flags2;
     CharacterFlags3 Flags3;
-    [[bg3::hidden]] void* _PAD;
 
     RefReturn<Character> LuaGetSelf() const;
 };
@@ -205,7 +204,6 @@ struct Character : public BaseProxyComponent
     uint8_t FeetStatus;
     CharacterFlags2 Flags2;
     CharacterFlags3 Flags3;
-    [[bg3::hidden]] void* _PAD;
 };
 
 END_NS()

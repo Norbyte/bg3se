@@ -488,7 +488,6 @@ struct TLPreviewDummy : public BaseProxyComponent
     [[bg3::legacy(field_C4)]] bool IsPlayer;
     bool IsWeaponUnsheathed;
     bool ShouldShowVanityWeapon;
-    [[bg3::hidden]] uint64_t _Pad;
 #if 0
     //ls::DrawingContext DrawingContext;
     //Array<void*> DebugTexts;

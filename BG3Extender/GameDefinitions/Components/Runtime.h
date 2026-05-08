@@ -59,7 +59,6 @@ struct AnubisExecutorComponent : public BaseProxyComponent
     [[bg3::hidden]] void* Task;
     uint8_t field_10;
     uint8_t field_11;
-    [[bg3::hidden]] void* field_18; // Unknown?
 };
 
 struct ReplicationDependencyComponent : public BaseComponent

@@ -30,7 +30,6 @@ struct Bound : public ProtectedGameObject<Bound>
     uint8_t field_89;
     BoundFlags Flags;
     FixedString OwnerPlatform;
-    [[bg3::hidden]] void* field_90;
 };
 
 struct BoundComponent : public BaseProxyComponent

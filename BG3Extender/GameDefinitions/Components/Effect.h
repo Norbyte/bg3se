@@ -23,7 +23,6 @@ struct EffectComponent : public BaseProxyComponent
     std::array<bool, 2> OverrideFadeShadowEnabled;
     [[bg3::hidden]] void* ConstructionJob;
     [[bg3::readonly]] uint16_t ConstructFlagsAndSalt;
-    [[bg3::hidden]] uint64_t _Pad;
 };
 
 DEFINE_ONEFRAME_TAG_COMPONENT(ls, EffectCreateOneFrameComponent, EffectCreate)

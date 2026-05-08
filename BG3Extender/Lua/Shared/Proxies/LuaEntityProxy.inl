@@ -150,27 +150,23 @@ void ForEachCommittedComponent(ecs::EntitySystemHelpersBase* ecs, ecs::EntityWor
         auto storageIndex = storage->InstanceToPageMap.try_get(entity);
         if (storageIndex) {
             for (auto typeInfo : storage->ComponentTypeToIndex) {
-                auto extType = ecs->GetComponentType(typeInfo.Key());
-                if (extType) {
-                    auto const& meta = ecs->GetComponentMeta(*extType);
-                    void* component;
-                    if (meta.IsProxy) {
-                        component = ecs::DereferenceProxyComponent(storage->GetComponent(*storageIndex, typeInfo.Value(), sizeof(void*)));
-                    } else {
-                        component = storage->GetComponent(*storageIndex, typeInfo.Value(), meta.Size);
+                auto meta = ecs->GetComponentMeta(typeInfo.Key());
+                if (meta) {
+                    void* component = storage->GetComponent(*storageIndex, typeInfo.Value(), meta->InlineSize);
+                    if (component && meta->IsProxy) {
+                        component = ecs::DereferenceProxyComponent(component);
                     }
 
-                    f(ecs, *extType, meta, component);
+                    f(ecs, *meta, component);
                 }
             }
 
             if (storage->HasOneFrameComponents) {
                 for (auto pool : storage->OneFrameComponents) {
-                    auto extType = ecs->GetComponentType(pool.Key());
-                    if (extType) {
-                        auto const& meta = ecs->GetComponentMeta(*extType);
+                    auto meta = ecs->GetComponentMeta(pool.Key());
+                    if (meta) {
                         auto component = pool->Value().get_or_default(entity);
-                        f(ecs, *extType, meta, component);
+                        f(ecs, *meta, component);
                     }
                 }
             }
@@ -187,15 +183,14 @@ void ForEachECBComponent(ecs::EntitySystemHelpersBase* ecs, ecs::EntityWorld* wo
         for (uint32_t i = 0; i < change->Store.size(); i++) {
             auto const& comp = change->Store[i];
             if (comp.Index) {
-                auto extType = ecs->GetComponentType(comp.ComponentTypeId);
-                if (extType) {
+                auto meta = ecs->GetComponentMeta(comp.ComponentTypeId);
+                if (meta) {
                     auto component = ecb->GetComponentChange(comp.ComponentTypeId, comp.Index);
                     if (component) {
-                        auto const& meta = ecs->GetComponentMeta(*extType);
-                        if (meta.IsProxy) {
+                        if (meta->IsProxy) {
                             component = ecs::DereferenceProxyComponent(component);
                         }
-                        f(ecs, *extType, meta, component);
+                        f(ecs, *meta, component);
                     }
                 }
             }
@@ -208,8 +203,8 @@ UserReturn EntityProxyMetatable::GetAllComponents(lua_State* L, EntityHandle ent
     StackCheck _(L, 1);
     lua_newtable(L);
 
-    auto pushComponent = [L] (ecs::EntitySystemHelpersBase* ecs, ExtComponentType type, ecs::EntitySystemHelpersBase::PerComponentData const& meta, void* component) {
-        push(L, type);
+    auto pushComponent = [L] (ecs::EntitySystemHelpersBase* ecs, ecs::EntitySystemHelpersBase::PerComponentData const& meta, void* component) {
+        push(L, meta.Type);
         PushComponent(L, component, *meta.Properties, GetCurrentLifetime(L));
         lua_rawset(L, -3);
     };
@@ -239,18 +234,15 @@ UserReturn EntityProxyMetatable::GetChangedComponents(lua_State* L, EntityHandle
             if (storage->ModifiedComponents[type.Value()]
                 && storage->WasComponentChanged(*storageIndex, type.Value())) {
 
-                auto extType = ecs->GetComponentType(type.Key());
-                if (extType) {
-                    auto const& meta = ecs->GetComponentMeta(*extType);
-                    void* component;
-                    if (meta.IsProxy) {
-                        component = ecs::DereferenceProxyComponent(storage->GetComponent(*storageIndex, type.Value(), sizeof(void*)));
-                    } else {
-                        component = storage->GetComponent(*storageIndex, type.Value(), meta.Size);
+                auto meta = ecs->GetComponentMeta(type.Key());
+                if (meta) {
+                    void* component = storage->GetComponent(*storageIndex, type.Value(), meta->InlineSize);
+                    if (component && meta->IsProxy) {
+                        component = ecs::DereferenceProxyComponent(component);
                     }
 
-                    push(L, *extType);
-                    PushComponent(L, component, *meta.Properties, GetCurrentLifetime(L));
+                    push(L, meta->Type);
+                    PushComponent(L, component, *meta->Properties, GetCurrentLifetime(L));
                     lua_rawset(L, -3);
                 }
             }
@@ -265,8 +257,8 @@ UserReturn EntityProxyMetatable::GetAddedComponentsCurrentFrame(lua_State* L, En
     StackCheck _(L, 1);
     lua_newtable(L);
 
-    auto pushComponent = [L] (ecs::EntitySystemHelpersBase* ecs, ExtComponentType type, ecs::EntitySystemHelpersBase::PerComponentData const& meta, void* component) {
-        push(L, type);
+    auto pushComponent = [L] (ecs::EntitySystemHelpersBase* ecs, ecs::EntitySystemHelpersBase::PerComponentData const& meta, void* component) {
+        push(L, meta.Type);
         PushComponent(L, component, *meta.Properties, GetCurrentLifetime(L));
         lua_rawset(L, -3);
     };

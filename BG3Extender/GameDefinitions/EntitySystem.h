@@ -195,7 +195,7 @@ struct ComponentTypeEntry : public ProtectedGameObject<ComponentTypeEntry>
     bool field_A;
     bool QueryFlags[4];
     uint16_t InlineSize;
-    uint16_t ComponentSize;
+    uint16_t TotalSize;
     void* DtorProc;
 #if 0
     void* CountProc;
@@ -870,7 +870,6 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
     CRITICAL_SECTION CS2;
 #endif
 
-    void* ResolveRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy);
     void* GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize);
     void* GetCommittedComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize);
     void* GetImmediateComponent(EntityHandle entityHandle, ComponentTypeIndex type);

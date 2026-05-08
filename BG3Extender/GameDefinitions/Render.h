@@ -849,7 +849,6 @@ struct [[bg3::component]] LightComponent : public MoveableObject
     EntityHandle AssociatedScene;
     uint16_t CullFlags;
     FixedString UUID;
-    [[bg3::hidden]] void* _PAD;
 };
 
 struct LightUpdateFadeRequest

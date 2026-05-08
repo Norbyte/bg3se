@@ -178,8 +178,6 @@ struct Scenery : public BaseProxyComponent
     SceneryInitSound* Sound;
     FixedString Visual;
     VisualLoadFlags VisualLoadFlags;
-    // Likely unused
-    [[bg3::hidden]] uint64_t field_60;
 };
 
 END_NS()

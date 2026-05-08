@@ -474,7 +474,7 @@ PerECSComponentData const& ECSComponentDataMap::Get(ComponentTypeIndex type) con
 PerECSComponentData& ECSComponentDataMap::GetOrAdd(ComponentTypeIndex type)
 {
     auto idx = (uint32_t)SparseHashMapHash(type);
-    if (idx > componentData_.size()) {
+    if (idx >= componentData_.size()) {
         componentData_.resize(idx + 1);
     }
 
@@ -626,20 +626,6 @@ void EntityCommandBuffer::RemoveComponent(EntityHandle entity, ComponentTypeInde
     auto change = changes->Store.add();
     change->Index = ComponentFrameStorageIndex{};
     change->ComponentTypeId = type;
-}
-
-void* EntityWorld::ResolveRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy)
-{
-    if (isProxy) {
-        auto component = GetRawComponent(entityHandle, type, sizeof(void*));
-        if (component) {
-            return DereferenceProxyComponent(component);
-        } else {
-            return nullptr;
-        }
-    } else {
-        return GetRawComponent(entityHandle, type, componentSize);
-    }
 }
 
 void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize)
@@ -835,8 +821,8 @@ EntitySystemHelpersBase::EntitySystemHelpersBase()
 
 std::optional<ComponentTypeIndex> EntitySystemHelpersBase::GetComponentIndex(ExtComponentType type) const
 {
-    auto idx = components_[(unsigned)type].ComponentIndex;
-    if (idx != UndefinedComponent && GetEntityWorld()->ComponentOps.Get(idx) != nullptr) {
+    auto idx = extComponentMap_[(unsigned)type].ComponentIndex;
+    if (idx != UndefinedComponent) {
         return idx;
     } else {
         return {};
@@ -867,24 +853,25 @@ STDString SimplifyComponentName(StringView name)
 void* EntitySystemHelpersBase::CreateComponentRaw(EntityHandle entity, ExtComponentType type)
 {
     auto const& meta = GetComponentMeta(type);
-    if (meta.ComponentIndex == UndefinedComponent
+    if (!meta.ComponentIndex
         || meta.Properties == nullptr
         || meta.Properties->Construct == nullptr) {
         return nullptr;
     }
 
     ComponentFrameStorageIndex index;
+    auto ptr = GetEntityWorld()->Deferred()->CreateComponentRaw(entity, *meta.ComponentIndex, meta.InlineSize, index, meta.Properties->ProxyDestroy);
+
     if (meta.IsProxy) {
-        auto ptr = (void**)GetEntityWorld()->Deferred()->CreateComponentRaw(entity, meta.ComponentIndex, sizeof(void*), index, meta.Properties->ProxyDestroy);
-        *ptr = GameAllocRaw(meta.Size);
-        memset(*ptr, 0, meta.Size);
-        meta.Properties->Construct(*ptr);
-        return *ptr;
+        auto external = GameAllocRaw(meta.ExternalSize);
+        memset(external, 0, meta.ExternalSize);
+        meta.Properties->Construct(external);
+        *(void**)ptr = external;
+        return external;
     } else {
-        auto ptr = GetEntityWorld()->Deferred()->CreateComponentRaw(entity, meta.ComponentIndex, meta.Size, index, meta.Properties->ProxyDestroy);
         // Ensure we're using zeroed memory since not every component has proper default constructors
         // and could end up using leftover garbage from memory
-        memset(ptr, 0, meta.Size);
+        memset(ptr, 0, meta.InlineSize);
         meta.Properties->Construct(ptr);
         return ptr;
     }
@@ -893,7 +880,7 @@ void* EntitySystemHelpersBase::CreateComponentRaw(EntityHandle entity, ExtCompon
 void* EntitySystemHelpersBase::CreateComponentImmediateRaw(EntityHandle entity, ExtComponentType type)
 {
     auto const& meta = GetComponentMeta(type);
-    if (meta.ComponentIndex == UndefinedComponent
+    if (!meta.ComponentIndex
         || meta.Properties == nullptr
         || meta.Properties->Construct == nullptr) {
         return nullptr;
@@ -902,22 +889,22 @@ void* EntitySystemHelpersBase::CreateComponentImmediateRaw(EntityHandle entity, 
     ComponentFrameStorageIndex index;
     void* ptr;
     auto iwc = GetEntityWorld()->Cache;
-    if (iwc->PrepareAddComponent(entity, meta.ComponentIndex, ptr)) {
+    if (iwc->PrepareAddComponent(entity, *meta.ComponentIndex, ptr)) {
         if (meta.IsProxy) {
             auto comp = (void**)ptr;
-            *comp = GameAllocRaw(meta.Size);
-            memset(*comp, 0, meta.Size);
+            *comp = GameAllocRaw(meta.ExternalSize);
+            memset(*comp, 0, meta.ExternalSize);
             meta.Properties->Construct(*comp);
             return *comp;
         } else {
             // Ensure we're using zeroed memory since not every component has proper default constructors
             // and could end up using leftover garbage from memory
-            memset(ptr, 0, meta.Size);
+            memset(ptr, 0, meta.InlineSize);
             meta.Properties->Construct(ptr);
             return ptr;
         }
 
-        iwc->FinalizeAddComponent(entity, meta.ComponentIndex, ptr);
+        iwc->FinalizeAddComponent(entity, *meta.ComponentIndex, ptr);
     }
 
     return nullptr;
@@ -926,27 +913,23 @@ void* EntitySystemHelpersBase::CreateComponentImmediateRaw(EntityHandle entity, 
 bool EntitySystemHelpersBase::RemoveComponent(EntityHandle entity, ExtComponentType type)
 {
     auto const& meta = GetComponentMeta(type);
-    if (meta.ComponentIndex == UndefinedComponent
+    if (!meta.ComponentIndex
         || meta.Properties == nullptr) {
         return false;
     }
 
-    if (meta.IsProxy) {
-        GetEntityWorld()->Deferred()->RemoveComponent(entity, meta.ComponentIndex, sizeof(void*), meta.Properties->ProxyDestroy);
-    } else {
-        GetEntityWorld()->Deferred()->RemoveComponent(entity, meta.ComponentIndex, meta.Size, meta.Properties->ProxyDestroy);
-    }
-
+    GetEntityWorld()->Deferred()->RemoveComponent(entity, *meta.ComponentIndex, meta.InlineSize, meta.Properties->ProxyDestroy);
     return true;
 }
 
 BitSet<>* EntitySystemHelpersBase::GetReplicationFlags(EntityHandle const& entity, ExtComponentType type)
 {
-    if (components_[(unsigned)type].ReplicationIndex == UndefinedReplicationComponent) {
+    auto replicationIdx = GetComponentMeta(type).ReplicationIndex;
+    if (!replicationIdx) {
         return nullptr;
     }
 
-    return GetReplicationFlags(entity, components_[(unsigned)type].ReplicationIndex);
+    return GetReplicationFlags(entity, *replicationIdx);
 }
 
 BitSet<>* EntitySystemHelpersBase::GetReplicationFlags(EntityHandle const& entity, ReplicationTypeIndex replicationType)
@@ -966,11 +949,12 @@ BitSet<>* EntitySystemHelpersBase::GetReplicationFlags(EntityHandle const& entit
 
 BitSet<>* EntitySystemHelpersBase::GetOrCreateReplicationFlags(EntityHandle const& entity, ExtComponentType type)
 {
-    if (components_[(unsigned)type].ReplicationIndex == UndefinedReplicationComponent) {
+    auto replicationIdx = GetComponentMeta(type).ReplicationIndex;
+    if (!replicationIdx) {
         return nullptr;
     }
 
-    return GetOrCreateReplicationFlags(entity, components_[(unsigned)type].ReplicationIndex);
+    return GetOrCreateReplicationFlags(entity, *replicationIdx);
 }
 
 BitSet<>* EntitySystemHelpersBase::GetOrCreateReplicationFlags(EntityHandle const& entity, ReplicationTypeIndex replicationType)
@@ -1054,7 +1038,7 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 
     componentNameToIndexMappings_.clear();
     ecsComponentData_.Clear();
-    components_.fill(PerComponentData{});
+    extComponentMap_.fill(PerComponentData{});
     staticDataIndices_.fill(resource::UndefinedStaticDataType);
     systemIndices_.fill(UndefinedSystem);
 
@@ -1135,43 +1119,64 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 
 void EntitySystemHelpersBase::ValidatePropertyMapBindings()
 {
-    for (uint32_t componentType = 0; componentType < components_.size(); componentType++) {
-        if (!components_[componentType].Properties) {
+    for (uint32_t componentType = 0; componentType < extComponentMap_.size(); componentType++) {
+        if (!extComponentMap_[componentType].Properties) {
             ERR("[ECS] Component %s has no property map!",
                 EnumInfo<ExtComponentType>::Find((ExtComponentType)componentType).GetString());
         }
     }
 }
 
+void EntitySystemHelpersBase::BindExtComponent(ComponentTypeIndex componentIndex, ExtComponentType type)
+{
+    auto idx = (uint32_t)SparseHashMapHash(componentIndex);
+    if (idx >= componentMap_.size()) {
+        componentMap_.resize(idx + 1);
+    }
+
+    componentMap_[idx] = &extComponentMap_[(unsigned)type];
+}
+
 void EntitySystemHelpersBase::MapComponentIndices(char const* componentName, ExtComponentType type, std::size_t size, bool isProxy, bool oneFrame)
 {
     auto it = componentNameToIndexMappings_.find(componentName);
-    if (it != componentNameToIndexMappings_.end()) {
-        auto& comp = components_[(unsigned)type];
-        comp.ComponentIndex = it->second.ComponentIndex;
-        comp.ReplicationIndex = it->second.ReplicationIndex;
-
-        if (it->second.ComponentIndex != UndefinedComponent) {
-            auto& binding = ecsComponentData_.GetOrAdd(it->second.ComponentIndex);
-            binding.Name = &it->first;
-            binding.ExtType = type;
-            binding.ReplicationType = it->second.ReplicationIndex;
-        }
-
-        if (it->second.ReplicationIndex != UndefinedReplicationComponent) {
-            auto& binding = ecsComponentData_.GetOrAdd(it->second.ReplicationIndex);
-            binding.Name = &it->first;
-            binding.ExtType = type;
-            binding.ComponentType = it->second.ComponentIndex;
-        }
-
-        se_assert(size < 0x10000);
-        comp.Size = (uint16_t)size;
-        comp.IsProxy = isProxy;
-        comp.OneFrame = oneFrame;
-    } else {
-        OsiWarn("Could not find index for component: " << componentName);
+    if (it == componentNameToIndexMappings_.end()) {
+        WARN("Could not find index for component: %s", componentName);
+        return;
     }
+
+    auto& comp = extComponentMap_[(unsigned)type];
+    comp.Type = type;
+
+    if (it->second.ComponentIndex != UndefinedComponent) {
+        auto& binding = ecsComponentData_.GetOrAdd(it->second.ComponentIndex);
+        binding.Name = &it->first;
+        binding.ExtType = type;
+        binding.ReplicationType = it->second.ReplicationIndex;
+
+        comp.ComponentIndex = it->second.ComponentIndex;
+        BindExtComponent(it->second.ComponentIndex, type);
+    }
+
+    if (it->second.ReplicationIndex != UndefinedReplicationComponent) {
+        auto& binding = ecsComponentData_.GetOrAdd(it->second.ReplicationIndex);
+        binding.Name = &it->first;
+        binding.ExtType = type;
+        binding.ComponentType = it->second.ComponentIndex;
+
+        comp.ReplicationIndex = it->second.ReplicationIndex;
+    }
+
+    se_assert(size < 0x10000);
+    if (isProxy) {
+        comp.InlineSize = (uint16_t)sizeof(void*);
+        comp.ExternalSize = (uint16_t)size;
+    } else {
+        comp.InlineSize = (uint16_t)size;
+        comp.ExternalSize = 0;
+    }
+    comp.IsProxy = isProxy;
+    comp.OneFrame = oneFrame;
 }
 
 void EntitySystemHelpersBase::MapResourceManagerIndex(char const* componentName, ExtResourceManagerType type)
@@ -1214,20 +1219,33 @@ void* EntitySystemHelpersBase::GetRawComponent(FixedString const& guid, ExtCompo
     }
 }
 
-void* EntitySystemHelpersBase::GetRawComponent(EntityHandle entityHandle, ExtComponentType type)
+void* EntitySystemHelpersBase::GetRawComponent(EntityHandle entityHandle, PerComponentData const& meta)
 {
+    if (!meta.ComponentIndex) {
+        return nullptr;
+    }
+
     auto world = GetEntityWorld();
     if (!world) {
         return nullptr;
     }
 
-    auto const& meta = GetComponentMeta(type);
-    if (meta.ComponentIndex != UndefinedComponent) {
-        auto component = world->ResolveRawComponent(entityHandle, meta.ComponentIndex, meta.Size, meta.IsProxy);
-        return component;
+    if (meta.IsProxy) {
+        auto component = world->GetRawComponent(entityHandle, *meta.ComponentIndex, meta.InlineSize);
+        if (component) {
+            return DereferenceProxyComponent(component);
+        } else {
+            return nullptr;
+        }
     } else {
-        return nullptr;
+        return world->GetRawComponent(entityHandle, *meta.ComponentIndex, meta.InlineSize);
     }
+}
+
+void* EntitySystemHelpersBase::GetRawComponent(EntityHandle entityHandle, ExtComponentType type)
+{
+    auto const& meta = GetComponentMeta(type);
+    return GetRawComponent(entityHandle, meta);
 }
 
 bool EntitySystemHelpersBase::MarkComponentAsChanged(EntityHandle entityHandle, ExtComponentType type)
@@ -1238,8 +1256,8 @@ bool EntitySystemHelpersBase::MarkComponentAsChanged(EntityHandle entityHandle, 
     }
 
     auto const& meta = GetComponentMeta(type);
-    if (meta.ComponentIndex != UndefinedComponent) {
-        return world->MarkComponentAsChanged(entityHandle, meta.ComponentIndex);
+    if (meta.ComponentIndex) {
+        return world->MarkComponentAsChanged(entityHandle, *meta.ComponentIndex);
     } else {
         return false;
     }
@@ -1253,8 +1271,8 @@ bool EntitySystemHelpersBase::WasComponentChanged(EntityHandle entityHandle, Ext
     }
 
     auto const& meta = GetComponentMeta(type);
-    if (meta.ComponentIndex != UndefinedComponent) {
-        return world->WasComponentChanged(entityHandle, meta.ComponentIndex);
+    if (meta.ComponentIndex) {
+        return world->WasComponentChanged(entityHandle, *meta.ComponentIndex);
     } else {
         return false;
     }
@@ -1264,7 +1282,7 @@ void* EntitySystemHelpersBase::GetRawSingleton(ExtComponentType type)
 {
     auto& meta = GetComponentMeta(type);
     if (meta.SingleComponentQuery == ecs::UndefinedQuery) {
-        WARN("No query defined for singleton %s?", GetComponentName(meta.ComponentIndex)->c_str());
+        WARN("No query defined for singleton %s?", GetComponentName(*meta.ComponentIndex)->c_str());
         return nullptr;
     }
 
@@ -1280,7 +1298,7 @@ void* EntitySystemHelpersBase::GetRawSingleton(ExtComponentType type)
     }
 
     auto page = storage.Storage->InstanceToPageMap.values()[0];
-    auto component = storage.Storage->GetComponent(page, storage.GetComponentIndex(0), meta.Size);
+    auto component = storage.Storage->GetComponent(page, storage.GetComponentIndex(0), meta.InlineSize);
     if (component && meta.IsProxy) {
         component = DereferenceProxyComponent(component);
     }
@@ -1291,7 +1309,7 @@ EntityHandle EntitySystemHelpersBase::GetSingletonEntity(ExtComponentType type)
 {
     auto& meta = GetComponentMeta(type);
     if (meta.SingleComponentQuery == ecs::UndefinedQuery) {
-        WARN("No query defined for singleton %s?", GetComponentName(meta.ComponentIndex)->c_str());
+        WARN("No query defined for singleton %s?", GetComponentName(*meta.ComponentIndex)->c_str());
         return {};
     }
 
@@ -1501,7 +1519,7 @@ void EntitySystemHelpersBase::ValidateReplication()
         auto const& pool = world->Replication->ComponentPools[i];
         auto componentType = GetComponentType(ReplicationTypeIndex(i));
         if (componentType && pool.size() > 0) {
-            auto pm = GetPropertyMap(*componentType);
+            auto pm = GetComponentMeta(*componentType).Properties;
             if (pm != nullptr) {
                 for (auto const& entity : pool) {
                     auto component = GetRawComponent(entity.Key(), *componentType);
@@ -1520,11 +1538,11 @@ void EntitySystemHelpersBase::ValidateMappedComponentSizes()
     auto world = GetEntityWorld();
 
     Array<ComponentTypeIndex> deletions;
-    for (unsigned componentIdx = 0; componentIdx < components_.size(); componentIdx++) {
-        auto componentType = components_[componentIdx].ComponentIndex;
-        if (componentType != UndefinedComponent) {
-            if (!ValidateMappedComponentSize(world, componentType, ExtComponentType{ componentIdx })) {
-                deletions.push_back(componentType);
+    for (unsigned componentIdx = 0; componentIdx < extComponentMap_.size(); componentIdx++) {
+        auto componentType = extComponentMap_[componentIdx].ComponentIndex;
+        if (componentType) {
+            if (!ValidateMappedComponentSize(world, *componentType, ExtComponentType{ componentIdx })) {
+                deletions.push_back(*componentType);
             }
         }
     }
@@ -1533,7 +1551,7 @@ void EntitySystemHelpersBase::ValidateMappedComponentSizes()
         auto& mapping = ecsComponentData_.GetOrAdd(typeId);
         if (mapping.ExtType) {
             ERR("[ECS INTEGRITY CHECK] Force unmap component %s", mapping.Name->c_str());
-            components_[(unsigned)*mapping.ExtType].ComponentIndex = UndefinedComponent;
+            extComponentMap_[(unsigned)*mapping.ExtType].ComponentIndex = UndefinedComponent;
             mapping.ExtType = {};
         }
     }
@@ -1542,7 +1560,7 @@ void EntitySystemHelpersBase::ValidateMappedComponentSizes()
 bool EntitySystemHelpersBase::ValidateMappedComponentSize(ecs::EntityWorld* world, ComponentTypeIndex typeId, ExtComponentType extType)
 {
     auto mapped = world->ComponentRegistry_.Get(typeId);
-    auto const& local = components_[(unsigned)extType];
+    auto const& local = extComponentMap_[(unsigned)extType];
     auto name = ecsComponentData_.Get(typeId).Name;
     if (mapped != nullptr) {
         if (!local.Properties) {
@@ -1550,29 +1568,36 @@ bool EntitySystemHelpersBase::ValidateMappedComponentSize(ecs::EntityWorld* worl
             return false;
         }
 
+        if (mapped->TotalSize < mapped->InlineSize) {
+            ERR("[ECS INTEGRITY CHECK] '%s' has incorrect component size? (inline %d, total %d)",
+                name->c_str(), mapped->InlineSize, mapped->TotalSize);
+            return false;
+        }
+
         if (local.IsProxy) {
+            assert(local.InlineSize == sizeof(void*));
             if (mapped->InlineSize != sizeof(void*)) {
-                ERR("[ECS INTEGRITY CHECK] '%s' marked as proxy, but entity only has inline data (%d)", 
+                ERR("[ECS INTEGRITY CHECK] '%s' marked as proxy, but entity inline data is not a proxy (%d)", 
                     name->c_str(), mapped->InlineSize);
                 return false;
             }
 
-            if (mapped->InlineSize != sizeof(void*) || mapped->ComponentSize != local.Size) {
+            if (mapped->TotalSize - mapped->InlineSize != local.ExternalSize) {
                 ERR("[ECS INTEGRITY CHECK] '%s' OOB size mismatch: local %d, ECS %d", 
-                    name->c_str(), local.Size, mapped->ComponentSize);
+                    name->c_str(), local.ExternalSize, mapped->TotalSize - mapped->InlineSize);
                 // Don't unmap since OOB mismatch doesn't invalidate component store layout
                 return true;
             }
         } else {
-            if (mapped->InlineSize != mapped->ComponentSize) {
-                ERR("[ECS INTEGRITY CHECK] '%s' marked as non-proxy, but entity has OOB data (inline %d, OOB %d)",
-                    name->c_str(), mapped->InlineSize, mapped->ComponentSize);
+            if (mapped->InlineSize != mapped->TotalSize) {
+                ERR("[ECS INTEGRITY CHECK] '%s' marked as non-proxy, but entity has OOB data (inline %d, total %d)",
+                    name->c_str(), mapped->InlineSize, mapped->TotalSize);
                 return false;
             }
 
-            if (mapped->ComponentSize != local.Size) {
-                ERR("[ECS INTEGRITY CHECK] '%s' size mismatch: local %d, ECS %d",
-                    name->c_str(), local.Size, mapped->ComponentSize);
+            if (mapped->InlineSize != local.InlineSize) {
+                ERR("[ECS INTEGRITY CHECK] '%s' inline size mismatch: local %d, ECS %d",
+                    name->c_str(), local.InlineSize, mapped->InlineSize);
                 return false;
             }
         }
@@ -1590,7 +1615,6 @@ void EntitySystemHelpersBase::ValidateECBFlushChanges()
 {
     OPTICK_EVENT(Optick::Category::Debug);
     auto world = GetEntityWorld();
-    EntityHandle last{};
 
     for (auto& ecb : world->CommandBuffers) {
         for (unsigned i = 0; i < ecb.Data.EntityChanges.size(); i++) {
@@ -1601,18 +1625,14 @@ void EntitySystemHelpersBase::ValidateECBFlushChanges()
                 auto const& change = entityChanges.Store[j];
 
                 if (change.Index) {
-                    auto componentType = GetComponentType(change.ComponentTypeId);
-                    if (componentType) {
-                        auto const& meta = GetComponentMeta(*componentType);
-                        auto pm = GetPropertyMap(*componentType);
-                        if (pm != nullptr) {
-                            auto component = ecb.GetComponentChange(change.ComponentTypeId, change.Index);
-                            if (component) {
-                                if (meta.IsProxy) {
-                                    pm->ValidateObject(*(void**)component);
-                                } else {
-                                    pm->ValidateObject(component);
-                                }
+                    auto meta = GetComponentMeta(change.ComponentTypeId);
+                    if (meta) {
+                        auto component = ecb.GetComponentChange(change.ComponentTypeId, change.Index);
+                        if (component) {
+                            if (meta->IsProxy) {
+                                meta->Properties->ValidateObject(*(void**)component);
+                            } else {
+                                meta->Properties->ValidateObject(component);
                             }
                         }
                     }
@@ -1631,15 +1651,15 @@ void EntitySystemHelpersBase::ValidateEntityChanges()
 
 void EntitySystemHelpersBase::ValidateEntityChanges(ImmediateWorldCache::Changes& changes)
 {
-    for (auto i = 0; i < components_.size(); i++) {
-        auto const& componentInfo = components_[i];
-        if (componentInfo.ComponentIndex != UndefinedComponent) {
-            if (changes.AvailableComponentTypes[(unsigned)componentInfo.ComponentIndex]) {
-                auto const& pool = changes.ComponentsByType[(unsigned)componentInfo.ComponentIndex];
-                auto name = ecsComponentData_.Get(componentInfo.ComponentIndex).Name;
-                auto componentSize = componentInfo.IsProxy ? sizeof(void*) : componentInfo.Size;
-                if (pool.FrameStorage.ComponentSizeInBytes != componentSize) {
-                    ERR("[ECS INTEGRITY CHECK] Component size mismatch (%s): local %lld, ECS %d", name->c_str(), componentSize, pool.FrameStorage.ComponentSizeInBytes);
+    for (auto i = 0; i < extComponentMap_.size(); i++) {
+        auto const& componentInfo = extComponentMap_[i];
+        if (componentInfo.ComponentIndex) {
+            if (changes.AvailableComponentTypes[(unsigned)*componentInfo.ComponentIndex]) {
+                auto const& pool = changes.ComponentsByType[(unsigned)*componentInfo.ComponentIndex];
+                if (pool.FrameStorage.ComponentSizeInBytes != componentInfo.InlineSize) {
+                    auto name = ecsComponentData_.Get(*componentInfo.ComponentIndex).Name;
+                    ERR("[ECS INTEGRITY CHECK] Inline component size mismatch (%s): local %d, ECS %d", 
+                        name->c_str(), componentInfo.InlineSize, pool.FrameStorage.ComponentSizeInBytes);
                 }
             }
         }
@@ -1648,15 +1668,12 @@ void EntitySystemHelpersBase::ValidateEntityChanges(ImmediateWorldCache::Changes
     for (uint32_t componentId = 0; componentId < changes.AvailableComponentTypes.size(); componentId++) {
         if (changes.AvailableComponentTypes[componentId]) {
             auto const& components = changes.ComponentsByType[componentId].Components;
-            auto componentType = GetComponentType(ComponentTypeIndex(componentId));
-            if (componentType) {
-                auto pm = GetPropertyMap(*componentType);
-                if (pm != nullptr && components.Values.size() > 0) {
-                    for (uint32_t j = 0; j < components.Values.size(); j++) {
-                        auto const& component = components.Values[j];
-                        if (component.Ptr != nullptr) {
-                            pm->ValidateObject(component.Ptr);
-                        }
+            auto meta = GetComponentMeta(ComponentTypeIndex(componentId));
+            if (meta && components.Values.size() > 0) {
+                for (uint32_t j = 0; j < components.Values.size(); j++) {
+                    auto const& component = components.Values[j];
+                    if (component.StorageIndex) {
+                        meta->Properties->ValidateObject(component.Ptr);
                     }
                 }
             }
@@ -1669,7 +1686,7 @@ void EntitySystemHelpersBase::MapSingleComponentQuery(QueryIndex queryIndex, Com
     auto extComponent = GetComponentType(component);
     if (!extComponent) return;
 
-    auto& desc = components_[(unsigned)*extComponent];
+    auto& desc = extComponentMap_[(unsigned)*extComponent];
     if (desc.SingleComponentQuery != ecs::UndefinedQuery) {
         auto const& currentQuery = GetEntityWorld()->Queries.Queries[(unsigned)desc.SingleComponentQuery];
         auto const& newQuery = GetEntityWorld()->Queries.Queries[(unsigned)queryIndex];
