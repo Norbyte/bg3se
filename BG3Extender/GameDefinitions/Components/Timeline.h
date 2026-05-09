@@ -268,7 +268,7 @@ struct SyncedTimelineControlComponent : public BaseComponent
     uint8_t CreationState;
     [[bg3::hidden]] HashMap<Guid, void*> SceneTriggers; // HashMap<Guid, SceneTrigger>
     HashMap<Guid, Guid> Triggers;
-    Array<TimelineNode*> Nodes;
+    Array<TimelineNode> Nodes;
     uint8_t PlaybackState;
     bool SmoothExitRequested;
 };
