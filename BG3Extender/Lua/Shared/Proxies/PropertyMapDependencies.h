@@ -27,6 +27,7 @@
 
 #include <Lua/LuaBinding.h>
 #include <Lua/LuaSerializers.h>
+#include <Lua/Shared/ExposedTypes.h>
 #include <Lua/Shared/LuaModule.h>
 #include <Lua/Shared/LuaMethodCallHelpers.h>
 #include <Lua/Shared/Proxies/LuaPropertyMapHelpers.h>

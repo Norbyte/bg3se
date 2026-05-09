@@ -803,6 +803,7 @@ void ECSChangeLog::AddComponentChange(EntityWorld* world, EntityHandle entity, C
 
     auto entry = Entities.get_or_add(entity);
     auto componentEntry = entry->Components.get_or_add((uint16_t)type);
+
     componentEntry->ComponentType = type;
     componentEntry->Flags = componentEntry->Flags | flags;
 }
@@ -816,7 +817,8 @@ RuntimeCheckLevel EntitySystemHelpersBase::CheckLevel{ RuntimeCheckLevel::FullEC
 
 EntitySystemHelpersBase::EntitySystemHelpersBase()
     : staticDataIndices_{ resource::UndefinedStaticDataType },
-    systemIndices_{ UndefinedSystem }
+    systemIndices_{ UndefinedSystem },
+    tracer_(this)
 {}
 
 std::optional<ComponentTypeIndex> EntitySystemHelpersBase::GetComponentIndex(ExtComponentType type) const
@@ -1358,39 +1360,16 @@ void* EntitySystemHelpersBase::GetRawSystem(ExtSystemType type)
     }
 }
 
+void EntitySystemHelpersBase::Bind()
 {
-    OPTICK_EVENT();
-    if (CheckLevel == RuntimeCheckLevel::FullECS) {
-        ValidateECBFlushChanges();
-        ValidateEntityChanges();
-    }
-
-    ThrowECBFlushEvents();
-
-    if (logging_) {
-        DebugLogECBFlushChanges();
-        DebugLogUpdateChanges();
-    }
+    auto world = GetEngineEntityWorld();
+    // The underlying EntityWorld pointer should never change after binding
+    se_assert(world == nullptr || World == nullptr || world == World);
+    World = world;
 }
 
-void EntitySystemHelpersBase::DebugLogUpdateChanges()
 void EntitySystemHelpersBase::PreUpdate()
 {
-    OPTICK_EVENT(Optick::Category::Debug);
-    auto world = GetEntityWorld();
-
-    auto const& changes = world->Cache->WriteChanges;
-    for (unsigned i = 0; i < changes.AvailableComponentTypes.NumBits; i++) {
-        if (changes.AvailableComponentTypes[i]) {
-            auto const& changeSet = changes.ComponentsByType[i];
-            for (unsigned j = 0; j < changeSet.Components.size(); j++) {
-                auto entityHandle = changeSet.Components.key_at(j);
-                auto const& change = changeSet.Components.Values[j];
-
-                log_.AddComponentChange(world, entityHandle, ComponentTypeIndex{ (uint16_t)i }, change.Ptr ? ComponentChangeFlags::Create : ComponentChangeFlags::Destroy);
-            }
-        }
-    }
 }
 
 void EntitySystemHelpersBase::PostUpdate()
@@ -1406,9 +1385,7 @@ void EntitySystemHelpersBase::PostUpdate()
         ValidateReplication();
     }
 
-    if (logging_) {
-        DebugLogReplicationChanges();
-    }
+    tracer_.LogReplicatedChanges();
 }
 
 void EntitySystemHelpersBase::OnInit()
@@ -1421,11 +1398,111 @@ void EntitySystemHelpersBase::OnDestroy()
     ClearSystemUpdateHooks();
 }
 
-void EntitySystemHelpersBase::DebugLogReplicationChanges()
+void EntitySystemHelpersBase::OnFlushECBs()
 {
-    auto world = GetEntityWorld();
-    if (!logging_) return;
+    OPTICK_EVENT();
+    if (CheckLevel == RuntimeCheckLevel::FullECS) {
+        ValidateECBFlushChanges();
+        ValidateImmediateWorldCacheChanges();
+    }
 
+    ThrowECBFlushEvents();
+    tracer_.LogECBChanges();
+    tracer_.LogImmediateWorldCacheChanges();
+    tracer_.LogComponentModifications();
+}
+
+void ECSChangeTracer::StartTracing()
+{
+    tracing_ = true;
+}
+
+void ECSChangeTracer::StopTracing()
+{
+    tracing_ = false;
+}
+
+void ECSChangeTracer::LogECBChanges()
+{
+    if (!tracing_ || !options_.TrackECB) return;
+
+    OPTICK_EVENT(Optick::Category::Debug);
+
+    auto world = ecs_->GetEntityWorld();
+    for (auto& ecb : world->CommandBuffers) {
+        for (unsigned i = 0; i < ecb.Data.EntityChanges.size(); i++) {
+            auto entityHandle = ecb.Data.EntityChanges.key_at(i);
+            auto const& entityChanges = ecb.Data.EntityChanges.Values[i];
+
+            log_.AddEntityChange(entityHandle, entityChanges.Flags);
+
+            for (unsigned j = 0; j < entityChanges.Store.size(); j++) {
+                auto const& upd = entityChanges.Store[j];
+
+                log_.AddComponentChange(world, entityHandle, upd.ComponentTypeId,
+                    upd.Index ? ComponentChangeFlags::Create : ComponentChangeFlags::Destroy);
+            }
+        }
+    }
+}
+
+void ECSChangeTracer::LogImmediateWorldCacheChanges()
+{
+    if (!tracing_ || !options_.TrackImmediateWorldCache) return;
+
+    OPTICK_EVENT(Optick::Category::Debug);
+
+    auto world = ecs_->GetEntityWorld();
+    auto const& changes = world->Cache->WriteChanges;
+    for (unsigned i = 0; i < changes.AvailableComponentTypes.NumBits; i++) {
+        if (changes.AvailableComponentTypes[i]) {
+            auto const& changeSet = changes.ComponentsByType[i];
+            for (unsigned j = 0; j < changeSet.Components.size(); j++) {
+                auto entityHandle = changeSet.Components.key_at(j);
+                auto const& change = changeSet.Components.Values[j];
+
+                log_.AddComponentChange(world, entityHandle, ComponentTypeIndex{ (uint16_t)i }, change.Ptr ? ComponentChangeFlags::Create : ComponentChangeFlags::Destroy);
+            }
+        }
+    }
+}
+
+void ECSChangeTracer::LogComponentModifications()
+{
+    if (!tracing_ || !options_.TrackModifications) return;
+
+    OPTICK_EVENT(Optick::Category::Debug);
+
+    auto world = ecs_->GetEntityWorld();
+    auto storages = world->Storage;
+    for (auto index = storages->UsedFrameDataStorages.FindFirst(); index; index = storages->UsedFrameDataStorages.FindNext(*index)) {
+        auto storage = storages->Storages[*index];
+        for (auto componentSlot = storage->ModifiedComponents.FindFirst(); componentSlot; componentSlot = storage->ModifiedComponents.FindNext(*componentSlot)) {
+            auto componentType = storage->ComponentDtors[*componentSlot].ComponentTypeId;
+
+            if (!options_.ExcludeModificationTypes[(unsigned)componentType]) {
+                for (unsigned pageIdx = 0; pageIdx < storage->Components.size(); pageIdx++) {
+                    auto& page = storage->Components[pageIdx]->Components[*componentSlot];
+                    auto handles = storage->Handles[pageIdx];
+
+                    auto modifications = page.ModifiedEntities.load();
+                    for (auto componentIdx = BitSetScan(&modifications, &modifications + 1); componentIdx;
+                        componentIdx = BitSetScan(&modifications, &modifications + 1, *componentIdx)) {
+                        if (handles->Pool[*componentIdx]) {
+                            log_.AddComponentChange(world, handles->Pool[*componentIdx], componentType, ComponentChangeFlags::Modify);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+void ECSChangeTracer::LogReplicatedChanges()
+{
+    if (!tracing_ || !options_.TrackReplication) return;
+
+    auto world = ecs_->GetEntityWorld();
     ecs::SyncBuffers* buffers = world->Replication;
     if (!buffers) {
         buffers = *GetStaticSymbols().GetEoCClient()->GameClient->ReplicationPeer.Buffers;
@@ -1438,46 +1515,11 @@ void EntitySystemHelpersBase::DebugLogReplicationChanges()
         auto const& pool = buffers->ComponentPools[i];
         if (pool.size() > 0) {
             for (auto const& entity : pool) {
-                auto type = ecsComponentData_.Get(ReplicationTypeIndex{ (uint16_t)i }).ComponentType;
+                auto type = ecs_->GetComponentIndex(ReplicationTypeIndex{ (uint16_t)i });
 
                 if (type != UndefinedComponent) {
                     log_.AddComponentChange(world, entity.Key(), type, ComponentChangeFlags::Replicate);
                 }
-            }
-        }
-    }
-}
-
-void EntitySystemHelpersBase::OnFlushECBs()
-{
-    if (CheckLevel == RuntimeCheckLevel::FullECS) {
-        ValidateECBFlushChanges();
-    }
-
-    ThrowECBFlushEvents();
-
-    if (logging_) {
-        DebugLogECBFlushChanges();
-    }
-}
-
-void EntitySystemHelpersBase::DebugLogECBFlushChanges()
-{
-    OPTICK_EVENT(Optick::Category::Debug);
-    auto world = GetEntityWorld();
-
-    for (auto& ecb : world->CommandBuffers) {
-        for (unsigned i = 0; i < ecb.Data.EntityChanges.size(); i++) {
-            auto entityHandle = ecb.Data.EntityChanges.key_at(i);
-            auto const& entityChanges = ecb.Data.EntityChanges.Values[i];
-
-            log_.AddEntityChange(entityHandle, entityChanges.Flags);
-
-            for (unsigned j = 0; j < entityChanges.Store.size(); j++) {
-                auto const& upd = entityChanges.Store[j];
-
-                log_.AddComponentChange(world, entityHandle, upd.ComponentTypeId, 
-                    upd.Index ? ComponentChangeFlags::Create : ComponentChangeFlags::Destroy);
             }
         }
     }
@@ -1643,14 +1685,14 @@ void EntitySystemHelpersBase::ValidateECBFlushChanges()
     }
 }
 
-void EntitySystemHelpersBase::ValidateEntityChanges()
+void EntitySystemHelpersBase::ValidateImmediateWorldCacheChanges()
 {
     OPTICK_EVENT(Optick::Category::Debug);
     auto world = GetEntityWorld();
-    ValidateEntityChanges(world->Cache->WriteChanges);
+    ValidateImmediateWorldCacheChanges(world->Cache->WriteChanges);
 }
 
-void EntitySystemHelpersBase::ValidateEntityChanges(ImmediateWorldCache::Changes& changes)
+void EntitySystemHelpersBase::ValidateImmediateWorldCacheChanges(ImmediateWorldCache::Changes& changes)
 {
     for (auto i = 0; i < extComponentMap_.size(); i++) {
         auto const& componentInfo = extComponentMap_[i];

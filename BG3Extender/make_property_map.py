@@ -714,6 +714,7 @@ sources = [
     'GameDefinitions/Controllers/Steering.h',
     'GameDefinitions/Controllers/Controller.h',
     'GameDefinitions/Controllers/OsirisTask.h',
+    'Lua/Shared/ExposedTypes.h',
     'Lua/Client/ClientEvents.h',
     'Lua/Server/ServerEvents.h',
 ]

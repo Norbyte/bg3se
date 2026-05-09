@@ -527,8 +527,8 @@ void State::Shutdown()
     variableManager_.Invalidate();
     modVariableManager_.Invalidate();
 
-    GetEntitySystemHelpers()->EnableLogging(false);
-    GetEntitySystemHelpers()->GetLog().Clear();
+    GetEntitySystemHelpers()->GetTracer().StopTracing();
+    GetEntitySystemHelpers()->GetTracer().GetLog().Clear();
 }
 
 LifetimeHandle State::GetCurrentLifetime()

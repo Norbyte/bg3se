@@ -92,6 +92,46 @@ struct ECSChangeLog
     void AddComponentChange(EntityWorld* world, EntityHandle entity, ComponentTypeIndex type, ComponentChangeFlags flags);
 };
 
+struct ECSChangeTracerOptions
+{
+    bool TrackECB{ true };
+    bool TrackImmediateWorldCache{ true };
+    bool TrackReplication{ true };
+    bool TrackModifications{ false };
+    ComponentTypeMask ExcludeModificationTypes;
+};
+
+class ECSChangeTracer
+{
+public:
+    inline ECSChangeTracer(EntitySystemHelpersBase* ecs)
+        : ecs_(ecs)
+    {}
+
+    inline ECSChangeLog& GetLog()
+    {
+        return log_;
+    }
+
+    inline ECSChangeTracerOptions& GetOptions()
+    {
+        return options_;
+    }
+
+    void StartTracing();
+    void StopTracing();
+    void LogECBChanges();
+    void LogImmediateWorldCacheChanges();
+    void LogComponentModifications();
+    void LogReplicatedChanges();
+
+private:
+    EntitySystemHelpersBase* ecs_;
+    ECSChangeLog log_;
+    bool tracing_{ false };
+    ECSChangeTracerOptions options_;
+};
+
 template <class T>
 void EntityProxyDeleteHelper(T** p)
 {
@@ -275,14 +315,9 @@ public:
         }
     }
 
-    inline void EnableLogging(bool enable)
+    inline ECSChangeTracer& GetTracer()
     {
-        logging_ = enable;
-    }
-
-    inline ECSChangeLog& GetLog()
-    {
-        return log_;
+        return tracer_;
     }
 
     BitSet<> * GetReplicationFlags(EntityHandle const& entity, ExtComponentType type);
@@ -341,8 +376,8 @@ protected:
     void ValidateMappedComponentSizes();
     bool ValidateMappedComponentSize(ecs::EntityWorld* world, ComponentTypeIndex typeId, ExtComponentType extType);
     void ValidateECBFlushChanges();
-    void ValidateEntityChanges();
-    void ValidateEntityChanges(ImmediateWorldCache::Changes& changes);
+    void ValidateImmediateWorldCacheChanges();
+    void ValidateImmediateWorldCacheChanges(ImmediateWorldCache::Changes& changes);
     void UpdateQueryCache();
     void MapSingleComponentQuery(QueryIndex query, ComponentTypeIndex component);
 
@@ -371,7 +406,6 @@ private:
     bool initialized_{ false };
     bool queryCacheInitialized_{ false };
     bool validated_{ false };
-    bool logging_{ false };
 
     std::unordered_map<BaseSystem*, SystemTypeIndex> systemToId_;
     std::vector<SystemHook> systemHooks_;
@@ -381,7 +415,7 @@ private:
     std::array<SystemTypeIndex, (size_t)ExtSystemType::Max> systemIndices_;
     Array<PerComponentData*> componentMap_;
 
-    ECSChangeLog log_;
+    ECSChangeTracer tracer_;
 
     void BindSystem(std::string_view name, SystemTypeIndex id);
     void BindStaticData(std::string_view name, resource::StaticDataTypeIndex id);

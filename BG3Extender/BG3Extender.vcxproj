@@ -313,6 +313,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="Lua\Shared\EntityComponentEvents.h" />
     <ClInclude Include="Lua\Shared\EntityEventHelpers.h" />
     <ClInclude Include="Lua\Shared\EntityReplicationEvents.h" />
+    <ClInclude Include="Lua\Shared\ExposedTypes.h" />
     <ClInclude Include="Lua\Shared\LuaBundle.h" />
     <ClInclude Include="Lua\Shared\LuaCustomizations.h" />
     <ClInclude Include="Lua\Shared\LuaDelegate.h" />

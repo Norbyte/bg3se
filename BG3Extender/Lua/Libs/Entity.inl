@@ -240,6 +240,26 @@ bool Unsubscribe(lua_State* L, LuaEntitySubscriptionId handle)
     return EntityEventHelpers::Unsubscribe(L, handle);
 }
 
+void SetupTracing(lua_State* L, EntityTracingOptions options)
+{
+    auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
+    auto& opts = ecs->GetTracer().GetOptions();
+    opts.TrackECB = options.TrackECB;
+    opts.TrackImmediateWorldCache = options.TrackImmediateWorldCache;
+    opts.TrackReplication = options.TrackReplication;
+    opts.TrackModifications = options.TrackModifications;
+    opts.ExcludeModificationTypes.Clear();
+
+    for (auto const& component : options.ExcludeModificationComponents) {
+        auto componentTypeIndex = ecs->GetComponentIndex(component);
+        if (componentTypeIndex) {
+            if (!ecs::IsOneFrame(*componentTypeIndex)) {
+                opts.ExcludeModificationTypes.Set((unsigned)*componentTypeIndex);
+            }
+        }
+    }
+}
+
 void EnableTracing(lua_State* L, bool enable)
 {
     if (!gExtender->GetConfig().DeveloperMode) {
@@ -247,24 +267,23 @@ void EnableTracing(lua_State* L, bool enable)
         return;
     }
 
-    static bool DevelWarningShown = false;
+    if (enable) {
+        WARN_ONCE("Entity tracing is a development tool designed for tracking entity changes; it should not be used in production!");
 
-    if (!DevelWarningShown) {
-        DevelWarningShown = true;
-        WARN("Entity tracing is a development tool designed for tracking entity changes; it should not be used in production!");
+        State::FromLua(L)->GetEntitySystemHelpers()->GetTracer().StartTracing();
+    } else {
+        State::FromLua(L)->GetEntitySystemHelpers()->GetTracer().StopTracing();
     }
-
-    State::FromLua(L)->GetEntitySystemHelpers()->EnableLogging(enable);
 }
 
 ecs::ECSChangeLog* GetTrace(lua_State* L)
 {
-    return &State::FromLua(L)->GetEntitySystemHelpers()->GetLog();
+    return &State::FromLua(L)->GetEntitySystemHelpers()->GetTracer().GetLog();
 }
 
 void ClearTrace(lua_State* L)
 {
-    State::FromLua(L)->GetEntitySystemHelpers()->GetLog().Clear();
+    State::FromLua(L)->GetEntitySystemHelpers()->GetTracer().GetLog().Clear();
 }
 
 Array<StringView> GetRegisteredComponentTypes(lua_State* L, std::optional<bool> oneFrame, std::optional<bool> mapped)
@@ -318,6 +337,7 @@ void RegisterEntityLib()
     MODULE_FUNCTION(OnSystemPostUpdate)
     MODULE_FUNCTION(Unsubscribe)
 
+    MODULE_FUNCTION(SetupTracing)
     MODULE_FUNCTION(EnableTracing)
     MODULE_FUNCTION(GetTrace)
     MODULE_FUNCTION(ClearTrace)

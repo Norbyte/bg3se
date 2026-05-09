@@ -2,6 +2,126 @@
 
 BEGIN_SE()
 
+inline std::optional<uint32_t> BitSetScan(uint64_t const* begin, uint64_t const* end)
+{
+    DWORD index;
+    for (auto buf = begin; buf < end; buf++) {
+        if (_BitScanForward64(&index, *buf)) {
+            return (uint32_t)(buf - begin) * 64 + index;
+        }
+    }
+
+    return {};
+}
+
+inline std::optional<uint32_t> BitSetScan(uint64_t const* begin, uint64_t const* end, uint32_t prev)
+{
+    auto buf = begin + (prev / 64);
+
+    DWORD index;
+    auto off = (prev % 64) + 1;
+    if (off != 64) {
+        // Mask off already visited bits
+        auto val = (*buf >> off) << off;
+        // Scan remainder of current qword
+        if (_BitScanForward64(&index, val)) {
+            return (uint32_t)(buf - begin) * 64 + index;
+        }
+    }
+
+    buf++;
+    for (; buf < end; buf++) {
+        if (_BitScanForward64(&index, *buf)) {
+            return (uint32_t)(buf - begin) * 64 + index;
+        }
+    }
+
+    return {};
+}
+
+
+template <class TWord, unsigned NumWords>
+struct BitArray
+{
+    using value_type = bool;
+
+    static constexpr uint32_t BitsPerWord = sizeof(TWord) * CHAR_BIT;
+    static constexpr uint32_t IndexBitsPerWord = (sizeof(TWord) == 4) ? 5 : 6;
+    static constexpr uint32_t NumBits = NumWords * BitsPerWord;
+
+    TWord Bits[NumWords]{ 0 };
+
+    inline bool operator [] (uint32_t index) const
+    {
+        if (index >= NumBits) {
+            return false;
+        }
+
+        return (Bits[index >> IndexBitsPerWord] & (TWord(1) << (index & (BitsPerWord - 1)))) != 0;
+    }
+
+    inline bool Set(uint32_t index)
+    {
+        if (index >= NumBits) {
+            return false;
+        }
+
+        Bits[index >> IndexBitsPerWord] |= (TWord(1) << (index & (BitsPerWord - 1)));
+        return true;
+    }
+
+    inline bool AtomicSet(uint32_t index)
+    {
+        if (index >= NumBits) {
+            return false;
+        }
+
+        InterlockedOr64((LONG64*)(Bits + (index >> IndexBitsPerWord)), (TWord(1) << (index & (BitsPerWord - 1))));
+        return true;
+    }
+
+    inline bool Clear(uint32_t index)
+    {
+        if (index >= NumBits) {
+            return false;
+        }
+
+        Bits[index >> IndexBitsPerWord] &= ~(TWord(1) << (index & (BitsPerWord - 1)));
+        return true;
+    }
+
+    inline void Clear()
+    {
+        for (unsigned i = 0; i < NumWords; i++) {
+            Bits[i] = 0u;
+        }
+    }
+
+    inline bool IsSet(uint32_t index) const
+    {
+        if (index >= NumBits) {
+            return false;
+        }
+
+        return (Bits[index >> IndexBitsPerWord] & (TWord(1) << (index & (BitsPerWord - 1)))) != 0;
+    }
+
+    inline uint32_t size() const
+    {
+        return NumWords * sizeof(TWord) * CHAR_BIT;
+    }
+
+    inline std::optional<uint32_t> FindFirst()
+    {
+        return BitSetScan(Bits, Bits + NumWords);
+    }
+
+    inline std::optional<uint32_t> FindNext(uint32_t prev)
+    {
+        return BitSetScan(Bits, Bits + NumWords, prev);
+    }
+};
+
 template <class Allocator = GameMemoryAllocator>
 struct BitSet
 {
@@ -127,6 +247,18 @@ struct BitSet
     {
         EnsureSize(index + 1);
         GetBuf()[index / 64] &= ~(1ull << (index % 64));
+    }
+
+    inline std::optional<uint32_t> FindFirst()
+    {
+        auto start = GetBuf();
+        return BitSetScan(start, start + NumQwords());
+    }
+
+    inline std::optional<uint32_t> FindNext(uint32_t prev)
+    {
+        auto start = GetBuf();
+        return BitSetScan(start, start + NumQwords(), prev);
     }
 
     void EnsureSize(uint32_t size)

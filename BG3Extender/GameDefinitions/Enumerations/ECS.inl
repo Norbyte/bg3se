@@ -1908,6 +1908,7 @@ BEGIN_BITMASK_NS(ecs, ComponentChangeFlags, ECSComponentChangeFlags, uint8_t)
     EV(Replicate, 4)
     EV(OneFrame, 8)
     EV(ReplicatedComponent, 0x10)
+    EV(Modify, 0x20)
 END_ENUM_NS()
 
 BEGIN_BITMASK(InterruptInteractionTypes, uint8_t)

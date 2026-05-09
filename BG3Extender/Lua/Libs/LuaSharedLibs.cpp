@@ -1,5 +1,6 @@
 #include <stdafx.h>
 #include <Lua/Libs/LibraryRegistrationHelpers.h>
+#include <Lua/Shared/ExposedTypes.h>
 #include <Lua/Shared/LuaModule.h>
 #include <Lua/Shared/LuaMethodCallHelpers.h>
 #include <Lua/Osiris/FunctionProxy.h>
