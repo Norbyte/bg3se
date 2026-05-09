@@ -1227,7 +1227,6 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
     E(ServerReplicationDependencyOwner)
     E(HistoryTargetUUID)
     E(ServerPeersInRange)
-    E(ServerSurface)
     E(ServerDisarmAttempt)
     E(ServerUnsheathSpellAnimationLifetime)
     E(ServerUnsheath)
@@ -1240,6 +1239,14 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
     E(ServerVariableManager)
     E(IsMarkedForDeletion)
     E(JumpFollow)
+
+    // Server surfaces
+    E(ServerSurface)
+    E(ServerSurfaceLevelLoaded)
+    E(ServerSurfaceCreatedEvent)
+    E(ServerSurfaceRemovedEvent)
+    E(ServerSurfaceActionFinishedEvent)
+    E(ServerSurfaceActionGrownEvent)
 
     // Server events
     E(ServerTemplateChangedEvent)
