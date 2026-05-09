@@ -202,7 +202,7 @@ namespace bg3se::esv::lua
 
     ecs::EntityWorld* ServerState::GetEntityWorld()
     {
-        return GetStaticSymbols().GetServerEntityWorld();
+        return gExtender->GetServer().GetEntityHelpers().GetEntityWorld();
     }
 
 

@@ -157,6 +157,11 @@ public:
 
     std::optional<ComponentTypeIndex> GetComponentIndex(ExtComponentType type) const;
 
+    inline ComponentTypeIndex GetComponentIndex(ReplicationTypeIndex index) const
+    {
+        return ecsComponentData_.Get(index).ComponentType;
+    }
+
     inline PerComponentData const* GetComponentMeta(ComponentTypeIndex type) const
     {
         auto idx = (uint32_t)SparseHashMapHash(type);
@@ -241,7 +246,17 @@ public:
     void* CreateComponentImmediateRaw(EntityHandle entity, ExtComponentType type);
     bool RemoveComponent(EntityHandle entity, ExtComponentType type);
 
-    virtual EntityWorld* GetEntityWorld() const = 0;
+    inline bool HasEntityWorld() const
+    {
+        return World != nullptr;
+    }
+
+    inline EntityWorld* GetEntityWorld() const
+    {
+        assert(World != nullptr); // Should not be called before helpers are initialized
+        return World;
+    }
+
     virtual ExtensionStateBase* GetExtensionState() const = 0;
 
     virtual std::optional<EntityHandle> NetIdToEntity(NetId netId) const = 0;
@@ -304,7 +319,8 @@ public:
         return GetSingletonEntity(T::ComponentType);
     }
 
-    void Update();
+    void Bind();
+    void PreUpdate();
     void PostUpdate();
     void OnFlushECBs();
     void OnInit();
@@ -313,6 +329,10 @@ public:
     bool SetSystemUpdateHook(SystemTypeIndex system, std::function<SystemHookProc> preUpdate, std::function<SystemHookProc> postUpdate);
 
 protected:
+    // Fetch EntityWorld from EocServer/EocClient; needed to bootstrap entity helpers
+    // so we can cache the EntityWorld pointer
+    virtual EntityWorld* GetEngineEntityWorld() const = 0;
+
     void MapComponentIndices(char const* componentName, ExtComponentType type, std::size_t size, bool isProxy, bool oneFrame);
     void MapResourceManagerIndex(char const* componentName, ExtResourceManagerType type);
     void MapSystemIndex(char const* systemName, ExtSystemType type);
@@ -340,6 +360,7 @@ private:
         std::function<SystemHookProc> PostUpdate;
     };
 
+    EntityWorld* World{ nullptr };
     std::unordered_map<STDString, IndexMappings> componentNameToIndexMappings_;
     ECSComponentDataMap ecsComponentData_;
     std::unordered_map<STDString, SystemTypeIndex> systemIndexMappings_;
@@ -387,7 +408,7 @@ class ServerEntitySystemHelpers : public EntitySystemHelpersBase
 public:
     void Setup();
 
-    EntityWorld* GetEntityWorld() const override;
+    EntityWorld* GetEngineEntityWorld() const override;
     ExtensionStateBase* GetExtensionState() const override;
     std::optional<EntityHandle> NetIdToEntity(NetId netId) const override;
     std::optional<NetId> EntityToNetId(EntityHandle entity) const override;
@@ -398,7 +419,7 @@ class ClientEntitySystemHelpers : public EntitySystemHelpersBase
 public:
     void Setup();
 
-    EntityWorld* GetEntityWorld() const override;
+    EntityWorld* GetEngineEntityWorld() const override;
     ExtensionStateBase* GetExtensionState() const override;
     std::optional<EntityHandle> NetIdToEntity(NetId netId) const override;
     std::optional<NetId> EntityToNetId(EntityHandle entity) const override;

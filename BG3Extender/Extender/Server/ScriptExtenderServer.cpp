@@ -103,7 +103,7 @@ void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
 {
 #if defined(DEBUG_SERVER_CLIENT)
         DEBUG("esv::ScriptExtender::OnGameStateChanged(): %s -> %s", 
-            ServerGameStateNames[(unsigned)fromState], ServerGameStateNames[(unsigned)toState]);
+            GameStateNames[(unsigned)fromState], GameStateNames[(unsigned)toState]);
 #endif
 
     if (fromState != GameState::Unknown) {
@@ -126,6 +126,7 @@ void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
 
     switch (toState) {
     case GameState::Init:
+        entityHelpers_.Bind();
         network_.ExtendNetworking();
         break;
         

@@ -1114,6 +1114,7 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
     FOR_EACH_GUID_RESOURCE_TYPE()
 #undef FOR_RESOURCE_TYPE
 
+    Bind();
     initialized_ = true;
 }
 
@@ -1357,7 +1358,6 @@ void* EntitySystemHelpersBase::GetRawSystem(ExtSystemType type)
     }
 }
 
-void EntitySystemHelpersBase::Update()
 {
     OPTICK_EVENT();
     if (CheckLevel == RuntimeCheckLevel::FullECS) {
@@ -1374,6 +1374,7 @@ void EntitySystemHelpersBase::Update()
 }
 
 void EntitySystemHelpersBase::DebugLogUpdateChanges()
+void EntitySystemHelpersBase::PreUpdate()
 {
     OPTICK_EVENT(Optick::Category::Debug);
     auto world = GetEntityWorld();
@@ -1888,9 +1889,9 @@ void ClientEntitySystemHelpers::Setup()
 
 
 
-EntityWorld* ServerEntitySystemHelpers::GetEntityWorld() const
+EntityWorld* ServerEntitySystemHelpers::GetEngineEntityWorld() const
 {
-    return GetStaticSymbols().GetServerEntityWorld();
+    return GetStaticSymbols().GetEoCServer()->EntityWorld;
 }
 
 ExtensionStateBase* ServerEntitySystemHelpers::GetExtensionState() const
@@ -1912,9 +1913,9 @@ std::optional<NetId> ServerEntitySystemHelpers::EntityToNetId(EntityHandle entit
     return netId ? *netId : std::optional<NetId>{};
 }
 
-EntityWorld* ClientEntitySystemHelpers::GetEntityWorld() const
+EntityWorld* ClientEntitySystemHelpers::GetEngineEntityWorld() const
 {
-    return GetStaticSymbols().GetClientEntityWorld();
+    return GetStaticSymbols().GetEoCClient()->EntityWorld;
 }
 
 ExtensionStateBase* ClientEntitySystemHelpers::GetExtensionState() const

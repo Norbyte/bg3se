@@ -243,28 +243,6 @@ namespace bg3se
             }
         }
 
-        inline ecs::EntityWorld* GetClientEntityWorld() const
-        {
-            if (ecl__EoCClient != nullptr
-                && *ecl__EoCClient != nullptr
-                && (*ecl__EoCClient)->EntityWorld != nullptr) {
-                return (*ecl__EoCClient)->EntityWorld;
-            } else {
-                return {};
-            }
-        }
-
-        inline ecs::EntityWorld* GetServerEntityWorld() const
-        {
-            if (esv__EoCServer != nullptr
-                && *esv__EoCServer != nullptr
-                && (*esv__EoCServer)->EntityWorld != nullptr) {
-                return (*esv__EoCServer)->EntityWorld;
-            } else {
-                return {};
-            }
-        }
-
         inline TranslatedStringRepository* GetTranslatedStringRepository() const
         {
             if (ls__gTranslatedStringRepository != nullptr) {

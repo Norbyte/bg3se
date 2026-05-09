@@ -111,7 +111,7 @@ void ClientState::OnUpdate(GameTime const& time)
 
 ecs::EntityWorld* ClientState::GetEntityWorld()
 {
-    return GetStaticSymbols().GetClientEntityWorld();
+    return gExtender->GetClient().GetEntityHelpers().GetEntityWorld();
 }
 
 

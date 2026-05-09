@@ -290,7 +290,7 @@ void ScriptExtender::OnECSUpdateGuarded(ecs::EntityWorld::UpdateProc* wrapped, e
 {
     auto ecs = GetECS(entityWorld);
     if (ecs != nullptr) {
-        ecs->Update();
+        ecs->PreUpdate();
         
         {
             DisableCrashReporting _;
@@ -391,11 +391,12 @@ ExtensionStateBase* ScriptExtender::GetCurrentExtensionState()
 
 ecs::EntitySystemHelpersBase* ScriptExtender::GetECS(ecs::EntityWorld* world)
 {
-    if (world == GetStaticSymbols().GetClientEntityWorld()) {
+    if (client_.GetEntityHelpers().HasEntityWorld() && world == client_.GetEntityHelpers().GetEntityWorld()) {
         return &client_.GetEntityHelpers();
-    } else if (world == GetStaticSymbols().GetServerEntityWorld()) {
+    } else if (server_.GetEntityHelpers().HasEntityWorld() && world == server_.GetEntityHelpers().GetEntityWorld()) {
         return &server_.GetEntityHelpers();
-    } else  {
+    } else {
+        // This can happen if we're not yet past server/client setup phase
         return nullptr;
     }
 }
