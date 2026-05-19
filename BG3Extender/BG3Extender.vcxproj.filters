@@ -536,6 +536,7 @@
     <ClInclude Include="GameDefinitions\Base\WindowsSlim.h" />
     <ClInclude Include="Lua\Shared\ExposedTypes.h" />
     <ClInclude Include="GameDefinitions\Base\Lock.h" />
+    <ClInclude Include="GameDefinitions\ObjectFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -586,9 +587,6 @@
     </None>
     <None Include="Lua\Server\FunctorEvents.inl">
       <Filter>Lua\Server</Filter>
-    </None>
-    <None Include="GameDefinitions\PropertyMaps\SurfaceActions.inl">
-      <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
     <None Include="GameDefinitions\Components\AllComponentTypes.inl">
       <Filter>GameDefinitions\Components</Filter>
@@ -805,6 +803,9 @@
     </None>
     <None Include="GameDefinitions\Base\Lock.inl">
       <Filter>GameDefinitions\Base</Filter>
+    </None>
+    <None Include="GameDefinitions\Surface.inl">
+      <Filter>GameDefinitions</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

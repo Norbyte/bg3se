@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GameDefinitions/Effect.h>
+#include <GameDefinitions/ObjectFactory.h>
 
 BEGIN_NS(esv)
 
@@ -677,28 +678,6 @@ struct StatusClimbing : public Status
 };
 
 
-struct [[bg3::hidden]] ObjectFactory2 : public ProtectedGameObject<ObjectFactory2>
-{
-    __int64 VMT;
-    Array<void*> Entries;
-    LegacyArray<uint32_t> Salts_Arr_u32;
-    Array<void*> field_38;
-    Array<void*> Objects;
-    int field_58;
-    int HandleType;
-};
-
-struct [[bg3::hidden]] NetworkObjectFactory2 : public ObjectFactory2
-{
-    HashMap<Guid, void*> StatusesByGuid;
-    Array<void*> field_A0;
-    HashSet<uint64_t> NetIdQueue;
-    LegacyArray<uint16_t> NetIdSalts;
-    __int64 field_100;
-    bool CanCreateNetIDs;
-};
-
-
 struct EntityStatusData
 {
     Array<StatusVFX*> VFX;
@@ -723,7 +702,7 @@ struct ManagedStatusFXs
 };
 
 
-struct [[bg3::hidden]] StatusMachine : public NetworkObjectFactory2
+struct [[bg3::hidden]] StatusMachine : public NetworkObjectFactory<Status>
 {
     void* VMT2;
     EntityHandle OwnerHandle;

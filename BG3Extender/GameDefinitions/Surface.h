@@ -3,282 +3,342 @@
 #include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/Misc.h>
+#include <GameDefinitions/ObjectFactory.h>
 
 BEGIN_SE()
 
 struct SurfaceMetaData
 {
     Guid TeamId;
-    EntityHandle field_10;
-    EntityHandle field_18;
+    ComponentHandle SurfaceHandle;
+    EntityHandle Owner;
     float LifeTime;
     uint8_t Level;
 };
 
 END_SE()
 
-namespace bg3se::esv
+BEGIN_NS(esv)
+
+struct SubSurface : ProtectedGameObject<SubSurface>
 {
-    struct Level;
-    struct Surface;
-    struct SurfaceManager;
+    Surface* Surface;
+    uint64_t SurfaceStateFlags;
+    Array<AiTilePos> Cells;
+    Array<AiTilePos> GrowCells;
+    [[bg3::readonly]] uint16_t SurfaceIndex;
+    AiTilePos Pos;
+};
 
-    struct SurfaceCell
-    {
-        glm::i16vec2 Position;
-    };
+struct Surface : ProtectedGameObject<Surface>
+{
+    ComponentHandle SurfaceHandle;
+    EntityHandle SurfaceEntity;
+    SurfaceType Type;
+    uint8_t Flags;
+    SurfaceMetaData Meta;
+    bool HasLifeTime;
+    bool IsControlledByConcentration;
+    Array<AiTilePos> NeighbourMergeCells;
+    std::array<EntityHandle, 14> TransformActions;
+    [[bg3::readonly]] int16_t Index;
+    [[bg3::readonly]] int16_t SurfaceConcentrationTarget;
+    [[bg3::hidden]] SurfaceManager* SurfaceManager;
+    bool NeedsSplitEvaluation;
+    float OwnershipTimer;
+    int StoryActionID;
+    ActionOriginator Originator;
+    AbilityId SpellCastingAbility;
+    Guid SpellCastSourceUuid;
+    Guid Parent;
+    Array<SubSurface*> SubSurfaces;
+};
 
-    struct SubSurface : ProtectedGameObject<SubSurface>
-    {
-        Surface* Surface;
-        uint64_t SurfaceStateFlags;
-        PrimitiveSmallSet<SurfaceCell> Cells;
-        PrimitiveSmallSet<SurfaceCell> GrowCells;
-        uint16_t SurfaceIndex;
-        int16_t SurfaceConcentrationTarget_M;
-        AiTilePos Pos;
-    };
+struct SurfaceAction : ProtectedGameObject<SurfaceAction>
+{
+    virtual ~SurfaceAction() = 0;
+    virtual SurfaceActionType GetTypeId() = 0;
+    virtual bool Visit(ObjectVisitor* visitor) = 0;
+    virtual void Unknown4() = 0;
+    virtual SurfaceType GetSurfaceType() = 0;
+    virtual EntityHandle GetOwner() = 0;
+    virtual glm::vec3 const& GetPosition() = 0;
+    virtual Guid* GetTeam(Guid& teamId, bool) = 0;
+    virtual Guid* GetCombat(Guid& combatId, bool) = 0;
+    virtual std::optional<uint16_t> GetSurfaceConcentrationTarget() = 0;
+    virtual void BreakConcentration() = 0;
+    virtual void Enter() = 0;
+    virtual void Update(GameTime const& time) = 0;
+    virtual void Exit() = 0;
+    virtual bool IsFinished() = 0;
+    virtual void SetPosition(glm::vec3 const&) = 0;
+    virtual void Unknown16() = 0;
+    virtual void ApplySurfaceChanges() = 0;
 
-    struct Surface : ProtectedGameObject<Surface>
-    {
-        EntityHandle field_0;
-        EntityHandle field_8;
-        SurfaceType Type;
-        uint8_t Flags;
-        SurfaceMetaData Meta;
-        bool HasLifeTime;
-        bool IsControlledByConcentration;
-        Array<AiTilePos> NeighbourMergeCells;
-        std::array<EntityHandle, 14> TransformActions;
-        int16_t Index;
-        int16_t SurfaceConcentrationTarget;
-        SurfaceManager* SurfaceManager;
-        bool NeedsSplitEvaluation;
-        float OwnershipTimer;
-        int StoryActionID;
-        ActionOriginator Originator;
-        AbilityId SpellCastingAbility;
-        Guid SpellCastSourceUuid;
-        Guid Parent;
-        Array<SubSurface*> SubSurfaces;
-    };
+    [[bg3::hidden]] Level* Level;
+    int StoryActionID;
+    ActionOriginator Originator;
+    [[bg3::hidden]] resource::GuidResourceBankBase* ClassDescriptionMgr;
+    EntityHandle Handle;
+};
 
-    struct SurfaceAction;
+struct CreateSurfaceActionBase : public SurfaceAction
+{
+    EntityHandle Owner;
+    float Duration;
+    bool IsControlledByConcentration;
+    glm::vec3 Position;
+    SurfaceType SurfaceType;
+    std::array<ComponentHandle, (unsigned)SurfaceType::Sentinel> SurfaceHandlesByType;
+    std::array<Array<AiTilePos>*, (unsigned)SurfaceType::Sentinel> SurfaceChanges;
+    std::array<Array<AiTilePos>*, 2> SurfaceCellsByLayer;
+};
 
-    struct SurfaceActionVMT : ProtectedGameObject<SurfaceActionVMT>
-    {
-        void (*Destroy)(SurfaceAction*, bool);
-        SurfaceActionType(*GetTypeId)(SurfaceAction*);
-        bool (*Visit)(SurfaceAction* self, ObjectVisitor* visitor);
-        int* (*Unknown)(SurfaceAction* self, int*, bool);
-        void (*Enter)(SurfaceAction* self);
-        void (*Update)(SurfaceAction* self, void* time);
-        void (*Unknown2)(SurfaceAction* self);
-        void (*Reset)(SurfaceAction* self);
-        bool (*IsFinished)(SurfaceAction* self);
-        bool (*Unknown3)(SurfaceAction* self);
-    };
+struct CreateSurfaceAction : public CreateSurfaceActionBase
+{
+    static constexpr SurfaceActionType Type = SurfaceActionType::CreateSurface;
 
-    struct SurfaceAction : ProtectedGameObject<SurfaceAction>
-    {
-        SurfaceActionVMT* VMT;
-        Level* Level;
-        int StoryActionID;
-        ActionOriginator Originator;
-        resource::GuidResourceBankBase* ClassDescriptionMgr;
-        EntityHandle Handle;
-    };
+    bool InitialChangesPushed;
+    float Radius;
+    float ExcludeRadius;
+    float MaxHeight;
+    bool IgnoreIrreplacableSurfaces;
+    bool CheckExistingSurfaces;
+    uint64_t LineCheckBlock;
+    float Timer;
+    float GrowTimer;
+    int GrowStep;
+    int CurrentCellCount;
+    Array<AiTilePos> SurfaceCells;
+    SurfaceLayer8 SurfaceLayer;
+};
 
-    struct CreateSurfaceActionBase : public SurfaceAction
-    {
-        ecs::EntityRef Owner;
-        float Duration;
-        bool IsControlledByConcentration;
-        glm::vec3 Position;
-        SurfaceType SurfaceType;
-        EntityHandle SurfaceHandlesByType[(unsigned)SurfaceType::Sentinel];
-        Array<SurfaceCell>* SurfaceChanges[(unsigned)SurfaceType::Sentinel];
-        Array<SurfaceCell>* SurfaceCellsByLayer[2];
-    };
+struct CreatePuddleAction : public CreateSurfaceActionBase
+{
+    static constexpr SurfaceActionType Type = SurfaceActionType::CreatePuddle;
 
-    struct CreateSurfaceAction : public CreateSurfaceActionBase
-    {
-        bool InitialChangesPushed;
-        float Radius;
-        float ExcludeRadius;
-        float MaxHeight;
-        bool IgnoreIrreplacableSurfaces;
-        bool CheckExistingSurfaces;
-        uint64_t LineCheckBlock;
-        float Timer;
-        float GrowTimer;
-        int GrowStep;
-        int CurrentCellCount;
-        Array<SurfaceCell> SurfaceCells;
-        SurfaceLayer8 SurfaceLayer;
-        uint8_t field_491;
-        SpellId SpellId;
-        uint16_t SurfaceConcentrationTarget;
-    };
+    int SurfaceCells;
+    int Step;
+    float GrowSpeed;
+    int field_454;
+    bool IsFinished;
+    bool IgnoreIrreplacableSurfaces;
+    Array<AiTilePos> CellAtGrow;
+    Array<AiTilePos> ClosedCells;
+    float GrowTimer;
+};
 
-    struct CreatePuddleAction : public CreateSurfaceActionBase
-    {
-        int SurfaceCells;
-        int Step;
-        float GrowSpeed;
-        int field_454;
-        bool IsFinished;
-        bool IgnoreIrreplacableSurfaces;
-        __int64 CellAtGrow[3];
-        __int64 ClosedCells[3];
-        float GrowTimer;
-    };
+struct ForceCreateSurfaceAction : public CreateSurfaceActionBase
+{
+    static constexpr SurfaceActionType Type = SurfaceActionType::ForceCreateSurface;
+};
 
-    struct ExtinguishFireAction : public CreateSurfaceActionBase
-    {
-        glm::vec3 ExtinguishPosition;
-        float Radius;
-        float Percentage;
-        float ExtinguishGrowTimer;
-        float Step;
-        Array<void*> field_468;
-        __int64 SomeFixedArray[3];
-    };
+struct CapsuleSurfaceAction : public CreateSurfaceActionBase
+{
+    static constexpr SurfaceActionType Type = SurfaceActionType::CapsuleSurface;
 
-    struct ZoneActionParams
-    {
-        int Shape;
-        float Radius;
-        float ZoneParam;
-        float FrontOffset;
-        float MaxHeight;
-        float Height;
-        uint8_t Flags;
-    };
+    glm::vec3 AnimationCenter;
+    glm::vec3 End;
+    float Radius;
+    float ElapsedTime;
+    float AnimationDuration;
+    HashSet<AiTilePos> Cells;
+};
 
-    struct ZoneAction : public CreateSurfaceActionBase
-    {
-        SpellId Spell;
-        FixedString TextKey;
-        glm::vec3 Target;
-        ZoneActionParams Params;
-        int field_49C;
-        int GrowStep;
-        __int64 field_4A8;
-        int field_4B0;
-        Array<SurfaceCell> SurfaceCells;
-        Array<ecs::EntityRef> Targets;
-        Array<void*> field_4E8;
-        int64_t CurrentCellCount;
-        uint8_t Flags;
-    };
+struct RemoveSurfaceAction : public CreateSurfaceActionBase
+{
+    static constexpr SurfaceActionType Type = SurfaceActionType::RemoveSurface;
 
-    struct TransformSurfaceAction : public SurfaceAction
-    {
-        float Timer;
-        uint8_t SurfaceTransformAction; // FIXME enum
-        uint8_t OriginSurface; // FIXME enum
-        SurfaceLayer8 SurfaceLayer;
-        float GrowCellPerSecond;
-        bool Finished;
-        void* CellSearcher;
-        ecs::EntityRef OwnerHandle;
-        glm::vec3 Position;
-        float SurfaceLifetime;
-        LegacyRefMap<SurfaceType, ComponentHandle> SurfaceMap;
-        LegacyRefMap<SurfaceType, PrimitiveSet<SurfaceCell>> SurfaceCellMap;
-        ObjectSet<SurfaceCell> SurfaceRemoveGroundCellMap;
-        ObjectSet<SurfaceCell> SurfaceRemoveCloudCellMap;
-        bool PlayerCharacterNearby;
-        __int64 field_C0;
-        __int64 field_C8;
-        __int64 field_D0;
-        int field_D8;
-        int field_DC;
-        __int64 field_E0;
-    };
+    bg3se::SurfaceType RemoveSurfaceType;
+    glm::vec3 RemovePosition;
+    float Radius;
+    float Percentage;
+    float GrowTimer;
+    float Step;
+    int TotalCellCount;
+    float CurrentGrowTimer;
+    Array<AiTilePos> Cells;
+    Array<AiTilePos> GrowCells;
+};
 
-    struct ChangeSurfaceOnPathAction : public CreateSurfaceActionBase
-    {
-        ecs::EntityRef FollowHandle;
-        float Radius;
-        bool IsFinished;
-        Array<SurfaceCell> SurfaceCells;
-        bool IgnoreIrreplacableSurfaces;
-        bool CheckExistingSurfaces;
-        bool IgnoreOwnerCells;
-    };
 
-    struct RectangleSurfaceAction : public CreateSurfaceActionBase
-    {
-        glm::vec3 Target;
-        int field_458;
-        float SurfaceArea_M;
-        float Width;
-        float Length;
-        float GrowTimer;
-        float MaxHeight;
-        int GrowStep;
-        ObjectSet<void*> DamageList;
-        stats::DeathType DeathType;
-        uint64_t LineCheckBlock;
-        void* SkillProperties_M;
-        int CurrentGrowTimer_M;
-        Array<SurfaceCell> SurfaceCells;
-        ObjectSet<ecs::EntityRef> Characters;
-        ObjectSet<ecs::EntityRef> Items;
-        int CurrentCellCount;
-    };
+struct ZoneActionParams
+{
+    int Shape;
+    float Radius;
+    float ZoneParam;
+    float FrontOffset;
+    float MaxHeight;
+    float Height;
+    uint8_t Flags;
+};
 
-    struct PolygonSurfaceAction : public CreateSurfaceActionBase
-    {
-        FixedString field_448;
-        int field_44C;
-        ObjectSet<glm::vec2> PolygonVertices;
-        int field_468;
-        ObjectSet<void*> DamageList;
-        uint8_t field_488;
-        __int64 field_490;
-        float CurrentGrowTimer;
-        float GrowTimer;
-        glm::vec3 SomePosition;
-        int GrowStep;
-        int LastSurfaceCellCount;
-        int field_4B4;
-        Array<SurfaceCell> SurfaceCells;
-        ObjectSet<EntityHandle> Characters;
-        ObjectSet<EntityHandle> Items;
-        uint8_t field_500;
-    };
+struct ZoneAction : public CreateSurfaceActionBase
+{
+    static constexpr SurfaceActionType Type = SurfaceActionType::Zone;
 
-    /*struct SurfaceActionFactory : public ComponentFactoryBase
-    {
-        using CreateActionProc = SurfaceAction * (SurfaceActionFactory* self, SurfaceActionType actionType, 
-            resource::GuidResourceBankBase* classDefMgr, uint64_t actionHandle);
-    };
+    SpellId Spell;
+    FixedString TextKey;
+    glm::vec3 Target;
+    ZoneActionParams Params;
+    float GrowTimer;
+    int GrowStep;
+    [[bg3::hidden]] void* SpellProperties;
+    float CurrentGrowTimer;
+    Array<AiTilePos> Cells;
+    Array<EntityHandle> Targets;
+    Array<HitDesc> Hits;
+    int64_t CurrentCellCount;
+    uint8_t Flags;
+};
 
-    struct SurfaceManager : public ComponentFactoryBase
-    {
-        using AddActionProc = void(SurfaceManager* self, SurfaceAction* action);
+struct TransformSurfaceAction : public SurfaceAction
+{
+    static constexpr SurfaceActionType Type = SurfaceActionType::TransformSurface;
 
-        struct Unkn
-        {
-            int64_t field_0[3];
-        };
+    float Timer;
+    uint8_t SurfaceTransformAction; // FIXME enum
+    uint8_t OriginSurface; // FIXME enum
+    SurfaceLayer8 SurfaceLayer;
+    float GrowCellPerSecond;
+    bool Finished;
+    [[bg3::hidden]] void* CellSearcher;
+    EntityHandle OwnerHandle;
+    glm::vec3 Position;
+    float SurfaceLifetime;
+    LegacyRefMap<SurfaceType, ComponentHandle> SurfaceMap;
+    LegacyRefMap<SurfaceType, Array<AiTilePos>> SurfaceCellMap;
+    Array<AiTilePos> SurfaceRemoveGroundCellMap;
+    Array<AiTilePos> SurfaceRemoveCloudCellMap;
+    bool PlayerCharacterNearby;
+    Array<SurfaceType> SurfaceTypes;
+    LegacyRefMap<SurfaceType, SurfaceType> SurfaceTypeMap;
+};
 
-        int64_t field_78;
-        int64_t field_80;
-        Unkn field_88[17];
-        esv::Level* Level;
-        Array<SurfaceAction*> SurfaceActions;
-        int64_t field_240;
-        Array<Surface*> Surfaces;
-        int64_t field_260;
-        ObjectSet<void*> SurfaceConcentrationTargets;
-        int64_t field_280[16];
-        ObjectSet<void*> pAiTilePosSets;
-        LegacyRefMap<void*, void*> field_318;
-        LegacyRefMap<void*, void*> field_328;
-        int64_t field_338[10];
-    };*/
-}
+struct ChangeSurfaceOnPathAction : public CreateSurfaceActionBase
+{
+    static constexpr SurfaceActionType Type = SurfaceActionType::ChangeSurfaceOnPath;
+
+    EntityHandle FollowHandle;
+    float Radius;
+    bool IsFinished;
+    Array<AiTilePos> Cells;
+    bool IgnoreIrreplacableSurfaces;
+    bool CheckExistingSurfaces;
+    bool IgnoreOwnerCells;
+    bool field_5C3;
+};
+
+struct RectangleSurfaceAction : public CreateSurfaceActionBase
+{
+    static constexpr SurfaceActionType Type = SurfaceActionType::RectangleSurface;
+
+    glm::vec3 Target;
+    float SurfaceArea_M;
+    float Width;
+    float Length;
+    float GrowTimer;
+    float MaxHeight;
+    int GrowStep;
+    [[bg3::hidden]] ObjectSet<void*> DamageList;
+    stats::DeathType DeathType;
+    uint64_t LineCheckBlock;
+    Array<AiTilePos> Cells;
+    ObjectSet<EntityHandle> Characters;
+    ObjectSet<EntityHandle> Items;
+    int CurrentCellCount;
+};
+
+struct PolygonSurfaceAction : public CreateSurfaceActionBase
+{
+    static constexpr SurfaceActionType Type = SurfaceActionType::PolygonSurface;
+
+    FixedString field_448;
+    Array<glm::vec3> PolygonVertices;
+    int field_468;
+    [[bg3::hidden]] Array<void*> DamageList;
+    uint8_t field_488;
+    __int64 field_490;
+    float CurrentGrowTimer;
+    float GrowTimer;
+    int GrowStep;
+    int LastSurfaceCellCount;
+    Array<AiTilePos> SurfaceCells;
+    Array<EntityHandle> Characters;
+    Array<EntityHandle> Items;
+    uint8_t field_500;
+    bool PolygonCreated;
+};
+
+struct [[bg3::hidden]] SurfaceAiFlood : public AiFlood
+{
+    AiTilePos field_68;
+    __int64 field_70;
+    __int64 field_78;
+    __int16 field_80;
+    Array<AiTilePos> Tiles;
+};
+
+struct SurfaceCreatedEventRequest : ProtectedGameObject<SurfaceCreatedEventRequest>
+{
+    Surface* Surface;
+    bool NewlyCreated;
+};
+
+struct SurfaceRemovedEventRequest
+{
+    EntityHandle field_0;
+    EntityHandle field_8;
+    Guid SpellCastUuid;
+};
+
+struct SurfacePosition
+{
+    ComponentHandle Surface;
+    glm::vec3 Position;
+};
+
+struct SurfaceConcentrationTarget
+{
+    HashSet<ComponentHandle> Surfaces;
+    uint16_t Index;
+};
+
+struct SurfaceTransformActionRequirement
+{
+    uint8_t Type; // SurfaceTransformRequirementType
+    std::variant<SurfaceType, uint8_t /*SurfaceModifierType*/, int8_t /*SurfaceCategory*/> Requirement;
+};
+
+struct SurfaceTransformActionRequirements
+{
+    uint8_t byte0;
+    Array<SurfaceTransformActionRequirement> Requirements;
+};
+
+
+struct [[bg3::hidden]] SurfaceManager : public ObjectFactory<Surface>
+{
+    void* VMT2;
+    __int64 field_68;
+    std::array<Array<SurfaceTransformActionRequirements>, 16> TransformActionRequirements;
+    Level* Level;
+    Array<SurfaceAction*> Actions;
+    LegacyArray<Surface*> Surfaces;
+    LegacyArray<SurfaceConcentrationTarget*> SurfaceConcentrationTargets;
+    Array<AiTilePos> RemoveCells;
+    SurfaceAiFlood AiFlood;
+    Array<Array<AiTilePos>> HandledCellTransitions;
+    LegacyRefMap<FixedString, Array<AiTilePos>> Chasms;
+    Array<SurfacePosition> CheckFTBTeamRequests;
+    Array<SurfaceCreatedEventRequest> CreatedEvents;
+    Array<SurfaceRemovedEventRequest> RemovedEvents;
+};
+
+END_NS()
+
+BEGIN_NS(lua)
+
+LUA_POLYMORPHIC(esv::SurfaceAction)
+
+END_NS()

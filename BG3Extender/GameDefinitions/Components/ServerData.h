@@ -398,8 +398,12 @@ struct SurfaceComponent : public BaseComponent
 {
     DEFINE_COMPONENT(ServerSurface, "esv::surface::SurfaceComponent")
 
-    Guid Surface;
-    ComponentHandle field_10;
+    Guid SpellCastUuid;
+    [[bg3::legacy(field_10)]] ComponentHandle SurfaceHandle;
+
+    // Lua call helpers
+    //# P_GETTER(Surface, GetSurface)
+    esv::Surface* GetSurface(lua_State* L) const;
 };
 
 struct LevelLoadedComponent : public BaseComponent

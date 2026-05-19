@@ -538,10 +538,24 @@ inline void CallGetter(lua_State* L, T const* obj, R(T::* fun)() const) {
 }
 
 template <class R, class T>
+inline void CallGetter(lua_State* L, T const* obj, R(T::* fun)(lua_State*) const) {
+    static_assert(TupleSize(Overload<R>{}) == 1, "Can only push 1 value to stack in a getter.");
+    StackCheck _(L, 1);
+    PushReturnValue(L, (obj->*fun)(L));
+}
+
+template <class R, class T>
 inline void CallGetter(lua_State* L, T const* obj, R const& (T::* fun)() const) {
     static_assert(TupleSize(Overload<R>{}) == 1, "Can only push 1 value to stack in a getter.");
     StackCheck _(L, 1);
     PushReturnValue(L, (obj->*fun)());
+}
+
+template <class R, class T>
+inline void CallGetter(lua_State* L, T const* obj, R const& (T::* fun)(lua_State*) const) {
+    static_assert(TupleSize(Overload<R>{}) == 1, "Can only push 1 value to stack in a getter.");
+    StackCheck _(L, 1);
+    PushReturnValue(L, (obj->*fun)(L));
 }
 
 template <class R, class T>
@@ -552,17 +566,17 @@ inline void CallGetter(lua_State* L, T const* obj, R(* fun)(T const*)) {
 }
 
 template <class R, class T>
-inline void CallGetter(lua_State* L, T const* obj, R const& (* fun)(T const*)) {
-    static_assert(TupleSize(Overload<R>{}) == 1, "Can only push 1 value to stack in a getter.");
-    StackCheck _(L, 1);
-    PushReturnValue(L, (*fun)(obj));
-}
-
-template <class R, class T>
 inline void CallGetter(lua_State* L, T const* obj, R(* fun)(lua_State*, T const*)) {
     static_assert(TupleSize(Overload<R>{}) == 1, "Can only push 1 value to stack in a getter.");
     StackCheck _(L, 1);
     PushReturnValue(L, (*fun)(L, obj));
+}
+
+template <class R, class T>
+inline void CallGetter(lua_State* L, T const* obj, R const& (* fun)(T const*)) {
+    static_assert(TupleSize(Overload<R>{}) == 1, "Can only push 1 value to stack in a getter.");
+    StackCheck _(L, 1);
+    PushReturnValue(L, (*fun)(obj));
 }
 
 template <class R, class T>

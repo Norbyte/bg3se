@@ -272,6 +272,25 @@ struct [[bg3::hidden]] AiGridRequestMap
 };
 
 
+struct [[bg3::hidden]] AiFlood : public ProtectedGameObject<AiFlood>
+{
+    void* VMT;
+    EntityHandle MovingObject;
+    uint8_t FloodType;
+    float field_14;
+    float ClimbHeight;
+    uint8_t PathClimbingMode;
+    uint8_t PathDroppingMode;
+    HashSet<FixedString> field_20;
+    int field_50;
+    uint8_t FloodFlags;
+    uint8_t field_55;
+    uint8_t Flags;
+    int MaxIterations;
+    uint64_t field_60;
+};
+
+
 struct AiSomeFloodObj
 {
     __int64 field_0;

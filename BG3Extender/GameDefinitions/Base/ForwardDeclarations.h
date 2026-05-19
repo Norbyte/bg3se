@@ -164,6 +164,10 @@ namespace esv
     struct SteeringMachine;
     struct TaskController;
 
+    struct Surface;
+    struct SurfaceAction;
+    struct SurfaceManager;
+
     class ExtensionState;
 
     namespace lua

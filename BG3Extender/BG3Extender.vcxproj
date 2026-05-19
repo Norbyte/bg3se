@@ -249,6 +249,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="GameDefinitions\Item.h" />
     <ClInclude Include="GameDefinitions\Module.h" />
     <ClInclude Include="GameDefinitions\Net.h" />
+    <ClInclude Include="GameDefinitions\ObjectFactory.h" />
     <ClInclude Include="GameDefinitions\Osiris.h" />
     <ClInclude Include="GameDefinitions\GuidResources.h" />
     <ClInclude Include="GameDefinitions\Controllers\OsirisTask.h" />
@@ -488,13 +489,13 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="GameDefinitions\PropertyMaps\Events.inl" />
     <None Include="GameDefinitions\PropertyMaps\IMGUI.inl" />
     <None Include="GameDefinitions\PropertyMaps\ServerObjects.inl" />
-    <None Include="GameDefinitions\PropertyMaps\SurfaceActions.inl" />
     <None Include="GameDefinitions\PropertyMaps\UI.inl" />
     <None Include="GameDefinitions\Render.inl" />
     <None Include="GameDefinitions\RootTemplates.inl" />
     <None Include="GameDefinitions\Stats\Expression.inl" />
     <None Include="GameDefinitions\Stats\Functors.inl" />
     <None Include="GameDefinitions\Status.inl" />
+    <None Include="GameDefinitions\Surface.inl" />
     <None Include="GameHooks\EngineHooks.inl" />
     <None Include="LuaScripts\BuiltinLibrary.lua" />
     <None Include="LuaScripts\BuiltinLibraryClient.lua" />

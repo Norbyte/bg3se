@@ -704,6 +704,7 @@ sources = [
     'GameDefinitions/Resources.h',
     'GameDefinitions/Skeleton.h',
     'GameDefinitions/Status.h',
+    'GameDefinitions/Surface.h',
     'GameDefinitions/Ai.h',
     'GameDefinitions/AiHelpers.h',
     'GameDefinitions/Controllers/Action.h',
