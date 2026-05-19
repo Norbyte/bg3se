@@ -555,7 +555,8 @@ struct TurnBasedComponent : public BaseComponent
 {
     DEFINE_COMPONENT(FTBTurnBased, "esv::ftb::TurnBasedComponent")
 
-    uint64_t Entity;
+    uint8_t field_0;
+    uint32_t field_4;
 };
 
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::ftb, PlayersTurnEndedEventOneFrameComponent, FTBPlayersTurnEndedEvent)

@@ -225,7 +225,7 @@ struct OriginalTemplateComponent : public BaseComponent
     DEFINE_COMPONENT(OriginalTemplate, "eoc::templates::OriginalTemplateComponent")
 
     FixedString OriginalTemplate;
-    uint8_t TemplateType;
+    TemplateType TemplateType;
 };
 
 

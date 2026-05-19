@@ -94,8 +94,8 @@ struct BoostDescription
 
 struct ResourceRollDefinition
 {
-    Guid field_0;
-    uint8_t field_10{ 0 };
+    [[bg3::legacy(field_0)]] Guid Resource;
+    [[bg3::legacy(field_10)]] uint8_t Amount{ 0 };
 };
 
 struct PathSettings
@@ -116,7 +116,7 @@ struct TextLine : TranslatedString
 struct TemplateInfo
 {
     FixedString TemplateId;
-    uint8_t TemplateType{ 0 };
+    TemplateType TemplateType{ TemplateType::RootTemplate };
 };
 
 END_SE()
