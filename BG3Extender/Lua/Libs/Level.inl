@@ -29,10 +29,13 @@ void PathfindingSystem::PathRequest::Release(LevelManager& levelManager)
 
 AiPath* PathfindingSystem::CreatePathRequestImmediate()
 {
-    auto path = levelManager_.CurrentLevel->AiGrid->CreatePath();
+    auto aiGrid = levelManager_.CurrentLevel ? levelManager_.CurrentLevel->AiGrid : nullptr;
+    if (!aiGrid) return nullptr;
+
+    auto path = aiGrid->CreatePath();
     if (path) {
         pendingRequests_.push_back(PathRequest{ path, LuaDelegate<void(AiPath*)>{}, true });
-        levelManager_.CurrentLevel->AiGrid->Paths.push_back(path);
+        aiGrid->Paths.push_back(path);
     }
 
     return path;
@@ -40,10 +43,13 @@ AiPath* PathfindingSystem::CreatePathRequestImmediate()
 
 AiPath* PathfindingSystem::CreatePathRequest(LuaDelegate<void(AiPath*)>&& callback)
 {
-    auto path = levelManager_.CurrentLevel->AiGrid->CreatePath();
+    auto aiGrid = levelManager_.CurrentLevel ? levelManager_.CurrentLevel->AiGrid : nullptr;
+    if (!aiGrid) return nullptr;
+
+    auto path = aiGrid->CreatePath();
     if (path) {
         pendingRequests_.push_back(PathRequest{ path, std::move(callback), false });
-        levelManager_.CurrentLevel->AiGrid->Paths.push_back(path);
+        aiGrid->Paths.push_back(path);
     }
 
     return path;
@@ -100,12 +106,14 @@ void PathfindingSystem::Update()
 AiGrid* GetAiGrid(lua_State* L)
 {
     auto levelManager = State::FromLua(L)->GetExtensionState().GetLevelManager();
-    return levelManager->CurrentLevel->AiGrid;
+    return (levelManager->CurrentLevel) ? levelManager->CurrentLevel->AiGrid : nullptr;
 }
 
 Array<EntityHandle> GetEntitiesOnTile(lua_State* L, glm::vec3 pos)
 {
     auto aiGrid = GetAiGrid(L);
+    if (!aiGrid) return {};
+
     auto worldPos = AiGrid::ToWorldPos(pos);
 
     Array<EntityHandle> entities;
@@ -127,6 +135,8 @@ AiGridLuaTile gTestTile;
 AiGridLuaTile* GetTileDebugInfo(lua_State* L, glm::vec3 pos)
 {
     auto aiGrid = GetAiGrid(L);
+    if (!aiGrid) return nullptr;
+
     auto worldPos = AiGrid::ToWorldPos(pos);
 
     AiGridLuaTile& tile = gTestTile;
@@ -162,6 +172,8 @@ AiGridLuaTile* GetTileDebugInfo(lua_State* L, glm::vec3 pos)
 Array<float> GetHeightsAt(lua_State* L, float x, float z)
 {
     auto aiGrid = GetAiGrid(L);
+    if (!aiGrid) return {};
+
     auto worldPos = AiGrid::ToWorldPos(glm::vec3(x, 0.0f, z));
     return aiGrid->GetHeightsAt(worldPos);
 }
@@ -221,16 +233,18 @@ void ReleasePath(lua_State* L, AiPath* path)
 AiPath* GetPathById(lua_State* L, AiPathId id)
 {
     auto aiGrid = GetAiGrid(L);
-    return aiGrid->PathMap.get_or_default(id);
+    return aiGrid ? aiGrid->PathMap.get_or_default(id) : nullptr;
 }
 
 Array<AiPath*> GetActivePathfindingRequests(lua_State* L)
 {
     Array<AiPath*> paths;
     auto aiGrid = GetAiGrid(L);
-    for (auto path : aiGrid->PathPool) {
-        if (path->InUse) {
-            paths.push_back(path);
+    if (aiGrid) {
+        for (auto path : aiGrid->PathPool) {
+            if (path->InUse) {
+                paths.push_back(path);
+            }
         }
     }
 
