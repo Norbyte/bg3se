@@ -67,6 +67,8 @@ struct Character : public BaseProxyComponent
     Status* GetStatus(FixedString statusId);
     Status* GetStatusByType(StatusType type);
 
+    CharacterTemplate* CreateCacheTemplate();
+
     void* VMT;
     void* VMT2;
     EntityHandle field_10;

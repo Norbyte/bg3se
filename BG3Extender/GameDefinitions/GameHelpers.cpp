@@ -8,8 +8,10 @@
 #include <GameDefinitions/Dialog.h>
 #include <GameDefinitions/Stats/UseActions.h>
 #include <GameDefinitions/Stats/Functors.h>
+#include <GameDefinitions/Components/ServerData.h>
 
 #include <GameDefinitions/Ai.inl>
+#include <GameDefinitions/Base/Lock.inl>
 
 namespace bg3se
 {
@@ -251,6 +253,43 @@ namespace bg3se
         }
 
         return nullptr;
+    }
+
+    CharacterTemplate* esv::Character::CreateCacheTemplate()
+    {
+        auto oldTemplate = Template;
+        auto tmplType = Template->TemplateHandle.GetType();
+        if (tmplType == TemplateType::CacheTemplate || tmplType == TemplateType::LevelCacheTemplate) {
+            return nullptr;
+        }
+
+        auto templateMgr = *GetStaticSymbols().esv__CacheTemplateManager;
+        auto newTmpl = static_cast<CharacterTemplate*>(templateMgr->CacheTemplate(Template, Template->LevelName, Template->Id));
+        if (newTmpl != Template) {
+            DecTemplateRef(Template);
+            IncTemplateRef(newTmpl);
+            Template = newTmpl;
+
+            auto changeSys = gExtender->GetServer().GetEntityHelpers().GetSystem<esv::templates::ChangeSystem>();
+            changeSys->TemplateSwitch.set(field_10, TemplateInfo{
+                .TemplateId = newTmpl->Id,
+                .TemplateType = newTmpl->TemplateHandle.GetType()
+            });
+        }
+
+        if (OriginalTemplate == oldTemplate) {
+            DecTemplateRef(OriginalTemplate);
+            IncTemplateRef(newTmpl);
+            OriginalTemplate = newTmpl;
+        }
+
+        if (TemplateUsedForSpells == oldTemplate) {
+            DecTemplateRef(TemplateUsedForSpells);
+            IncTemplateRef(newTmpl);
+            TemplateUsedForSpells = newTmpl;
+        }
+
+        return newTmpl;
     }
 
     char const * TempStrings::Make(STDString const & str)
@@ -1062,73 +1101,6 @@ bool AppliedMaterial::SetVirtualTexture(FixedString const& paramName, FixedStrin
 
         ERR("Material has no VT parameter named '%s'", paramName.GetString());
         return false;
-    }
-}
-
-void SRWSpinLock::ReadLock()
-{
-    if (OwningThreadId == 0xffffffffu || OwningThreadId != GetCurrentThreadId()) {
-        ReadWait();
-    }
-}
-
-void SRWSpinLock::ReadUnlock()
-{
-    if (OwningThreadId == 0xffffffffu || OwningThreadId != GetCurrentThreadId()) {
-        se_assert((FastLock & 0x000fffffu) > 0);
-        --FastLock;
-    }
-}
-
-void SRWSpinLock::WriteLock()
-{
-    if (OwningThreadId == 0xffffffffu || OwningThreadId != GetCurrentThreadId()) {
-        WriteWait();
-
-        OwningThreadId = GetCurrentThreadId();
-    }
-
-    ++WriteEnterCount;
-}
-
-void SRWSpinLock::WriteUnlock()
-{
-    se_assert(WriteEnterCount > 0);
-    if (--WriteEnterCount == 0) {
-        se_assert(OwningThreadId == GetCurrentThreadId());
-        se_assert((FastLock & 0xfff00000u) > 0);
-        OwningThreadId = 0xffffffffu;
-        FastLock -= 0x100000u;
-    }
-}
-
-void SRWSpinLock::WriteWait()
-{
-    for (;;) {
-        SpinWait([&] () { return (FastLock & 0xfff00000u) == 0; });
-
-        if ((FastLock.fetch_add(0x100000u) & 0xfff00000u) == 0) {
-            break;
-        }
-
-        FastLock -= 0x100000u;
-    }
-
-    if ((FastLock & 0x000fffffu) != 0) {
-        SpinWait([&] () { return (FastLock & 0x000fffffu) == 0; });
-    }
-}
-
-void SRWSpinLock::ReadWait()
-{
-    for (;;) {
-        SpinWait([&] () { return (FastLock & 0xfff00000u) == 0; });
-
-        if ((FastLock.fetch_add(1) & 0xfff00000u) == 0) {
-            break;
-        }
-
-        --FastLock;
     }
 }
 

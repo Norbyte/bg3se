@@ -77,38 +77,6 @@ struct TranslatedFSArgumentString : private ProtectedGameObject<TranslatedFSArgu
     LegacyRefMap<FixedString, ArgumentPosition> ArgPositions;
 };
 
-template <class Pred>
-inline void SpinWait(Pred pred)
-{
-    while (!pred()) {
-        unsigned spinCount = 0;
-        while (!pred()) {
-            _mm_pause();
-            if (spinCount++ > 400) {
-                Sleep(0);
-                break;
-            }
-        }
-    }
-}
-
-class SRWSpinLock
-{
-public:
-    void ReadLock();
-    void ReadUnlock();
-    void WriteLock();
-    void WriteUnlock();
-
-private:
-    std::atomic<uint32_t> FastLock;
-    DWORD OwningThreadId;
-    uint32_t WriteEnterCount;
-
-    void WriteWait();
-    void ReadWait();
-};
-
 struct TranslatedArgumentStringBuffer
 {
     char* ArgumentsBuffer2;

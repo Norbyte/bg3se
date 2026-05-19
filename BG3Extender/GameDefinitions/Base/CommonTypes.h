@@ -62,13 +62,6 @@ struct CriticalSection : public CRITICAL_SECTION
     __int64 field_30;
 };
 
-struct SRWLock
-{
-    SRWLOCK SRWLock;
-    int32_t ThreadId;
-    uint32_t EnterCount;
-};
-
 struct AiTilePos
 {
     int16_t X;

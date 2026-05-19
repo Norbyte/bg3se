@@ -168,6 +168,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="GameDefinitions\Base\Base.h" />
     <ClInclude Include="GameDefinitions\Base\ExposedTypes.h" />
     <ClInclude Include="GameDefinitions\Base\Genome.h" />
+    <ClInclude Include="GameDefinitions\Base\Lock.h" />
     <ClInclude Include="GameDefinitions\Base\LuaAnnotations.h" />
     <ClInclude Include="GameDefinitions\Base\Serialization.h" />
     <ClInclude Include="GameDefinitions\Base\BaseTypeInformation.h" />
@@ -459,6 +460,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="GameDefinitions\Ai.inl" />
     <None Include="GameDefinitions\AllSpark.inl" />
     <None Include="GameDefinitions\Animation.inl" />
+    <None Include="GameDefinitions\Base\Lock.inl" />
     <None Include="GameDefinitions\Base\TypeInformation.inl" />
     <None Include="GameDefinitions\Components\AllComponentTypes.inl" />
     <None Include="GameDefinitions\Components\AllSystemTypes.inl" />

@@ -72,6 +72,7 @@ P_GETTER(Character, LuaGetSelf)
 // Functions
 P_FUN(GetStatus, esv::Character::GetStatus)
 P_FUN(GetStatusByType, esv::Character::GetStatusByType)
+P_FUN(CreateCacheTemplate, esv::Character::CreateCacheTemplate)
 END_CLS()
 
 

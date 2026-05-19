@@ -54,6 +54,8 @@ struct GlobalTemplateManager;
 struct GlobalTemplateBank;
 struct LocalTemplateManager;
 struct CacheTemplateManagerBase;
+struct GlobalCacheTemplateManager;
+struct LevelCacheTemplateManager;
 
 struct AiGrid;
 struct AiPath;

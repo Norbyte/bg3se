@@ -117,7 +117,7 @@ namespace bg3se
         esv::LevelManager** esv__LevelManager{ nullptr };
         ecl::LevelManager** ecl__LevelManager{ nullptr };
         GlobalTemplateManager** ls__GlobalTemplateManager{ nullptr };
-        CacheTemplateManagerBase** esv__CacheTemplateManager{ nullptr };
+        LevelCacheTemplateManager** esv__CacheTemplateManager{ nullptr };
 
         AiGrid::FindPathProc* eoc__AiGrid__FindPath{ nullptr };
         AiGrid::FindPathImmediateProc* eoc__AiGrid__FindPathImmediate{ nullptr };

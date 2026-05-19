@@ -6,6 +6,32 @@ BEGIN_SE()
 
 struct TemplateTagContainer;
 
+struct [[bg3::hidden]] TemplateHandle
+{
+public:
+    inline TemplateHandle(uint32_t index, TemplateType type)
+        : handle_(index | (((uint32_t)type) << 29))
+    {}
+
+    inline uint32_t GetHandle() const
+    {
+        return handle_;
+    }
+
+    inline uint32_t GetIndex() const
+    {
+        return handle_ & ~0xe0000000u;
+    }
+
+    inline TemplateType GetType() const
+    {
+        return TemplateType(handle_ >> 29);
+    }
+
+private:
+    uint32_t handle_;
+};
+
 struct GameObjectTemplate : public ProtectedGameObject<GameObjectTemplate>
 {
     virtual ~GameObjectTemplate() = 0;
@@ -23,7 +49,7 @@ struct GameObjectTemplate : public ProtectedGameObject<GameObjectTemplate>
     virtual bool IsValid() const = 0;
     virtual Guid* GetHLOD() = 0;
     virtual GameObjectTemplate* Clone() = 0;
-    virtual GameObjectTemplate* PartialClone(GameObjectTemplate* other) = 0;
+    virtual GameObjectTemplate* CloneFrom(GameObjectTemplate* other) = 0;
     virtual void OverrideFromParent(GameObjectTemplate* other, bool force) = 0;
     virtual void UpdateOverrideFlagsFromParent(GameObjectTemplate* other) = 0;
     virtual bool PostLoad() = 0;
@@ -51,7 +77,7 @@ struct GameObjectTemplate : public ProtectedGameObject<GameObjectTemplate>
     [[bg3::readonly]] FixedString Id;
     [[bg3::readonly]] FixedString TemplateName;
     [[bg3::readonly]] FixedString ParentTemplateId;
-    [[bg3::readonly]] uint32_t TemplateHandle;
+    [[bg3::hidden]] TemplateHandle TemplateHandle;
     [[bg3::readonly]] STDString Name;
     OverrideableProperty<uint32_t> GroupID;
     FixedString LevelName;
@@ -949,7 +975,7 @@ struct ConstellationTemplate : public GameObjectTemplate
     Array<InterEntityConnection> Connections;
 };
 
-struct [[bg3::hidden]] GlobalTemplateBank
+struct [[bg3::hidden]] GlobalTemplateBank : public ProtectedGameObject<GlobalTemplateBank>
 {
     void* VMT;
     LegacyMap<FixedString, GameObjectTemplate*> Templates;
@@ -963,7 +989,7 @@ struct [[bg3::hidden]] GlobalTemplateBank
 };
 
 
-struct [[bg3::hidden]] GlobalTemplateManager
+struct [[bg3::hidden]] GlobalTemplateManager : public ProtectedGameObject<GlobalTemplateManager>
 {
     void* VMT;
     LegacyMap<FixedString, GameObjectTemplate*> Templates;
@@ -971,34 +997,71 @@ struct [[bg3::hidden]] GlobalTemplateManager
 };
 
 
-struct [[bg3::hidden]] CacheTemplateManagerBase
+struct [[bg3::hidden]] CacheTemplateManagerBase : public ProtectedGameObject<CacheTemplateManagerBase>
 {
-    void* VMT;
-    uint8_t TemplateManagerType;
+    virtual ~CacheTemplateManagerBase() = 0;
+    virtual void Clear(bool) = 0;
+    virtual bool ShouldSave(ObjectVisitor*, GameObjectTemplate const*) = 0;
+    virtual void OnLoad(ObjectVisitor*, GameObjectTemplate*) = 0;
+    virtual uint32_t GetNewIndex() = 0;
+    virtual bool PostVisit(ObjectVisitor*) = 0;
+
+    GameObjectTemplate* CacheTemplate(GameObjectTemplate* tmpl, FixedString const& levelName, FixedString const& templateId);
+    void RegisterTemplate(TemplateHandle handle, GameObjectTemplate* tmpl);
+    void IncTemplateRef(TemplateHandle handle);
+    void DecTemplateRef(TemplateHandle handle);
+
+    TemplateType TemplateManagerType;
     HashMap<FixedString, GameObjectTemplate*> Templates;
     HashMap<uint32_t, GameObjectTemplate*> TemplatesByHandle;
     HashMap<uint32_t, uint32_t> RefCountsByHandle;
     SRWLock Lock;
-    Array<void*> NewTemplates;
-    Array<void*> CacheTemplateRemovers;
-    bool field_100;
+    Array<GameObjectTemplate*> AddedTemplates;
+    Array<GameObjectTemplate*> RemovedTemplates;
+    bool EnableTemplateSync;
 };
 
 
-struct [[bg3::hidden]] LocalTemplateManager
+struct [[bg3::hidden]] GlobalCacheTemplateManager : public CacheTemplateManagerBase
 {
+    uint32_t NextTemplateId;
+};
+
+
+struct [[bg3::hidden]] LevelCacheTemplateManager : public CacheTemplateManagerBase
+{
+    FixedString LevelName;
+};
+
+struct [[bg3::hidden]] LocalTemplateData
+{
+    GameObjectTemplate* Template;
+    std::atomic<uint32_t> RefCount{ 0 };
+};
+
+struct [[bg3::hidden]] LocalTemplateManager : public ProtectedGameObject<LocalTemplateManager>
+{
+    void IncTemplateRef(TemplateHandle handle);
+    void DecTemplateRef(TemplateHandle handle);
+
     SRWLOCK Lock;
     LegacyRefMap<FixedString, GameObjectTemplate*> Templates;
     LegacyRefMap<uint16_t, Array<GameObjectTemplate*>*> TemplatesByType;
-    LegacyRefMap<uint32_t, GameObjectTemplate*> TemplatesByHandle;
-    void* LocalLoadHelper;
+    LegacyRefMap<uint32_t, LocalTemplateData> TemplatesByHandle;
+    void* LevelDataManager;
     CRITICAL_SECTION CriticalSection;
     LegacyRefMap<FixedString, LegacyRefMap<FixedString, GameObjectTemplate*>> TemplatesByLevel;
     int field_78;
 };
 
-
 END_SE()
+
+BEGIN_NS(esv)
+
+void IncTemplateRef(GameObjectTemplate* tmpl);
+void DecTemplateRef(GameObjectTemplate* tmpl);
+
+END_NS()
 
 BEGIN_NS(lua)
 

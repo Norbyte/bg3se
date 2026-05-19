@@ -259,6 +259,7 @@ template <class T, class TBase>
 inline constexpr StructTypeId CheckedGetParentStructId()
 {
     static_assert(std::is_base_of_v<TBase, T>, "Can only copy properties from base class");
+    static_assert(IsStruct<TBase>, "Inheriting from a non-struct type?");
     // FIXME - this check is not constexpr :(
     // static_assert(static_cast<T*>(reinterpret_cast<TBase*>(nullptr)) == reinterpret_cast<T*>(nullptr), "Base and child class should start at same base ptr");
 

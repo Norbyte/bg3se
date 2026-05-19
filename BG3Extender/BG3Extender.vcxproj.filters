@@ -535,6 +535,7 @@
     <ClInclude Include="GameDefinitions\Base\TypeId.h" />
     <ClInclude Include="GameDefinitions\Base\WindowsSlim.h" />
     <ClInclude Include="Lua\Shared\ExposedTypes.h" />
+    <ClInclude Include="GameDefinitions\Base\Lock.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -801,6 +802,9 @@
     </None>
     <None Include="GameDefinitions\Components\Level.inl">
       <Filter>GameDefinitions\Components</Filter>
+    </None>
+    <None Include="GameDefinitions\Base\Lock.inl">
+      <Filter>GameDefinitions\Base</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

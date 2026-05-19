@@ -34,6 +34,7 @@ END_SE()
 #include <GameDefinitions/Base/TypeMetadata.h>
 #include <GameDefinitions/Base/LuaAnnotations.h>
 #include <GameDefinitions/Base/BaseTypeInformation.h>
+#include <GameDefinitions/Base/Lock.h>
 #include <GameDefinitions/Base/CommonTypes.h>
 #include <GameDefinitions/Base/ExposedTypes.h>
 #include <GameDefinitions/Base/Genome.h>

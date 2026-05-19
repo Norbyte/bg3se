@@ -100,7 +100,7 @@ namespace bg3se
             void* AtmosphereOverrides;
             void* EnvironmentalStatusManager;
             void* StaticPhysicsManager;
-            CacheTemplateManagerBase* CacheTemplateManager;
+            LevelCacheTemplateManager* CacheTemplateManager;
         };
 
         struct LevelManager : public bg3se::LevelManager

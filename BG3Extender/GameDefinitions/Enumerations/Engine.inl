@@ -121,6 +121,16 @@ BEGIN_ENUM_NS(esv, GameState, ServerGameState, uint32_t)
 END_ENUM_NS()
 
 
+BEGIN_ENUM(TemplateType, uint8_t)
+    EV(RootTemplate, 0)
+    EV(GlobalTemplate, 1)
+    EV(LocalTemplate, 2)
+    EV(CacheTemplate, 3)
+    EV(LevelTemplate, 4)
+    EV(LevelCacheTemplate, 5)
+END_ENUM()
+
+
 BEGIN_ENUM(ResourceBankType, uint32_t)
     EV(Visual, 0)
     EV(VisualSet, 1)
