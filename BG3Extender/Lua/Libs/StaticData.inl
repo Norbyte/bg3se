@@ -13,6 +13,7 @@ public:
     virtual Array<Guid> GetAll() = 0;
     virtual HashMap<Guid, Array<Guid>>* GetSources() = 0;
     virtual Array<Guid>* GetByModId(Guid modGuid) = 0;
+    virtual GuidResourceBankBase* GetBank() const = 0;
 };
 
 class NullGuidResourceBankHelper : public GuidResourceBankHelperBase
@@ -41,6 +42,11 @@ public:
     Array<Guid>* GetByModId(Guid modGuid) override
     {
         return &dummyResources_;
+    }
+    
+    GuidResourceBankBase* GetBank() const override
+    {
+        return nullptr;
     }
 
 private:
@@ -119,6 +125,11 @@ public:
     Array<Guid>* GetByModId(Guid modGuid) override
     {
         return bank_->ResourceGuidsByMod.try_get(modGuid);
+    }
+
+    GuidResourceBankBase* GetBank() const override
+    {
+        return bank_;
     }
 
 private:
@@ -215,6 +226,16 @@ Array<Guid>* GetGuidResourcesByModId(lua_State* L, ExtResourceManagerType type, 
     return gGuidResourceHelpers.Get(type)->GetByModId(modGuid);
 }
 
+void ClearResourceBank(ExtResourceManagerType type)
+{
+    gGuidResourceHelpers.Get(type)->GetBank()->ClearInternal();
+}
+
+void SyncResourceBank(ExtResourceManagerType type)
+{
+    gGuidResourceHelpers.Get(type)->GetBank()->PostLoad();
+}
+
 UserReturn CreateGuidResource(lua_State* L, ExtResourceManagerType type, std::optional<Guid> resourceGuid)
 {
     if (!gGuidResourceHelpers.Get(type)->Create(L, resourceGuid, true)) {
@@ -303,6 +324,8 @@ void RegisterStaticDataLib()
     MODULE_NAMED_FUNCTION("GetTextureAtlasManager", GetTextureAtlasManager)
     MODULE_NAMED_FUNCTION("GetIconAtlas", GetIconAtlas)
     MODULE_NAMED_FUNCTION("GetIconUVs", GetIconUVs)
+    MODULE_NAMED_FUNCTION("ClearResourceBank", ClearResourceBank)
+    MODULE_NAMED_FUNCTION("SyncResourceBank", SyncResourceBank)
     END_MODULE()
 
     DECLARE_MODULE(Resource, Both)

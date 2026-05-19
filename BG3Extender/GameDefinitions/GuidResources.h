@@ -143,7 +143,7 @@ struct [[bg3::hidden]] GuidResourceBankBase : ProtectedGameObject<GuidResourceBa
     virtual GuidResource const* AddLoadedObject(GuidResource&&) = 0;
     virtual bool Load(ObjectVisitor&, Array<Guid>&, bool) = 0;
     virtual FixedString const& VisitorSortKey() const = 0;
-    virtual void PostUnload() = 0;
+    virtual void ClearInternal() = 0;
     virtual void PostLoad() = 0;
 
     FixedString LSXRegionName;
