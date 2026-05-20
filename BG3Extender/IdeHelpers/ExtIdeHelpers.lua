@@ -5003,8 +5003,8 @@ Osi = {}
 --- @class LockComponent:BaseComponent
 --- @field Key_M FixedString
 --- @field LockDC int32
+--- @field LockDifficultyClassID Guid
 --- @field field_18 Guid[]
---- @field field_8 Guid
 
 
 --- @class LockpickActionData:IActionData
