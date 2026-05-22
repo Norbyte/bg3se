@@ -184,3 +184,4 @@ FS(FixedStringSet);
 FS(AnimationSimpleName);
 FS(AnimationSetID);
 FS(AnimationComplexName);
+FS(TimelineData);

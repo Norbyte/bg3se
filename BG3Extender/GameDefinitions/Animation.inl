@@ -139,8 +139,9 @@ UserReturn GenomeVariant::LuaGetValue(lua_State* L) const
         Serialize(L, &GetValue<TGenomeSet<STDString>>());
     } else if (Type->TypeName == GFS.strFixedStringSet) {
         Serialize(L, &GetValue<TGenomeSet<FixedString>>());
+    } else if (Type->TypeName == GFS.strTimelineData) {
+        lua::push(L, const_cast<GenomeTimelineData*>(&GetValue<GenomeTimelineData>()), GetCurrentLifetime(L));
     } else {
-        // TODO - TimelineData (= ls::GenomeTimelineData*)
         WARN_ONCE("Unsupported Genome variant type: %s", Type->TypeName.GetString());
         push(L, nullptr);
     }
@@ -225,8 +226,17 @@ void GenomeVariant::LuaSetValue(GenomeVarTypeDesc* type, lua_State* L, int index
         SetValue<glm::mat4>(L, index);
     } else if (type->TypeName == GFS.strFloatSet) {
         SetValue<TGenomeSet<float>>(L, index);
+    } else if (Type->TypeName == GFS.strIntSet) {
+        SetValue<TGenomeSet<int32_t>>(L, index);
+    } else if (Type->TypeName == GFS.strShortNameSet) {
+        SetValue<TGenomeSet<FixedString>>(L, index);
+    } else if (Type->TypeName == GFS.strStringSet) {
+        SetValue<TGenomeSet<STDString>>(L, index);
+    } else if (Type->TypeName == GFS.strFixedStringSet) {
+        SetValue<TGenomeSet<FixedString>>(L, index);
+    } else if (Type->TypeName == GFS.strTimelineData) {
+        SetValue<GenomeTimelineData>(L, index);
     } else {
-        // TODO - unsupported: FloatSet, IntSet, ShortNameSet, StringSet, FixedStringSet, TimelineData
         luaL_error(L, "Assignment not supported for this Genome type: %s", type->TypeName.GetString());
         return;
     }

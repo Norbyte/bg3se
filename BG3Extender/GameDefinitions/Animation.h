@@ -30,6 +30,59 @@ struct GenomeParametrizedEventArgs : public GenomeEventArgs
     std::array<GenomeVariant, 22> Args;
 };
 
+struct GenomeTimelineAnimation
+{
+    double StartTime;
+    double EndTime;
+    float PlayStartOffset;
+    float PlayRate;
+    FixedString Source;
+    FixedString Animation;
+    FixedString AdditiveLoopingAnimation;
+    uint32_t field_24;
+    float AdditiveFadeIn;
+    bool IsContinuous;
+    bool HoldAnimation;
+    bool Voice;
+    bool EnableRootMotion;
+    bool IsMirrored;
+    bool PerformanceDriftType;
+    Guid BoneGroupId;
+    glm::vec4 HeadCorrection;
+};
+
+struct GenomeTimelineAnimationPair
+{
+    GenomeTimelineAnimation AnimA;
+    GenomeTimelineAnimation AnimB;
+
+    Guid field_0;
+    uint8_t field_10;
+    uint8_t field_11;
+    float EndTimeWithFade;
+    float EndTimeWithFadeOffset;
+    float StartTimeWithFade;
+    float StartTimeWithFadeOffset;
+    int field_D4;
+};
+
+struct GenomeTimelineActiveAnimations : public GenomeTimelineAnimation
+{
+    Array<GenomeTimelineAnimationPair> Animations;
+    Array<GenomeTimelineAnimationPair> LayeredAnimations;
+    Array<GenomeTimelineAnimationPair> AdditiveAnimations;
+};
+
+struct GenomeTimelineData
+{
+    uint64_t field_0;
+    double field_8;
+    double field_10;
+    uint8_t field_18;
+    uint8_t field_19;
+    Array<GenomeTimelineActiveAnimations> Animations;
+};
+
 // Unmapped compiler internals
 class GenomeGlobalCompilationContext;
 class GenomeSequenceCompilationContext;
