@@ -38,6 +38,7 @@ void RegisterClientLibraries()
 {
     net::RegisterNetLib();
     tmpl::RegisterTemplateLib();
+    level::RegisterLevelLibClient();
     audio::RegisterAudioLib();
     input::RegisterInputLib();
     ui::RegisterUILib();
@@ -52,6 +53,7 @@ void RegisterServerLibraries()
 {
     net::RegisterNetLib();
     tmpl::RegisterTemplateLib();
+    level::RegisterLevelLibServer();
 }
 
 void RegisterServerMetatables(lua_State* L)
@@ -132,7 +134,6 @@ void RegisterSharedLibraries()
     vars::RegisterVarsLib();
     table::RegisterTableLib();
     timer::RegisterTimerLib();
-    level::RegisterLevelLib();
 }
 
 void RegisterLibraries()

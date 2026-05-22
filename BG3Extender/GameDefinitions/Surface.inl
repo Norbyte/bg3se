@@ -1,5 +1,41 @@
 #include <GameDefinitions/Components/ServerData.h>
 
+BEGIN_NS(esv)
+
+SurfaceAction* SurfaceManager::CreateAction(SurfaceActionType type)
+{
+    auto factory = GetStaticSymbols().esv__gSurfaceActionFactory;
+    auto ctor = GetStaticSymbols().esv__SurfaceActionFactory__DoCreateAction;
+
+    if (!ctor || !factory || !*factory) {
+        return nullptr;
+    }
+
+    auto action = ctor(*factory, type, ComponentHandle::NullHandle);
+
+    if (action) {
+        auto helpers = GetCurrentExtensionState()->GetLua()->GetEntitySystemHelpers();
+        auto classDescs = helpers->GetResourceManager<resource::ClassDescription>();
+        action->ClassDescriptionMgr = *classDescs;
+    }
+
+    return action;
+}
+
+void SurfaceManager::AddAction(SurfaceAction* action)
+{
+    if (action->Level) {
+        ERR("Surface action is already activated!");
+        return;
+    }
+
+    action->Level = Level;
+    action->Enter();
+    Actions.push_back(action);
+}
+
+END_NS()
+
 BEGIN_NS(esv::surface)
 
 Surface* SurfaceComponent::GetSurface(lua_State* L) const

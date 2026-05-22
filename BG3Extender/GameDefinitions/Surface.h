@@ -40,7 +40,7 @@ struct Surface : ProtectedGameObject<Surface>
     bool HasLifeTime;
     bool IsControlledByConcentration;
     Array<AiTilePos> NeighbourMergeCells;
-    std::array<EntityHandle, 14> TransformActions;
+    std::array<ComponentHandle, 14> TransformActions;
     [[bg3::readonly]] int16_t Index;
     [[bg3::readonly]] int16_t SurfaceConcentrationTarget;
     [[bg3::hidden]] SurfaceManager* SurfaceManager;
@@ -78,17 +78,26 @@ struct SurfaceAction : ProtectedGameObject<SurfaceAction>
     [[bg3::hidden]] Level* Level;
     int StoryActionID;
     ActionOriginator Originator;
+    AbilityId SpellCastingAbility;
+    Guid SpellCastUuid;
     [[bg3::hidden]] resource::GuidResourceBankBase* ClassDescriptionMgr;
-    EntityHandle Handle;
+    EntityHandle SurfaceEntity;
+    Array<AiTilePos> BaseCells;
+    ComponentHandle Handle;
+    uint8_t field_78;
 };
+
+using SurfaceActionFactoryCreateProc = SurfaceAction* (void* self, SurfaceActionType type, uint64_t actionHandle);
 
 struct CreateSurfaceActionBase : public SurfaceAction
 {
     EntityHandle Owner;
     float Duration;
-    bool IsControlledByConcentration;
     glm::vec3 Position;
     SurfaceType SurfaceType;
+    SpellId Spell;
+    uint16_t SurfaceConcentrationTarget;
+    bool ConcentrationBroke;
     std::array<ComponentHandle, (unsigned)SurfaceType::Sentinel> SurfaceHandlesByType;
     std::array<Array<AiTilePos>*, (unsigned)SurfaceType::Sentinel> SurfaceChanges;
     std::array<Array<AiTilePos>*, 2> SurfaceCellsByLayer;
@@ -333,6 +342,9 @@ struct [[bg3::hidden]] SurfaceManager : public ObjectFactory<Surface>
     Array<SurfacePosition> CheckFTBTeamRequests;
     Array<SurfaceCreatedEventRequest> CreatedEvents;
     Array<SurfaceRemovedEventRequest> RemovedEvents;
+
+    SurfaceAction* CreateAction(SurfaceActionType type);
+    void AddAction(SurfaceAction* action);
 };
 
 END_NS()

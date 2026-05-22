@@ -1063,5 +1063,25 @@
       48 8b 99 98 00 00 00 // mov     rbx, [rcx+98h]
       <Target Type="Absolute" Offset="0" Symbol="ls__Visual__UpdateBlendshapeWeightsFromSkeleton" />
     </Mapping>
+
+    <Mapping Name="esv::SurfaceActionFactory">
+		48 89 9c 24 80 00 00 00 // mov     [rsp+78h+arg_0], rbx
+		89 44 24 28 // mov     [rsp+78h+var_50], eax
+		48 89 ac 24 88 00 00 00 // mov     [rsp+78h+arg_8], rbp
+		e8 ?? ?? ?? ?? // call    sub_1405E8EC0
+		@ref1 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:esv__gSurfaceActionFactory
+		4d 8b c1 // mov     r8, r9
+		b2 02 // mov     dl, 2
+		48 8b e8 // mov     rbp, rax
+		@ref2 e8 ?? ?? ?? ?? // call    esv__SurfaceActionFactory__DoCreateAction
+		48 8b d8 // mov     rbx, rax
+		48 85 c0 // test    rax, rax
+		0f 84 92 01 00 00 // jz      loc_142F89298
+		c7 40 10 00 00 00 00 // mov     dword ptr [rax+10h], 0
+		48 89 68 50 // mov     [rax+50h], rbp
+		48 8b 4e 10 // mov     rcx, [rsi+10h]
+		<Target Type="Indirect" Offset="@ref1" Symbol="esv__gSurfaceActionFactory" />
+		<Target Type="Indirect" Offset="@ref2" Symbol="esv__SurfaceActionFactory__DoCreateAction" />
+    </Mapping>
   </Mappings>
 </BinaryMappings>

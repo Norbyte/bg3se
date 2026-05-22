@@ -1,6 +1,7 @@
 #include <GameDefinitions/Ai.h>
 #include <Lua/Libs/Level.h>
 #include <GameDefinitions/Physics.h>
+#include <GameDefinitions/Surface.h>
 
 /// <lua_module>Level</lua_module>
 BEGIN_NS(lua::level)
@@ -393,9 +394,25 @@ phx::PhysicsHitAll* TestSphere(lua_State* L, glm::vec3 const& position, float ra
     }
 }
 
-void RegisterLevelLib()
+esv::SurfaceAction* CreateSurfaceAction(SurfaceActionType type)
 {
-    DECLARE_MODULE(Level, Both)
+    auto level = GetStaticSymbols().GetCurrentServerLevel();
+    if (!level) return nullptr;
+    
+    return level->SurfaceManager->CreateAction(type);
+}
+
+void ExecuteSurfaceAction(esv::SurfaceAction* action)
+{
+    auto level = GetStaticSymbols().GetCurrentServerLevel();
+    if (!level) return;
+    
+    return level->SurfaceManager->AddAction(action);
+}
+
+void RegisterLevelLibClient()
+{
+    DECLARE_MODULE(Level, Client)
     BEGIN_MODULE()
     MODULE_FUNCTION(GetEntitiesOnTile)
     MODULE_FUNCTION(GetTileDebugInfo)
@@ -420,6 +437,39 @@ void RegisterLevelLib()
 
     MODULE_FUNCTION(TestBox)
     MODULE_FUNCTION(TestSphere)
+    END_MODULE()
+}
+
+void RegisterLevelLibServer()
+{
+    DECLARE_MODULE(Level, Server)
+    BEGIN_MODULE()
+    MODULE_FUNCTION(GetEntitiesOnTile)
+    MODULE_FUNCTION(GetTileDebugInfo)
+    MODULE_FUNCTION(GetHeightsAt)
+    MODULE_FUNCTION(BeginPathfinding)
+    MODULE_FUNCTION(BeginPathfindingImmediate)
+    MODULE_FUNCTION(FindPath)
+    MODULE_FUNCTION(ReleasePath)
+    MODULE_FUNCTION(GetPathById)
+    MODULE_FUNCTION(GetActivePathfindingRequests)
+
+    MODULE_FUNCTION(RaycastClosest)
+    MODULE_FUNCTION(RaycastAny)
+    MODULE_FUNCTION(RaycastAll)
+
+    MODULE_FUNCTION(SweepSphereClosest)
+    MODULE_FUNCTION(SweepCapsuleClosest)
+    MODULE_FUNCTION(SweepBoxClosest)
+    MODULE_FUNCTION(SweepSphereAll)
+    MODULE_FUNCTION(SweepCapsuleAll)
+    MODULE_FUNCTION(SweepBoxAll)
+
+    MODULE_FUNCTION(TestBox)
+    MODULE_FUNCTION(TestSphere)
+
+    MODULE_FUNCTION(CreateSurfaceAction)
+    MODULE_FUNCTION(ExecuteSurfaceAction)
     END_MODULE()
 }
 

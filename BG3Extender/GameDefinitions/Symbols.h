@@ -119,6 +119,9 @@ namespace bg3se
         GlobalTemplateManager** ls__GlobalTemplateManager{ nullptr };
         LevelCacheTemplateManager** esv__CacheTemplateManager{ nullptr };
 
+        void** esv__gSurfaceActionFactory{ nullptr };
+        esv::SurfaceActionFactoryCreateProc* esv__SurfaceActionFactory__DoCreateAction{ nullptr };
+
         AiGrid::FindPathProc* eoc__AiGrid__FindPath{ nullptr };
         AiGrid::FindPathImmediateProc* eoc__AiGrid__FindPathImmediate{ nullptr };
 
