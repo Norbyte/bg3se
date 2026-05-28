@@ -871,6 +871,7 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
 #endif
 
     void* GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize);
+    void* GetAndDereferenceRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize);
     void* GetCommittedComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize);
     void* GetImmediateComponent(EntityHandle entityHandle, ComponentTypeIndex type);
     void* GetECBComponent(EntityHandle entityHandle, ComponentTypeIndex type);

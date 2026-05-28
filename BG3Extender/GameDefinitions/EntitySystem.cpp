@@ -628,6 +628,27 @@ void EntityCommandBuffer::RemoveComponent(EntityHandle entity, ComponentTypeInde
     change->ComponentTypeId = type;
 }
 
+void* EntityWorld::GetAndDereferenceRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize)
+{
+    auto component = GetCommittedComponent(entityHandle, type, componentSize);
+    if (component) {
+        return DereferenceProxyComponent(component);
+    }
+
+    component = GetImmediateComponent(entityHandle, type);
+    if (component) {
+        // NOTE: ImmediateWorldCache keeps a pointer to the external object, not to the proxy
+        return component;
+    }
+
+    component = GetECBComponent(entityHandle, type);
+    if (component) {
+        return DereferenceProxyComponent(component);
+    }
+
+    return nullptr;
+}
+
 void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize)
 {
     auto component = GetCommittedComponent(entityHandle, type, componentSize);
@@ -1234,12 +1255,7 @@ void* EntitySystemHelpersBase::GetRawComponent(EntityHandle entityHandle, PerCom
     }
 
     if (meta.IsProxy) {
-        auto component = world->GetRawComponent(entityHandle, *meta.ComponentIndex, meta.InlineSize);
-        if (component) {
-            return DereferenceProxyComponent(component);
-        } else {
-            return nullptr;
-        }
+        return world->GetAndDereferenceRawComponent(entityHandle, *meta.ComponentIndex, meta.InlineSize);
     } else {
         return world->GetRawComponent(entityHandle, *meta.ComponentIndex, meta.InlineSize);
     }
