@@ -40,6 +40,13 @@ GameObjectTemplate* CacheTemplateManagerBase::CacheTemplate(GameObjectTemplate* 
     auto newTmpl = tmpl->Clone();
     newTmpl->Id = templateId;
     newTmpl->LevelName = levelName;
+
+    // The game requires cache templates to have a root template (roots are not supposed to be in the cache)
+    if (!newTmpl->TemplateName) {
+        newTmpl->TemplateName = newTmpl->Id;
+        newTmpl->ParentTemplateId = FixedString{};
+    }
+
     RegisterTemplate(newHandle, newTmpl);
 
     if (EnableTemplateSync) {
