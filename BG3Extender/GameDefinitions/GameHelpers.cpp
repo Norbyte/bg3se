@@ -255,6 +255,61 @@ namespace bg3se
         return nullptr;
     }
 
+    GameObjectTemplate* TryToCacheTemplate(GameObjectTemplate* tmpl)
+    {
+        switch (tmpl->TemplateHandle.GetType()) {
+        case TemplateType::CacheTemplate:
+        case TemplateType::LevelCacheTemplate:
+        {
+            WARN("Cannot cache template '%s' - it is already a cache template!", tmpl->Id.GetString());
+            return tmpl;
+        }
+
+        case TemplateType::RootTemplate:
+        {
+            auto templateMgr = *GetStaticSymbols().esv__CacheTemplateManager;
+            FixedString templateId(Guid::Generate().ToString());
+            return static_cast<CharacterTemplate*>(templateMgr->CacheTemplate(tmpl, tmpl->LevelName, templateId));
+        }
+
+        case TemplateType::GlobalTemplate:
+        {
+            auto templateMgr = *GetStaticSymbols().esv__CacheTemplateManager;
+            auto cached = templateMgr->Templates.get_or_default(tmpl->Id);
+            if (cached) {
+                WARN("Tried to cache global template '%s' multiple times - only a single cached template can exist!", tmpl->Id.GetString());
+                return cached;
+            }
+
+            return static_cast<CharacterTemplate*>(templateMgr->CacheTemplate(tmpl, tmpl->LevelName, tmpl->Id));
+        }
+
+        case TemplateType::LocalTemplate:
+        {
+            auto level = GetStaticSymbols().GetCurrentServerLevel();
+            if (!level) {
+                WARN("Cannot cache local template '%s' - no active level!", tmpl->Id.GetString());
+                return tmpl;
+            }
+
+            auto templateMgr = level->CacheTemplateManager;
+            auto cached = templateMgr->Templates.get_or_default(tmpl->Id);
+            if (cached) {
+                WARN("Tried to cache local template '%s' multiple times - only a single cached template can exist!", tmpl->Id.GetString());
+                return cached;
+            }
+
+            return static_cast<CharacterTemplate*>(templateMgr->CacheTemplate(tmpl, tmpl->LevelName, tmpl->Id));
+        }
+
+        default:
+        {
+            WARN("Trying to cache unsupported handle type %d?", tmpl->TemplateHandle.GetType());
+            return tmpl;
+        }
+        }
+    }
+
     CharacterTemplate* esv::Character::CreateCacheTemplate()
     {
         auto oldTemplate = Template;
@@ -264,7 +319,7 @@ namespace bg3se
         }
 
         auto templateMgr = *GetStaticSymbols().esv__CacheTemplateManager;
-        auto newTmpl = static_cast<CharacterTemplate*>(templateMgr->CacheTemplate(Template, Template->LevelName, Template->Id));
+        auto newTmpl = static_cast<CharacterTemplate*>(TryToCacheTemplate(Template));
         if (newTmpl != Template) {
             DecTemplateRef(Template);
             IncTemplateRef(newTmpl);
@@ -275,18 +330,18 @@ namespace bg3se
                 .TemplateId = newTmpl->Id,
                 .TemplateType = newTmpl->TemplateHandle.GetType()
             });
-        }
 
-        if (OriginalTemplate == oldTemplate) {
-            DecTemplateRef(OriginalTemplate);
-            IncTemplateRef(newTmpl);
-            OriginalTemplate = newTmpl;
-        }
+            if (OriginalTemplate == oldTemplate) {
+                DecTemplateRef(OriginalTemplate);
+                IncTemplateRef(newTmpl);
+                OriginalTemplate = newTmpl;
+            }
 
-        if (TemplateUsedForSpells == oldTemplate) {
-            DecTemplateRef(TemplateUsedForSpells);
-            IncTemplateRef(newTmpl);
-            TemplateUsedForSpells = newTmpl;
+            if (TemplateUsedForSpells == oldTemplate) {
+                DecTemplateRef(TemplateUsedForSpells);
+                IncTemplateRef(newTmpl);
+                TemplateUsedForSpells = newTmpl;
+            }
         }
 
         return newTmpl;

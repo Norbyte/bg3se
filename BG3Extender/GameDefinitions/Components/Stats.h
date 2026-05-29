@@ -120,8 +120,8 @@ struct StatsComponent : public BaseComponent
     std::array<int, 18> Skills;
     int ProficiencyBonus;
     AbilityId SpellCastingAbility;
-    int field_8C;
-    int field_90;
+    [[bg3::legacy(field_8C)]] int MaxPreparedSpells;
+    [[bg3::legacy(field_90)]] int PhysicalForceRangeBonus;
     int ArmorType;
     int ArmorType2;
     AbilityId UnarmedAttackAbility;
