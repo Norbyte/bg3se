@@ -72,6 +72,8 @@ for file in os.listdir('GameDefinitions/ExternalEnumerations'):
 
 cur_enumerations = ''
 try:
+    if not os.path.exists('GameDefinitions/Generated'):
+        os.mkdir('GameDefinitions/Generated')
     with open('GameDefinitions/Generated/Enumerations.inl', 'r') as f:
         cur_enumerations = f.read()
 except FileNotFoundError:
