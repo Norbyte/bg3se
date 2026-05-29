@@ -38,6 +38,7 @@ bool SpellPrototypeManager::SyncStat(Object* object, SpellPrototype* proto)
     proto->WeaponTypes = 0;
     proto->AiFlags = 0;
     proto->RequirementEvents = 0;
+    proto->IsWeaponAttack = false;
 
     sync(proto, object->Name);
     return true;
@@ -324,7 +325,9 @@ std::optional<Object*> RPGStats::CreateObject(FixedString const& name, int32_t m
 void RPGStats::SyncWithPrototypeManager(Object* object)
 {
     auto modifier = ModifierLists.GetByHandle(object->ModifierListIndex);
-    if (modifier->Name == GFS.strSpellData) {
+    if (!modifier) {
+        ERR("Trying to sync stats entry with no modifier list assigned?");
+    } else if (modifier->Name == GFS.strSpellData) {
         auto spellProtoMgr = GetStaticSymbols().eoc__SpellPrototypeManager;
         if (spellProtoMgr && *spellProtoMgr) {
             (*spellProtoMgr)->SyncStat(object);
