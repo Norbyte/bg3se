@@ -313,11 +313,6 @@ namespace bg3se
     CharacterTemplate* esv::Character::CreateCacheTemplate()
     {
         auto oldTemplate = Template;
-        auto tmplType = Template->TemplateHandle.GetType();
-        if (tmplType == TemplateType::CacheTemplate || tmplType == TemplateType::LevelCacheTemplate) {
-            return nullptr;
-        }
-
         auto templateMgr = *GetStaticSymbols().esv__CacheTemplateManager;
         auto newTmpl = static_cast<CharacterTemplate*>(TryToCacheTemplate(Template));
         if (newTmpl != Template) {
@@ -341,6 +336,32 @@ namespace bg3se
                 DecTemplateRef(TemplateUsedForSpells);
                 IncTemplateRef(newTmpl);
                 TemplateUsedForSpells = newTmpl;
+            }
+        }
+
+        return newTmpl;
+    }
+
+    ItemTemplate* esv::Item::CreateCacheTemplate()
+    {
+        auto oldTemplate = Template;
+        auto templateMgr = *GetStaticSymbols().esv__CacheTemplateManager;
+        auto newTmpl = static_cast<ItemTemplate*>(TryToCacheTemplate(Template));
+        if (newTmpl != Template) {
+            DecTemplateRef(Template);
+            IncTemplateRef(newTmpl);
+            Template = newTmpl;
+
+            auto changeSys = gExtender->GetServer().GetEntityHelpers().GetSystem<esv::templates::ChangeSystem>();
+            changeSys->TemplateSwitch.set(field_10, TemplateInfo{
+                .TemplateId = newTmpl->Id,
+                .TemplateType = newTmpl->TemplateHandle.GetType()
+            });
+
+            if (OriginalTemplate == oldTemplate) {
+                DecTemplateRef(OriginalTemplate);
+                IncTemplateRef(newTmpl);
+                OriginalTemplate = newTmpl;
             }
         }
 

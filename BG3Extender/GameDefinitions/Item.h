@@ -9,6 +9,8 @@ struct Item : public BaseProxyComponent
 {
     DEFINE_COMPONENT(ServerItem, "esv::Item")
 
+    ItemTemplate* CreateCacheTemplate();
+
     void* VMT;
     void* VMT2;
     EntityHandle field_10;
