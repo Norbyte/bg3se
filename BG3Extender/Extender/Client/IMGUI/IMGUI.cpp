@@ -1143,7 +1143,10 @@ void Table::StyledRender(DrawingContext& context)
 
         EndRender(context);
     } else {
-        TreeParent::StyledRender(context);
+        // IMGUI crashes when rendering cells with Columns == 0
+        if (std::max(Columns, ColumnDefs.size()) > 0) {
+            TreeParent::StyledRender(context);
+        }
     }
 }
 
