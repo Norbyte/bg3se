@@ -95,6 +95,12 @@ P_GETTER(Functors, GetFunctors)
 END_CLS()
 
 
+BEGIN_CLS(AABound)
+P(Min)
+P(Max)
+END_CLS()
+
+
 BEGIN_CLS(AiTilePos)
 P(X)
 P(Y)

@@ -83,10 +83,10 @@ struct AttackTargetContextData : public ContextData
     HitWith HitWith{ HitWith::None };
     uint32_t StatusEvent{ 0 };
     FixedString StatusId;
-    FixedString field_26C;
+    [[bg3::legacy(field_26C)]] FixedString PassiveId;
     uint8_t StatusExitCause{ 3 };
-    uint8_t field_315{ 0 };
-    uint8_t field_316{ 19 };
+    [[bg3::legacy(field_315)]] AbilityId CheckedAbility{ AbilityId::None };
+    [[bg3::legacy(field_316)]] SkillId CheckedSkill{ SkillId::Sentinel };
 };
 
 struct AttackPositionContextData : public ContextData

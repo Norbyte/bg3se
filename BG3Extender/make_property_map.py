@@ -653,6 +653,7 @@ sources = [
     'GameDefinitions/DragDrop.h',
     'GameDefinitions/Effect.h',
     'GameDefinitions/Input.h',
+    'GameDefinitions/Level.h',
     'GameDefinitions/Lighting.h',
     'GameDefinitions/RootTemplates.h',
     'GameDefinitions/Components/ActionResources.h',

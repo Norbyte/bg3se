@@ -24,16 +24,16 @@ struct LevelInstanceComponent : public BaseComponent
     FixedString LevelInstanceID;
     FixedString SubLevelName;
     FixedString LevelInstanceTemplate;
-    uint8_t LevelType;
-    bool Active;
-    bool Platform;
-    bool MovingPlatform;
-    bool DynamicLayer;
-    bool NeedsPhysics;
-    bool HasTemplateAfterDestruction;
-    bool UseSoundOcclusion;
-    bool IsCinematic;
-    bool Activated;
+    uint8_t LevelType{ 0 };
+    bool Active{ false };
+    bool Platform{ false };
+    bool MovingPlatform{ false };
+    bool DynamicLayer{ false };
+    bool NeedsPhysics{ false };
+    bool HasTemplateAfterDestruction{ false };
+    bool UseSoundOcclusion{ false };
+    bool IsCinematic{ false };
+    bool Activated{ false };
     Transform Transform;
 };
 
@@ -43,7 +43,7 @@ struct LevelInstanceStateComponent : public BaseComponent
 
     HashSet<EntityHandle> Children;
     HashSet<EntityHandle> Children2;
-    int32_t State;
+    LevelInstanceState State;
     AABound LocalBound;
     AABound WorldBound;
     FixedString MergedLevelTemplateUUID;

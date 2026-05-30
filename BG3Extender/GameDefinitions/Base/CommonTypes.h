@@ -43,6 +43,12 @@ struct Version
 
 MARK_BY_VALUE_TYPE(Version)
 
+struct AABound
+{
+    glm::vec3 Min;
+    glm::vec3 Max;
+};
+
 struct GameRandom
 {
     int* FixedRollList;

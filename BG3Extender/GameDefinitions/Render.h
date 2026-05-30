@@ -7,12 +7,6 @@ BEGIN_SE()
 
 struct MoveableObject;
 
-struct AABound
-{
-    glm::vec3 Min;
-    glm::vec3 Max;
-};
-
 struct [[bg3::hidden]] Pose : ProtectedGameObject<Pose>
 {
     glm::mat3x4* Pose1;

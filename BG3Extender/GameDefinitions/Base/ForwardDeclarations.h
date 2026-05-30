@@ -39,6 +39,10 @@ struct LightTemplate;
 struct PhysicsTemplate;
 
 struct LevelBase;
+struct LevelDesc;
+struct LevelMetaData;
+struct LevelData;
+struct LevelDataManager;
 struct EoCLevel;
 struct LevelManager;
 

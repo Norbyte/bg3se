@@ -70,8 +70,10 @@ struct GameObjectTemplate : public ProtectedGameObject<GameObjectTemplate>
     virtual OverrideableProperty<bool>* IsTrap() const = 0;
 
     FixedString GetTemplateType() const;
+    TemplateType GetTemplateStorageType() const;
 
     //# P_GETTER(TemplateType, GetTemplateType)
+    //# P_GETTER(TemplateStorageType, GetTemplateStorageType)
 
     TemplateTagContainer* Tags;
     [[bg3::readonly]] FixedString Id;
@@ -1048,7 +1050,7 @@ struct [[bg3::hidden]] LocalTemplateManager : public ProtectedGameObject<LocalTe
     LegacyRefMap<FixedString, GameObjectTemplate*> Templates;
     LegacyRefMap<uint16_t, Array<GameObjectTemplate*>*> TemplatesByType;
     LegacyRefMap<uint32_t, LocalTemplateData> TemplatesByHandle;
-    void* LevelDataManager;
+    LevelDataManager* LevelDataManager;
     CRITICAL_SECTION CriticalSection;
     LegacyRefMap<FixedString, LegacyRefMap<FixedString, GameObjectTemplate*>> TemplatesByLevel;
     int field_78;
