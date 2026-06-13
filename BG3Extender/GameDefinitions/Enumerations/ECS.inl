@@ -1153,6 +1153,30 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
     E(InstancingBatchInitialized)
     E(InstancingBatchVisualReloadedOneFrame)
 
+    // HLOD
+    E(HLOD)
+    E(HLODChild)
+
+    // Misc visual
+    E(Bound)
+    E(LocalBound)
+    E(Occlusion)
+
+    // Clustering
+    E(ClusterBound)
+    E(ClusterBoundMax)
+    E(ClusterChild)
+    E(ClusterChildIndexed)
+    E(ClusterContainer)
+    E(ClusterDistMin)
+    E(ClusterDistMax)
+    E(ClusterPositionX)
+    E(ClusterPositionY)
+    E(ClusterPositionZ)
+    E(ClusterRadius)
+    E(Cluster)
+    E(ClusterAttachRequest)
+
     // Fade
     E(FadeChildrenAdded)
     E(FadeChildrenRemoved)

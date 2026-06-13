@@ -593,7 +593,141 @@ struct ConstructionSystem : public BaseSystem
     [[bg3::hidden]] void* OcclusionSystem;
 };
 
+DEFINE_ONEFRAME_TAG_COMPONENT(ls, RequestConstructionUpdateOneFrameComponent, RequestConstructionUpdate)
 DEFINE_TAG_COMPONENT(ls, IsSeeThroughComponent, IsSeeThrough)
+
+
+struct HLODInstanceData
+{
+    Guid UUID;
+    int Level;
+    // Editor only
+    // uint64_t VersionHash;
+    Array<Guid> Children;
+    Array<Guid> Objects;
+};
+
+struct HLODComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(HLOD, "ls::HLODComponent")
+
+    [[bg3::hidden]] LevelBase* Level;
+    HLODInstanceData Instance;
+    float CullDistanceBias;
+    FixedString UUID;
+    Array<EntityHandle> Children;
+    // Editor only
+    // uint64_t RecursiveHash;
+    // uint64_t BaseHash;
+    // bool Enabled;
+};
+
+struct HLODChildComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(HLODChild, "ls::HLODChildComponent")
+
+    EntityHandle Parent;
+    // Editor only
+    // uint64_t Hash;
+};
+
+struct ClusterBoundComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClusterBound, "ls::ClusterBoundComponent")
+
+    AABound Bounds;
+};
+
+struct ClusterBoundMaxComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClusterBoundMax, "ls::ClusterBoundMaxComponent")
+
+    float BoundMax;
+};
+
+struct ClusterChildComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClusterChild, "ls::ClusterChildComponent")
+
+    EntityHandle Parent;
+};
+
+struct ClusterChildIndexedComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClusterChildIndexed, "ls::ClusterChildIndexedComponent")
+
+    int X;
+    int Y;
+    int Z;
+    int Radius;
+};
+
+struct ClusterContainerComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClusterContainer, "ls::ClusterContainerComponent")
+
+    HashMap<glm::ivec4, EntityHandle> Clusters;
+};
+
+
+struct ClusterDistMinComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClusterDistMin, "ls::ClusterDistMinComponent")
+
+    float DistMin;
+};
+
+struct ClusterDistMaxComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClusterDistMax, "ls::ClusterDistMaxComponent")
+
+    float DistMax;
+};
+
+struct ClusterPositionXComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClusterPositionX, "ls::ClusterPositionXComponent")
+
+    float X;
+};
+
+struct ClusterPositionYComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClusterPositionY, "ls::ClusterPositionYComponent")
+
+    float Y;
+};
+
+struct ClusterPositionZComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClusterPositionZ, "ls::ClusterPositionZComponent")
+
+    float Z;
+};
+
+struct ClusterRadiusComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ClusterRadius, "ls::ClusterRadiusComponent")
+
+    float Radius;
+};
+
+DEFINE_TAG_COMPONENT(ls, ClusterComponent, Cluster)
+DEFINE_TAG_COMPONENT(ls, ClusterAttachRequestComponent, ClusterAttachRequest)
+
+struct LocalBoundComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(LocalBound, "ls::LocalBoundComponent")
+
+    AABound Bounds;
+};
+
+struct OcclusionComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(Occlusion, "ls::OcclusionComponent")
+
+    [[bg3::hidden]] void* OcclusionModel;
+};
 
 END_SE()
 
