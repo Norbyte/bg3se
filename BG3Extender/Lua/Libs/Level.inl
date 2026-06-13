@@ -410,6 +410,34 @@ void ExecuteSurfaceAction(esv::SurfaceAction* action)
     return level->SurfaceManager->AddAction(action);
 }
 
+LevelData* GetLevelInfo(FixedString const& levelName)
+{
+    auto levelManager = GetStaticSymbols().GetServerLevelManager();
+    auto level = levelManager->LocalTemplateManager->LevelDataManager->Levels.try_get(levelName);
+    if (level) {
+        return *level;
+    } else {
+        return nullptr;
+    }
+}
+
+std::optional<uint32_t> AddActivePersistentLevelTemplate(FixedString const& parentLevel, FixedString const& subLevelName, FixedString const& instanceId)
+{
+    auto levelManager = GetStaticSymbols().GetServerLevelManager();
+    auto level = levelManager->Levels.try_get(parentLevel);
+    if (level) {
+        auto& tmpls = (*level)->ActiveLevelTemplates;
+        tmpls.push_back(ActivePersistentLevelTemplate{
+            .SubLevelName = subLevelName,
+            .LevelInstanceID = instanceId
+        });
+        return tmpls.size();
+    } else {
+        ERR("Tried to add persistent level to parent level '%s' that does not exist!", parentLevel.GetString());
+        return {};
+    }
+}
+
 void RegisterLevelLibClient()
 {
     DECLARE_MODULE(Level, Client)
@@ -470,6 +498,9 @@ void RegisterLevelLibServer()
 
     MODULE_FUNCTION(CreateSurfaceAction)
     MODULE_FUNCTION(ExecuteSurfaceAction)
+
+    MODULE_FUNCTION(GetLevelInfo)
+    MODULE_FUNCTION(AddActivePersistentLevelTemplate)
     END_MODULE()
 }
 

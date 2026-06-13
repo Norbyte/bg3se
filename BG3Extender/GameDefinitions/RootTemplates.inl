@@ -16,6 +16,11 @@ FixedString GameObjectTemplate::GetTemplateType() const
     return *GetType();
 }
 
+TemplateType GameObjectTemplate::GetTemplateStorageType() const
+{
+    return TemplateHandle.GetType();
+}
+
 IActionData* ItemTemplate::AddUseAction(ActionDataType type)
 {
     auto action = gExtender->GetUseActionHelpers().Create(type);
@@ -38,14 +43,15 @@ GameObjectTemplate* CacheTemplateManagerBase::CacheTemplate(GameObjectTemplate* 
 {
     TemplateHandle newHandle(GetNewIndex(), TemplateManagerType);
     auto newTmpl = tmpl->Clone();
-    newTmpl->Id = templateId;
-    newTmpl->LevelName = levelName;
 
     // The game requires cache templates to have a root template (roots are not supposed to be in the cache)
     if (!newTmpl->TemplateName) {
         newTmpl->TemplateName = newTmpl->Id;
         newTmpl->ParentTemplateId = FixedString{};
     }
+
+    newTmpl->Id = templateId;
+    newTmpl->LevelName = levelName;
 
     RegisterTemplate(newHandle, newTmpl);
 
