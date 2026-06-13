@@ -126,6 +126,11 @@ EntityHandle IntegerToHandle(int64_t i)
     return EntityHandle(i);
 }
 
+Guid GenerateGuid()
+{
+    return Guid::Generate();
+}
+
 STDString GetValueType(lua_State* L)
 {
     return lua_typename(L, 1);
@@ -230,6 +235,7 @@ void RegisterUtilsLib()
     MODULE_FUNCTION(IsValidHandle)
     MODULE_FUNCTION(HandleToInteger)
     MODULE_FUNCTION(IntegerToHandle)
+    MODULE_FUNCTION(GenerateGuid)
     MODULE_FUNCTION(ShowErrorAndExitGame)
     MODULE_FUNCTION(ShowError)
     MODULE_FUNCTION(GetGlobalSwitches)
