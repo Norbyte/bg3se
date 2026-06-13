@@ -56,7 +56,7 @@ struct GTSHeader
 struct GTSTileSetLayer
 {
     uint32_t DataType;
-    int32_t B; // -1
+    uint32_t DefaultColor;
 };
 
 
@@ -67,11 +67,24 @@ struct GTSTileSetLevel
     uint64_t FlatTileIndicesOffset; // Flat tiles offset in file
 };
 
+enum class GTSCodec : uint32_t
+{
+    // Unsupported codecs omitted
+    Uniform = 0,
+    BC = 9,
+};
+
+enum class GTSDataType : uint32_t
+{
+    // Unsupported types omitted
+    R8G8B8A8_SRGB = 1,
+    X8Y8Z8W8 = 8,
+};
 
 struct GTSParameterBlockHeader
 {
     uint32_t ParameterBlockID;
-    uint32_t Codec;
+    GTSCodec Codec;
     uint32_t ParameterBlockSize;
     uint64_t FileInfoOffset;
 };
@@ -104,7 +117,7 @@ struct GTSUniformParameterBlock
     uint16_t A_Unused;
     uint32_t Width;
     uint32_t Height;
-    uint32_t DataType;
+    GTSDataType DataType;
 };
 
 
@@ -117,11 +130,19 @@ struct GTSPageFileInfo
     uint32_t F; // 2
 };
 
+enum class GTSFourCCFormat : uint8_t
+{
+    Node = 1,
+    String = 2,
+    Int = 3,
+    IntArray = 8,
+    GuidArray = 0xD
+};
 
 struct GTSFourCCMetadata
 {
     uint32_t FourCC;
-    uint8_t Format;
+    GTSFourCCFormat Format;
     uint8_t ExtendedLength;
     uint16_t Length;
 
@@ -219,7 +240,7 @@ struct FourCCTextureMeta
 
 struct FourCCNode
 {
-    GTSFourCCMetadata* Node;
+    GTSFourCCMetadata const* Node;
     uint32_t Size;
 
     FourCCNode FindNext(uint32_t tag);

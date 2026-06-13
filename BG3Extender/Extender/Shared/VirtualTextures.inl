@@ -152,10 +152,11 @@ bool VirtualTextureHelpers::Stitch()
             gts->Buf.resize((uint32_t)reader.Size());
             std::copy(static_cast<uint8_t*>(reader.Buf()), static_cast<uint8_t*>(reader.Buf()) + reader.Size(), gts->Buf.begin());
             char const* reason{ nullptr };
-            if (!gts->Read(reason)) {
-                ERR("Failed to load '%s': %s", path.GetString(), reason ? reason : "");
-            } else {
+            try {
+                gts->Read();
                 stitched.TileSets.push_back(gts);
+            } catch (std::runtime_error& e) {
+                ERR("Failed to load '%s': %s", path.GetString(), e.what());
             }
         }
     }
