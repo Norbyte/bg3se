@@ -582,18 +582,19 @@ struct [[bg3::component]] Construction : public ProtectedGameObject<Construction
 
 struct ConstructionSystem : public BaseSystem
 {
-    HashMap<Guid, EntityHandle> Constructions;
-    HashMap<Guid, EntityHandle> Tiles;
-    HashMap<Guid, EntityHandle> Fillings;
-    HashMap<Guid, EntityHandle> ConstructionUpdateRequests;
+    // Editor only
+    // HashMap<Guid, EntityHandle> Constructions;
+    // HashMap<Guid, EntityHandle> Tiles;
+    // HashMap<Guid, EntityHandle> Fillings;
+    // HashMap<Guid, EntityHandle> ConstructionUpdateRequests;
     [[bg3::hidden]] void* TransformSystem;
-    [[bg3::hidden]] void* PhysicsLoaderSystem;
+    // Editor only
+    // [[bg3::hidden]] void* PhysicsLoaderSystem;
     [[bg3::hidden]] void* PhysicsRequestSystem;
     [[bg3::hidden]] void* VisualChangeRequestSystem;
     [[bg3::hidden]] void* OcclusionSystem;
 };
 
-DEFINE_ONEFRAME_TAG_COMPONENT(ls, RequestConstructionUpdateOneFrameComponent, RequestConstructionUpdate)
 DEFINE_TAG_COMPONENT(ls, IsSeeThroughComponent, IsSeeThrough)
 
 
