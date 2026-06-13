@@ -40,6 +40,10 @@ template <class T>
 concept IsProxyComponentType = IsComponentType<T> && 
     (std::derived_from<T, BaseProxyComponent> || requires(T t) { t.ForceProxy; });
 
+template <class T>
+concept IsSystemType = std::derived_from<T, BaseSystem> &&
+    requires(T t) { t.SystemType; };
+
 END_SE()
 
 BEGIN_NS(ecs)

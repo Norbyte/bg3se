@@ -502,16 +502,16 @@ struct CustomIconsStorageSingletonComponent : public BaseComponent
     HashMap<Guid, ScratchBuffer> Icons;
 };
 
-struct FogVolumeRequestComponent : public MoveableObject
+struct FogVolumeRequestComponent : public BaseComponent
 {
-    DEFINE_PROXY_COMPONENT(FogVolumeRequest, "eoc::FogVolumeRequestComponent")
+    DEFINE_COMPONENT(FogVolumeRequest, "eoc::FogVolumeRequestComponent")
 
     Guid field_0;
 };
 
-struct CombinedLightComponent : public MoveableObject
+struct CombinedLightComponent : public BaseComponent
 {
-    DEFINE_PROXY_COMPONENT(CombinedLight, "eoc::CombinedLightComponent")
+    DEFINE_COMPONENT(CombinedLight, "eoc::CombinedLightComponent")
 
     EntityHandle Entity;
     BYTE TemplateType;
@@ -530,30 +530,30 @@ struct StandardGameObject : public ProtectedGameObject<StandardGameObject>
     uint16_t GameObjectFlags;
 };
 
-struct ConstructionTile : public StandardGameObject
+struct [[bg3::component]] ConstructionTile : public StandardGameObject
 {
-    DEFINE_COMPONENT(ConstructionTile, "ls::ConstructionTile")
+    DEFINE_PROXY_COMPONENT(ConstructionTile, "ls::ConstructionTile")
 
-    Guid InstanceId;
     EntityHandle Entity;
     EntityHandle field_48;
     ConstructionTileTemplate* Template;
-    FixedString Construction;
-    FixedString field_5C;
+    FixedString ParentTemplate;
+    FixedString TileSetResourceId;
     float Scale;
-    uint8_t Flags;
+    ConstructionTileFlags Flags;
 };
 
-struct ConstructionFilling : public StandardGameObject
+struct [[bg3::component]] ConstructionFilling : public StandardGameObject
 {
-    DEFINE_COMPONENT(ConstructionFilling, "ls::ConstructionFilling")
+    DEFINE_PROXY_COMPONENT(ConstructionFilling, "ls::ConstructionFilling")
 
-    struct Guid InstanceId;
+    Guid InstanceId;
     EntityHandle Entity;
-    ConstructionFillingTemplate* Template;
+    // Editor only
+    // ConstructionFillingTemplate* Template;
     RenderableObject* Renderable;
     RenderableObject* Renderable2;
-    FixedString Construction;
+    FixedString ParentTemplate;
     FixedString FadeGroup;
     FixedString Material;
     FixedString Physics;
@@ -562,26 +562,26 @@ struct ConstructionFilling : public StandardGameObject
     bool WalkOn;
     bool SeeThrough;
     bool Fadeable;
-    bool HierarchyOnlyFade;
+    // Editor only
+    // bool HierarchyOnlyFade;
 };
 
-struct Construction : public ProtectedGameObject<Construction>
+struct [[bg3::component]] Construction : public ProtectedGameObject<Construction>
 {
-    DEFINE_COMPONENT(Construction, "ls::Construction")
+    DEFINE_PROXY_COMPONENT(Construction, "ls::Construction")
 
     [[bg3::hidden]] void* field_0;
-    [[bg3::hidden]] UnknownSignal field_8;
+    // Editor only
+    // [[bg3::hidden]] UnknownSignal field_8;
     Array<EntityHandle> Tiles;
     Array<EntityHandle> Filling;
     Guid InstanceId;
-    ConstructionTemplate* Template;
+    // Editor only
+    // ConstructionTemplate* Template;
 };
 
-// Editor only system :(
 struct ConstructionSystem : public BaseSystem
 {
-    DEFINE_SYSTEM(Construction, "ls::ConstructionSystem")
-
     HashMap<Guid, EntityHandle> Constructions;
     HashMap<Guid, EntityHandle> Tiles;
     HashMap<Guid, EntityHandle> Fillings;
@@ -596,6 +596,18 @@ struct ConstructionSystem : public BaseSystem
 DEFINE_TAG_COMPONENT(ls, IsSeeThroughComponent, IsSeeThrough)
 
 END_SE()
+
+BEGIN_NS(ecl)
+
+struct ConstructionSystem : public bg3se::ConstructionSystem
+{
+    DEFINE_SYSTEM(ClientConstruction, "ecl::ConstructionSystem")
+
+    bool RequestSetSeeThrough;
+    bool EnableSeeThrough;
+};
+
+END_NS()
 
 BEGIN_NS(animation)
 

@@ -80,5 +80,6 @@ T(ecl::CharacterManager)
 T(ecl::equipment::VisualsVisibilityStateSystem)
 T(ecl::effect::HandlerSystem)
 T(ecl::TimelineSystem)
+T(ecl::ConstructionSystem)
 
 T(SoundRoutingSystem)

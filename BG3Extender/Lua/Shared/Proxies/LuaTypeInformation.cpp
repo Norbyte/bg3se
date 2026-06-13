@@ -65,7 +65,7 @@ inline constexpr char const* GetStaticComponentName()
 template <class T>
 inline constexpr char const* GetStaticSystemName()
 {
-    if constexpr (std::is_base_of_v<BaseSystem, T> && !std::is_same_v<BaseSystem, T>) {
+    if constexpr (IsSystemType<T>) {
         return T::SystemName;
     } else {
         return nullptr;

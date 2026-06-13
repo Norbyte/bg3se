@@ -807,10 +807,11 @@ struct ConstructionFillingTemplate : public ProtectedGameObject<ConstructionFill
     bool Fadeable;
     bool HierarchyOnlyFade;
     Guid HLOD;
-    [[bg3::hidden]] void* gapC0;
-    Array<ConstructionSpline*> Splines;
-    uint8_t field_D8;
-    bool HiddenFromMinimapRendering;
+    // Editor only
+    // [[bg3::hidden]] void* gapC0;
+    // Array<ConstructionSpline*> Splines;
+    // uint8_t field_D8;
+    // bool HiddenFromMinimapRendering;
 };
 
 struct ConstructionTileTemplate
@@ -824,7 +825,7 @@ struct ConstructionTileTemplate
     FixedString OverridePhysicsResource;
     glm::vec4 Rotation;
     glm::vec3 Translate;
-    float ScaleX;
+    float ScaleZ;
     float Scale;
     uint8_t ShootThroughType;
     bool WalkOn;
@@ -833,12 +834,13 @@ struct ConstructionTileTemplate
     bool CanSeeThrough;
     bool WalkThrough;
     bool ClickThrough;
-    [[bg3::hidden]] HashSet<void*> ReferenceFromNeighbourPoint; // TileSetNeighbourPointTileList*
-    Guid TemplateGuid;
-    int Side;
-    uint8_t gapA4;
-    bool Flip;
-    bool Stretchable;
+    // Editor only
+    // [[bg3::hidden]] HashSet<void*> ReferenceFromNeighbourPoint; // TileSetNeighbourPointTileList*
+    // Guid TemplateGuid;
+    // int Side;
+    // uint8_t gapA4;
+    // bool Flip;
+    // bool Stretchable;
 };
 
 struct ConstructionTemplate : public GameObjectTemplate
