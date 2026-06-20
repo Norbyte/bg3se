@@ -220,6 +220,10 @@ struct GenomeBlueprintInstance : public ProtectedGameObject<GenomeBlueprintInsta
     // Editor only
     // [[bg3::hidden]] void* DebugContext;
     // [[bg3::hidden]] bool DumpStateOnNextRun;
+
+    // Lua call helpers
+    //# P_FUN(GetNode, gn::GenomeBlueprintInstance::LuaGetNode)
+    UserReturn LuaGetNode(lua_State* L, uint32_t nodeIdx);
 };
 
 struct BlueprintInstanceData : public ProtectedGameObject<BlueprintInstanceData>

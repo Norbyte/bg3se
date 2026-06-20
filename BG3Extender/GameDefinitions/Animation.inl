@@ -250,6 +250,24 @@ GenomeEventArgs::~GenomeEventArgs()
 GenomeParametrizedEventArgs::~GenomeParametrizedEventArgs()
 {}
 
+UserReturn GenomeBlueprintInstance::LuaGetNode(lua_State* L, uint32_t nodeIdx)
+{
+    if (nodeIdx >= Nodes.size() || Parent == nullptr) {
+        push(L, nullptr);
+        return 1;
+    }
+
+    auto node = Nodes[nodeIdx];
+    auto tmpl = Parent->Nodes[nodeIdx];
+    auto const& type = tmpl->GetTypeID();
+
+    // Generic path - no specific type info available for this node
+    WARN("Genome node type unsupported: %s", type.GetString());
+    MakeObjectRef(L, node);
+
+    return 1;
+}
+
 END_NS()
 
 BEGIN_NS(lua)
