@@ -141,6 +141,7 @@ namespace bg3se
         SYM_OFF(ecl__gCursorControl);
         SYM_OFF(ls__gDragDropManager);
         SYM_OFF(ls__gTranslatedStringRepository);
+        SYM_OFF(ls__gTranslatedStringKeyManager);
 
         SYM_OFF(ecl__gGameStateEventManager);
         SYM_OFF(esv__gGameStateEventManager);

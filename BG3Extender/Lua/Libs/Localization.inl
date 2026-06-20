@@ -58,12 +58,43 @@ bool UpdateTranslatedString(FixedString handle, char const* value)
     return true;
 }
 
+LegacyMap<FixedString, TranslatedString>* GetAllTranslatedStringKeys(FixedString key)
+{
+    auto repo = GetStaticSymbols().GetTranslatedStringKeyManager();
+    if (!repo) return {};
+
+    return &repo->Keys;
+}
+
+std::optional<TranslatedString> GetTranslatedStringKey(FixedString key)
+{
+    auto repo = GetStaticSymbols().GetTranslatedStringKeyManager();
+    if (!repo) return {};
+
+    auto ts = repo->Keys.try_get(key);
+    return ts ? *ts : std::optional<TranslatedString>{};
+}
+
+bool UpdateTranslatedStringKey(FixedString key, FixedString ts)
+{
+    auto repo = GetStaticSymbols().GetTranslatedStringKeyManager();
+    if (!repo) return false;
+
+    TranslatedString tsk;
+    tsk.Handle.Handle = ts;
+    repo->Keys.insert(key, tsk);
+    return true;
+}
+
 void RegisterLocalizationLib()
 {
     DECLARE_MODULE(Loca, Both)
     BEGIN_MODULE()
     MODULE_FUNCTION(GetTranslatedString)
     MODULE_FUNCTION(UpdateTranslatedString)
+    MODULE_FUNCTION(GetAllTranslatedStringKeys)
+    MODULE_FUNCTION(GetTranslatedStringKey)
+    MODULE_FUNCTION(UpdateTranslatedStringKey)
     END_MODULE()
 }
 

@@ -119,4 +119,13 @@ struct TranslatedStringRepository : public ProtectedGameObject<TranslatedStringR
     void UpdateTranslatedString(RuntimeStringHandle const& handle, StringView translated);
 };
 
+struct TranslatedStringKeyManager : public ProtectedGameObject<TranslatedStringKeyManager>
+{
+    void* VMT;
+    Array<Path> Folders_Path;
+    LegacyMap<FixedString, TranslatedString> Keys;
+    LegacyMap<FixedString, FixedString> Speakers;
+    bool DoDecoration;
+};
+
 END_SE()

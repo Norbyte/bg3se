@@ -203,6 +203,17 @@
       <Target Type="Indirect" Offset="@ref1" Symbol="ls__gTranslatedStringRepository" />
     </Mapping>
 
+	  <Mapping Name="ls__gTranslatedStringKeyManager">
+		41 83 7d 18 02 // cmp     dword ptr [r13+18h], 2
+		0f 85 ?? ?? 00 00 // jnz     loc_141B90E2F
+		@str1 48 8d 05 ?? ?? ?? ?? // lea     rax, aOnmap; "OnMap"
+		48 89 44 24 ?? // mov     [rsp+1F0h+var_1A0], rax
+		@ref1 4c 8b 15 ?? ?? ?? ?? // mov     r10, cs:ls__gTranslatedStringKeyManager
+		45 8b 04 24 // mov     r8d, [r12]
+		<Condition Type="String" Offset="@str1" Value="OnMap" />
+		<Target Type="Indirect" Offset="@ref1" Symbol="ls__gTranslatedStringKeyManager" />
+	  </Mapping>
+
     <Mapping Name="ecl::EoCClient::HandleError">
       41 b0 01 // mov     r8b, 1
       48 8d 55 ff // lea     rdx, [rbp+57h+var_58]

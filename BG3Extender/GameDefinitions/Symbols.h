@@ -56,6 +56,7 @@ namespace bg3se
         ecl::DragDropManager** ls__gDragDropManager{ nullptr };
 
         TranslatedStringRepository** ls__gTranslatedStringRepository{ nullptr };
+        TranslatedStringKeyManager** ls__gTranslatedStringKeyManager{ nullptr };
 
         GameStateEventManager** ecl__gGameStateEventManager{ nullptr };
         GameStateEventManager** esv__gGameStateEventManager{ nullptr };
@@ -255,14 +256,14 @@ namespace bg3se
             }
         }
 
-        /*inline esv::SurfaceActionFactory* GetSurfaceActionFactory() const
+        inline TranslatedStringKeyManager* GetTranslatedStringKeyManager() const
         {
-            if (esv__SurfaceActionFactory != nullptr) {
-                return *esv__SurfaceActionFactory;
+            if (ls__gTranslatedStringKeyManager != nullptr) {
+                return *ls__gTranslatedStringKeyManager;
             } else {
-                return {};
+                return nullptr;
             }
-        }*/
+        }
 
         inline esv::LevelManager* GetServerLevelManager() const
         {
