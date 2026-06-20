@@ -723,6 +723,82 @@ DEFINE_TAG_COMPONENT(esv::trigger, TriggerWorldAutoTriggeredComponent, ServerTri
 
 END_NS()
 
+BEGIN_NS(ecl)
+
+struct [[bg3::component]] SoundVolumeTrigger : public bg3se::SoundVolumeTrigger
+{
+    DEFINE_PROXY_COMPONENT(ClientSoundVolumeTrigger, "ecl::SoundVolumeTrigger")
+    
+    [[bg3::hidden]] void* SoundStateSyncChangedListenerVMT;
+    [[bg3::hidden]] void* SoundRTPCSyncChangedListenerVMT;
+    EntityHandle Entity;
+    bool Enabled;
+    bool IsInternal;
+    bool Loaded;
+    [[bg3::hidden]] void* OnSoundActivatedListener;
+    [[bg3::hidden]] void* OnSoundDeactivatedListener;
+    [[bg3::hidden]] void* OnSoundVolumeEnterListener;
+    [[bg3::hidden]] void* OnSoundVolumeLeaveListener;
+};
+
+struct [[bg3::component]] AtmosphereTrigger : public bg3se::AtmosphereTrigger
+{
+    DEFINE_PROXY_COMPONENT(ClientAtmosphereTrigger, "ecl::AtmosphereTrigger")
+
+    EntityHandle Entity;
+};
+
+struct [[bg3::component]] FloorTrigger : bg3se::FloorTrigger
+{
+    DEFINE_PROXY_COMPONENT(ClientFloorTrigger, "ecl::FloorTrigger")
+
+    EntityHandle Entity;
+};
+
+struct [[bg3::component]] PortalTrigger : public bg3se::PortalTrigger
+{
+    DEFINE_PROXY_COMPONENT(ClientPortalTrigger, "ecl::PortalTrigger")
+
+    EntityHandle Entity;
+};
+
+struct [[bg3::component]] RoomTrigger : public bg3se::RoomTrigger
+{
+    DEFINE_PROXY_COMPONENT(ClientRoomTrigger, "ecl::RoomTrigger")
+
+    EntityHandle Entity;
+    uint8_t RenderMethod;
+    uint8_t RenderEffect;
+    float Border;
+};
+
+struct [[bg3::component]] TimelineSceneTrigger : public bg3se::TimelineSceneTrigger
+{
+    DEFINE_PROXY_COMPONENT(ClientTimelineSceneTrigger, "ecl::TimelineSceneTrigger")
+
+    uint64_t field_A8;
+    EntityHandle Entity;
+};
+
+struct [[bg3::component]] RegionTrigger : public bg3se::AreaTrigger
+{
+    DEFINE_PROXY_COMPONENT(ClientRegionTrigger, "ecl::RegionTrigger")
+
+    EntityHandle Entity;
+    uint8_t field_78;
+    bool CameraPosLocked;
+    bool MaskRegionInWorld;
+};
+
+struct [[bg3::component]] LightingTrigger : public bg3se::LightingTrigger
+{
+    DEFINE_PROXY_COMPONENT(ClientLightingTrigger, "ecl::LightingTrigger")
+
+    EntityHandle Entity;
+};
+
+END_NS()
+
 BEGIN_NS(floor)
 
 struct InfoComponent : public BaseComponent

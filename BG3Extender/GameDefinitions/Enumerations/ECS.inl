@@ -977,6 +977,16 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
     E(ServerTriggerLoadedHandled)
     E(ServerTriggerWorldAutoTriggered)
 
+    // Client Trigger
+    E(ClientSoundVolumeTrigger)
+    E(ClientAtmosphereTrigger)
+    E(ClientFloorTrigger)
+    E(ClientPortalTrigger)
+    E(ClientRoomTrigger)
+    E(ClientTimelineSceneTrigger)
+    E(ClientRegionTrigger)
+    E(ClientLightingTrigger)
+
     // Server ping
     E(ServerOsirisPingRequestSingleton)
     E(ServerPingCooldownSingleton)
