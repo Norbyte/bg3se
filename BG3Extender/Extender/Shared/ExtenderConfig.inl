@@ -31,6 +31,7 @@ void ApplyConfig(ExtenderConfig& config, Document& root)
     ConfigGet(root, "InsanityCheck", config.InsanityCheck);
     ConfigGet(root, "LocalMessagePassing", config.LocalMessagePassing);
     ConfigGet(root, "Optick", config.Optick);
+    ConfigGet(root, "MergeVirtualTextures", config.MergeVirtualTextures);
 
     ConfigGet(root, "DebuggerPort", config.DebuggerPort);
     ConfigGet(root, "LuaDebuggerPort", config.LuaDebuggerPort);

@@ -42,6 +42,7 @@ struct ExtenderConfig
     bool InsanityCheck{ false };
     bool LocalMessagePassing{ true };
     bool Optick{ false };
+    bool MergeVirtualTextures{ false };
 
 #if defined(OSI_EXTENSION_BUILD)
 #if defined(_DEBUG)

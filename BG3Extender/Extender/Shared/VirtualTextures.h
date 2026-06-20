@@ -17,11 +17,13 @@ private:
     std::unordered_set<FixedString> sourceTileSets_;
     bool built_{ false };
     std::mutex lock_;
+    Guid mergedTileSetId_;
 
-    bool Stitch();
     HashMap<FixedString, FixedString> CollectRemaps();
     bool NeedsRebuild(std::unordered_set<FixedString> const& newTileSets);
     void RebuildIfNecessary();
+    void BindSEVirtualTextures();
+    void MergeModVTs();
 };
 
 END_SE()

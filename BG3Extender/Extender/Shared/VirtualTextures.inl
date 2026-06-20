@@ -3,12 +3,69 @@
 
 BEGIN_SE()
 
+std::optional<STDString> MergeGTS(Array<STDString> const& gtsPaths)
+{
+    DEBUG("Creating merged virtual texture tile set");
+
+    vt::GTSStitchedFile stitched;
+    for (auto const& path : gtsPaths) {
+        auto reader = GetStaticSymbols().MakeFileReaderAbsolute(path);
+        if (reader.IsLoaded()) {
+            auto gts = GameAlloc<vt::GTSFile>();
+            gts->Path = FixedString{ path };
+            gts->Buf.resize((uint32_t)reader.Size());
+            std::copy(static_cast<uint8_t*>(reader.Buf()), static_cast<uint8_t*>(reader.Buf()) + reader.Size(), gts->Buf.begin());
+            char const* reason{ nullptr };
+            try {
+                gts->Read();
+                stitched.TileSets.push_back(gts);
+            } catch (std::runtime_error& e) {
+                ERR("Failed to load '%s': %s", path.c_str(), e.what());
+            }
+        }
+    }
+
+    // We need at least one loaded tileset to proceed with stitching
+    if (stitched.TileSets.empty()) {
+        ERR("Unable to merge tileset, no source tilesets loaded");
+        return {};
+    }
+
+    vt::MergedTileSetGeometryCalculator geom;
+    geom.TileSets = stitched.TileSets;
+    if (!geom.DoAutoPlacement()) {
+        ERR("Failed to calculate merged tileset geometry, virtual textures will not be available!");
+        return {};
+    }
+
+    DEBUG("Merged geometry: %d x %d tiles (%d x %d px)",
+        geom.TotalWidth, geom.TotalHeight,
+        geom.TotalWidth * 128, geom.TotalHeight * 128
+    );
+
+    stitched.Init(geom.TotalWidth, geom.TotalHeight);
+    if (stitched.Build()) {
+        DEBUG("Built merged GTS: %s", stitched.OutputPath.c_str());
+        return stitched.OutputPath;
+    } else {
+        ERR("Merged tile set build failed, virtual textures will not be available!");
+        return {};
+    }
+}
+
+
 void VirtualTextureHelpers::Load()
 {
     std::lock_guard _(lock_);
 
+    MergeModVTs();
     RebuildIfNecessary();
+    BindSEVirtualTextures();
+}
 
+
+void VirtualTextureHelpers::BindSEVirtualTextures()
+{
     auto pendingRemaps = gtsPaths_;
 
     auto banks = GetStaticSymbols().GetCurrentResourceBank();
@@ -70,13 +127,69 @@ void VirtualTextureHelpers::RebuildIfNecessary()
     }
 
     if (sourceTileSets_.size() > 1) {
-        built_ = Stitch();
-        if (!built_) {
+        Array<STDString> sourceGts;
+        for (auto const& path : sourceTileSets_) {
+            auto dataPath = GetStaticSymbols().ToPath(path.GetStringView(), PathRootType::Data);
+            sourceGts.push_back(dataPath);
+        }
+
+        auto outputPath = MergeGTS(sourceGts);
+        if (outputPath) {
+            FixedString outputPathFS{ *outputPath };
+            for (auto& path : gtsPaths_) {
+                path.Value() = outputPathFS;
+            }
+
+            built_ = true;
+        } else {
             gtsPaths_.clear();
             sourceTileSets_.clear();
         }
     }
 }
+
+// NOTE --------------------------------------
+// This is currently WIP, as tile sets get preloaded before we reach the end of LoadModule,
+// so its too late to remove tilesets at this point.
+//
+void VirtualTextureHelpers::MergeModVTs()
+{
+    if (!gExtender->GetConfig().MergeVirtualTextures) {
+        return;
+    }
+
+    auto vtManager = (*GetStaticSymbols().ls__gGlobalResourceManager)->VirtualTextureManager;
+    if (vtManager->TileSets.size() < 2) {
+        return;
+    }
+
+    Array<STDString> paths;
+    for (auto const& path : vtManager->TileSets) {
+        paths.push_back(path.Value());
+    }
+
+    auto outputGts = MergeGTS(paths);
+    if (!outputGts) {
+        return;
+    }
+
+    mergedTileSetId_ = Guid::Generate();
+    auto tileSetGuidStr = FixedString{ mergedTileSetId_.ToString() };
+    vtManager->TileSets.clear();
+    vtManager->TileSets.set(mergedTileSetId_, *outputGts);
+
+    auto banks = GetStaticSymbols().GetCurrentResourceBank();
+    auto bank = banks->Container.Banks[(unsigned)ResourceBankType::VirtualTexture];
+    resource::VirtualTextureResource* firstTex{ nullptr };
+
+    for (auto const& res : bank->Resources) {
+        auto tex = static_cast<resource::VirtualTextureResource*>(res.Value);
+        if (tex->TileSetFileName) {
+            tex->TileSetFileName = tileSetGuidStr;
+        }
+    }
+}
+
 
 bool VirtualTextureHelpers::NeedsRebuild(std::unordered_set<FixedString> const& newTileSets)
 {
@@ -131,68 +244,6 @@ HashMap<FixedString, FixedString> VirtualTextureHelpers::CollectRemaps()
     }
 
     return remaps;
-}
-
-bool VirtualTextureHelpers::Stitch()
-{
-    if (sourceTileSets_.size() < 2) {
-        // No need to stitch if we only have 1 tile set
-        ERR("Trying to stitch VT with only a single tile set loaded?");
-        return false;
-    }
-
-    DEBUG("Creating merged virtual texture tile set");
-
-    vt::GTSStitchedFile stitched;
-    for (auto const& path : sourceTileSets_) {
-        auto reader = GetStaticSymbols().MakeFileReader(path, PathRootType::Data);
-        if (reader.IsLoaded()) {
-            auto gts = GameAlloc<vt::GTSFile>();
-            gts->Path = path;
-            gts->Buf.resize((uint32_t)reader.Size());
-            std::copy(static_cast<uint8_t*>(reader.Buf()), static_cast<uint8_t*>(reader.Buf()) + reader.Size(), gts->Buf.begin());
-            char const* reason{ nullptr };
-            try {
-                gts->Read();
-                stitched.TileSets.push_back(gts);
-            } catch (std::runtime_error& e) {
-                ERR("Failed to load '%s': %s", path.GetString(), e.what());
-            }
-        }
-    }
-
-    // We need at least one loaded tileset to proceed with stitching
-    if (stitched.TileSets.empty()) {
-        ERR("Unable to merge tileset, no source tilesets loaded");
-        return false;
-    }
-
-    vt::MergedTileSetGeometryCalculator geom;
-    geom.TileSets = stitched.TileSets;
-    if (!geom.DoAutoPlacement()) {
-        ERR("Failed to calculate merged tileset geometry, virtual textures will not be available!");
-        return false;
-    }
-
-    DEBUG("Merged geometry: %d x %d tiles (%d x %d px)",
-        geom.TotalWidth, geom.TotalHeight,
-        geom.TotalWidth * 128, geom.TotalHeight * 128
-    );
-
-    stitched.Init(geom.TotalWidth, geom.TotalHeight);
-    if (stitched.Build()) {
-        DEBUG("Built merged GTS: %s", stitched.OutputPath.c_str());
-
-        FixedString outputPath{ stitched.OutputPath };
-        for (auto& path : gtsPaths_) {
-            path.Value() = outputPath;
-        }
-
-        return true;
-    } else {
-        ERR("Merged tile set build failed, virtual textures will not be available!");
-        return false;
-    }
 }
 
 END_SE()

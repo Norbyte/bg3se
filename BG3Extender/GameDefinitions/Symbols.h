@@ -326,6 +326,7 @@ namespace bg3se
         void CanonicalizePath(STDString & path) const;
         STDString ToPath(StringView path, PathRootType root, bool canonicalize = true) const;
         FileReaderPin MakeFileReader(StringView path, PathRootType root = PathRootType::Data, bool canonicalize = true) const;
+        FileReaderPin MakeFileReaderAbsolute(StringView path) const;
         void DestroyFileReader(FileReader* reader);
         bool FileExists(StringView path, PathRootType root = PathRootType::Data, bool canonicalize = true) const;
     };

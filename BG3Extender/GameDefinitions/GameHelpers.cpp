@@ -108,9 +108,13 @@ namespace bg3se
         }
 
         auto absolutePath = ToPath(path, root, canonicalize);
+        return MakeFileReaderAbsolute(absolutePath);
+    }
 
+    FileReaderPin StaticSymbols::MakeFileReaderAbsolute(StringView path) const
+    {
         Path lsPath;
-        lsPath.Name = absolutePath;
+        lsPath.Name = path;
 
         auto reader = GameAlloc<FileReader>();
         ls__FileReader__ctor(reader, lsPath, 2, 0);

@@ -82,30 +82,30 @@ struct [[bg3::hidden]] VirtualTextureManagerBase : public ProtectedGameObject<Vi
     };
 
     virtual ~VirtualTextureManagerBase() = 0;
-    virtual void VMT_08() = 0;
-    virtual void VMT_10() = 0;
-    virtual void VMT_18() = 0;
-    virtual void VMT_20() = 0;
-    virtual void VMT_28() = 0;
+    virtual void MakePackedTilesResident(void*, int, int, int) = 0;
+    virtual void MakePackedTilesResident2(void*, int) = 0;
+    virtual void Update() = 0;
+    virtual void UpdateGraniteDevice() = 0;
+    virtual void BeginFrame() = 0;
     virtual void VMT_30() = 0;
-    virtual bool InitGraphine() = 0;
-    virtual void* LoadTexture(int32_t gtsHandle, FixedString const& gtexFileName, uint8_t r9_0) = 0;
-    virtual bool UnloadTexture(int32_t gtsHandle, void* graphineTexture) = 0;
-    virtual void VMT_50() = 0;
-    virtual void VMT_58() = 0;
+    virtual bool Init() = 0;
+    virtual void* KeepWarm(int32_t gtsHandle, FixedString const& gtexFileName, uint8_t r9_0) = 0;
+    virtual bool Cooldown(int32_t gtsHandle, void* graphineTexture) = 0;
+    virtual void FillTextureMap(void*, void*) = 0;
+    virtual bool IsPartialUpdate() = 0;
     virtual void VMT_60() = 0;
     virtual void VMT_68() = 0;
-    virtual void VMT_70() = 0;
-    virtual void VMT_78() = 0;
-    virtual void VMT_80() = 0;
+    virtual void GetDataLoaderBufferBindingInfo() = 0;
+    virtual void UpdateCacheSizes() = 0;
     virtual void VMT_88() = 0;
-    virtual void VMT_90() = 0;
-    virtual void VMT_98() = 0;
-    virtual void VMT_A0() = 0;
-    virtual void VMT_A8() = 0;
-    virtual void VMT_B0() = 0;
-    virtual int32_t LoadGTS(uint32_t textureLayerConfig, STDString const& path, int textureSetId, Array<LayerConfig>& layerConfigs) = 0;
-    virtual void ReleaseGTS(uint32_t textureLayerConfig, int32_t gtsHandle, bool releaseTexSet0, bool releaseTexSet1) = 0;
+    virtual void PrefetchOneImmediately(void*, uint32_t) = 0;
+    virtual void Prefetch(void*, uint32_t, void*) = 0;
+    virtual void ProcessFeedbackData(void*, void*) = 0;
+    virtual void ResolveFeedbackData(void*, void*) = 0;
+    virtual void SuspendWarmTextures(uint8_t) = 0;
+    virtual void ResumeWarmTextures(uint8_t) = 0;
+    virtual int32_t OpenVirtualTextureFile(uint32_t textureLayerConfig, STDString const& path, uint8_t textureSetId, Array<LayerConfig>& layerConfigs) = 0;
+    virtual void CloseVirtualTextureFile(uint32_t textureLayerConfig, int32_t gtsHandle, bool releaseTexSet0, bool releaseTexSet1) = 0;
 
     bool UseChunkedVirtualTextures;
     SRWLOCK GTSLock;
@@ -114,11 +114,15 @@ struct [[bg3::hidden]] VirtualTextureManagerBase : public ProtectedGameObject<Vi
     HashMap<Guid, STDString> TileSets;
 };
 
-struct [[bg3::hidden]] VirtualTextureSet
+struct [[bg3::hidden]] VirtualTexturePrefetcher
 {
-    BitSet<> Bits;
-    Array<void*> field_10;
+    void* VMT;
+    void* field_8;
+    VirtualTextureManagerBase* ThisPtr;
+    CRITICAL_SECTION CriticalSection;
+    Array<void*> Arr_pGranitePrefetchWorker_BatchedPrefetchJob;
 };
+
 
 struct [[bg3::hidden]] VirtualTextureManager : public VirtualTextureManagerBase
 {
@@ -128,23 +132,20 @@ struct [[bg3::hidden]] VirtualTextureManager : public VirtualTextureManagerBase
         int field_8;
     };
 
-    void* Renderer_M;
+    void* Renderer;
     void* GraphineContext;
     void* GraphineDevice;
     void* GraphineTranscoder;
-    VirtualTextureSet TexSet0;
-    VirtualTextureSet TexSet1;
+    SparseArray<void*> TexSet0;
+    SparseArray<void*> TexSet1;
     SRWLOCK Lock2;
-    uint64_t field_D0[3];
-    SomeVal field_E8[3];
-    int field_118;
-    SRWLOCK Lock3;
-    Array<void*> SomeArrays1[17];
-    Array<void*> SomeArrays2[17];
-    VirtualTextureSet field_348;
-    __int64 TexSet2;
-    __int64 field_370;
-    Array<void*> field_378;
+    void* DataLoaderBuffer;
+    void* DataLoaderBufferBindingInfo[2];
+    SRWLOCK PerThreadLocks[64];
+    Array<void*> PerThreadPrefetches[64]; // GranitePrefetch*
+    Array<void*> PerThreadWStrings[64]; // GranitePrefetch*
+    SparseArray<void*> CpuCaches;
+    SparseArray<void*> GpuCaches;
     int field_388;
     int field_38C;
     int field_390;
@@ -153,24 +154,17 @@ struct [[bg3::hidden]] VirtualTextureManager : public VirtualTextureManagerBase
     int field_39C;
     int field_3A0;
     int field_3A4;
-    __int64 VMT2;
-    __int64 field_3B0;
-    VirtualTextureManagerBase* ThisPtr;
-    CRITICAL_SECTION CriticalSection;
-    __int64 field_3E8;
-    int field_3F0;
-    int field_3F4;
-    int field_3F8;
-    char field_3FC;
-    __declspec(align(4)) BYTE field_400;
-    char field_401;
-    char field_402;
-    char field_403;
+    VirtualTexturePrefetcher Prefetcher;
+    std::optional<int> field_3F8;
+    bool WasShutdown;
+    bool PackedTilesResident;
+    bool UpdateFinished;
+    bool PartialUpdate;
     int field_404;
     int field_408;
     int field_40C;
-    int field_410;
-    char field_414;
+    int GPUCachesSize;
+    bool RequestResizeGPUCaches;
 };
 
 struct [[bg3::hidden]] ViewDescriptor
@@ -1174,7 +1168,7 @@ struct TimelineSceneResource : public LoadableResource
 
 struct VirtualTextureResource : public LoadableResource
 {
-    [[bg3::readonly]] uint8_t field_80;
+    [[bg3::readonly]] uint8_t GTSIndex;
     [[bg3::readonly]] uint32_t VirtualTextureLayerConfig;
     [[bg3::readonly]] uint32_t LoadedVirtualTextureLayerConfig;
     STDString RootPath;
@@ -1184,7 +1178,8 @@ struct VirtualTextureResource : public LoadableResource
     [[bg3::hidden]] void* GraphineTextureData;
     bool Prefetch;
     int8_t PrefetchMipLevel;
-    [[bg3::readonly]] uint8_t field_52;
+    [[bg3::readonly]] uint8_t IsEditor;
+    [[bg3::readonly]] uint8_t IsValid;
     uint32_t ReferencedColorSpaces;
 };
 
