@@ -537,6 +537,7 @@
     <ClInclude Include="Lua\Shared\ExposedTypes.h" />
     <ClInclude Include="GameDefinitions\Base\Lock.h" />
     <ClInclude Include="GameDefinitions\ObjectFactory.h" />
+    <ClInclude Include="GameDefinitions\Stats\Entries.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

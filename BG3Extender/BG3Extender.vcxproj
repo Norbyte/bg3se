@@ -262,6 +262,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="GameDefinitions\Skeleton.h" />
     <ClInclude Include="GameDefinitions\Sound.h" />
     <ClInclude Include="GameDefinitions\Stats\Common.h" />
+    <ClInclude Include="GameDefinitions\Stats\Entries.h" />
     <ClInclude Include="GameDefinitions\Stats\Expression.h" />
     <ClInclude Include="GameDefinitions\Stats\Functors.h" />
     <ClInclude Include="GameDefinitions\Stats\Prototype.h" />
