@@ -563,7 +563,7 @@ struct GTSStitchedFile
 
         for (uint32_t i = 0; i < tileSet->ParameterBlocks.size(); i++) {
             bool found{ false };
-            for (uint32_t j = 0; i < ParameterBlocks.size(); j++) {
+            for (uint32_t j = 0; j < ParameterBlocks.size(); j++) {
                 if (ParameterBlocks[j].ParameterBlockID == tileSet->ParameterBlocks[i].ParameterBlockID) {
                     found = true;
                     break;
