@@ -70,10 +70,6 @@ namespace bg3se
         ecs::EntityWorld::UpdateProc* ecs__EntityWorld__Update{ nullptr };
         ecs::EntityWorld::FlushECBsProc* ecs__EntityWorld__FlushECBs{ nullptr };
 
-        /*esv::SurfaceActionFactory** esv__SurfaceActionFactory{nullptr};
-        esv::SurfaceActionFactory::CreateActionProc* esv__SurfaceActionFactory__CreateAction{ nullptr };
-        esv::SurfaceManager::AddActionProc* esv__SurfaceManager__AddAction{ nullptr };*/
-
         stats::SpellPrototypeManager** eoc__SpellPrototypeManager{ nullptr };
         stats::SpellPrototype::InitProc* eoc__SpellPrototype__Init{ nullptr };
 

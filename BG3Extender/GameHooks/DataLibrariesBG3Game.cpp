@@ -155,10 +155,6 @@ namespace bg3se
         SYM_OFF(ecs__EntityWorld__Update);
         SYM_OFF(ecs__EntityWorld__FlushECBs);
 
-        /*SYM_OFF(esv__SurfaceActionFactory);
-        SYM_OFF(esv__SurfaceActionFactory__CreateAction);
-        SYM_OFF(esv__SurfaceManager__AddAction);*/
-
         SYM_OFF(eoc__SpellPrototypeManager);
         SYM_OFF(eoc__SpellPrototype__Init);
 
