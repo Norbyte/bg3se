@@ -229,6 +229,12 @@ SpellSet* GetSpellSet(FixedString const& name)
     return stats->SpellSetManager->GetByName(name);
 }
 
+Array<SpellSet*> GetAllSpellSets()
+{
+    auto stats = GetStaticSymbols().GetStats();
+    return stats->SpellSetManager->Values;
+}
+
 SpellSet* CreateSpellSet(lua_State* L, FixedString const& name)
 {
     auto stats = GetStaticSymbols().GetStats();
@@ -242,6 +248,12 @@ EquipmentSet* GetEquipmentSet(FixedString const& name)
 {
     auto stats = GetStaticSymbols().GetStats();
     return stats->EquipmentSetManager->GetByName(name);
+}
+
+Array<EquipmentSet*> GetAllEquipmentSets()
+{
+    auto stats = GetStaticSymbols().GetStats();
+    return stats->EquipmentSetManager->Values;
 }
 
 EquipmentSet* CreateEquipmentSet(lua_State* L, FixedString const& name)
@@ -323,6 +335,12 @@ ItemCombination* GetItemCombination(lua_State* L, FixedString const& name)
     return GetStaticSymbols().GetStats()->ItemCombinationManager->GetByName(name);
 }
 
+Array<ItemCombination*> GetAllItemCombinations()
+{
+    auto stats = GetStaticSymbols().GetStats();
+    return stats->ItemCombinationManager->Values;
+}
+
 ItemCombination* CreateItemCombination(lua_State* L, FixedString const& name)
 {
     auto combo = GameAlloc<ItemCombination>();
@@ -337,6 +355,16 @@ ItemCombinationPreviewData* GetItemCombinationPreviewData(lua_State* L, FixedStr
 {
     auto preview = GetStaticSymbols().GetStats()->ItemCombinationManager->PreviewData.try_get(name);
     return preview ? *preview : nullptr;
+}
+
+Array<ItemCombinationPreviewData*> GetAllItemCombinationPreviewDatas()
+{
+    Array<ItemCombinationPreviewData*> previews;
+    auto stats = GetStaticSymbols().GetStats();
+    for (auto const& kv : stats->ItemCombinationManager->PreviewData) {
+        previews.push_back(kv.Value);
+    }
+    return previews;
 }
 
 ItemCombinationPreviewData* CreateItemCombinationPreviewData(lua_State* L, FixedString const& name)
@@ -355,6 +383,16 @@ ItemCombinationProperty* GetItemCombinationProperty(lua_State* L, FixedString co
     return property ? *property : nullptr;
 }
 
+Array<ItemCombinationProperty*> GetAllItemCombinationProperties()
+{
+    Array<ItemCombinationProperty*> properties;
+    auto stats = GetStaticSymbols().GetStats();
+    for (auto const& kv : stats->ItemCombinationManager->Properties) {
+        properties.push_back(kv.Value);
+    }
+    return properties;
+}
+
 ItemCombinationProperty* CreateItemCombinationProperty(lua_State* L, FixedString const& name)
 {
     auto property = GameAlloc<ItemCombinationProperty>();
@@ -371,10 +409,30 @@ ItemGroup* GetItemGroup(lua_State* L, FixedString const& name)
     return group ? *group : nullptr;
 }
 
+Array<ItemGroup*> GetAllItemGroups()
+{
+    Array<ItemGroup*> val;
+    auto stats = GetStaticSymbols().GetStats();
+    for (auto const& kv : stats->ItemProgressionManager->ItemGroups) {
+        val.push_back(kv.Value);
+    }
+    return val;
+}
+
 NameGroup* GetNameGroup(lua_State* L, FixedString const& name)
 {
     auto group = GetStaticSymbols().GetStats()->ItemProgressionManager->NameGroups.try_get(name);
     return group ? *group : nullptr;
+}
+
+Array<NameGroup*> GetAllNameGroups()
+{
+    Array<NameGroup*> val;
+    auto stats = GetStaticSymbols().GetStats();
+    for (auto const& kv : stats->ItemProgressionManager->NameGroups) {
+        val.push_back(kv.Value);
+    }
+    return val;
 }
 
 /// <summary>
@@ -697,12 +755,14 @@ void RegisterStatsLib()
     DECLARE_SUBMODULE(Stats, SpellSet, Both)
     BEGIN_MODULE()
     MODULE_NAMED_FUNCTION("Get", GetSpellSet)
+    MODULE_NAMED_FUNCTION("GetAll", GetAllSpellSets)
     MODULE_NAMED_FUNCTION("Create", CreateSpellSet)
     END_MODULE()
         
     DECLARE_SUBMODULE(Stats, EquipmentSet, Both)
     BEGIN_MODULE()
     MODULE_NAMED_FUNCTION("Get", GetEquipmentSet)
+    MODULE_NAMED_FUNCTION("GetAll", GetAllEquipmentSets)
     MODULE_NAMED_FUNCTION("Create", CreateEquipmentSet)
     END_MODULE()
         
@@ -722,29 +782,34 @@ void RegisterStatsLib()
     DECLARE_SUBMODULE(Stats, ItemCombo, Both)
     BEGIN_MODULE()
     MODULE_NAMED_FUNCTION("Get", GetItemCombination)
+    MODULE_NAMED_FUNCTION("GetAll", GetAllItemCombinations)
     MODULE_NAMED_FUNCTION("Create", CreateItemCombination)
     END_MODULE()
         
     DECLARE_SUBMODULE(Stats, ItemComboPreview, Both)
     BEGIN_MODULE()
     MODULE_NAMED_FUNCTION("Get", GetItemCombinationPreviewData)
+    MODULE_NAMED_FUNCTION("GetAll", GetAllItemCombinationPreviewDatas)
     MODULE_NAMED_FUNCTION("Create", CreateItemCombinationPreviewData)
     END_MODULE()
         
     DECLARE_SUBMODULE(Stats, ItemComboProperty, Both)
     BEGIN_MODULE()
     MODULE_NAMED_FUNCTION("Get", GetItemCombinationProperty)
+    MODULE_NAMED_FUNCTION("GetAll", GetAllItemCombinationProperties)
     MODULE_NAMED_FUNCTION("Create", CreateItemCombinationProperty)
     END_MODULE()
         
     DECLARE_SUBMODULE(Stats, ItemGroup, Both)
     BEGIN_MODULE()
     MODULE_NAMED_FUNCTION("Get", GetItemGroup)
+    MODULE_NAMED_FUNCTION("GetAll", GetAllItemGroups)
     END_MODULE()
         
     DECLARE_SUBMODULE(Stats, NameGroup, Both)
     BEGIN_MODULE()
     MODULE_NAMED_FUNCTION("Get", GetNameGroup)
+    MODULE_NAMED_FUNCTION("GetAll", GetAllNameGroups)
     END_MODULE()
 }
 

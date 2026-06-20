@@ -192,16 +192,13 @@ function Generator:LoadNativeData()
 end
 
 local _ModuleToClassField = {
-    ["Module_Stats.DeltaMod"] = "Module_Stats",
+    ["Module_Stats.SpellSet"] = "Module_Stats",
     ["Module_Stats.EquipmentSet"] = "Module_Stats",
-    ["Module_Stats.ItemColor"] = "Module_Stats",
     ["Module_Stats.ItemCombo"] = "Module_Stats",
     ["Module_Stats.ItemComboPreview"] = "Module_Stats",
     ["Module_Stats.ItemComboProperty"] = "Module_Stats",
     ["Module_Stats.ItemGroup"] = "Module_Stats",
-    ["Module_Stats.ItemSet"] = "Module_Stats",
     ["Module_Stats.NameGroup"] = "Module_Stats",
-    ["Module_Stats.SkillSet"] = "Module_Stats",
     ["Module_Stats.TreasureCategory"] = "Module_Stats",
     ["Module_Stats.TreasureTable"] = "Module_Stats",
     ["Module_Stats.Math"] = "Module_Stats",

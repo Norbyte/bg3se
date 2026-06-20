@@ -45,7 +45,7 @@ struct EquipmentSet
 {
     FixedString Name;
     uint8_t WeaponSetType{ 0 };
-    Vector<EquipmentGroup> EquipmentGroups;
+    Vector<EquipmentGroup*> EquipmentGroups;
 
     inline FixedString const& GetElementName() const
     {
