@@ -3,16 +3,18 @@
 
 BEGIN_SE()
 
-std::optional<STDString> MergeGTS(Array<STDString> const& gtsPaths)
+std::optional<STDString> MergeGTS(Array<STDString> const& relativePaths)
 {
     DEBUG("Creating merged virtual texture tile set");
 
     vt::GTSStitchedFile stitched;
-    for (auto const& path : gtsPaths) {
-        auto reader = GetStaticSymbols().MakeFileReaderAbsolute(path);
+    for (auto const& path : relativePaths) {
+        auto reader = GetStaticSymbols().MakeFileReader(path, PathRootType::Data);
         if (reader.IsLoaded()) {
             auto gts = GameAlloc<vt::GTSFile>();
-            gts->Path = FixedString{ path };
+            auto absPath = GetStaticSymbols().ToPath(path, PathRootType::Data);
+            gts->DataPath = path;
+            gts->AbsolutePath = absPath;
             gts->Buf.resize((uint32_t)reader.Size());
             std::copy(static_cast<uint8_t*>(reader.Buf()), static_cast<uint8_t*>(reader.Buf()) + reader.Size(), gts->Buf.begin());
             char const* reason{ nullptr };
@@ -22,6 +24,8 @@ std::optional<STDString> MergeGTS(Array<STDString> const& gtsPaths)
             } catch (std::runtime_error& e) {
                 ERR("Failed to load '%s': %s", path.c_str(), e.what());
             }
+        } else {
+            ERR("Referenced VT tileset does not exist: %s", path.c_str());
         }
     }
 
@@ -75,9 +79,9 @@ void VirtualTextureHelpers::BindSEVirtualTextures()
 
     for (auto const& res : bank->Resources) {
         auto tex = static_cast<resource::VirtualTextureResource*>(res.Value);
-        firstTex = tex;
         auto remap = pendingRemaps.try_get(tex->GTexFileName);
         if (remap) {
+            firstTex = tex;
             auto gtsGuid = gtsToGuid_.try_get(*remap);
             if (gtsGuid == nullptr) {
                 auto newGuid = Guid::Generate();
@@ -129,8 +133,7 @@ void VirtualTextureHelpers::RebuildIfNecessary()
     if (sourceTileSets_.size() > 1) {
         Array<STDString> sourceGts;
         for (auto const& path : sourceTileSets_) {
-            auto dataPath = GetStaticSymbols().ToPath(path.GetStringView(), PathRootType::Data);
-            sourceGts.push_back(dataPath);
+            sourceGts.push_back(STDString(path.GetStringView()));
         }
 
         auto outputPath = MergeGTS(sourceGts);

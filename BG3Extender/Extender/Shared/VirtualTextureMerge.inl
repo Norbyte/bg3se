@@ -99,7 +99,8 @@ using GTSParameterBlockDesc = std::variant<GTSUniformParameterBlock, GTSBCParame
 
 struct GTSFile
 {
-    FixedString Path;
+    STDString AbsolutePath;
+    STDString DataPath;
     Array<uint8_t> Buf;
 
     GTSHeader* Header;
@@ -511,7 +512,7 @@ struct GTSStitchedFile
         }
 
         for (auto tileSet : TileSets) {
-            DEBUG("Adding source GTS: %s (%d x %d tiles)", tileSet->Path.GetString(), tileSet->Levels[0].Width, tileSet->Levels[0].Height);
+            DEBUG("Adding source GTS: %s (%d x %d tiles)", tileSet->AbsolutePath.c_str(), tileSet->Levels[0].Width, tileSet->Levels[0].Height);
             AddTileSet(tileSet);
         }
     }
@@ -538,8 +539,8 @@ struct GTSStitchedFile
 
     void AddTileSet(GTSFile* tileSet)
     {
-        STDWString gtsDir;
-        auto gtsPath = tileSet->Path.GetStringView();
+         STDWString gtsDir;
+        auto gtsPath = tileSet->DataPath;
         auto sep = gtsPath.find_last_of('/');
         if (sep != StringView::npos) {
             gtsDir = FromUTF8(gtsPath.substr(0, sep + 1));
