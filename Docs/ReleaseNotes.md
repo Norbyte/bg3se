@@ -1,5 +1,42 @@
 # Release Notes
 
+## v32
+
+### New features
+
+- Templates can now be customized on a per-entity basis via `ServerCharacter:CreateCacheTemplate()` and `ServerItem:CreateCacheTemplate()`
+- Exposed spell set, equipment set, crafting, item progression stats data via the `Ext.Stats.SpellSet`, `Ext.Stats.EquipmentSet`, `Ext.Stats.ItemCombo`, `Ext.Stats.ItemComboPreview`, `Ext.Stats.ItemComboProperty`, `Ext.Stats.ItemGroup`, `Ext.Stats.NameGroup` submodules
+- Added `Ext.StaticData.SyncResourceBank(bank)` for updating internal caches after adding new resources (should only be used in specific cases)
+- Surface mutations (eg. create, remove, flood, etc.) can now be performed via `Ext.Level.CreateSurfaceAction()` and `Ext.Level.ExecuteSurfaceAction()`
+- Translated string keys are now accessible via `Ext.Loca.GetAllTranslatedStringKeys()`, `Ext.Loca.GetTranslatedStringKey(key)`, `Ext.Loca.UpdateTranslatedStringKey(key, handle)`
+- Added `Ext.Utils.GenerateGuid()`
+- Merging Toolkit VT-s with SE VT-s is now supported
+- Accessing components that were created in the same frame no longer returns `nil`
+- New methods for checking same-frame entity mutation: `WasAdded(component)`, `WasRemoved(component)`, `WasEntityAdded()`, `WasEntityRemoved()`, `GetChangedComponents()`, `GetAddedComponentsCurrentFrame()`, `GetRemovedComponentsCurrentFrame()` entity methods
+- Capturing component changes is now configurable via `Ext.Entity.SetupTracing(...)`
+
+
+### Mappings
+
+- Mapped `ecl::TimelineSystem` and related timeline components - `TimelineActorData`, `TimelineData`, `SyncedTimelineActorControl`, `SyncedTimelineControl`
+- Mapped surface components - `ServerSurface`, `ServerSurfaceLevelLoaded`, `ServerSurfaceCreatedEvent`, `ServerSurfaceRemovedEvent`, `ServerSurfaceActionFinishedEvent`, `ServerSurfaceActionGrownEvent`
+- Mapped HLOD/cluster components - `HLOD`, `HLODChild`, `ClusterBound/Child/ChildIndexed/Container/Dist/XYZ/Radius`, `LocalBound`, `Occlusion`
+- Mapped client triggers - `SoundVolumeTrigger`, `AtmosphereTrigger`, `FloorTrigger`, `PortalTrigger`, `RoomTrigger`, `TimelineSceneTrigger`, `RegionTrigger`, `LightingTrigger`
+- Expanded Genome mappings to support `TimelineData`, `IntSet`, `ShortNameSet˙, ˙FixedStringSet` types
+- Various mapping updates to dialogs, interrupt, level and hit components
+
+
+### Fixes
+
+- Fixed construction components (`Construction`, `ConstructionTile`, `ConstructionFilling`, etc.) not being exposed
+- Fixed possible crash when enumerating proxy components
+- Fixed various cases where a component may be resolved incorrectly
+- Fixed AI grid calls crashing when the map is not yet loaded
+- Fixed crash when drawing tables with 0 columns
+- Fixed crash in `StatsObject:Sync()` when modifier index is not set
+- Fixed possible out of bounds in VT merge logic
+
+
 ## v30
 
 ### Materials
