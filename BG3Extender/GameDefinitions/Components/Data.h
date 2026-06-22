@@ -252,7 +252,7 @@ struct LockComponent : public BaseComponent
 
     FixedString Key_M;
     int LockDC;
-    Guid field_8;
+    [[bg3::legacy(field_8)]] Guid LockDifficultyClassID;
     Array<Guid> field_18;
 };
 
