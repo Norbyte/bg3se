@@ -246,6 +246,44 @@ struct GTSFile
         ReadFourCC();
         ReadTiles();
     }
+
+    GTSParameterBlockDesc* FindParameterBlock(uint32_t blockId)
+    {
+        for (uint32_t i = 0; i < ParameterBlocks.size(); i++) {
+            if (ParameterBlocks[i].ParameterBlockID == blockId) {
+                return &ParameterBlockBlobs[i];
+            }
+        }
+
+        return nullptr;
+    }
+
+    bool IsCompatibleWith(GTSFile const& f)
+    {
+        for (uint32_t i = 0; i < f.ParameterBlocks.size(); i++) {
+            auto const& blk = f.ParameterBlockBlobs[i];
+            auto otherBlk = FindParameterBlock(f.ParameterBlocks[i].ParameterBlockID);
+            if (otherBlk != nullptr) {
+                if (blk.index() != otherBlk->index()) {
+                    return false;
+                }
+
+                if (std::holds_alternative<GTSUniformParameterBlock>(blk)) {
+                    // Uniform blocks can't conflict
+                } else if (std::holds_alternative<GTSBCParameterBlock>(blk)) {
+                    auto const& v1 = std::get<GTSBCParameterBlock>(blk);
+                    auto const& v2 = std::get<GTSBCParameterBlock>(*otherBlk);
+                    if (v1.SaveMip != v2.SaveMip
+                        || strncmp(v1.Compression1, v2.Compression1, 16) != 0
+                        || strncmp(v1.Compression2, v2.Compression2, 16) != 0) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
 };
 
 
@@ -456,6 +494,7 @@ struct FourCCWriter
 
 struct GTSStitchedFile
 {
+    uint32_t Index{ 0 };
     Array<GTSFile*> TileSets;
     STDString OutputPath;
 
@@ -716,7 +755,10 @@ struct GTSStitchedFile
         Header.ParameterBlockHeadersCount = ParameterBlocks.size();
         Header.ThumbnailsOffset = 0;
 
-        OutputPath = "SEMergedTileSet.gts";
+        OutputPath = "SEMergedTileSet_";
+        OutputPath += std::to_string(Index);
+        OutputPath += ".gts";
+
         auto gtsPath = GetStaticSymbols().ToPath(OutputPath, PathRootType::Data, true);
         std::ofstream f(gtsPath.c_str(), std::ios::out | std::ios::binary);
 
@@ -724,6 +766,8 @@ struct GTSStitchedFile
             f.close();
 
             OutputPath = "SEMergedTileSet_";
+            OutputPath += std::to_string(Index);
+            OutputPath += "_";
             OutputPath += std::to_string(GetCurrentProcessId());
             OutputPath += ".gts";
             gtsPath = GetStaticSymbols().ToPath(OutputPath, PathRootType::Data, true);
@@ -786,5 +830,48 @@ struct GTSStitchedFile
         return true;
     }
 };
+
+struct GTSStitchedFileGroup
+{
+    uint32_t Index;
+    Array<GTSFile*> TileSets;
+
+    bool IsCompatible(GTSFile const& f)
+    {
+        for (auto tileSet : TileSets) {
+            if (!tileSet->IsCompatibleWith(f)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+};
+
+Array<GTSStitchedFileGroup> ComputeGroups(Array<GTSFile*> const& tileSets)
+{
+    Array<GTSStitchedFileGroup> groups;
+
+    for (auto tileSet : tileSets) {
+        bool matched{ false };
+        for (auto& group : groups) {
+            if (group.IsCompatible(*tileSet)) {
+                group.TileSets.push_back(tileSet);
+                matched = true;
+                break;
+            }
+        }
+
+        if (!matched) {
+            groups.push_back(GTSStitchedFileGroup{
+                .Index = groups.size()
+            });
+            groups[groups.size() - 1].TileSets.push_back(tileSet);
+        }
+    }
+
+    return groups;
+}
+
 
 END_NS()
