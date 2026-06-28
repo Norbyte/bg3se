@@ -1822,8 +1822,15 @@ void IMGUIManager::InitializeUI()
         io.IniFilename = _strdup(configPath.c_str());
     }
 
+    auto getClipboardText = GImGui->PlatformIO.Platform_GetClipboardTextFn;
+    auto setClipboardText = GImGui->PlatformIO.Platform_SetClipboardTextFn;
+
     sdl_.InitializeUI();
     renderer_->InitializeUI();
+
+    // Use native clipboard handler instead of SDL to prevent freezes when copying text
+    GImGui->PlatformIO.Platform_GetClipboardTextFn = getClipboardText;
+    GImGui->PlatformIO.Platform_SetClipboardTextFn = setClipboardText;
 
     UpdateStyle();
 
