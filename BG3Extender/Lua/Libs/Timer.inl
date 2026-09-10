@@ -7,9 +7,9 @@ BEGIN_NS(lua::timer)
 void TimerManager::BaseTimer::SavegameVisit(ObjectVisitor* visitor)
 {
     visitor->VisitDouble(GFS.strTime, Time, .0);
-    visitor->VisitFloat(GFS.strTime, FrozenTime, .0f);
-    visitor->VisitFloat(GFS.strTime, Repeat, .0f);
-    visitor->VisitBool(GFS.strTime, Paused, false);
+    visitor->VisitFloat(GFS.strFrozenTime, FrozenTime, .0f);
+    visitor->VisitFloat(GFS.strRepeat, Repeat, .0f);
+    visitor->VisitBool(GFS.strPaused, Paused, false);
 }
 
 void TimerManager::BaseTimer::Start(double time, float repeat)
@@ -61,8 +61,8 @@ void TimerManager::PersistentTimer::UnfreezeAfterRestore(double time)
     }
 }
 
-TimerManager::TimerManager(State& state, lua::DeferredLuaDelegateQueue& queue)
-    : state_(state), eventQueue_(queue)
+TimerManager::TimerManager(State& state, lua::DeferredLuaDelegateQueue& queue, uint64_t handleFlags)
+    : state_(state), eventQueue_(queue), handleFlags_(handleFlags)
 {}
 
 TimerHandle TimerManager::Add(float delta, Ref callback, float repeat)
@@ -71,10 +71,10 @@ TimerHandle TimerManager::Add(float delta, Ref callback, float repeat)
     auto timer = ephemeralTimers_.Add(id);
     timer->Start(lastUpdate_ + delta, repeat);
     timer->Callback = LuaDelegate<void(TimerHandle)>(state_.GetState(), callback);
+    timer->Handle = TimerHandle{ (uint64_t)id | handleFlags_ };
 
-    TimerHandle handle{ id };
-    QueueTimer(handle, *timer);
-    return handle;
+    QueueTimer(*timer);
+    return timer->Handle;
 }
 
 TimerHandle TimerManager::AddPersistent(float delta, FixedString const& callback, StringView argsJson, float repeat)
@@ -84,10 +84,10 @@ TimerHandle TimerManager::AddPersistent(float delta, FixedString const& callback
     timer->Start(lastUpdate_ + delta, repeat);
     timer->Callback = callback;
     timer->ArgsJson = argsJson;
+    timer->Handle = TimerHandle{ (uint64_t)id | handleFlags_ | PersistentFlag };
 
-    TimerHandle handle{ (uint64_t)id | PersistentFlag };
-    QueueTimer(handle, *timer);
-    return handle;
+    QueueTimer(*timer);
+    return timer->Handle;
 }
 
 TimerHandle TimerManager::RestorePersistent(PersistentTimer const& t)
@@ -95,14 +95,14 @@ TimerHandle TimerManager::RestorePersistent(PersistentTimer const& t)
     uint32_t id;
     auto timer = persistentTimers_.Add(id);
     *timer = t;
+    timer->Handle = TimerHandle{ (uint64_t)id | handleFlags_ | PersistentFlag };
     timer->UnfreezeAfterRestore(lastUpdate_);
 
-    TimerHandle handle{ (uint64_t)id | PersistentFlag };
     if (!timer->Paused) {
-        QueueTimer(handle, *timer);
+        QueueTimer(*timer);
     }
 
-    return handle;
+    return timer->Handle;
 }
 
 void TimerManager::RegisterPersistentCallback(FixedString const& name, Ref callback)
@@ -150,7 +150,7 @@ bool TimerManager::Resume(TimerHandle handle)
     if (timer) {
         if (timer->Paused) {
             timer->Resume(lastUpdate_);
-            QueueTimer(handle, *timer);
+            QueueTimer(*timer);
         }
         return true;
     } else {
@@ -207,37 +207,37 @@ void TimerManager::FireTimer(TimerQueueEntry const& entry)
                 WARN("Tried to fire persistent timer '%s' but it has no callback registered!", timer->Callback.GetString());
             }
             
-            RepeatOrReleaseTimer(entry.Handle, *timer);
+            RepeatOrReleaseTimer(*timer);
         }
     } else {
         auto timer = ephemeralTimers_.Find((uint32_t)entry.Handle);
         if (timer != nullptr && entry.Matches(*timer)) {
             eventQueue_.Call(timer->Callback, entry.Handle);
-            RepeatOrReleaseTimer(entry.Handle, *timer);
+            RepeatOrReleaseTimer(*timer);
         }
     }
 }
 
-void TimerManager::RepeatOrReleaseTimer(TimerHandle handle, BaseTimer& timer)
+void TimerManager::RepeatOrReleaseTimer(BaseTimer& timer)
 {
     if (timer.Repeat > 0.0f) {
         timer.Time = lastUpdate_ + timer.Repeat;
-        QueueTimer(handle, timer);
+        QueueTimer(timer);
     } else {
-        if (handle & PersistentFlag) {
-            persistentTimers_.Free((uint32_t)handle);
+        if (timer.Handle & PersistentFlag) {
+            persistentTimers_.Free((uint32_t)timer.Handle);
         } else {
-            ephemeralTimers_.Free((uint32_t)handle);
+            ephemeralTimers_.Free((uint32_t)timer.Handle);
         }
     }
 }
 
-void TimerManager::QueueTimer(TimerHandle handle, BaseTimer const& timer)
+void TimerManager::QueueTimer(BaseTimer const& timer)
 {
     se_assert(!timer.Paused);
     queue_.push(TimerQueueEntry{
         .Time = timer.Time,
-        .Handle = handle,
+        .Handle = timer.Handle,
         .InvokeId = timer.InvokeId
     });
 }
@@ -253,6 +253,7 @@ void TimerManager::SavegameVisit(ObjectVisitor* visitor)
                 PersistentTimer timer;
                 timer.SavegameVisit(visitor);
                 pendingRestore_.push_back(timer);
+                visitor->ExitNode(GFS.strTimer);
             }
         }
     } else {
@@ -273,8 +274,8 @@ void TimerManager::SavegameVisit(ObjectVisitor* visitor)
 
 
 TimerSystem::TimerSystem(State& state, bool isServer)
-    : realtime_(state, eventQueue_),
-    game_(state, eventQueue_),
+    : realtime_(state, eventQueue_, TimerManager::RealtimeFlag),
+    game_(state, eventQueue_, 0),
     isServer_(isServer),
     eventQueue_("Timer event")
 {}
@@ -366,8 +367,7 @@ TimerHandle WaitForRealtime(lua_State* L, float delay, Ref callback, std::option
 {
     auto state = State::FromLua(L);
 
-    auto handle = state->GetTimers().RealtimeTimer().Add(delay / 1000.0f, callback, repeat ? (*repeat / 1000.0f) : 0.0f);
-    return handle | TimerManager::RealtimeFlag;
+    return state->GetTimers().RealtimeTimer().Add(delay / 1000.0f, callback, repeat ? (*repeat / 1000.0f) : 0.0f);
 }
 
 void RegisterPersistentHandler(lua_State* L, FixedString name, Ref callback)

@@ -20,6 +20,7 @@ public:
         float Repeat{ .0f };
         uint32_t InvokeId{ 0 };
         bool Paused{ false };
+        TimerHandle Handle{ 0 };
 
         void SavegameVisit(ObjectVisitor* visitor);
         void Start(double time, float repeat = .0f);
@@ -51,6 +52,7 @@ public:
         inline bool Matches(BaseTimer const& timer) const
         {
             return InvokeId == timer.InvokeId
+                && Handle == timer.Handle
                 && Time == timer.Time
                 && !timer.Paused;
         }
@@ -61,7 +63,7 @@ public:
         }
     };
 
-    TimerManager(State& state, DeferredLuaDelegateQueue& queue);
+    TimerManager(State& state, DeferredLuaDelegateQueue& queue, uint64_t handleFlags);
     TimerHandle Add(float delta, Ref callback, float repeat = .0f);
     TimerHandle AddPersistent(float delta, FixedString const& callback, StringView argsJson, float repeat = .0f);
     void RegisterPersistentCallback(FixedString const& name, Ref callback);
@@ -81,11 +83,12 @@ private:
 
     State& state_;
     DeferredLuaDelegateQueue& eventQueue_;
+    uint64_t handleFlags_{ 0 };
     double lastUpdate_{ .0f };
 
     void FireTimer(TimerQueueEntry const& entry);
-    void RepeatOrReleaseTimer(TimerHandle handle, BaseTimer& timer);
-    void QueueTimer(TimerHandle handle, BaseTimer const& timer);
+    void RepeatOrReleaseTimer(BaseTimer& timer);
+    void QueueTimer(BaseTimer const& timer);
     TimerHandle RestorePersistent(PersistentTimer const& timer);
 };
 

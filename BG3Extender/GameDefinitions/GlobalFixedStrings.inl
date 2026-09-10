@@ -116,6 +116,9 @@ FS(GameTimers);
 FS(RealtimeTimers);
 FS(Timer);
 FS(Time);
+FS(FrozenTime);
+FS(Repeat);
+FS(Paused);
 FS(Handler);
 FS(Args);
 
