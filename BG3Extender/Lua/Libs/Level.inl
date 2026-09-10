@@ -274,8 +274,8 @@ phx::PhysicsSceneBase* GetPhysicsScene(lua_State* L)
     return phys;
 }
 
-phx::PhysicsHit gHit;
-phx::PhysicsHitAll gHits;
+thread_local phx::PhysicsHit gHit;
+thread_local phx::PhysicsHitAll gHits;
 
 phx::PhysicsHit* RaycastClosest(lua_State* L, glm::vec3 const& source, glm::vec3 const& destination, PhysicsType physicsType, PhysicsGroupFlags includePhysicsGroup, PhysicsGroupFlags excludePhysicsGroup, int context)
 {
