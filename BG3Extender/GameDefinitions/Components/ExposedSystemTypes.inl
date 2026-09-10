@@ -73,6 +73,7 @@ T(esv::sight::ViewshedSystem)
 T(esv::roll::stream::SaveSystem)
 T(esv::combat_log::CombatLogSystem)
 T(esv::lock::LockpickingSystem)
+T(esv::hotbar::HotbarSystem)
 
 T(ecl::EquipmentVisualsSystem)
 T(ecl::VisualSystem)

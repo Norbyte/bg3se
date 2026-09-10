@@ -676,6 +676,7 @@ sources = [
     'GameDefinitions/Components/Events.h',
     'GameDefinitions/Components/Fade.h',
     'GameDefinitions/Components/Hit.h',
+    'GameDefinitions/Components/Hotbar.h',
     'GameDefinitions/Components/Item.h',
     'GameDefinitions/Components/Instancing.h',
     'GameDefinitions/Components/Inventory.h',

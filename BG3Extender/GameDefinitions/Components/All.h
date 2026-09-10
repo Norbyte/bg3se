@@ -14,6 +14,7 @@
 #include <GameDefinitions/Components/Instancing.h>
 #include <GameDefinitions/Components/Inventory.h>
 #include <GameDefinitions/Components/Item.h>
+#include <GameDefinitions/Components/Hotbar.h>
 #include <GameDefinitions/Components/Hit.h>
 #include <GameDefinitions/Components/Level.h>
 #include <GameDefinitions/Components/Passives.h>

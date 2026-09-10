@@ -542,6 +542,7 @@
     <ClInclude Include="GameDefinitions\FileReader.h" />
     <ClInclude Include="GameDefinitions\MaterialParameters.h" />
     <ClInclude Include="GameDefinitions\Camera.h" />
+    <ClInclude Include="GameDefinitions\Components\Hotbar.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

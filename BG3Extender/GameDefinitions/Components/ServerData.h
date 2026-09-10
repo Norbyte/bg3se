@@ -271,7 +271,6 @@ struct DisarmAttemptComponent : public BaseComponent
 DEFINE_TAG_COMPONENT(esv::cover, IsLightBlockerComponent, ServerIsLightBlocker)
 DEFINE_TAG_COMPONENT(esv::cover, IsVisionBlockerComponent, ServerIsVisionBlocker)
 DEFINE_TAG_COMPONENT(esv::darkness, DarknessActiveComponent, ServerDarknessActive)
-DEFINE_TAG_COMPONENT(esv::hotbar, OrderComponent, ServerHotbarOrder)
 DEFINE_TAG_COMPONENT(esv::level, InventoryItemDataPopulatedComponent, ServerInventoryItemDataPopulated)
 
 DEFINE_TAG_COMPONENT(esv, VariableManagerComponent, ServerVariableManager)

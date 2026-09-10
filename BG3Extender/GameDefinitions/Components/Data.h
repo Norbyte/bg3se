@@ -632,44 +632,6 @@ DEFINE_TAG_COMPONENT(eoc::exp, CanLevelUpComponent, CanLevelUp)
 
 END_NS()
 
-BEGIN_NS(eoc::hotbar)
-
-struct Slot
-{
-    EntityHandle Item;
-    SpellId SpellId;
-    FixedString Passive;
-    uint32_t Slot;
-    bool IsNew{ false };
-};
-
-struct Bar
-{
-    uint8_t Index{ 0 };
-    uint8_t field_1{ 0 };
-    Array<Slot> Elements;
-    uint8_t Width{ 1 };
-    uint32_t Height{ 1 };
-    STDString field_20;
-};
-
-struct ContainerComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(HotbarContainer, "eoc::hotbar::ContainerComponent")
-
-    HashMap<FixedString, Array<Bar>> Containers;
-    FixedString ActiveContainer;
-};
-
-struct HotbarCurrentDecksComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(HotbarDecks, "eoc::hotbar::CurrentDecksComponent")
-
-    HashMap<FixedString, int32_t> Decks;
-};
-
-END_NS()
-
 BEGIN_NS(eoc::lock)
 
 struct LockComponent : public BaseComponent
