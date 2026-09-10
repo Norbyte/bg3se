@@ -421,7 +421,7 @@ struct NormalizeOp
     template <class T1>
     static __forceinline auto DoInPlace(lua_State* L, T1 const& a) -> decltype((void)assign(L, 3, glm::normalize(a)), void())
     {
-        assign(L, 3, glm::normalize(a));
+        assign(L, 2, glm::normalize(a));
     }
 };
 
@@ -463,7 +463,7 @@ struct InverseOp
     template <class T1>
     static __forceinline auto DoInPlace(lua_State* L, T1 const& a) -> decltype((void)assign(L, 3, glm::inverse(a)), void())
     {
-        assign(L, 3, glm::inverse(a));
+        assign(L, 2, glm::inverse(a));
     }
 };
 
@@ -487,7 +487,7 @@ struct TransposeOp
     template <class T1>
     static __forceinline auto DoInPlace(lua_State* L, T1 const& a) -> decltype((void)assign(L, 3, glm::transpose(a)), void())
     {
-        assign(L, 3, glm::transpose(a));
+        assign(L, 2, glm::transpose(a));
     }
 };
 
@@ -617,7 +617,7 @@ float QuatDot(glm::quat const& a, glm::quat const& b)
 
 glm::quat QuatSlerp(glm::quat const& a, glm::quat const& b, float alpha)
 {
-    return glm::mix(a, b, alpha);
+    return glm::slerp(a, b, alpha);
 }
 
 glm::mat3 QuatToMat3(glm::quat const& a)
