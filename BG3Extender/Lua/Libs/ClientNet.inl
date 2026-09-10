@@ -17,6 +17,7 @@ void PostMessageToServer(lua_State* L, StringView channel, StringView payload, s
             bg3se::net::LocalMessage msg;
             BuildMessage(L, msg, *localUserId, channel, payload, moduleGuid, requestHandler, replyId, binary.value_or(false));
             gExtender->GetServer().GetNetworkManager().PushLocalMessage(std::move(msg));
+            return;
         }
     }
     
