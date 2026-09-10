@@ -148,20 +148,20 @@ function SubscribableEvent:DoUnsubscribe(handlerIndex)
 end
 
 function SubscribableEvent:ProcessDeferredSubscriptions()
-    if #self.PendingDeletions > 0 then
-        for i,handlerIndex in pairs(self.PendingDeletions) do
-            self:DoUnsubscribe(handlerIndex)
-        end
-
-        self.PendingDeletions = {}
-    end
-
     if #self.PendingAdds > 0 then
         for i,sub in pairs(self.PendingAdds) do
             self:DoSubscribe(sub)
         end
 
         self.PendingAdds = {}
+    end
+
+    if #self.PendingDeletions > 0 then
+        for i,handlerIndex in pairs(self.PendingDeletions) do
+            self:DoUnsubscribe(handlerIndex)
+        end
+
+        self.PendingDeletions = {}
     end
 end
 
