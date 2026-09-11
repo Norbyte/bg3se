@@ -22,6 +22,12 @@ namespace bg3se::lua::dbg
     struct DebuggerEvaluateRequest;
     struct DebuggerGetVariablesRequest;
 
+    enum class EvalFlags : uint32_t
+    {
+        EvaluateAsStatement = 1 << 0,
+        DisallowVariableRefs = 1 << 1
+    };
+
     enum class ResultCode
     {
         Success = 0,

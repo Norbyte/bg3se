@@ -9,6 +9,13 @@ using System.Text;
 
 namespace NSE.DebuggerFrontend
 {
+    [Flags]
+    public enum EvaluateFlags : UInt32
+    {
+        EvaluateAsStatement = 1 << 0,
+        DisallowVariableRefs = 1 << 1
+    }
+
     public class AsyncProtobufClient
     {
         private TcpClient Socket;
@@ -220,7 +227,7 @@ namespace NSE.DebuggerFrontend
             Send(msg);
         }
 
-        public UInt32 SendEvaluate(DbgContext context, int frameIndex, string expression)
+        public UInt32 SendEvaluate(DbgContext context, int frameIndex, string expression, EvaluateFlags flags)
         {
             var msg = new DebuggerToBackend
             {
@@ -228,7 +235,8 @@ namespace NSE.DebuggerFrontend
                 {
                     Context = context,
                     Frame = frameIndex,
-                    Expression = expression
+                    Expression = expression,
+                    Flags = (UInt32)flags
                 }
             };
             return Send(msg);

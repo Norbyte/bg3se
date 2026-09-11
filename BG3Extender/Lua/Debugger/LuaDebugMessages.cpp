@@ -402,6 +402,8 @@ void DebugMessageHandler::HandleEvaluate(uint32_t seq, DbgEvaluate const& req)
     evalReq.Seq = seq;
     evalReq.Context = req.context();
     evalReq.Frame = req.frame();
+    evalReq.EvalStatement = (req.flags() & (uint32_t)EvalFlags::EvaluateAsStatement) != 0;
+    evalReq.AllowRefs = (req.flags() & (uint32_t)EvalFlags::DisallowVariableRefs) == 0;
     evalReq.Expression = req.expression();
     evalReq.Msg = new BackendToDebugger();
     evalReq.Response = evalReq.Msg->mutable_evaluateresponse();

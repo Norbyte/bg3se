@@ -342,7 +342,7 @@ namespace NSE.DebuggerFrontend
             }
 
             // TODO - evaluate in frame in later versions
-            uint seq = DAP.DbgCli.SendEvaluate(state.Context, frameIndex, req.expression);
+            uint seq = DAP.DbgCli.SendEvaluate(state.Context, frameIndex, req.expression, 0);
             PendingEvalRequests.Add(seq, (uint replySeq, StatusCode status, BkEvaluateResponse response) =>
             {
                 if (status == StatusCode.Success)

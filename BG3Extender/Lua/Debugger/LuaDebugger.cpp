@@ -921,14 +921,90 @@ namespace bg3se::lua::dbg
             }
         }
 
-        STDString syntaxCheck = "local x = " + req.Expression;
-        if (luaL_loadstring(L, syntaxCheck.c_str())) {
+        return EvaluateInContextGuarded(L, req);
+    }
+
+    ResultCode ContextDebugger::EvalSyntaxCheck(lua_State* L, DebuggerEvaluateRequest const& req)
+    {
+        auto expr = req.EvalStatement ? req.Expression : ("return " + req.Expression);
+        if (luaL_loadstring(L, expr.c_str())) {
             req.Response->set_error_message(lua_tostring(L, -1));
             lua_pop(L, 1);
             return ResultCode::EvalFailed;
         }
 
         lua_pop(L, 1);
+        return ResultCode::Success;
+    }
+
+    ResultCode ContextDebugger::EvaluateInContextGuarded(lua_State* L, DebuggerEvaluateRequest const& req)
+    {
+        if (req.EvalStatement && req.Frame != -1) {
+            req.Response->set_error_message("Statement evaluation within a specific stack frame is not supported");
+            return ResultCode::EvalFailed;
+        }
+
+        auto result = EvalSyntaxCheck(L, req);
+        if (result != ResultCode::Success) {
+            return result;
+        }
+
+        if (req.EvalStatement) {
+            return EvaluateStatement(L, req);
+        } else {
+            return EvaluateExpression(L, req);
+        }
+    }
+
+    void ContextDebugger::FetchReturnValue(lua_State* L, DebuggerEvaluateRequest const& req, int numValues)
+    {
+        auto result = req.Response->mutable_result();
+        if (numValues == 0) {
+            result->set_type_id(MsgValueType::NONE);
+        } else {
+            auto retval = lua_absindex(L, -1);
+            LuaToProtobuf(L, retval, result);
+            if (IsLuaContainerType(L, retval) && req.AllowRefs) {
+                lua_rawgeti(L, LUA_REGISTRYINDEX, evalContextRef_);
+                auto registry = lua_absindex(L, -1);
+                auto index = lua_rawlen(L, registry);
+                lua_pushvalue(L, retval);
+                lua_rawseti(L, registry, index + 1);
+                lua_pop(L, 1);
+
+                auto ref = result->mutable_variables();
+                ref->set_frame(-1);
+                ref->set_local(-1);
+                ref->set_variableref((int32_t)index + 1);
+            }
+        }
+
+        lua_pop(L, numValues);
+    }
+
+    ResultCode ContextDebugger::EvaluateStatement(lua_State * L, DebuggerEvaluateRequest const& req)
+    {
+        auto top = lua_gettop(L);
+
+        if (luaL_loadstring(L, req.Expression.c_str())) {
+            req.Response->set_error_message(lua_tostring(L, -1));
+            lua_pop(L, lua_gettop(L) - top);
+            return ResultCode::EvalFailed;
+        }
+
+        if (bg3se::lua::CallWithTraceback(L, 0, 1)) {
+            req.Response->set_error_message(lua_tostring(L, -1));
+            lua_pop(L, 1);
+            return ResultCode::EvalFailed;
+        } else {
+            auto numReturnValues = lua_gettop(L) - top;
+            FetchReturnValue(L, req, numReturnValues);
+            return ResultCode::Success;
+        }
+    }
+
+    ResultCode ContextDebugger::EvaluateExpression(lua_State * L, DebuggerEvaluateRequest const& req)
+    {
         auto top = lua_gettop(L);
 
         STDString evalateLocals;
@@ -961,7 +1037,7 @@ namespace bg3se::lua::dbg
 
         if (luaL_loadstring(L, evaluator.c_str())) {
             req.Response->set_error_message(lua_tostring(L, -1));
-            lua_pop(L, top - lua_gettop(L));
+            lua_pop(L, lua_gettop(L) - top);
             return ResultCode::EvalFailed;
         }
 
@@ -975,28 +1051,7 @@ namespace bg3se::lua::dbg
             return ResultCode::EvalFailed;
         } else {
             auto numReturnValues = lua_gettop(L) - top;
-            auto result = req.Response->mutable_result();
-            if (numReturnValues == 0) {
-                result->set_type_id(MsgValueType::NONE);
-            } else {
-                auto retval = lua_absindex(L, -1);
-                LuaToProtobuf(L, retval, result);
-                if (IsLuaContainerType(L, retval)) {
-                    lua_rawgeti(L, LUA_REGISTRYINDEX, evalContextRef_);
-                    auto registry = lua_absindex(L, -1);
-                    auto index = lua_rawlen(L, registry);
-                    lua_pushvalue(L, retval);
-                    lua_rawseti(L, registry, index + 1);
-                    lua_pop(L, 1);
-
-                    auto ref = result->mutable_variables();
-                    ref->set_frame(-1);
-                    ref->set_local(-1);
-                    ref->set_variableref((int32_t)index + 1);
-                }
-            }
-
-            lua_pop(L, numReturnValues);
+            FetchReturnValue(L, req, numReturnValues);
             return ResultCode::Success;
         }
     }
