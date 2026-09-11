@@ -64,12 +64,14 @@ void RegisterUserVariable(lua_State* L, FixedString name)
 
 void SyncUserVariables(lua_State* L)
 {
+    State::FromLua(L)->GetVariableManager().Flush();
     auto& vars = ExtensionStateBase::FromLua(L).GetUserVariables();
     vars.Flush(true);
 }
 
 void DirtyUserVariables(lua_State* L, std::optional<Guid> entityGuid, std::optional<FixedString> key)
 {
+    State::FromLua(L)->GetVariableManager().Flush();
     auto& vars = ExtensionStateBase::FromLua(L).GetUserVariables();
     if (!entityGuid) {
         for (auto& entity : vars.GetAll()) {
@@ -136,12 +138,14 @@ UserReturn GetModVariables(lua_State* L, Guid moduleUuid)
 
 void SyncModVariables(lua_State* L)
 {
+    State::FromLua(L)->GetModVariableManager().Flush();
     auto& vars = ExtensionStateBase::FromLua(L).GetModVariables();
     vars.Flush(true);
 }
 
 void DirtyModVariables(lua_State* L, std::optional<Guid> moduleUuid, std::optional<FixedString> key)
 {
+    State::FromLua(L)->GetModVariableManager().Flush();
     auto& vars = ExtensionStateBase::FromLua(L).GetModVariables();
     if (!moduleUuid) {
         for (auto& mod : vars.GetAll()) {

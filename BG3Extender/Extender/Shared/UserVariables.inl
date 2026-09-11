@@ -1035,7 +1035,7 @@ CachedUserVariable& CachedUserVariable::operator = (CachedUserVariable&& o) noex
 {
     Type = o.Type;
     Dirty = o.Dirty;
-    Value = o.Value;
+    Value = std::move(o.Value);
 
     return *this;
 }
