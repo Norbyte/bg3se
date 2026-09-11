@@ -133,7 +133,7 @@ Guid GenerateGuid()
 
 STDString GetValueType(lua_State* L)
 {
-    return lua_typename(L, 1);
+    return GetDebugName(L, 1);
 }
 
 void ShowErrorAndExitGame(STDString message)
