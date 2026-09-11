@@ -738,7 +738,7 @@ glm::mat3 BuildFromEulerAngles3(lua_State* L, glm::vec3 const& angle)
 }
 
 /// <summary>
-/// Decomposes a model matrix to translations, rotation and scale components.
+/// Decomposes a model matrix to scale, rotation and translation components.
 /// </summary>
 void Decompose(lua_State* L, glm::mat4 const& m, glm::vec3 const& scale_, glm::vec3 const& yawPitchRoll, glm::vec3 const& translation_)
 {
@@ -901,7 +901,7 @@ float Lerp(float x, float y, float a)
 }
 
 /// <summary>
-/// Arc cosine. Returns an angle whose sine is x.
+/// Arc cosine. Returns an angle whose cosine is x.
 /// </summary>
 float Acos(float x)
 {
@@ -930,9 +930,9 @@ float Atan(float y_over_x)
 /// Returns an angle whose tangent is y / x.
 /// The signs of x and y are used to determine what quadrant the angle is in.
 /// </summary>
-float Atan2(float x, float y)
+float Atan2(float y, float x)
 {
-    return glm::atan(x, y);
+    return glm::atan(y, x);
 }
 
 /// <summary>
