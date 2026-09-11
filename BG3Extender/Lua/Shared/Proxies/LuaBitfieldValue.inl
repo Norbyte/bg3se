@@ -4,6 +4,19 @@
 
 BEGIN_NS(lua)
 
+bool IsPrimitiveLabel(uint64_t val)
+{
+    return val != 0
+        // Only a single bit is set
+        && (val & (val - 1)) == 0;
+}
+
+bool BitfieldHasValue(uint64_t bitfield, uint64_t val)
+{
+    return IsPrimitiveLabel(val)
+        && (bitfield & val) == val;
+}
+
 BitfieldInfoStore* BitfieldValueMetatable::GetBitfieldInfo(CppObjectMetadata const& self)
 {
     return BitfieldRegistry::Get().BitfieldsById[self.PropertyMapTag];
@@ -37,7 +50,7 @@ STDString BitfieldValueMetatable::GetValueAsString(CppObjectMetadata& self)
     STDString labels;
     auto ei = GetBitfieldInfo(self);
     for (auto const& val : ei->Values) {
-        if ((self.Value & val.Value) == val.Value) {
+        if (BitfieldHasValue(self.Value, val.Value)) {
             if (!labels.empty()) labels += " | ";
             labels += val.Key.GetString();
         }
@@ -57,11 +70,7 @@ int BitfieldValueMetatable::Index(lua_State* L, CppObjectMetadata& self)
             lua_newtable(L);
             int i = 1;
             for (auto const& val : ei->Values) {
-                // Don't return the "0" label
-                if (val.Value != 0
-                    // Don't return composite values
-                    && (val.Value & (val.Value - 1)) == 0 
-                    && (self.Value & val.Value) == val.Value) {
+                if (BitfieldHasValue(self.Value, val.Value)) {
                     settable(L, i, val.Key, -3);
                     i++;
                 }
@@ -115,7 +124,7 @@ int BitfieldValueMetatable::ToString(lua_State* L, CppObjectMetadata& self)
     STDString labels;
     auto ei = GetBitfieldInfo(self);
     for (auto const& val : ei->Values) {
-        if ((self.Value & val.Value) == val.Value) {
+        if (BitfieldHasValue(self.Value, val.Value)) {
             if (!labels.empty()) labels += ',';
             labels += val.Key.GetString();
         }
@@ -237,9 +246,9 @@ EnumUnderlyingType get_bitfield_value(lua_State* L, int index, BitfieldTypeId ty
         EnumUnderlyingType val{ 0 };
         for (auto valueIdx : iterate(L, index)) {
             auto label = do_get(L, valueIdx, Overload<FixedString>{});
-            auto index = store.Find(label);
-            if (index) {
-                val |= *index;
+            auto value = store.Find(label);
+            if (value) {
+                val |= *value;
             } else {
                 luaL_error(L, "Param %d: not a valid '%s' bitfield value: %s", 
                     index, store.EnumName.GetString(), label.GetString());
@@ -300,9 +309,9 @@ std::optional<EnumUnderlyingType> try_get_bitfield_value(lua_State* L, int index
         EnumUnderlyingType val{ 0 };
         for (auto valueIdx : iterate(L, index)) {
             auto label = do_get(L, valueIdx, Overload<FixedString>{});
-            auto index = store.Find(label);
-            if (index) {
-                val |= *index;
+            auto value = store.Find(label);
+            if (value) {
+                val |= *value;
             } else {
                 return {};
             }

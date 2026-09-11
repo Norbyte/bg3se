@@ -92,7 +92,7 @@ EnumUnderlyingType get_enum_value(lua_State* L, int index, EnumTypeId typeId)
         if (store.Find(val)) {
             return val;
         } else {
-            luaL_error(L, "Param %d: not a valid '%s' enum index: %d", index, store.EnumName.GetString(), val);
+            luaL_error(L, "Param %d: not a valid '%s' enum index: %p", index, store.EnumName.GetString(), val);
         }
         break;
     }

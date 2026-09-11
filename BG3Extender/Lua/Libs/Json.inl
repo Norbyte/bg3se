@@ -509,7 +509,9 @@ void StringifyBitfield(CppObjectMetadata& self, Writer& writer)
     writer.StartArray();
     auto ei = BitfieldValueMetatable::GetBitfieldInfo(self);
     for (auto const& val : ei->Values) {
-        if ((self.Value & val.Value) == val.Value) {
+        if (val.Value != 0 
+            && (val.Value & (val.Value - 1)) == 0
+            && (self.Value & val.Value) == val.Value) {
             auto sv = val.Key.GetStringView();
             writer.String(sv.data(), (uint32_t)sv.size());
         }
