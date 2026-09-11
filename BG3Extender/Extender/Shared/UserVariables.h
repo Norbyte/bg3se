@@ -75,6 +75,8 @@ struct UserVariablePrototype
     }
 
     bool NeedsRebroadcast(bool server) const;
+
+    void SanityCheckFlags(FixedString const& name);
 };
 
 class UserVariableInterface

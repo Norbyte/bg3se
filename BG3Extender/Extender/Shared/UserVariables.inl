@@ -258,6 +258,35 @@ bool UserVariablePrototype::NeedsRebroadcast(bool server) const
     return false;
 }
 
+void UserVariablePrototype::SanityCheckFlags(FixedString const& name)
+{
+    if (!Has(UserVariableFlags::IsOnServer) || !Has(UserVariableFlags::IsOnClient)) {
+        if (Has(UserVariableFlags::SyncServerToClient)) {
+            Flags &= ~UserVariableFlags::SyncServerToClient;
+            WARN("Variable '%s' marked for server to client sync, but it is not present on both sides!", name.GetString());
+        }
+
+        if (Has(UserVariableFlags::SyncClientToServer)) {
+            Flags &= ~UserVariableFlags::SyncClientToServer;
+            WARN("Variable '%s' marked for client to server sync, but it is not present on both sides!", name.GetString());
+        }
+    }
+    
+    if (!Has(UserVariableFlags::IsOnServer) && Has(UserVariableFlags::WriteableOnServer)) {
+        Flags &= ~UserVariableFlags::WriteableOnServer;
+        WARN("Variable '%s' marked as writeable on server, but is not present on the server!", name.GetString());
+    }
+    
+    if (!Has(UserVariableFlags::IsOnClient) && Has(UserVariableFlags::WriteableOnClient)) {
+        Flags &= ~UserVariableFlags::WriteableOnClient;
+        WARN("Variable '%s' marked as writeable on client, but is not present on the client!", name.GetString());
+    }
+    
+    if (!Has(UserVariableFlags::IsOnServer) && Has(UserVariableFlags::Persistent)) {
+        Flags &= ~UserVariableFlags::Persistent;
+        WARN("Variable '%s' marked as persistent, but is not present on the server!", name.GetString());
+    }
+}
 
 void UserVariableSyncWriter::Flush(bool force)
 {
