@@ -57,7 +57,7 @@ message MsgValue {
   oneof value {
     bool boolval = 2;
     int64 intval = 3;
-    float floatval = 4;
+    double floatval = 4;
     string stringval = 5;
   }
   MsgVariablesRef variables = 6;

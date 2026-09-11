@@ -90,8 +90,13 @@ namespace bg3se::lua::dbg
             break;
 
         case LUA_TNUMBER:
-            value->set_type_id(MsgValueType::FLOAT);
-            value->set_floatval((float)lua_tonumber(L, idx));
+            if (lua_isinteger(L, idx)) {
+                value->set_type_id(MsgValueType::INTEGER);
+                value->set_intval(lua_tointeger(L, idx));
+            } else {
+                value->set_type_id(MsgValueType::FLOAT);
+                value->set_floatval(lua_tonumber(L, idx));
+            }
             break;
 
         case LUA_TSTRING:

@@ -70,7 +70,7 @@ namespace NSE.DebuggerFrontend
     public class DAPMessageHandler
     {
         // DBG protocol version (game/editor backend to debugger frontend communication)
-        private const UInt32 DBGProtocolVersion = 4;
+        private const UInt32 DBGProtocolVersion = 5;
 
         // DAP protocol version (VS Code to debugger frontend communication)
         private const int DAPProtocolVersion = 1;
