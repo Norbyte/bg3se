@@ -200,8 +200,9 @@ namespace bg3se
 
         inline FixedString& operator = (FixedString&& fs) noexcept
         {
-            Index = fs.Index;
             if (this != &fs) {
+                DecRef();
+                Index = fs.Index;
                 fs.Index = NullIndex;
             }
 
@@ -264,8 +265,9 @@ namespace bg3se
 
         inline FixedStringUnhashed& operator = (FixedStringUnhashed&& fs) noexcept
         {
-            Index = fs.Index;
             if (this != &fs) {
+                DecRef();
+                Index = fs.Index;
                 fs.Index = NullIndex;
             }
 
