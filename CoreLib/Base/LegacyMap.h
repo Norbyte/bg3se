@@ -272,10 +272,7 @@ public:
 
     ~LegacyMapBase()
     {
-        if (this->HashTable) {
-            clear();
-            GameFree(this->HashTable);
-        }
+        release();
     }
 
     LegacyMapBase<TInternals>& operator =(LegacyMapBase<TInternals> const& other)
@@ -290,6 +287,8 @@ public:
 
     LegacyMapBase<TInternals>& operator =(LegacyMapBase<TInternals> && other) noexcept
     {
+        release();
+
         this->HashTable = other.HashTable;
         this->HashSize = other.HashSize;
         this->ItemCount = other.ItemCount;
@@ -567,6 +566,14 @@ private:
             GameDelete(node);
             node = next;
         } while (node != nullptr);
+    }
+
+    void release()
+    {
+        if (this->HashTable) {
+            clear();
+            GameFree(this->HashTable);
+        }
     }
 };
 

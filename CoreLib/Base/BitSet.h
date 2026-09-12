@@ -181,6 +181,10 @@ struct BitSet
 
     BitSet& operator = (BitSet&& other) noexcept
     {
+        if (Capacity > 64) {
+            Allocator::Free(Buf);
+        }
+
         InlineValue = other.InlineValue;
         Capacity = other.Capacity;
         Size = other.Size;
@@ -343,7 +347,7 @@ struct StaticBitSet
         Buf = other.Buf;
         Size = other.Size;
 
-        other.Buf = 0;
+        other.Buf = nullptr;
         other.Size = 0;
     }
 
@@ -367,10 +371,14 @@ struct StaticBitSet
 
     StaticBitSet& operator = (StaticBitSet&& other)
     {
+        if (Buf) {
+            Allocator::Free(Buf);
+        }
+
         Buf = other.Buf;
         Size = other.Size;
 
-        other.Buf = 0;
+        other.Buf = nullptr;
         other.Size = 0;
 
         return *this;

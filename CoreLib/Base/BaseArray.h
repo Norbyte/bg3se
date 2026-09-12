@@ -223,13 +223,7 @@ public:
 
     ~StaticArray()
     {
-        if (buf_) {
-            for (size_type i = 0; i < size_; i++) {
-                buf_[i].~T();
-            }
-
-            GameFree(buf_);
-        }
+        release();
     }
 
     StaticArray& operator =(StaticArray const& a)
@@ -241,6 +235,7 @@ public:
     StaticArray& operator =(StaticArray&& a) noexcept
     {
         if (this != &a) {
+            release();
             buf_ = a.buf_;
             size_ = a.size_;
             a.buf_ = nullptr;
@@ -384,6 +379,17 @@ public:
 private:
     T* buf_{ nullptr };
     size_type size_{ 0 };
+
+    void release()
+    {
+        if (buf_) {
+            for (size_type i = 0; i < size_; i++) {
+                buf_[i].~T();
+            }
+
+            GameFree(buf_);
+        }
+    }
 };
 
 template <class T>
@@ -585,10 +591,7 @@ public:
 
     ~Array()
     {
-        if (buf_) {
-            clear();
-            GameFree(buf_);
-        }
+        release();
     }
 
     Array& operator =(Array const& a)
@@ -600,6 +603,7 @@ public:
     Array& operator =(Array&& a) noexcept
     {
         if (this != &a) {
+            release();
             buf_ = a.buf_;
             capacity_ = a.capacity_;
             size_ = a.size_;
@@ -813,6 +817,14 @@ private:
     T* buf_{ nullptr };
     size_type capacity_{ 0 };
     size_type size_{ 0 };
+
+    void release()
+    {
+        if (buf_) {
+            clear();
+            GameFree(buf_);
+        }
+    }
 
     inline void growIfNecessary()
     {
