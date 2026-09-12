@@ -88,10 +88,8 @@ struct PagedOps
                     allocator.free(pages[i]);
                 }
 
-                if (pages != nullptr) {
-                    allocator.free(pages);
-                }
-
+                allocator.free(pages);
+                pages = nullptr;
                 layout.NumPages = 0;
             }
         }
