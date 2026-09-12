@@ -17,6 +17,7 @@ inline std::optional<uint32_t> BitSetScan(uint64_t const* begin, uint64_t const*
 inline std::optional<uint32_t> BitSetScan(uint64_t const* begin, uint64_t const* end, uint32_t prev)
 {
     auto buf = begin + (prev / 64);
+    se_assert(buf < end);
 
     DWORD index;
     auto off = (prev % 64) + 1;
@@ -216,7 +217,7 @@ struct BitSet
 
     inline bool Get(uint32_t index) const
     {
-        if (Size < index) {
+        if (Size <= index) {
             return false;
         } else {
             return (GetBuf()[index / 64] & (1ull << (index % 64))) != 0;
@@ -230,7 +231,7 @@ struct BitSet
 
     inline bool operator [] (uint32_t index) const
     {
-        if (Size < index) {
+        if (Size <= index) {
             return false;
         } else {
             return (GetBuf()[index / 64] & (1ull << (index % 64))) != 0;
