@@ -177,6 +177,7 @@ public:
     {
         o.buf_ = nullptr;
         o.capacity_ = 0;
+        o.size_ = 0;
         o.readIndex_ = -1;
         o.writeIndex_ = 0;
     }
@@ -299,25 +300,22 @@ public:
     {
         auto newBuf = GameAllocArray<T>(newCapacity);
 
-        if (readIndex_ < writeIndex_) {
-            auto wr = 0;
-            for (int32_t i = readIndex_ + 1; i < writeIndex_; i++, wr++) {
-                newBuf[wr] = buf_[i];
-            }
-        } else {
-            auto wr = 0;
-            for (int32_t i = readIndex_ + 1; i < (int32_t)capacity_; i++, wr++) {
-                newBuf[wr] = buf_[i];
-            }
+        if (size_ > 0) {
+            if (readIndex_ < writeIndex_) {
+                int32_t wr = 0;
+                for (int32_t i = readIndex_; i < writeIndex_; i++, wr++) {
+                    newBuf[wr] = buf_[i];
+                }
+            } else {
+                int32_t wr = 0;
+                for (int32_t i = readIndex_; i < (int32_t)capacity_; i++, wr++) {
+                    newBuf[wr] = buf_[i];
+                }
 
-            for (int32_t i = 0; i < writeIndex_; i++, wr++) {
-                newBuf[wr] = buf_[i];
+                for (int32_t i = 0; i < writeIndex_; i++, wr++) {
+                    newBuf[wr] = buf_[i];
+                }
             }
-        }
-
-        size_ = std::min(size_, capacity_);
-        for (size_type i = 0; i < std::min(size_, newCapacity); i++) {
-            newBuf[i] = buf_[i];
         }
 
         if (buf_ != nullptr) {
@@ -326,6 +324,7 @@ public:
 
         buf_ = newBuf;
         capacity_ = newCapacity;
+        size_ = std::min(size_, capacity_);
         readIndex_ = 0;
         writeIndex_ = size_;
     }
