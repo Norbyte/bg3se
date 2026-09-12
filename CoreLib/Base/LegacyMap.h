@@ -436,10 +436,13 @@ public:
 
     void erase(Iterator const& it)
     {
+        se_assert(it);
+
         auto elem = *it.CurrentNode;
         if (elem == it.Element) {
             *it.CurrentNode = it.Element->Next;
             GameDelete(it.Element);
+            this->ItemCount--;
         } else {
             while (elem && elem->Next != it.Element) {
                 elem = elem->Next;
@@ -448,6 +451,7 @@ public:
             if (elem) {
                 elem->Next = it.Element->Next;
                 GameDelete(it.Element);
+                this->ItemCount--;
             }
         }
     }
