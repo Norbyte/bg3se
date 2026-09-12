@@ -254,7 +254,7 @@ struct FunctionImpl<R (T::*)(Args...), void>
         UserCallProc Handler;
     };
 
-    static Fn Make(T* this_, UserCallProc* handler)
+    static Fn Make(T* this_, UserCallProc handler)
     {
         Storage fn;
         fn.call_ = [](Storage const& self, Args... args) -> R {

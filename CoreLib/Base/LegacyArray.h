@@ -27,15 +27,14 @@ struct CompactSet
         Reallocate(other.Size);
         Size = other.Size;
         for (uint32_t i = 0; i < other.Size; i++) {
-            new (Buf + i) T(other.Buf[i]);
+            Buf[i] = other.Buf[i];
         }
     }
 
     ~CompactSet()
     {
         if (Buf) {
-            clear();
-            FreeBuffer(Buf);
+            Reallocate(0);
         }
     }
 
@@ -45,7 +44,7 @@ struct CompactSet
         Reallocate(other.Size);
         Size = other.Size;
         for (uint32_t i = 0; i < other.Size; i++) {
-            new (Buf + i) T(other.Buf[i]);
+            Buf[i] = other.Buf[i];
         }
         return *this;
     }
@@ -91,7 +90,7 @@ struct CompactSet
 
                 return (T*)((std::ptrdiff_t)newBuf + size_offset);
             } else {
-                return Allocator::template New<T>(newCapacity);
+                return (T*)Allocator::Alloc(newCapacity * sizeof(T));
             }
         } else {
             return nullptr;
@@ -109,34 +108,24 @@ struct CompactSet
             for (uint32_t i = 0; i < itemsToMove; i++) {
                 new (newBuf + i) T(std::move(oldBuf[i]));
             }
-
-            for (uint32_t i = itemsToMove; i < newCapacity; i++) {
-                new (newBuf + i) T();
-            }
-
-            // Late reassignment of 'Buf' should also reduce the likelihood of concurrent access
-            // to the not yet initialized array data (unfortunate, but happens).
-            // It's still possible for other threads to see the moved-from objects, but it should 
-            // not cause access to uninitialized memory and crash.
-            Buf = newBuf;
-
-            for (uint32_t i = itemsToMove; i < oldCapacity; i++) {
-                oldBuf[i].~T();
-            }
         } else {
             for (uint32_t i = 0; i < itemsToMove; i++) {
                 new (newBuf + i) T(oldBuf[i]);
             }
+        }
 
-            for (uint32_t i = itemsToMove; i < newCapacity; i++) {
-                new (newBuf + i) T();
-            }
+        for (uint32_t i = itemsToMove; i < newCapacity; i++) {
+            new (newBuf + i) T();
+        }
 
-            Buf = newBuf;
+        // Late reassignment of 'Buf' should also reduce the likelihood of concurrent access
+        // to the not yet initialized array data (unfortunate, but happens).
+        // It's still possible for other threads to see the moved-from objects, but it should 
+        // not cause access to uninitialized memory and crash.
+        Buf = newBuf;
 
-            for (uint32_t i = 0; i < oldCapacity; i++) {
-                oldBuf[i].~T();
-            }
+        for (uint32_t i = 0; i < oldCapacity; i++) {
+            oldBuf[i].~T();
         }
 
         FreeBuffer(oldBuf);
@@ -190,8 +179,8 @@ struct CompactSet
 
     TSize CapacityIncrement() const
     {
-        if (this->Capacity > 0) {
-            return 2 * this->Capacity;
+        if (Capacity > 0) {
+            return 2 * Capacity;
         } else {
             return 1;
         }
@@ -199,11 +188,20 @@ struct CompactSet
 
     void push_back(T const& value)
     {
-        if (this->Capacity <= this->Size) {
-            this->Reallocate(CapacityIncrement());
+        if (Capacity <= Size) {
+            Reallocate(CapacityIncrement());
         }
 
-        new (&this->Buf[this->Size++]) T(value);
+        Buf[Size++] = value;
+    }
+
+    void push_back(T&& value)
+    {
+        if (Capacity <= Size) {
+            Reallocate(CapacityIncrement());
+        }
+
+        Buf[Size++] = std::move(value);
     }
 
     ContiguousIterator<T> begin()
@@ -267,30 +265,16 @@ struct Set : public CompactSet<T, Allocator, StoreSize>
             this->Reallocate(CapacityIncrement());
         }
 
-        new (&this->Buf[this->Size++]) T(value);
+        this->Buf[this->Size++] = value;
     }
 
-    void Add(T const& value)
+    void push_back(T&& value)
     {
         if (this->Capacity <= this->Size) {
             this->Reallocate(CapacityIncrement());
         }
 
-        new (&this->Buf[this->Size++]) T(value);
-    }
-
-    void InsertAt(uint32_t index, T const& value)
-    {
-        if (this->Capacity <= this->Size) {
-            Reallocate(CapacityIncrement());
-        }
-
-        for (auto i = this->Size; i > index; i--) {
-            this->Buf[i] = this->Buf[i - 1];
-        }
-
-        this->Buf[index] = value;
-        this->Size++;
+        this->Buf[this->Size++] = std::move(value);
     }
 
     void remove_last()
@@ -310,25 +294,6 @@ template <class T, class Allocator = GameMemoryAllocator>
 struct PrimitiveSmallSet : public CompactSet<T, Allocator, false>
 {
     virtual ~PrimitiveSmallSet() {}
-
-    uint32_t CapacityIncrement() const
-    {
-        if (this->Capacity > 0) {
-            return 2 * this->Capacity;
-        }
-        else {
-            return 1;
-        }
-    }
-
-    void Add(T const& value)
-    {
-        if (this->Capacity <= this->Size) {
-            Reallocate(CapacityIncrement());
-        }
-
-        new (&this->Buf[this->Size++]) T(value);
-    }
 };
 
 template <class T, class Allocator = GameMemoryAllocator, bool StoreSize = false>
