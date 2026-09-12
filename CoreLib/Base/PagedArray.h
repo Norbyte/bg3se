@@ -168,13 +168,18 @@ public:
 
     void clear()
     {
-        PagedOps<T, TAllocator>::Resize(0, pages_, layout_, *this);
+        resize(0);
     }
 
     template <class TAlloc>
     void clearExtern(TAlloc& alloc)
     {
+        for (auto i = 0; i < size_; i++) {
+            layout_.at(pages_, i)->~T();
+        }
+
         PagedOps<T, TAlloc>::Resize(0, pages_, layout_, alloc);
+        size_ = 0;
     }
 
     T* add()
