@@ -216,7 +216,7 @@ public:
         return Keys.end();
     }
 
-    ContiguousIterator<T> find(T const& key) const
+    ContiguousConstIterator<T> find(T const& key) const
     {
         auto idx = find_index(key);
         return idx != -1 ? (Keys.begin() + idx) : Keys.end();
@@ -340,17 +340,17 @@ public:
             : Map(map), Index(index)
         {}
 
-        ConstIterator operator ++ ()
-        {
-            ConstIterator it(Map, Index);
-            Index++;
-            return it;
-        }
-
-        ConstIterator& operator ++ (int)
+        ConstIterator& operator ++ ()
         {
             ++Index;
             return *this;
+        }
+
+        ConstIterator operator ++ (int)
+        {
+            ConstIterator it(Map, Index);
+            ++Index;
+            return it;
         }
 
         bool operator == (ConstIterator const& it)
@@ -380,7 +380,7 @@ public:
 
         ConstIterator* operator -> ()
         {
-            return *this;
+            return this;
         }
 
         inline operator bool() const
@@ -409,17 +409,17 @@ public:
             : Map(map), Index(index)
         {}
 
-        Iterator operator ++ ()
+        Iterator& operator ++ ()
+        {
+            ++Index;
+            return *this;
+        }
+
+        Iterator operator ++ (int)
         {
             Iterator it(Map, Index);
             Index++;
             return it;
-        }
-
-        Iterator& operator ++ (int)
-        {
-            ++Index;
-            return *this;
         }
 
         bool operator == (Iterator const& it)

@@ -18,26 +18,26 @@ public:
 
     ContiguousIterator(T* p) : ptr_(p) {}
 
-    ContiguousIterator operator ++ ()
+    ContiguousIterator& operator ++ ()
     {
         ++ptr_;
         return *this;
     }
 
-    ContiguousIterator operator -- ()
+    ContiguousIterator& operator -- ()
     {
         --ptr_;
         return *this;
     }
 
-    ContiguousIterator& operator ++ (int)
+    ContiguousIterator operator ++ (int)
     {
         ContiguousIterator<T> it(ptr_);
         ++ptr_;
         return it;
     }
 
-    ContiguousIterator& operator -- (int)
+    ContiguousIterator operator -- (int)
     {
         ContiguousIterator<T> it(ptr_);
         --ptr_;
@@ -107,26 +107,26 @@ public:
 
     ContiguousConstIterator(T const* p) : ptr_(p) {}
 
-    ContiguousConstIterator operator ++ ()
+    ContiguousConstIterator& operator ++ ()
     {
         ++ptr_;
         return *this;
     }
 
-    ContiguousConstIterator operator -- ()
+    ContiguousConstIterator& operator -- ()
     {
         --ptr_;
         return *this;
     }
 
-    ContiguousConstIterator& operator ++ (int)
+    ContiguousConstIterator operator ++ (int)
     {
         ContiguousConstIterator<T> it(ptr_);
         ++ptr_;
         return it;
     }
 
-    ContiguousConstIterator& operator -- (int)
+    ContiguousConstIterator operator -- (int)
     {
         ContiguousConstIterator<T> it(ptr_);
         --ptr_;

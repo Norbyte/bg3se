@@ -19,17 +19,17 @@ public:
 
     QueueIterator(Queue<T>& q, int32_t i) : queue_(q), index_(i) {}
 
-    QueueIterator operator ++ ()
+    QueueIterator& operator ++ ()
+    {
+        index_++;
+        return *this;
+    }
+
+    QueueIterator operator ++ (int)
     {
         QueueIterator<T> it(queue_, index_);
         index_++;
         return it;
-    }
-
-    QueueIterator& operator ++ (int)
-    {
-        index_++;
-        return *this;
     }
 
     bool operator == (QueueIterator const& it) const
@@ -91,17 +91,17 @@ public:
 
     QueueConstIterator(Queue<T> const& q, int32_t i) : queue_(q), index_(i) {}
 
-    QueueConstIterator operator ++ ()
+    QueueConstIterator& operator ++ ()
+    {
+        index_++;
+        return *this;
+    }
+
+    QueueConstIterator operator ++ (int)
     {
         QueueConstIterator<T> it(queue_, index_);
         index_++;
         return it;
-    }
-
-    QueueConstIterator& operator ++ (int)
-    {
-        index_++;
-        return *this;
     }
 
     bool operator == (QueueConstIterator const& it) const

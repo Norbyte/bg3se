@@ -80,38 +80,17 @@ public:
             : CurrentNode(node), NodeListEnd(map.HashTable + map.HashSize), Element(element)
         {}
 
-        Iterator operator ++ ()
+        Iterator& operator ++ ()
         {
-            Iterator it(*this);
-
-            Element = Element->Next;
-            if (Element == nullptr) {
-                do {
-                    CurrentNode++;
-                } while (CurrentNode < NodeListEnd && *CurrentNode == nullptr);
-
-                if (CurrentNode < NodeListEnd && *CurrentNode) {
-                    Element = *CurrentNode;
-                }
-            }
-
-            return it;
+            Advance();
+            return *this;
         }
 
-        Iterator& operator ++ (int)
+        Iterator operator ++ (int)
         {
-            Element = Element->Next;
-            if (Element == nullptr) {
-                do {
-                    CurrentNode++;
-                } while (CurrentNode < NodeListEnd && *CurrentNode == nullptr);
-
-                if (CurrentNode < NodeListEnd && *CurrentNode) {
-                    Element = *CurrentNode;
-                }
-            }
-
-            return *this;
+            Iterator it(*this);
+            Advance();
+            return it;
         }
 
         bool operator == (Iterator const& it)
@@ -139,9 +118,9 @@ public:
             return *Element;
         }
 
-        Node& operator -> () const
+        Node* operator -> () const
         {
-            return *Element;
+            return Element;
         }
 
         operator bool() const
@@ -159,6 +138,20 @@ public:
 
         Node** CurrentNode, ** NodeListEnd;
         Node* Element;
+
+        void Advance()
+        {
+            Element = Element->Next;
+            if (Element == nullptr) {
+                do {
+                    CurrentNode++;
+                } while (CurrentNode < NodeListEnd && *CurrentNode == nullptr);
+
+                if (CurrentNode < NodeListEnd && *CurrentNode) {
+                    Element = *CurrentNode;
+                }
+            }
+        }
     };
 
     class ConstIterator
@@ -180,38 +173,17 @@ public:
             : CurrentNode(node), NodeListEnd(map.HashTable + map.HashSize), Element(element)
         {}
 
-        ConstIterator operator ++ ()
+        ConstIterator& operator ++ ()
         {
-            ConstIterator it(*this);
-
-            Element = Element->Next;
-            if (Element == nullptr) {
-                do {
-                    CurrentNode++;
-                } while (CurrentNode < NodeListEnd && *CurrentNode == nullptr);
-
-                if (CurrentNode < NodeListEnd && *CurrentNode) {
-                    Element = *CurrentNode;
-                }
-            }
-
-            return it;
+            Advance();
+            return *this;
         }
 
-        ConstIterator& operator ++ (int)
+        ConstIterator operator ++ (int)
         {
-            Element = Element->Next;
-            if (Element == nullptr) {
-                do {
-                    CurrentNode++;
-                } while (CurrentNode < NodeListEnd && *CurrentNode == nullptr);
-
-                if (CurrentNode < NodeListEnd && *CurrentNode) {
-                    Element = *CurrentNode;
-                }
-            }
-
-            return *this;
+            ConstIterator it(*this);
+            Advance();
+            return it;
         }
 
         bool operator == (ConstIterator const& it)
@@ -239,9 +211,9 @@ public:
             return *Element;
         }
 
-        Node const& operator -> () const
+        Node const* operator -> () const
         {
-            return *Element;
+            return Element;
         }
 
         operator bool() const
@@ -257,6 +229,20 @@ public:
     private:
         Node* const * CurrentNode, * const * NodeListEnd;
         Node const* Element;
+
+        void Advance()
+        {
+            Element = Element->Next;
+            if (Element == nullptr) {
+                do {
+                    CurrentNode++;
+                } while (CurrentNode < NodeListEnd && *CurrentNode == nullptr);
+
+                if (CurrentNode < NodeListEnd && *CurrentNode) {
+                    Element = *CurrentNode;
+                }
+            }
+        }
     };
 
     LegacyMapBase(uint32_t hashSize = 31)
