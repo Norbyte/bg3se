@@ -718,8 +718,13 @@ public:
         se_assert(index <= size_);
         growIfNecessary();
 
-        new (&buf_[size_]) T(buf_[index]);
-        buf_[index] = value;
+        if (index < size_) {
+            new (&buf_[size_]) T(buf_[index]);
+            buf_[index] = value;
+        } else {
+            new (&buf_[index]) T(value);
+        }
+
         size_++;
     }
 
