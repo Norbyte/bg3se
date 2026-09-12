@@ -688,8 +688,9 @@ protected:
         auto lastIndex = this->Keys.size();
         if (index < (int32_t)lastIndex) {
             Values[index] = std::move(Values[lastIndex]);
-            Values[lastIndex].~TValue();
         }
+
+        Values[lastIndex].~TValue();
     }
 
 private:
