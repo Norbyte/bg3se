@@ -706,7 +706,7 @@ public:
 
         new (&buf_[size_++]) T();
 
-        for (size_type i = size_ - 1; i > index; i++) {
+        for (size_type i = size_ - 1; i > index; i--) {
             buf_[i] = std::move(buf_[i - 1]);
         }
 
