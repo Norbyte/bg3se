@@ -476,31 +476,9 @@ public:
         se_assert(newInitializedCapacity <= newSize);
 
         if (size_ != newSize) {
-            T* newBuf;
-            if (newSize > 0) {
-                newBuf = GameMemoryAllocator::NewRaw<T>(newSize);
-            } else {
-                newBuf = nullptr;
-            }
-
-            for (size_type i = 0; i < std::min(initializedCapacity, newInitializedCapacity); i++) {
-                new (newBuf + i) T(std::move(buf_[i]));
-            }
-            
-            for (size_type i = std::min(initializedCapacity, newInitializedCapacity); i < newInitializedCapacity; i++) {
-                new (newBuf + i) T();
-            }
-
-            if (buf_ != nullptr) {
-                for (size_type i = 0; i < initializedCapacity; i++) {
-                    buf_[i].~T();
-                }
-
-                GameFree(buf_);
-            }
-
-            buf_ = newBuf;
-            size_ = newSize;
+            resizeWithMove(newSize, newInitializedCapacity, initializedCapacity);
+        } else {
+            resizeInPlace(newInitializedCapacity, initializedCapacity);
         }
     }
 
@@ -530,6 +508,48 @@ public:
 private:
     T* buf_{ nullptr };
     size_type size_{ 0 };
+
+    void resizeWithMove(size_type newSize, size_type newInitializedCapacity, size_type initializedCapacity)
+    {
+        T* newBuf;
+        if (newSize > 0) {
+            newBuf = GameMemoryAllocator::NewRaw<T>(newSize);
+        } else {
+            newBuf = nullptr;
+        }
+
+        for (size_type i = 0; i < std::min(initializedCapacity, newInitializedCapacity); i++) {
+            new (newBuf + i) T(std::move(buf_[i]));
+        }
+            
+        for (size_type i = std::min(initializedCapacity, newInitializedCapacity); i < newInitializedCapacity; i++) {
+            new (newBuf + i) T();
+        }
+
+        if (buf_ != nullptr) {
+            for (size_type i = 0; i < initializedCapacity; i++) {
+                buf_[i].~T();
+            }
+
+            GameFree(buf_);
+        }
+
+        buf_ = newBuf;
+        size_ = newSize;
+    }
+
+    void resizeInPlace(size_type newInitializedCapacity, size_type initializedCapacity)
+    {
+        // Free discarded items if array was shrunk
+        for (size_type i = newInitializedCapacity; i < initializedCapacity; i++) {
+            buf_[i].~T();
+        }
+
+        // Default-initialize new slots
+        for (size_type i = initializedCapacity; i < newInitializedCapacity; i++) {
+            new (buf_ + i) T();
+        }
+    }
 };
 
 template <class T>
