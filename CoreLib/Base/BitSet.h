@@ -162,7 +162,6 @@ struct BitSet
 
     ~BitSet()
     {
-        Clear();
         if (Capacity > 64) {
             Allocator::Free(Buf);
         }
@@ -170,7 +169,7 @@ struct BitSet
 
     BitSet& operator = (BitSet const& other)
     {
-        Clear();
+        Size = 0;
         Reallocate(other.Size);
         Size = other.Size;
         for (uint32_t i = 0; i < other.NumQwords(); i++) {
@@ -276,7 +275,8 @@ struct BitSet
 
     void Reallocate(uint32_t newCapacity)
     {
-        newCapacity = ((newCapacity / 64) + ((newCapacity % 64) ? 1 : 0)) * 64;
+        auto newWords = ((newCapacity / 64) + ((newCapacity % 64) ? 1 : 0));
+        newCapacity = newWords * 64;
 
         if (Capacity == newCapacity) {
             return;
@@ -287,7 +287,7 @@ struct BitSet
         auto oldInline = InlineValue;
 
         if (newCapacity > 64) {
-            Buf = Allocator::template New<uint64_t>(newCapacity);
+            Buf = Allocator::template New<uint64_t>(newWords);
         } else {
             // Don't touch inline value
         }
@@ -417,26 +417,30 @@ struct StaticBitSet
     {
         if (Size < size) {
             Reallocate(size);
-            Size = size;
         }
     }
 
     void Reallocate(uint32_t newSize)
     {
-        newSize = ((newSize / 64) + ((newSize % 64) ? 1 : 0)) * 64;
+        auto newWords = ((newSize / 64) + ((newSize % 64) ? 1 : 0));
+        newSize = newWords * 64;
 
         if (Size == newSize) {
             return;
         }
 
-        auto oldSize = Size;
+        auto oldWords = Size / 64;
         auto oldBuf = Buf;
 
         if (newSize > 0) {
-            Buf = Allocator::template New<uint64_t>(newSize);
+            Buf = Allocator::template New<uint64_t>(newWords);
 
-            for (uint32_t i = 0; i < std::min(newSize / 64, oldSize / 64); i++) {
+            auto copyWords = std::min(newWords, oldWords);
+            for (uint32_t i = 0; i < copyWords; i++) {
                 Buf[i] = oldBuf[i];
+            }
+            for (uint32_t i = copyWords; i < newWords; i++) {
+                Buf[i] = 0;
             }
         } else {
             Buf = nullptr;
