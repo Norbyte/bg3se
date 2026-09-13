@@ -27,9 +27,9 @@ private:
         ~EventHandler();
 
         EventHandler(EventHandler const&) = delete;
-        EventHandler(EventHandler &&) noexcept;
+        EventHandler(EventHandler &&) noexcept = default;
         EventHandler& operator = (EventHandler const&) = delete;
-        EventHandler& operator = (EventHandler&&) noexcept;
+        EventHandler& operator = (EventHandler&&) noexcept = default;
 
         void Unsubscribe();
 

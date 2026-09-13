@@ -23,25 +23,6 @@ UIEventHooks::EventHandler::~EventHandler()
     Unsubscribe();
 }
 
-UIEventHooks::EventHandler::EventHandler(EventHandler&& o) noexcept
-    : Target(std::move(o.Target)),
-    Event(o.Event),
-    EventType(o.EventType),
-    Handler(std::move(o.Handler)),
-    Index(o.Index)
-{}
-
-UIEventHooks::EventHandler& UIEventHooks::EventHandler::operator = (EventHandler&& o) noexcept
-{
-    Target = std::move(o.Target);
-    Event = o.Event;
-    EventType = o.EventType;
-    Handler = std::move(o.Handler);
-    Index = o.Index;
-
-    return *this;
-}
-
 void UIEventHooks::EventHandler::Unsubscribe()
 {
     IsActive = true;
