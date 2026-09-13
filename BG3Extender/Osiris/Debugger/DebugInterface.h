@@ -39,7 +39,7 @@ namespace bg3se
 
         uint16_t port_;
         SOCKET socket_;
-        SOCKET clientSocket_{ 0 };
+        SOCKET clientSocket_{ INVALID_SOCKET };
         uint8_t receiveBuf_[0x10000];
         uint32_t receivePos_{ 0 };
         std::function<void()> connectHandler_;
