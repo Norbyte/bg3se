@@ -123,7 +123,7 @@ public:
             return Element;
         }
 
-        operator bool() const
+        explicit operator bool() const
         {
             return Element != nullptr;
         }
@@ -216,7 +216,7 @@ public:
             return Element;
         }
 
-        operator bool() const
+        explicit operator bool() const
         {
             return Element != nullptr;
         }

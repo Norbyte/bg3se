@@ -367,9 +367,6 @@ Array<NameGroup*> GetAllNameGroups()
 
 /// <summary>
 /// Returns the specified stats entry as an object for easier manipulation.
-/// If the `level` argument is not specified or is `nil`, the table will contain stat values as specified in the stat entry.
-/// If the `level` argument is not `nil`, the table will contain level - scaled values for the specified level.
-/// A `level` value of `-1` will use the level specified in the stat entry.
 /// 
 /// The behavior of getting a table entry is identical to that of `StatGetAttribute` and setting a table entry is identical to `StatSetAttribute`.
 /// 
@@ -387,11 +384,10 @@ Array<NameGroup*> GetAllNameGroups()
 /// <lua_export>Get</lua_export>
 /// <lua_legacy>Ext.GetGet</lua_legacy>
 /// <param name="statName">Stats name to fetch</param>
-/// <param name="level">Specify `nil` to return raw (unscaled) stat values, `-1` to return values scaled to the stats level, or a specific level value to scale returned stats to that level</param>
+/// <param name="level">Deprecated</param>
 /// <param name="warnOnError">Log a warning in the console if the stats object could not be found?</param>
-/// <param name="byRef">Specifies whether the returned object should use by-value or by-ref properties (default: by-value)</param>
 /// <returns></returns>
-Object* Get(lua_State * L, char const* statName, std::optional<int> level, std::optional<bool> warnOnError, std::optional<bool> byRef)
+Object* Get(lua_State * L, char const* statName, std::optional<int> /*level*/, std::optional<bool> warnOnError)
 {
     return StatFindObject(statName, warnOnError.value_or(false));
 }

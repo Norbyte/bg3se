@@ -227,7 +227,7 @@ struct Object : public Noncopyable<Object>
     std::optional<Array<RollCondition> const*> GetRollConditions(FixedString const& attributeName) const;
     std::optional<Array<RollCondition>*> GetRollConditions(FixedString const& attributeName);
     bool SetString(FixedString const& attributeName, const char* value);
-    bool SetInt(FixedString const& attributeName, int32_t value);
+    bool SetInt(FixedString const& attributeName, int64_t value);
     bool SetFloat(FixedString const& attributeName, std::optional<float> value);
     bool SetInt64(FixedString const& attributeName, int64_t value);
     bool SetGuid(FixedString const& attributeName, std::optional<Guid> value);
@@ -237,6 +237,13 @@ struct Object : public Noncopyable<Object>
     bool SetRollConditions(FixedString const& attributeName, std::optional<Array<RollCondition>> const& value);
 
     bool CopyFrom(Object* source);
+
+private:
+    void SetString(int attributeIndex, FixedString const& value);
+    void SetFloat(int attributeIndex, std::optional<float> value);
+    void SetInt64Flags(int attributeIndex, int64_t value);
+    void SetGuid(int attributeIndex, std::optional<Guid> value);
+    void SetTranslatedString(int attributeIndex, std::optional<TranslatedString> value);
 };
 
 struct ObjectInstance : public Object

@@ -209,7 +209,8 @@ std::optional<Array<FixedString>> Object::GetFlags(FixedString const& attributeN
 
         if (flags) {
             for (auto const& kv : typeInfo->Values) {
-                if (**flags & (1ull << (kv.Value - 1))) {
+                if (kv.Value != 0 // Prevent invalid flag entries like "None = 0" from appearing in the result
+                    && **flags & (1ull << (kv.Value - 1))) {
                     flagSet.push_back(kv.Key);
                 }
             }
@@ -291,6 +292,15 @@ std::optional<Array<Object::RollCondition>*> Object::GetRollConditions(FixedStri
     return RollConditions.try_get(attributeName);
 }
 
+void Object::SetString(int attributeIndex, FixedString const& value)
+{
+    int poolIdx{ -1 };
+    auto fs = GetStaticSymbols().GetStats()->GetOrCreateFixedString(poolIdx);
+    if (fs != nullptr) {
+        *fs = value;
+        IndexedProperties[attributeIndex] = poolIdx;
+    }
+}
 
 bool Object::SetString(FixedString const& attributeName, const char * value)
 {
@@ -306,12 +316,7 @@ bool Object::SetString(FixedString const& attributeName, const char * value)
         AIFlags = FixedString{ value };
     } else if (typeInfo->Name == GFS.strFixedString
         || typeInfo->Name == GFS.strStatusIDs) {
-        int poolIdx{ -1 };
-        auto fs = stats->GetOrCreateFixedString(poolIdx);
-        if (fs != nullptr) {
-            *fs = FixedString(value);
-            IndexedProperties[attributeIndex] = poolIdx;
-        }
+        SetString(attributeIndex, FixedString(value));
 
     } else if (typeInfo->Name == GFS.strGuid) {
         auto guid = Guid::ParseGuidString(value);
@@ -320,7 +325,7 @@ bool Object::SetString(FixedString const& attributeName, const char * value)
             return false;
         }
 
-        return SetGuid(attributeName, *guid);
+        SetGuid(attributeIndex, guid);
 
     } else if (typeInfo->Name == GFS.strConditions
         || typeInfo->Name == GFS.strTargetConditions
@@ -329,10 +334,7 @@ bool Object::SetString(FixedString const& attributeName, const char * value)
         IndexedProperties[attributeIndex] = index;
 
     } else if (typeInfo->Name == GFS.strTranslatedString) {
-        int stringIdx{ -1 };
-        auto ts = stats->GetOrCreateTranslatedString(stringIdx);
-        *ts = TranslatedString::FromString(value);
-        IndexedProperties[attributeIndex] = stringIdx;
+        SetTranslatedString(attributeIndex, TranslatedString::FromString(value));
 
     } else if (typeInfo->Name == GFS.strRollConditions) {
         if (*value) {
@@ -352,9 +354,14 @@ bool Object::SetString(FixedString const& attributeName, const char * value)
         }
 
     } else if (typeInfo->Values.size() > 0) {
-        auto enumIndex = typeInfo->Values.find(FixedString(value));
-        if (enumIndex != typeInfo->Values.end()) {
-            IndexedProperties[attributeIndex] = enumIndex.Value();
+        auto enumEntry = typeInfo->Values.find(FixedString(value));
+        if (enumEntry != typeInfo->Values.end()) {
+            auto enumIndex = enumEntry.Value();
+            if (RPGEnumeration::IsFlagType(typeInfo->Name)) {
+                SetInt64Flags(attributeIndex, enumIndex ? (1ll << (enumIndex - 1)) : 0);
+            } else {
+                IndexedProperties[attributeIndex] = (int32_t)enumIndex;
+            }
         } else {
             OsiError("Couldn't set " << Name << "." << attributeName << ": Value (\"" << value << "\") is not a valid enum label");
             return false;
@@ -368,7 +375,7 @@ bool Object::SetString(FixedString const& attributeName, const char * value)
     return true;
 }
 
-bool Object::SetInt(FixedString const& attributeName, int32_t value)
+bool Object::SetInt(FixedString const& attributeName, int64_t value)
 {
     int attributeIndex;
     auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
@@ -378,13 +385,17 @@ bool Object::SetInt(FixedString const& attributeName, int32_t value)
     }
 
     if (typeInfo->Name == GFS.strConstantInt) {
-        IndexedProperties[attributeIndex] = value;
+        IndexedProperties[attributeIndex] = (int32_t)value;
     } else if (typeInfo->Values.size() > 0) {
-        if (value >= 0 && value < (int)typeInfo->Values.size()) {
-            IndexedProperties[attributeIndex] = value;
+        if (RPGEnumeration::IsFlagType(typeInfo->Name)) {
+            SetInt64Flags(attributeIndex, value);
         } else {
-            OsiError("Couldn't set " << Name << "." << attributeName << ": Enum index (\"" << value << "\") out of range");
-            return false;
+            if (value >= 0 && value < (int)typeInfo->Values.size()) {
+                IndexedProperties[attributeIndex] = (int32_t)value;
+            } else {
+                OsiError("Couldn't set " << Name << "." << attributeName << ": Enum index (\"" << value << "\") out of range");
+                return false;
+            }
         }
     } else {
         OsiError("Couldn't set " << Name << "." << attributeName << " to integer value: Inappropriate type: " << typeInfo->Name);
@@ -392,6 +403,20 @@ bool Object::SetInt(FixedString const& attributeName, int32_t value)
     }
 
     return true;
+}
+
+void Object::SetFloat(int attributeIndex, std::optional<float> value)
+{
+    if (value) {
+        int poolIdx{ -1 };
+        auto flt = GetStaticSymbols().GetStats()->GetOrCreateFloat(poolIdx);
+        if (flt != nullptr) {
+            *flt = *value;
+            IndexedProperties[attributeIndex] = poolIdx;
+        }
+    } else {
+        IndexedProperties[attributeIndex] = -1;
+    }
 }
 
 bool Object::SetFloat(FixedString const& attributeName, std::optional<float> value)
@@ -403,24 +428,24 @@ bool Object::SetFloat(FixedString const& attributeName, std::optional<float> val
         return false;
     }
 
-    auto stats = GetStaticSymbols().GetStats();
     if (typeInfo->Name == GFS.strConstantFloat) {
-        if (value) {
-            int poolIdx{ -1 };
-            auto flt = stats->GetOrCreateFloat(poolIdx);
-            if (flt != nullptr) {
-                *flt = *value;
-                IndexedProperties[attributeIndex] = poolIdx;
-            }
-        } else {
-            IndexedProperties[attributeIndex] = -1;
-        }
+        SetFloat(attributeIndex, value);
     } else {
         OsiError("Couldn't set " << Name << "." << attributeName << " to float value: Inappropriate type: " << typeInfo->Name);
         return false;
     }
 
     return true;
+}
+
+void Object::SetInt64Flags(int attributeIndex, int64_t value)
+{
+    int poolIdx{ -1 };
+    auto i64 = GetStaticSymbols().GetStats()->GetOrCreateInt64(poolIdx);
+    if (i64 != nullptr) {
+        *i64 = value;
+        IndexedProperties[attributeIndex] = poolIdx;
+    }
 }
 
 bool Object::SetInt64(FixedString const& attributeName, int64_t value)
@@ -432,20 +457,28 @@ bool Object::SetInt64(FixedString const& attributeName, int64_t value)
         return false;
     }
 
-    auto stats = GetStaticSymbols().GetStats();
     if (RPGEnumeration::IsFlagType(typeInfo->Name)) {
-        int poolIdx{ -1 };
-        auto i64 = stats->GetOrCreateInt64(poolIdx);
-        if (i64 != nullptr) {
-            *i64 = value;
-            IndexedProperties[attributeIndex] = poolIdx;
-        }
+        SetInt64Flags(attributeIndex, value);
     } else {
         OsiError("Couldn't set " << Name << "." << attributeName << " to int64 value: Inappropriate type: " << typeInfo->Name);
         return false;
     }
 
     return true;
+}
+
+void Object::SetGuid(int attributeIndex, std::optional<Guid> value)
+{
+    if (value) {
+        int poolIdx{ -1 };
+        auto guid = GetStaticSymbols().GetStats()->GetOrCreateGuid(poolIdx);
+        if (guid != nullptr) {
+            *guid = *value;
+            IndexedProperties[attributeIndex] = poolIdx;
+        }
+    } else {
+        IndexedProperties[attributeIndex] = -1;
+    }
 }
 
 bool Object::SetGuid(FixedString const& attributeName, std::optional<Guid> value)
@@ -457,24 +490,28 @@ bool Object::SetGuid(FixedString const& attributeName, std::optional<Guid> value
         return false;
     }
 
-    auto stats = GetStaticSymbols().GetStats();
     if (typeInfo->Name == GFS.strGuid) {
-        if (value) {
-            int poolIdx{ -1 };
-            auto guid = stats->GetOrCreateGuid(poolIdx);
-            if (guid != nullptr) {
-                *guid = *value;
-                IndexedProperties[attributeIndex] = poolIdx;
-            }
-        } else {
-            IndexedProperties[attributeIndex] = -1;
-        }
+        SetGuid(attributeIndex, value);
     } else {
         OsiError("Couldn't set " << Name << "." << attributeName << " to GUID value: Inappropriate type: " << typeInfo->Name);
         return false;
     }
 
     return true;
+}
+
+void Object::SetTranslatedString(int attributeIndex, std::optional<TranslatedString> value)
+{
+    if (value) {
+        int poolIdx{ -1 };
+        auto ts = GetStaticSymbols().GetStats()->GetOrCreateTranslatedString(poolIdx);
+        if (ts != nullptr) {
+            *ts = *value;
+            IndexedProperties[attributeIndex] = poolIdx;
+        }
+    } else {
+        IndexedProperties[attributeIndex] = -1;
+    }
 }
 
 bool Object::SetTranslatedString(FixedString const& attributeName, std::optional<TranslatedString> value)
@@ -486,18 +523,8 @@ bool Object::SetTranslatedString(FixedString const& attributeName, std::optional
         return false;
     }
 
-    auto stats = GetStaticSymbols().GetStats();
     if (typeInfo->Name == GFS.strTranslatedString) {
-        if (value) {
-            int poolIdx{ -1 };
-            auto ts = stats->GetOrCreateTranslatedString(poolIdx);
-            if (ts != nullptr) {
-                *ts = *value;
-                IndexedProperties[attributeIndex] = poolIdx;
-            }
-        } else {
-            IndexedProperties[attributeIndex] = -1;
-        }
+        SetTranslatedString(attributeIndex, value);
     } else {
         OsiError("Couldn't set " << Name << "." << attributeName << " to TranslatedString value: Inappropriate type: " << typeInfo->Name);
         return false;
@@ -529,16 +556,12 @@ bool Object::SetFlags(FixedString const& attributeName, Array<STDString> const& 
             return false;
         }
 
-        flags |= (1ll << (*flagValue - 1));
+        if (*flagValue) {
+            flags |= (1ll << (*flagValue - 1));
+        }
     }
 
-    int poolIdx{ -1 };
-    auto i64 = stats->GetOrCreateInt64(poolIdx);
-    if (i64 != nullptr) {
-        *i64 = flags;
-        IndexedProperties[attributeIndex] = poolIdx;
-    }
-
+    SetInt64Flags(attributeIndex, flags);
     return true;
 }
 

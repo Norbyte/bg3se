@@ -354,7 +354,7 @@ PropertyOperationResult LuaStatSetAttribute(lua_State* L, stats::Object* object,
             break;
 
         default:
-            object->SetInt(attributeName, (int32_t)luaL_checkinteger(L, valueIdx));
+            object->SetInt(attributeName, (int64_t)luaL_checkinteger(L, valueIdx));
             break;
         }
         break;

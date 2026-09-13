@@ -388,7 +388,7 @@ public:
             return this;
         }
 
-        inline operator bool() const
+        explicit inline operator bool() const
         {
             return Index != Map->Keys.size();
         }
@@ -457,7 +457,7 @@ public:
             return this;
         }
 
-        inline operator bool() const
+        explicit inline operator bool() const
         {
             return Index != Map->Keys.size();
         }
