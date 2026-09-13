@@ -206,7 +206,7 @@ private:
         length >>= 2;
         if (length >= 0x10000) {
             lenBytes = 3;
-        } else if (length > 0x100) {
+        } else if (length >= 0x100) {
             lenBytes = 2;
         } else if (length > 0) {
             lenBytes = 1;
