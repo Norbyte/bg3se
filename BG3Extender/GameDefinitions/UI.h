@@ -173,12 +173,27 @@ struct DependencyPropertyHelpers
     static bool IsReadOnly(DependencyProperty const* o);
 };
 
+enum class StoredValueCopy {};
+
 struct StoredValueHolder
 {
     inline StoredValueHolder() {}
-    inline StoredValueHolder(void* val, bool owned) : Value(val), IsIntegral(true), IsOwned(owned) {}
+
+    template <class T>
+    inline StoredValueHolder(T const& val, StoredValueCopy)
+    {
+        if constexpr (sizeof(T) <= sizeof(void*)) {
+            Value = *reinterpret_cast<void* const*>(&val);
+            IsIntegral = true;
+            IsOwned = false;
+        } else {
+            Value = GameAlloc<T>(val);
+            IsIntegral = false;
+            IsOwned = true;
+        }
+    }
+
     inline StoredValueHolder(BaseObject* val) : Value(val), IsIntegral(true), IsOwned(false) {}
-    inline StoredValueHolder(String* val) : Value(val), IsIntegral(false), IsOwned(false) {}
 
     ~StoredValueHolder();
 

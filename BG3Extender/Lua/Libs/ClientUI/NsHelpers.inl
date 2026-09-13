@@ -420,7 +420,7 @@ void PushTypedRef(lua_State* L, TypeProperty const* prop, BaseObject const* obj)
 
 StoredValueHolder::~StoredValueHolder()
 {
-    if (IsOwned && Value != nullptr) {
+    if (IsOwned && !IsIntegral && Value != nullptr) {
         GameFree(Value);
     }
 }
@@ -552,12 +552,7 @@ template <class T>
 StoredValueHolder StoredValueHelpers::GetRawValue(lua_State* L, Type const* type, lua::AnyRef value)
 {
     auto val = lua::get<T>(L, value.Index);
-    if constexpr (sizeof(T) <= sizeof(void*)) {
-        return StoredValueHolder (*reinterpret_cast<void**>(&val), false);
-    } else {
-        auto buf = GameAlloc<T>(val);
-        return StoredValueHolder(buf, true);
-    }
+    return StoredValueHolder(val, StoredValueCopy{});
 }
 
 std::optional<StoredValueHolder> StoredValueHelpers::GetValue(lua_State* L, Type const* type, lua::AnyRef value)
@@ -615,7 +610,7 @@ std::optional<StoredValueHolder> StoredValueHelpers::GetValue(lua_State* L, Type
         // IMultiValueConverter unsupported for now
         return {};
     } else if (type == types.String.Type) {
-        return GameAlloc<String>(lua::get<char const*>(L, value.Index));
+        return StoredValueHolder(String(lua::get<char const*>(L, value.Index)), StoredValueCopy{});
 
     } else if (TypeHelpers::IsDescendantOf(type->GetClassType(), classes.TypeEnum.Type)) {
         auto enumVal = lua::get<char const*>(L, value.Index);
@@ -627,7 +622,7 @@ std::optional<StoredValueHolder> StoredValueHelpers::GetValue(lua_State* L, Type
             return {};
         }
 
-        return StoredValueHolder((void*)(*label), false);
+        return StoredValueHolder(*label, StoredValueCopy{});
 
     } else if (TypeHelpers::IsDescendantOf(type, classes.BaseObject.Type)) {
         return lua::get<BaseObject*>(L, value.Index);
