@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <atomic>
+#include <utility>
 #include <vector>
 
 namespace bg3se
@@ -14,10 +15,10 @@ namespace bg3se
     void GameFree(_Post_ptr_invalid_ _Pre_valid_ void*) noexcept;
 
     template <class T, class ...Args>
-    _Post_writable_size_(1) T* GameAlloc(Args... args)
+    _Post_writable_size_(1) T* GameAlloc(Args&&... args)
     {
         auto ptr = static_cast<T*>(GameAllocRaw(sizeof(T)));
-        new (ptr) T(args...);
+        new (ptr) T(std::forward<Args>(args)...);
         return ptr;
     }
 
@@ -29,10 +30,10 @@ namespace bg3se
     }
 
     template <class T, class ...Args>
-    _Post_writable_size_(n) T* GameAllocArray(std::size_t n, Args... args)
+    _Post_writable_size_(n) T* GameAllocArray(std::size_t n, Args&&... args)
     {
         auto ptr = static_cast<T*>(GameAllocRaw(sizeof(T) * n));
-        for (auto i = 0; i < n; i++) {
+        for (std::size_t i = 0; i < n; i++) {
             new (ptr + i) T(args...);
         }
         return ptr;

@@ -252,7 +252,7 @@ public:
         if (a.size_ != size_) {
             Resize(a.size_);
             for (size_type i = 0; i < size_; i++) {
-                new (buf_ + i) T(a[i]);
+                buf_[i] = a[i];
             }
         }
     }
@@ -418,7 +418,8 @@ public:
 
     ~UninitializedStaticArray()
     {
-        GameFree(buf_);
+        // User needs to clear() the array before deletion
+        se_assert(buf_ == nullptr);
     }
 
     UninitializedStaticArray& operator =(UninitializedStaticArray const& a) = delete;
@@ -426,6 +427,9 @@ public:
     UninitializedStaticArray& operator =(UninitializedStaticArray&& a) noexcept
     {
         if (this != &a) {
+            // User needs to clear() the array before a move
+            se_assert(buf_ == nullptr);
+
             buf_ = a.buf_;
             size_ = a.size_;
             a.buf_ = nullptr;

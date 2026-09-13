@@ -197,17 +197,24 @@ public:
 
     Queue& operator =(Queue&& o)
     {
-        buf_ = o.buf_;
-        capacity_ = o.capacity_;
-        size_ = o.size_;
-        readIndex_ = o.readIndex_;
-        writeIndex_ = o.writeIndex_;
+        if (this != &o) {
+            if (buf_) {
+                GameDeleteArray<T>(buf_, capacity_);
+            }
 
-        o.buf_ = nullptr;
-        o.capacity_ = 0;
-        o.size_ = 0;
-        o.readIndex_ = -1;
-        o.writeIndex_ = 0;
+            buf_ = o.buf_;
+            capacity_ = o.capacity_;
+            size_ = o.size_;
+            readIndex_ = o.readIndex_;
+            writeIndex_ = o.writeIndex_;
+
+            o.buf_ = nullptr;
+            o.capacity_ = 0;
+            o.size_ = 0;
+            o.readIndex_ = -1;
+            o.writeIndex_ = 0;
+        }
+
         return *this;
     }
 
@@ -299,20 +306,21 @@ public:
     void resize(size_type newCapacity)
     {
         auto newBuf = GameAllocArray<T>(newCapacity);
+        auto itemsToCopy = (int32_t)std::min(size_, newCapacity);
 
-        if (size_ > 0) {
+        if (itemsToCopy > 0) {
             if (readIndex_ < writeIndex_) {
                 int32_t wr = 0;
-                for (int32_t i = readIndex_; i < writeIndex_; i++, wr++) {
+                for (int32_t i = readIndex_; i < writeIndex_ && wr < itemsToCopy; i++, wr++) {
                     newBuf[wr] = buf_[i];
                 }
             } else {
                 int32_t wr = 0;
-                for (int32_t i = readIndex_; i < (int32_t)capacity_; i++, wr++) {
+                for (int32_t i = readIndex_; i < (int32_t)capacity_ && wr < itemsToCopy; i++, wr++) {
                     newBuf[wr] = buf_[i];
                 }
 
-                for (int32_t i = 0; i < writeIndex_; i++, wr++) {
+                for (int32_t i = 0; i < writeIndex_ && wr < itemsToCopy; i++, wr++) {
                     newBuf[wr] = buf_[i];
                 }
             }
@@ -326,7 +334,7 @@ public:
         capacity_ = newCapacity;
         size_ = std::min(size_, capacity_);
         readIndex_ = 0;
-        writeIndex_ = size_;
+        writeIndex_ = (size_ < capacity_) ? (difference_type)size_ : 0;
     }
 
     void clear()

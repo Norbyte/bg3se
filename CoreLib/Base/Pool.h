@@ -36,9 +36,8 @@ public:
         auto salt = TSalt(id >> IdBits) & ((TSalt(1) << SaltBits) - 1);
 
         if (index < salts_.size() && salts_[(uint32_t)index] == salt) {
-            freeIndices_.push_back(index);
-            salt = (salt + 1) & TSalt(((TId(1) << SaltBits) - 1));
-            salts_[(uint32_t)index] = salt | DeletedFlag;
+            MarkFree((uint32_t)index);
+            pool_[(uint32_t)index] = T{};
             return true;
         } else {
             return false;

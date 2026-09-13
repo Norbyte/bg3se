@@ -182,18 +182,7 @@ public:
             return index;
         }
 
-        int keyIdx = (int)Keys.size();
-        Keys.push_back(key);
-        NextIds.push_back(-1);
-
-        auto desiredSize = Keys.size() + (Keys.size() >> 1);
-        if (HashKeys.size() >= desiredSize) {
-            InsertToHashMap(key, keyIdx);
-        } else {
-            ResizeHashMap(desiredSize);
-        }
-
-        return keyIdx;
+        return insertUnchecked(key);
     }
 
     ContiguousIterator<T> begin()
@@ -248,6 +237,22 @@ protected:
     StaticArray<int32_t> HashKeys;
     Array<int32_t> NextIds;
     Array<T> Keys;
+
+    int insertUnchecked(T const& key)
+    {
+        int keyIdx = (int)Keys.size();
+        Keys.push_back(key);
+        NextIds.push_back(-1);
+
+        auto desiredSize = Keys.size() + (Keys.size() >> 1);
+        if (HashKeys.size() >= desiredSize) {
+            InsertToHashMap(key, keyIdx);
+        } else {
+            ResizeHashMap(desiredSize);
+        }
+
+        return keyIdx;
+    }
 
     uint32_t bucketFromIndex(int32_t index)
     {
@@ -498,8 +503,11 @@ public:
 
     HashMap& operator =(HashMap&& other) noexcept
     {
-        HashSet<TKey>::operator =(std::move(other));
-        Values = std::move(other.Values);
+        if (this != &other) {
+            Values.clear(this->Keys.size());
+            HashSet<TKey>::operator =(std::move(other));
+            Values = std::move(other.Values);
+        }
 
         return *this;
     }
@@ -555,32 +563,50 @@ public:
 
     TValue* set(TKey const& key, TValue&& value)
     {
-        auto index = this->insert(key);
-        if (Values.size() < this->Keys.capacity()) {
-            Values.resize(this->Keys.capacity(), index, index);
-        }
+        auto index = this->find_index(key);
+        if (index != -1) {
+            Values[index] = std::move(value);
+            return &Values[index];
+        } else {
+            index = this->insertUnchecked(key);
+            if (Values.size() < this->Keys.capacity()) {
+                Values.resize(this->Keys.capacity(), index, index);
+            }
 
-        return new (&Values[index]) TValue(std::move(value));
+            return new (&Values[index]) TValue(std::move(value));
+        }
     }
 
     TValue* set(TKey const& key, TValue const& value)
     {
-        auto index = this->insert(key);
-        if (Values.size() < this->Keys.capacity()) {
-            Values.resize(this->Keys.capacity(), index, index);
-        }
+        auto index = this->find_index(key);
+        if (index != -1) {
+            Values[index] = value;
+            return &Values[index];
+        } else {
+            index = this->insertUnchecked(key);
+            if (Values.size() < this->Keys.capacity()) {
+                Values.resize(this->Keys.capacity(), index, index);
+            }
 
-        return new (&Values[index]) TValue(value);
+            return new (&Values[index]) TValue(value);
+        }
     }
 
     TValue* add_key(TKey const& key)
     {
-        auto index = this->insert(key);
-        if (Values.size() < this->Keys.capacity()) {
-            Values.resize(this->Keys.capacity(), index, index);
-        }
+        auto index = this->find_index(key);
+        if (index != -1) {
+            Values[index] = TValue();
+            return &Values[index];
+        } else {
+            index = this->insertUnchecked(key);
+            if (Values.size() < this->Keys.capacity()) {
+                Values.resize(this->Keys.capacity(), index, index);
+            }
 
-        return new (&Values[index]) TValue();
+            return new (&Values[index]) TValue();
+        }
     }
 
     bool remove(Iterator const& it)

@@ -12,14 +12,19 @@ struct PagedHashSet : protected TAllocator
         hashLayout_(bitsPerPage),
         keyLayout_(bitsPerPage)
     {}
+    
+    ~PagedHashSet()
+    {
+        PagedOps<int32_t, TAllocator>::Resize(0, hash_, hashLayout_, *this);
+        auto idsLayout = keyLayout_;
+        PagedOps<int32_t, TAllocator>::Resize(0, nextIds_, idsLayout, *this);
+        PagedOps<TKey, TAllocator>::Resize(0, keys_, keyLayout_, *this);
+    }
 
-    int32_t** hash_{ nullptr };
-    int32_t** nextIds_{ nullptr };
-    TKey** keys_{ nullptr };
-    PageLayout hashLayout_;
-    PageLayout keyLayout_;
-    uint32_t hashSize_{ 0 };
-    uint32_t keysSize_{ 0 };
+    PagedHashSet(PagedHashSet const&) = delete;
+    PagedHashSet(PagedHashSet&&) = delete;
+    PagedHashSet& operator =(PagedHashSet const&) = delete;
+    PagedHashSet& operator =(PagedHashSet&&) = delete;
 
     int find_index(TKey const& key) const
     {
@@ -64,6 +69,15 @@ struct PagedHashSet : protected TAllocator
         return (int)keyIdx;
     }
 
+protected:
+    int32_t** hash_{ nullptr };
+    int32_t** nextIds_{ nullptr };
+    TKey** keys_{ nullptr };
+    PageLayout hashLayout_;
+    PageLayout keyLayout_;
+    uint32_t hashSize_{ 0 };
+    uint32_t keysSize_{ 0 };
+
 private:
     void hash_insert(TKey const& key, int keyIdx)
     {
@@ -100,6 +114,11 @@ struct PagedHashMap : public PagedHashSet<TKey, TAllocator>
         : PagedHashSet<TKey, TAllocator>(bitsPerPage, allocator),
         Values(bitsPerPage, allocator)
     {}
+
+    PagedHashMap(PagedHashMap const&) = delete;
+    PagedHashMap(PagedHashMap&&) = delete;
+    PagedHashMap& operator =(PagedHashMap const&) = delete;
+    PagedHashMap& operator =(PagedHashMap&&) = delete;
 
     PagedArray<TValue, TAllocator> Values;
 
