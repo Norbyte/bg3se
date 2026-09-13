@@ -14,30 +14,42 @@ using namespace rapidjson;
 
 using Val = rapidjson::Value;
 
-void Parse(lua_State * L, Val const& val);
+void Parse(lua_State * L, Val const& val, unsigned depth);
 
-void ParseArray(lua_State * L, Val::ConstArray const& val)
+static constexpr unsigned MaxDepth = 64;
+
+void ParseArray(lua_State * L, Val::ConstArray const& val, unsigned depth)
 {
+    if (depth > MaxDepth) {
+        luaL_error(L, "Maximum JSON depth exceeded");
+    }
+
+    lua_checkstack(L, 3);
     lua_createtable(L, (int)val.Size(), 0);
     int idx = 1;
     for (auto& it : val) {
         push(L, idx++);
-        Parse(L, it);
+        Parse(L, it, depth + 1);
         lua_rawset(L, -3);
     }
 }
 
-void ParseObject(lua_State * L, Val::ConstObject const& val)
+void ParseObject(lua_State * L, Val::ConstObject const& val, unsigned depth)
 {
+    if (depth > MaxDepth) {
+        luaL_error(L, "Maximum JSON depth exceeded");
+    }
+
+    lua_checkstack(L, 3);
     lua_createtable(L, 0, (int)val.MemberCount());
     for (auto& it : val) {
-        Parse(L, it.name);
-        Parse(L, it.value);
+        Parse(L, it.name, depth + 1);
+        Parse(L, it.value, depth + 1);
         lua_rawset(L, -3);
     }
 }
 
-void Parse(lua_State * L, Val const& val)
+void Parse(lua_State * L, Val const& val, unsigned depth)
 {
     switch (val.GetType()) {
     case Type::kNullType:
@@ -53,11 +65,11 @@ void Parse(lua_State * L, Val const& val)
         break;
 
     case Type::kObjectType:
-        ParseObject(L, val.GetObj());
+        ParseObject(L, val.GetObj(), depth);
         break;
 
     case Type::kArrayType:
-        ParseArray(L, val.GetArray());
+        ParseArray(L, val.GetArray(), depth);
         break;
 
     case Type::kNumberType:
@@ -85,7 +97,7 @@ bool Parse(lua_State * L, StringView json, bool binary)
 
     if (binary) {
         BinaryReader reader(std::span<uint8_t const>((uint8_t const*)json.data(), json.size()));
-        if (!reader.ParseNext(L) || reader.Available() > 0) {
+        if (!reader.Parse(L)) {
             return luaL_error(L, "Unable to parse blob");
         }
     } else {
@@ -95,7 +107,7 @@ bool Parse(lua_State * L, StringView json, bool binary)
             return false;
         }
 
-        Parse(L, root);
+        Parse(L, root, 0);
     }
 
     return true;
@@ -113,7 +125,7 @@ UserReturn LuaParse(lua_State* L)
 
     if (binary) {
         BinaryReader reader(std::span<uint8_t const>((uint8_t const*)json, length));
-        if (!reader.ParseNext(L) || reader.Available() > 0) {
+        if (!reader.Parse(L)) {
             return luaL_error(L, "Unable to parse blob");
         }
     } else {
@@ -122,7 +134,7 @@ UserReturn LuaParse(lua_State* L)
             return luaL_error(L, "Unable to parse JSON");
         }
 
-        Parse(L, root);
+        Parse(L, root, 0);
     }
 
     return 1;

@@ -223,10 +223,23 @@ private:
 class BinaryReader
 {
 public:
+    static constexpr unsigned MaxDepth = 64;
+
     BinaryReader(std::span<uint8_t const> buf)
         : buf_(buf)
     {}
 
+    bool Parse(lua_State* L)
+    {
+        if (ParseNext(L)) {
+            // Treat trailing garbage at the end of the buffer as unsuccessful parse
+            return Available() == 0;
+        } else {
+            return false;
+        }
+    }
+
+private:
     inline uint32_t Available()
     {
         return (uint32_t)buf_.size() - pos_;
@@ -311,6 +324,13 @@ public:
 
     bool ParseArray(lua_State* L)
     {
+        if (depth_++ > MaxDepth) {
+            return false;
+        }
+
+        lua_checkstack(L, 3);
+        lua_newtable(L);
+
         int32_t i{ 1 };
         for (;;) {
             TypeTag type;
@@ -318,6 +338,7 @@ public:
 
             if (type == TypeTag::End) {
                 Consume(1);
+                depth_--;
                 return true;
             }
 
@@ -331,13 +352,20 @@ public:
 
     bool ParseObject(lua_State* L)
     {
-        int32_t i{ 1 };
+        if (depth_++ > MaxDepth) {
+            return false;
+        }
+
+        lua_checkstack(L, 3);
+        lua_newtable(L);
+
         for (;;) {
             TypeTag type;
             if (!PeekNext(type)) return false;
 
             if (type == TypeTag::End) {
                 Consume(1);
+                depth_--;
                 return true;
             }
 
@@ -453,12 +481,10 @@ public:
         }
 
         case TypeTag::Object:
-            lua_newtable(L);
             Consume(1);
             return ParseObject(L);
 
         case TypeTag::Array:
-            lua_newtable(L);
             Consume(1);
             return ParseArray(L);
 
@@ -473,6 +499,7 @@ public:
 private:
     std::span<uint8_t const> buf_;
     uint32_t pos_{ 0 };
+    uint32_t depth_{ 0 };
 };
 
 END_NS()
