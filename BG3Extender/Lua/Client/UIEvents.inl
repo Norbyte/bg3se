@@ -25,7 +25,7 @@ UIEventHooks::EventHandler::~EventHandler()
 
 void UIEventHooks::EventHandler::Unsubscribe()
 {
-    IsActive = true;
+    IsActive = false;
 
     if (Target) {
         auto event = Target->mRoutedEventHandlers.Find(EventType);
