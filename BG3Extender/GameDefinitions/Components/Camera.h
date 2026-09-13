@@ -218,6 +218,11 @@ END_SE()
 
 BEGIN_NS(ecl)
 
+struct CameraSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ClientCamera, "ecl::CameraSystem")
+};
+
 struct GameCameraBehavior : public BaseComponent
 {
     DEFINE_COMPONENT(GameCameraBehavior, "ecl::GameCameraBehavior")
@@ -300,6 +305,43 @@ struct GameCameraBehavior : public BaseComponent
     HashSet<int16_t> field_208;
     std::optional<glm::vec3> field_238;
     std::optional<glm::vec3> field_248;
+
+    //# P_GETTER(CameraDefinition, GetCameraDefinition)
+    CameraGlobalSwitches* GetCameraDefinition() const;
+};
+
+// Partial native argument layouts used by camera update hooks. Only the
+// accessed fields are identified; these are not complete engine structures.
+struct [[bg3::hidden]] CameraUpdateTime
+{
+    uint8_t field_0[0x0c];
+    float DeltaTime;
+};
+
+struct [[bg3::hidden]] CameraUpdateComponentView
+{
+    uint8_t field_0[0x30];
+    GameCameraBehavior* Camera;
+    uint8_t field_38[0x38];
+    EntityHandle Entity;
+};
+
+struct [[bg3::hidden]] CameraZoomUpdateComponentView
+{
+    uint8_t field_0[0x10];
+    GameCameraBehavior* Camera;
+};
+
+struct [[bg3::hidden]] CameraInputComponentView
+{
+    uint8_t field_0[0x40];
+    GameCameraBehavior* Camera;
+};
+
+struct [[bg3::hidden]] CameraDefaultZoomComponentView
+{
+    uint8_t field_0[0x20];
+    GameCameraBehavior* Camera;
 };
 
 END_NS()

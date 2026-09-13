@@ -287,6 +287,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="GameHooks\EngineHooks.h" />
     <ClInclude Include="GameHooks\EngineHooksFwdDecl.h" />
     <ClInclude Include="GameHooks\OsirisWrappers.h" />
+    <ClInclude Include="Lua\Client\CameraEvents.h" />
     <ClInclude Include="Lua\Client\ClientEntityReplicationEvents.h" />
     <ClInclude Include="Lua\Client\ClientEvents.h" />
     <ClInclude Include="Lua\Client\LuaBindingClient.h" />
@@ -405,6 +406,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClCompile Include="GameHooks\DataLibrariesBG3Game.cpp" />
     <ClCompile Include="GameHooks\EngineHooks.cpp" />
     <ClCompile Include="GameHooks\OsirisWrappers.cpp" />
+    <ClCompile Include="Lua\Client\CameraEvents.cpp" />
     <ClCompile Include="Lua\Client\LuaClient.cpp" />
     <ClCompile Include="Lua\Debugger\LuaDebug.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">NotUsing</PrecompiledHeader>
@@ -511,6 +513,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="GameDefinitions\Stats\Expression.inl" />
     <None Include="GameDefinitions\Stats\Functors.inl" />
     <None Include="GameDefinitions\Status.inl" />
+    <None Include="GameDefinitions\Components\Camera.inl" />
     <None Include="GameDefinitions\Surface.inl" />
     <None Include="GameDefinitions\Symbols.inl" />
     <None Include="GameHooks\EngineHooks.inl" />

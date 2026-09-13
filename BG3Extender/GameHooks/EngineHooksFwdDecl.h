@@ -16,6 +16,7 @@ struct AttackDesc;
 struct FileReader;
 struct AiGrid;
 struct Visual;
+struct CameraGlobalSwitches;
 
 using AiPathId = int32_t;
 
@@ -38,6 +39,12 @@ using AppliedMaterial__TryOverrideTexture2DParameterProc = bool (AppliedMaterial
 using TextureManager__UnloadTextureProc = bool (TextureManager* self, FixedString const& textureGuid);
 
 END_SE()
+
+BEGIN_NS(input)
+
+struct InputEvent;
+
+END_NS()
 
 BEGIN_NS(stats)
 
@@ -112,11 +119,25 @@ END_NS()
 
 BEGIN_NS(ecl)
 
+struct GameCameraBehavior;
+struct CameraUpdateTime;
+struct CameraUpdateComponentView;
+struct CameraZoomUpdateComponentView;
+struct CameraInputComponentView;
+struct CameraDefaultZoomComponentView;
+
 using EoCClient__HandleErrorProc = void (EoCClient* self, TranslatedString const& message, bool exitGame, TranslatedString const& a4, uint8_t messageBoxLocalId);
 
 using GameStateEventManager__ExecuteGameStateChangedEventProc = void (void* self, GameState fromState, GameState toState);
 using GameStateThreaded__GameStateWorker__DoWorkProc = void (void* self);
 using GameStateMachine__UpdateProc = void (void* self, GameTime* time);
+using CameraSystem__UpdateCameraProc = void (void* self, void* systemContext, CameraUpdateTime const* time, CameraUpdateComponentView* view);
+using CameraSystem__UpdateCameraPitchProc = void (void* self, void* entity, GameCameraBehavior* camera, CameraUpdateTime const* time);
+using CameraSystem__UpdateCameraZoomProc = void (void* self, void* entity, CameraZoomUpdateComponentView* view, CameraUpdateTime const* time);
+using GameCameraBehavior__GetCameraDefinitionProc = CameraGlobalSwitches* (GameCameraBehavior const* camera);
+using GameCameraBehavior__CalculatePitchProc = float (GameCameraBehavior* camera, bool ignoreAvoidance, bool selectMode);
+using CameraSystem__HandleInputProc = uint16_t* (void* self, uint16_t* result, CameraInputComponentView* view, input::InputEvent* inputEvent);
+using CameraSystem__SetDefaultZoomProc = void (CameraDefaultZoomComponentView* view);
 
 END_NS()
 
