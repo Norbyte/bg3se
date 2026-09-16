@@ -195,7 +195,37 @@ struct StoredValueHolder
 
     inline StoredValueHolder(BaseObject* val) : Value(val), IsIntegral(true), IsOwned(false) {}
 
-    ~StoredValueHolder();
+    StoredValueHolder(StoredValueHolder const&) = delete;
+    StoredValueHolder & operator = (StoredValueHolder const&) = delete;
+
+    inline StoredValueHolder(StoredValueHolder && o) noexcept
+        : Value(o.Value), IsIntegral(o.IsIntegral), IsOwned(o.IsOwned)
+    {
+        o.IsOwned = false;
+    }
+
+    inline StoredValueHolder& operator = (StoredValueHolder&& o) noexcept
+    {
+        if (&o != this) {
+            if (IsOwned) {
+                GameFree(Value);
+            }
+
+            Value = o.Value;
+            IsIntegral = o.IsIntegral;
+            IsOwned = o.IsOwned;
+            o.IsOwned = false;
+        }
+
+        return *this;
+    }
+
+    inline ~StoredValueHolder()
+    {
+        if (IsOwned) {
+            GameFree(Value);
+        }
+    }
 
     void* Value{ nullptr };
     bool IsIntegral{ true };

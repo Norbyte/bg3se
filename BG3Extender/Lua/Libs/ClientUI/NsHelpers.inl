@@ -418,13 +418,6 @@ void PushTypedRef(lua_State* L, TypeProperty const* prop, BaseObject const* obj)
     lua::push(L, *value);
 }
 
-StoredValueHolder::~StoredValueHolder()
-{
-    if (IsOwned && !IsIntegral && Value != nullptr) {
-        GameFree(Value);
-    }
-}
-
 void StoredValueHelpers::PushProperty(lua_State* L, BaseObject const* obj, TypeClass const* objType, TypeProperty const* prop)
 {
     auto& types = gStaticSymbols.Types;
