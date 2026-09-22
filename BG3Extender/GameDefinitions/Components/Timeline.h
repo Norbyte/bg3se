@@ -356,7 +356,7 @@ struct Timeline : public aspk::Timeline
     bool ArePeanutsVisible;
     bool IsDuringQuestionHoldAutomation;
     bool ShouldForceUpdateCameraBehavior;
-    bool AutomaticLightingIdFromAtmosphere;
+    Guid AutomaticLightingIdFromAtmosphere;
     bool ShouldUpdateAttachmentTransforms;
     DeltaExposure DeltaExposure;
     bool PausedForInGameControls;
