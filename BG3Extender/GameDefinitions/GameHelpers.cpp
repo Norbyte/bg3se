@@ -661,21 +661,19 @@ void MakePolymorphicRef(lua_State* L, dlg::DialogNode* value, LifetimeHandle lif
 
 void MakePolymorphicRef(lua_State* L, aspk::Component* value, LifetimeHandle lifetime)
 {
-    auto componentType = value->GetTypeName().GetStringView();
-#define V(type) else if (componentType == #type) \
+    auto const& componentType = value->GetTypeName();
+#define V(type) else if (componentType == GFS.str##type) \
                     MakeDirectObjectRef(L, static_cast<aspk::type##Component*>(value), lifetime);
-#define V_timeline(type) else if (componentType == #type) \
-                    MakeDirectObjectRef(L, static_cast<aspk::type##Component*>(value), lifetime);
-#define V_tlkeybase(type) else if (componentType == #type) \
+#define V_tlkeybase(type) else if (componentType == GFS.str##type) \
                     MakeDirectObjectRef(L, static_cast<aspk::type##Component<aspk::keys::KeyBase>*>(value), lifetime);
-#define V_tlchannel(type) else if (componentType == #type) \
+#define V_tlchannel(type) else if (componentType == GFS.str##type) \
                     MakeDirectObjectRef(L, static_cast<aspk::channels::type##Component*>(value), lifetime);
-    if (componentType == "BaseComponent")
+    if (componentType == GFS.strBaseComponent)
     {
         MakeDirectObjectRef(L, static_cast<aspk::Component*>(value), lifetime);
     }
     // Special case for this one because it can't be its own V
-    else if (componentType == "Ribbon 2.0")
+    else if (componentType == GFS.strRibbon20)
     {
         MakeDirectObjectRef(L, static_cast<aspk::Ribbon2Component*>(value), lifetime);
     }
@@ -702,44 +700,44 @@ void MakePolymorphicRef(lua_State* L, aspk::Component* value, LifetimeHandle lif
     V(VortexForce)
     V(WindForce)
     V(TLBase)
-    V_timeline(TimelineActorPropertiesReflection)
-    V_timeline(TLAdditiveAnimation)
-    V_timeline(TLAnimation)
-    V_timeline(TLAtmosphereAndLighting)
-    V_timeline(TLAttachToEvent)
-    V_timeline(TLAttitudeEvent)
-    V_timeline(TLCameraDoF)
-    V_timeline(TLCameraExposure)
-    V_timeline(TLCameraFoV)
-    V_timeline(TLCameraLookAt)
-    V_timeline(TLEffectPhaseEvent)
-    V_timeline(TLEmotionEvent)
-    V_timeline(TLFloatRTPC)
-    V_timeline(TLGenomeTextEvent)
-    V_timeline(TLHandsIK)
-    V_timeline(TLLayeredAnimation)
-    V_timeline(TLLookAtEvent)
-    V_timeline(TLMaterial)
-    V_timeline(TLPhysics)
-    V_timeline(TLPlayEffectEvent)
-    V_timeline(TLPlayRate)
-    V_timeline(TLShapeShift)
-    V_timeline(TLShot)
-    V_timeline(TLShotHoldPrevious)
-    V_timeline(TLShotZoom)
-    V_timeline(TLShowArmor)
-    V_timeline(TLShowHUD)
-    V_timeline(TLShowPeanuts)
-    V_timeline(TLShowVisual)
-    V_timeline(TLShowWeapon)
-    V_timeline(TLSoundEvent)
-    V_timeline(TLSplatter)
-    V_timeline(TLSprings)
-    V_timeline(TLSteppingFade)
-    V_timeline(TLSwitchLocationEvent)
-    V_timeline(TLSwitchStageEvent)
-    V_timeline(TLTransform)
-    V_timeline(TLVoice)
+    V(TimelineActorPropertiesReflection)
+    V(TLAdditiveAnimation)
+    V(TLAnimation)
+    V(TLAtmosphereAndLighting)
+    V(TLAttachToEvent)
+    V(TLAttitudeEvent)
+    V(TLCameraDoF)
+    V(TLCameraExposure)
+    V(TLCameraFoV)
+    V(TLCameraLookAt)
+    V(TLEffectPhaseEvent)
+    V(TLEmotionEvent)
+    V(TLFloatRTPC)
+    V(TLGenomeTextEvent)
+    V(TLHandsIK)
+    V(TLLayeredAnimation)
+    V(TLLookAtEvent)
+    V(TLMaterial)
+    V(TLPhysics)
+    V(TLPlayEffectEvent)
+    V(TLPlayRate)
+    V(TLShapeShift)
+    V(TLShot)
+    V(TLShotHoldPrevious)
+    V(TLShotZoom)
+    V(TLShowArmor)
+    V(TLShowHUD)
+    V(TLShowPeanuts)
+    V(TLShowVisual)
+    V(TLShowWeapon)
+    V(TLSoundEvent)
+    V(TLSplatter)
+    V(TLSprings)
+    V(TLSteppingFade)
+    V(TLSwitchLocationEvent)
+    V(TLSwitchStageEvent)
+    V(TLTransform)
+    V(TLVoice)
     V_tlkeybase(TLEventKey)
     V_tlkeybase(TLInterpolationKey)
     V_tlkeybase(TLKeyBase)
@@ -754,7 +752,7 @@ void MakePolymorphicRef(lua_State* L, aspk::Component* value, LifetimeHandle lif
     // Theoretically there are a lot of other EffectComponents that could get output here; haven't finished researching them
     else
     {
-        WARN("Fetching unknown AllSpark component type: '%s'", componentType.data());
+        WARN("Fetching unknown AllSpark component type: '%s'", componentType.GetString());
         MakeDirectObjectRef(L, value, lifetime);
     }
 

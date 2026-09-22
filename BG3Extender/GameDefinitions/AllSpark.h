@@ -62,9 +62,7 @@ struct IntegerRangeProperty : public Property
 struct ColorARGBKeyFrameData
 {
     float Time;
-    [[bg3::hidden]] __int32 field_4;
-    [[bg3::hidden]] __int64 field_8;
-    glm::fvec4 Color;
+    glm::aligned_highp_vec4 Color;
 };
 
 struct ColorARGBKeyFrameProperty : public Property
@@ -276,7 +274,7 @@ struct TLActor
 struct TLBaseComponent : public Component
 {
     TLActor Actor;
-    uint8_t field_68x;
+    bool Enabled;
     uint32_t TypeId;
     int64_t PhaseIndex;
     bool IsSnappedToEnd;
@@ -298,12 +296,11 @@ END_BARE_NS()
 template<typename Key>
 struct TLKeyBaseComponent : public TLBaseComponent
 {
-    float field_68;
     [[bg3::hidden]] Array<Key*> Keys;
     bool HasTargetKey;
-    Key* TargetKey;
+    uint64_t TargetKey;
     bool NeedsKeyUpdate;
-    bool field_91;
+    bool IsEvent;
     std::array<uint32_t, 2> Random;
 };
 
@@ -673,18 +670,25 @@ struct TimelineActorPropertiesReflectionComponent : public TLBaseComponent
     Array<Parameter*> PropertyParameters;
 };
 
+struct TLAnimationLazyId
+{
+    struct TLAnimationComponent* Animation;
+    Guid AnimationId;
+    std::optional<Guid> ResolvedAnimationId;
+};
+
 struct TLAnimationComponent : public TLBaseComponent
 {
-    __int64 field_80;
-    bg3se::Guid AnimationSourceId;
-    __int64 field_98;
-    __int64 field_a0;
-    __int64 field_a8;
-    // channels::EventKeyChannel<bool> field_b0;
-    [[bg3::hidden]] std::array<__int8, 0xb8> raw_field_b0;
-    [[bg3::getter]] channels::EventKeyChannel<bool>* field_b0()
+    // Editor only?
+    // [[bg3::hidden]] void* VMT2;
+    // bg3se::Guid AnimationSourceId;
+    // resource::AnimationResource* AnimationResource;
+    TLAnimationLazyId AnimationId;
+    // channels::EventKeyChannel<bool> Visibility;
+    [[bg3::hidden]] alignas(8) std::array<uint8_t, sizeof(channels::EventKeyChannel<bool>)> VisibilityInternal;
+    [[bg3::getter]] channels::EventKeyChannel<bool>* Visibility()
     {
-        return reinterpret_cast<channels::EventKeyChannel<bool>*>(&raw_field_b0);
+        return reinterpret_cast<channels::EventKeyChannel<bool>*>(&VisibilityInternal);
     }
     FixedString AnimationSlot;
     bool Continuous;
@@ -695,33 +699,22 @@ struct TLAnimationComponent : public TLBaseComponent
     double FadeOut;
     double FadeInOffset;
     double FadeOutOffset;
-    __int64 field_190;
+    double AdditiveFadeIn;
     double AnimationPlayRate;
     double AnimationPlayStartOffset;
     uint8_t OffsetType;
-    __int8 field_1a9;
-    __int16 field_1aa;
-    __int32 field_1ac;
-    bg3se::Guid AnimationGroup;
-    struct TargetTransforms
-    {
-        glm::fvec4 RotationQuat;
-        glm::fvec3 Position;
-        float field_1c;
-        float field_20;
-        float Scale;
-    };
-    TargetTransforms TargetTransform;
-    bg3se::Guid BoneGroupId;
-    __int64 field_1f8;
+    Guid AnimationGroup;
+    Transform TargetTransform;
+    Guid BoneGroupId;
+    bool HasRootMotion;
     // channels::EventKeyChannel<bool> HideVfxChannel;
-    [[bg3::hidden]] std::array<__int8, 0xb8> raw_HideVfxChannel;
+    [[bg3::hidden]] alignas(8) std::array<uint8_t, sizeof(channels::EventKeyChannel<bool>)> raw_HideVfxChannel;
     [[bg3::getter]] channels::EventKeyChannel<bool>* HideVfxChannel()
     {
         return reinterpret_cast<channels::EventKeyChannel<bool>*>(&raw_HideVfxChannel);
     }
-    __int64 field_2b8;
-    __int64 field_2c0;
+    [[bg3::hidden]] void* Callback1;
+    [[bg3::hidden]] void* Callback2;
 };
 
 struct TLAdditiveAnimationComponent : public TLAnimationComponent
@@ -740,7 +733,6 @@ struct TLAttachToEventComponent : public TLInterpolationKeyComponent<keys::Attac
 struct TLAttitudeEventComponent : public TLKeyBaseComponent<keys::AttitudeEventKey>
 {
     FixedString field_b0;
-    __int32 field_b4;
 };
 
 struct TLCameraDoFComponent : public TLBaseComponent
@@ -772,11 +764,11 @@ struct TLEmotionEventComponent : public TLEventKeyComponent<keys::EmotionEventKe
 
 struct TLFloatRTPCComponent : public TLInterpolationKeyComponent<keys::FloatRTPCKey>
 {
-    __int64 field_b0;
+    EntityHandle Entity;
     FixedString RTPCName;
     uint8_t SoundType;
     uint8_t SoundObjectIndex;
-    [[bg3::hidden]] __int16 field_be;
+    bool HasEmitter;
 };
 
 struct TLGenomeTextEventComponent : public TLEventKeyComponent<keys::GenomeTextEventKey>
@@ -816,8 +808,6 @@ struct TLMaterialComponent : public TLBaseComponent
     {
         bool TextureParam;
         bool IsVirtual;
-        __int16 field_1a;
-        __int32 field_1c;
 
         [[bg3::getter]] inline std::span<channels::TLMaterialTextureKeyComponent*> PropertyParameters()
         {
@@ -839,7 +829,7 @@ struct TLMaterialComponent : public TLBaseComponent
 
     Array<Parameter*> MaterialParameters;
     // channels::EventKeyChannel<bool> VisibilityChannel;
-    [[bg3::hidden]] std::array<__int8, 0xb8> raw_VisibilityChannel;
+    [[bg3::hidden]] alignas(8) std::array<uint8_t, sizeof(channels::EventKeyChannel<bool>)> raw_VisibilityChannel;
     [[bg3::getter]] channels::EventKeyChannel<bool>* VisibilityChannel()
     {
         return reinterpret_cast<channels::EventKeyChannel<bool>*>(&raw_VisibilityChannel);
@@ -847,7 +837,6 @@ struct TLMaterialComponent : public TLBaseComponent
     bg3se::Guid GroupId;
     bool IsContinuous;
     bool IsOverlay;
-    __int16 field_15a;
     float OverlayPriority;
 };
 
@@ -870,38 +859,24 @@ struct TLShapeShiftComponent : public TLEventKeyComponent<keys::ShapeShiftKey>
 
 struct TLShotComponent : public TLBaseComponent
 {
-    __int64 field_80;
-    bg3se::Guid FirstCamera;
-    Array<bg3se::Guid> CameraContainers;
+    float SwitchInterval;
+    Guid FirstCamera;
+    Array<Guid> CameraContainers;
     bool AutomatedCamera;
     bool AutomatedLighting;
     bool DisableConditionalStaging;
     bool IsLooping;
-    bool SwitchInterval;
+    float SwitchInterval2;
     bool IsJCutEnabled;
-    __int8 field_b1;
-    __int16 field_b2;
     float JCutLength;
     __int64 field_b8;
     __int64 field_c0;
-    __int64 field_c8;
-    __int64 field_d0;
+    Guid field_c8;
     bool IsLogicEnabled;
-    __int8 field_d9;
-    __int16 field_da;
-    __int32 field_dc;
-    bg3se::Guid CompanionCameraA;
-    bg3se::Guid CompanionCameraB;
-    bg3se::Guid CompanionCameraC;
-    __int64 field_110;
-    __int64 field_118;
-    __int64 field_120;
-    __int64 field_128;
-    __int64 field_130;
-    __int64 field_138;
-    __int64 field_140;
-    __int64 field_148;
-    __int64 field_150;
+    Guid CompanionCameraA;
+    Guid CompanionCameraB;
+    Guid CompanionCameraC;
+    HashMap<Guid, Array<uint32_t>> VTPrefetchData;
 };
 
 struct TLShotHoldPreviousComponent : public TLBaseComponent
