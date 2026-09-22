@@ -100,35 +100,10 @@ public:
     HashSet() noexcept
     {}
 
-    HashSet(HashSet const& other)
-        : HashKeys(other.HashKeys), NextIds(other.NextIds), Keys(other.Keys)
-    {}
-
-    HashSet(HashSet&& other) noexcept
-        : HashKeys(std::move(other.HashKeys)), NextIds(std::move(other.NextIds)), Keys(std::move(other.Keys))
-    {}
-
-    ~HashSet()
-    {}
-
-    HashSet& operator =(HashSet const& other)
-    {
-        HashKeys = other.HashKeys;
-        NextIds = other.NextIds;
-        Keys = other.Keys;
-        return *this;
-    }
-
-    HashSet& operator =(HashSet&& other) noexcept
-    {
-        if (this != &other) {
-            HashKeys = std::move(other.HashKeys);
-            NextIds = std::move(other.NextIds);
-            Keys = std::move(other.Keys);
-        }
-
-        return *this;
-    }
+    HashSet(HashSet const& other) = default;
+    HashSet(HashSet&& other) noexcept = default;
+    HashSet& operator =(HashSet const& other) = default;
+    HashSet& operator =(HashSet&& other) noexcept = default;
 
     inline uint32_t size() const
     {

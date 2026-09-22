@@ -16,34 +16,10 @@ public:
 
     inline constexpr SparseArray() noexcept {}
 
-    SparseArray(SparseArray const& a)
-        : mask_(a.mask_),
-        values_(a.values_)
-    {}
-
-    SparseArray(SparseArray&& a) noexcept
-    {
-        if (this != &a) {
-            mask_ = std::move(a.mask_);
-            values_ = std::move(a.values_);
-        }
-    }
-
-    SparseArray& operator =(SparseArray const& a)
-    {
-        mask_ = a.mask_;
-        values_ = a.values_;
-        return *this;
-    }
-
-    SparseArray& operator =(SparseArray&& a) noexcept
-    {
-        if (this != &a) {
-            mask_ = std::move(a.mask_);
-            values_ = std::move(a.values_);
-        }
-        return *this;
-    }
+    SparseArray(SparseArray const& a) = default;
+    SparseArray(SparseArray&& a) noexcept = default;
+    SparseArray& operator =(SparseArray const& a) = default;
+    SparseArray& operator =(SparseArray&& a) noexcept = default;
 
     inline constexpr bool empty() const noexcept
     {
