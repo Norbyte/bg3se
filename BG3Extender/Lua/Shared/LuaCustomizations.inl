@@ -787,7 +787,7 @@ FixedString do_get(lua_State* L, int index, Overload<FixedString>)
     }
 
     size_t len;
-    auto str = luaL_tolstring(L, index, &len);
+    auto str = luaL_checklstring(L, index, &len);
     auto fs = FixedString(StringView(str, len));
     lua_pop(L, 1);
     return fs;
@@ -811,7 +811,7 @@ FixedStringNoRef do_get(lua_State* L, int index, Overload<FixedStringNoRef>)
     }
 
     size_t len;
-    auto str = luaL_tolstring(L, index, &len);
+    auto str = luaL_checklstring(L, index, &len);
     auto fs = FixedStringNoRef{ StringView(str, len) };
     lua_pop(L, 1);
     return fs;
