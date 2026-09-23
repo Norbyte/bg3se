@@ -95,14 +95,13 @@ struct TurnOrderComponent : public BaseComponent
 {
     DEFINE_COMPONENT(TurnOrder, "eoc::TurnOrderComponent")
 
-    Array<uint64_t> TurnOrderIndices;
-    [[bg3::legacy(Participants)]] Array<TurnBasedGroup> Groups;
-    Array<uint64_t> TurnOrderIndices2;
-    [[bg3::legacy(Participants2)]] Array<TurnBasedGroup> Groups2;
-    int field_40;
-    int field_44;
-    int field_48;
-    float field_4C;
+    [[bg3::legacy(TurnOrderIndices)]] Array<uint64_t> CurrentTurnOrder;
+    [[bg3::legacy(Participants), bg3::legacy(Groups)]] Array<TurnBasedGroup> CurrentGroups;
+    [[bg3::legacy(TurnOrderIndices2)]] Array<uint64_t> NextRoundTurnOrder;
+    [[bg3::legacy(Participants2), bg3::legacy(Groups2)]] Array<TurnBasedGroup> NextRoundGroups;
+    [[bg3::legacy(field_40)]] int Round;
+    [[bg3::legacy(field_44)]] std::optional<float> TimeRemaining;
+    [[bg3::legacy(field_4C)]] float TurnTime;
 };
 
 struct IsCombatPausedComponent : public BaseComponent
