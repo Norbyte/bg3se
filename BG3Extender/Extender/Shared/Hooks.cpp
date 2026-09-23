@@ -2,6 +2,7 @@
 #include <Extender/Shared/Hooks.h>
 #include <Extender/ScriptExtender.h>
 #include <GameDefinitions/Net.h>
+#include <GameDefinitions/Stats/Cache.h>
 
 BEGIN_SE()
 
@@ -44,6 +45,8 @@ void Hooks::HookNetworkMessages(net::MessageFactory* factory)
 
 void Hooks::OnParseDataBuffers(stats::RPGStats* self)
 {
+    stats::gStatStructureCache.Invalidate();
+
     LuaVirtualPin lua(gExtender->GetCurrentExtensionState());
     if (lua) {
         lua->OnStatsStructureLoaded();

@@ -1,10 +1,5 @@
-#include "stdafx.h"
-
-#include <GameDefinitions/Base/Base.h>
-#include <GameDefinitions/Symbols.h>
 #include <GameDefinitions/Stats/Stats.h>
-#include <Extender/Shared/ScriptHelpers.h>
-#include <Extender/ScriptExtender.h>
+#include <GameDefinitions/Stats/Cache.h>
 
 BEGIN_NS(stats)
 
@@ -22,112 +17,66 @@ Array<Functor*> FunctorGroup::GetFunctors() const
     return Functors->Values;
 }
 
-RPGEnumeration* Object::GetAttributeInfo(FixedString const& attributeName, int& attributeIndex) const
+FixedString const* Object::GetFixedStringRef(StatModifierCache const& attribute) const
 {
-    auto stats = GetStaticSymbols().GetStats();
-    auto objModifiers = stats->ModifierLists.GetByHandle(ModifierListIndex);
-    if (objModifiers == nullptr) {
-        return nullptr;
-    }
-
-    auto modifierInfo = objModifiers->GetAttributeInfo(attributeName, &attributeIndex);
-    if (modifierInfo == nullptr) {
-        return nullptr;
-    }
-
-    return stats->ModifierValueLists.GetByHandle(modifierInfo->EnumerationIndex);
-}
-
-std::optional<STDString> Object::GetString(FixedString const& attributeName) const
-{
-    int attributeIndex;
-    auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
-    if (typeInfo == nullptr) {
-        return {};
-    }
-
-    auto index = IndexedProperties[attributeIndex];
-    if (typeInfo->Name == GFS.strFixedString
-        || typeInfo->Name == GFS.strStatusIDs) {
+    auto index = IndexedProperties[attribute.Index];
+    
+    switch (attribute.Type) {
+    case RPGEnumerationType::FixedString:
+    {
         auto val = GetStaticSymbols().GetStats()->GetFixedString(index);
         if (val) {
-            return (*val)->GetString();
+            return *val;
         }
-    } else if (typeInfo->Name == GFS.strAIFlags) {
-        return STDString(AIFlags.GetStringView());
-    } else if (typeInfo->Name == GFS.strConditions
-        || typeInfo->Name == GFS.strTargetConditions
-        || typeInfo->Name == GFS.strUseConditions) {
-        auto val = GetStaticSymbols().GetStats()->GetConditions(index);
-        if (val) {
-            return **val;
-        }
-    } else if (typeInfo->Name == GFS.strRollConditions) {
-        auto rollConditions = GetRollConditions(attributeName);
-        if (rollConditions && (*rollConditions)->Size() == 1 && (**rollConditions)[0].Name == GFS.strDefault) {
-            auto val = GetStaticSymbols().GetStats()->GetConditions((**rollConditions)[0].Conditions.Id);
-            if (val) {
-                return **val;
-            }
-        }
-    } else if (typeInfo->Values.size() > 0) {
-        auto enumLabel = typeInfo->Values.find_by_value(index);
-        if (enumLabel != typeInfo->Values.end()) {
-            return enumLabel.Key().GetString();
-        }
+        break;
     }
 
-    return {};
+    case RPGEnumerationType::Enumeration:
+    {
+        if (index >= 0 && index < (int32_t)attribute.Enum->Labels.size()) {
+            auto const& enumLabel = attribute.Enum->Labels[index];
+            if (enumLabel) {
+                return &enumLabel;
+            }
+        }
+
+        break;
+    }
+
+    case RPGEnumerationType::AIFlags:
+    {
+        return &AIFlags;
+    }
+    }
+
+    return nullptr;
 }
 
 std::optional<FixedString> Object::GetFixedString(FixedString const& attributeName) const
 {
-    int attributeIndex;
-    auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
-    if (typeInfo == nullptr) {
+    auto attrInfo = gStatStructureCache.GetCachedAttribute(ModifierListIndex, attributeName);
+    if (attrInfo == nullptr) {
         return {};
     }
 
-    auto index = IndexedProperties[attributeIndex];
-    if (typeInfo->Name == GFS.strAIFlags) {
-        return AIFlags;
-    } else if (typeInfo->Name == GFS.strFixedString
-        || typeInfo->Name == GFS.strStatusIDs) {
-        auto val = GetStaticSymbols().GetStats()->GetFixedString(index);
-        if (val) {
-            return **val;
-        }
-    }
-
-    return {};
+    auto fs = GetFixedStringRef(*attrInfo);
+    return fs ? *fs : std::optional<FixedString>{};
 }
 
-std::optional<int> Object::GetInt(FixedString const& attributeName) const
+std::optional<int> Object::GetInt(StatModifierCache const& attribute) const
 {
-    int attributeIndex;
-    auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
-    if (typeInfo == nullptr) {
-        return {};
-    }
-
-    if (typeInfo->Name == GFS.strConstantInt
-        || typeInfo->Values.size() > 0) {
-        return IndexedProperties[attributeIndex];
+    if (attribute.Type == RPGEnumerationType::Int
+        || attribute.Type == RPGEnumerationType::Enumeration) {
+        return IndexedProperties[attribute.Index];
     } else {
         return {};
     }
 }
 
-std::optional<float> Object::GetFloat(FixedString const& attributeName) const
+std::optional<float> Object::GetFloat(StatModifierCache const& attribute) const
 {
-    int attributeIndex;
-    auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
-    if (typeInfo == nullptr) {
-        return {};
-    }
-
-    auto index = IndexedProperties[attributeIndex];
-    if (typeInfo->Name == GFS.strConstantFloat) {
+    auto index = IndexedProperties[attribute.Index];
+    if (attribute.Type == RPGEnumerationType::Float) {
         auto val = GetStaticSymbols().GetStats()->GetFloat(index);
         if (val) {
             return **val;
@@ -137,16 +86,10 @@ std::optional<float> Object::GetFloat(FixedString const& attributeName) const
     return {};
 }
 
-std::optional<int64_t> Object::GetInt64(FixedString const& attributeName) const
+std::optional<int64_t> Object::GetInt64(StatModifierCache const& attribute) const
 {
-    int attributeIndex;
-    auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
-    if (typeInfo == nullptr) {
-        return {};
-    }
-
-    auto index = IndexedProperties[attributeIndex];
-    if (RPGEnumeration::IsFlagType(typeInfo->Name)) {
+    auto index = IndexedProperties[attribute.Index];
+    if (attribute.Type == RPGEnumerationType::Flags) {
         auto val = GetStaticSymbols().GetStats()->GetInt64(index);
         if (val) {
             return **val;
@@ -156,16 +99,10 @@ std::optional<int64_t> Object::GetInt64(FixedString const& attributeName) const
     return {};
 }
 
-std::optional<Guid> Object::GetGuid(FixedString const& attributeName) const
+std::optional<Guid> Object::GetGuid(StatModifierCache const& attribute) const
 {
-    int attributeIndex;
-    auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
-    if (typeInfo == nullptr) {
-        return {};
-    }
-
-    auto index = IndexedProperties[attributeIndex];
-    if (typeInfo->Name == GFS.strGuid) {
+    auto index = IndexedProperties[attribute.Index];
+    if (attribute.Type == RPGEnumerationType::GUID) {
         auto val = GetStaticSymbols().GetStats()->GetGuid(index);
         if (val) {
             return **val;
@@ -175,16 +112,10 @@ std::optional<Guid> Object::GetGuid(FixedString const& attributeName) const
     return {};
 }
 
-std::optional<TranslatedString> Object::GetTranslatedString(FixedString const& attributeName) const
+std::optional<TranslatedString> Object::GetTranslatedString(StatModifierCache const& attribute) const
 {
-    int attributeIndex;
-    auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
-    if (typeInfo == nullptr) {
-        return {};
-    }
-
-    auto index = IndexedProperties[attributeIndex];
-    if (typeInfo->Name == GFS.strTranslatedString) {
+    auto index = IndexedProperties[attribute.Index];
+    if (attribute.Type == RPGEnumerationType::TranslatedString) {
         auto val = GetStaticSymbols().GetStats()->GetTranslatedString(index);
         if (val) {
             return **val;
@@ -194,24 +125,18 @@ std::optional<TranslatedString> Object::GetTranslatedString(FixedString const& a
     return {};
 }
 
-std::optional<Array<FixedString>> Object::GetFlags(FixedString const& attributeName) const
+std::optional<Array<FixedString>> Object::GetFlags(StatModifierCache const& attribute) const
 {
-    int attributeIndex;
-    auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
-    if (typeInfo == nullptr) {
-        return {};
-    }
-
-    if (RPGEnumeration::IsFlagType(typeInfo->Name)) {
-        auto index = IndexedProperties[attributeIndex];
+    auto index = IndexedProperties[attribute.Index];
+    if (attribute.Type == RPGEnumerationType::Flags) {
         auto flags = GetStaticSymbols().GetStats()->GetInt64(index);
         Array<FixedString> flagSet;
 
         if (flags) {
-            for (auto const& kv : typeInfo->Values) {
-                if (kv.Value != 0 // Prevent invalid flag entries like "None = 0" from appearing in the result
-                    && **flags & (1ull << (kv.Value - 1))) {
-                    flagSet.push_back(kv.Key);
+            flagSet.reserve(std::popcount((uint64_t)**flags));
+            for (uint32_t i = 1; i < attribute.Enum->Labels.size(); i++) {
+                if (**flags & (1ull << (i - 1))) {
+                    flagSet.push_back(attribute.Enum->Labels[i]);
                 }
             }
         }
@@ -222,19 +147,13 @@ std::optional<Array<FixedString>> Object::GetFlags(FixedString const& attributeN
     return {};
 }
 
-std::optional<Array<FunctorGroup> const*> Object::GetFunctors(FixedString const& attributeName) const
+std::optional<Array<FunctorGroup> const*> Object::GetFunctors(StatModifierCache const& attribute) const
 {
-    int attributeIndex;
-    auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
-    if (typeInfo == nullptr) {
+    if (attribute.Type != RPGEnumerationType::StatsFunctors) {
         return {};
     }
 
-    if (typeInfo->Name != GFS.strStatsFunctors) {
-        return {};
-    }
-
-    auto functors = Functors.try_get(attributeName);
+    auto functors = Functors.try_get(attribute.Name);
     if (functors) {
         return functors;
     } else {
@@ -242,19 +161,13 @@ std::optional<Array<FunctorGroup> const*> Object::GetFunctors(FixedString const&
     }
 }
 
-std::optional<Array<FunctorGroup>*> Object::GetFunctors(FixedString const& attributeName)
+std::optional<Array<FunctorGroup>*> Object::GetFunctors(StatModifierCache const& attribute)
 {
-    int attributeIndex;
-    auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
-    if (typeInfo == nullptr) {
+    if (attribute.Type != RPGEnumerationType::StatsFunctors) {
         return {};
     }
 
-    if (typeInfo->Name != GFS.strStatsFunctors) {
-        return {};
-    }
-
-    auto functors = Functors.try_get(attributeName);
+    auto functors = Functors.try_get(attribute.Name);
     if (functors) {
         return functors;
     } else {
@@ -262,34 +175,37 @@ std::optional<Array<FunctorGroup>*> Object::GetFunctors(FixedString const& attri
     }
 }
 
-std::optional<Array<Object::RollCondition> const*> Object::GetRollConditions(FixedString const& attributeName) const
+std::optional<Array<Object::RollCondition> const*> Object::GetRollConditions(StatModifierCache const& attribute) const
 {
-    int attributeIndex;
-    auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
-    if (typeInfo == nullptr) {
+    if (attribute.Type != RPGEnumerationType::RollConditions) {
         return {};
     }
 
-    if (typeInfo->Name != GFS.strRollConditions) {
-        return {};
-    }
-
-    return RollConditions.try_get(attributeName);
+    return RollConditions.try_get(attribute.Name);
 }
 
-std::optional<Array<Object::RollCondition>*> Object::GetRollConditions(FixedString const& attributeName)
+std::optional<Array<Object::RollCondition>*> Object::GetRollConditions(StatModifierCache const& attribute)
 {
-    int attributeIndex;
-    auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
-    if (typeInfo == nullptr) {
+    if (attribute.Type != RPGEnumerationType::RollConditions) {
         return {};
     }
 
-    if (typeInfo->Name != GFS.strRollConditions) {
+    return RollConditions.try_get(attribute.Name);
+}
+
+std::optional<StringView> Object::GetConditions(StatModifierCache const& attribute) const
+{
+    if (attribute.Type != RPGEnumerationType::Conditions) {
         return {};
     }
 
-    return RollConditions.try_get(attributeName);
+    auto index = IndexedProperties[attribute.Index];
+    auto val = GetStaticSymbols().GetStats()->GetConditions(index);
+    if (val) {
+        return **val;
+    } else {
+        return {};
+    }
 }
 
 void Object::SetString(int attributeIndex, FixedString const& value)
@@ -302,41 +218,38 @@ void Object::SetString(int attributeIndex, FixedString const& value)
     }
 }
 
-bool Object::SetString(FixedString const& attributeName, const char * value)
+bool Object::SetString(StatModifierCache const& attribute, const char * value)
 {
-    int attributeIndex;
-    auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
-    if (typeInfo == nullptr) {
-        OsiError("Couldn't fetch type info for " << Name << "." << attributeName);
-        return false;
-    }
-
     auto stats = GetStaticSymbols().GetStats();
-    if (typeInfo->Name == GFS.strAIFlags) {
-        AIFlags = FixedString{ value };
-    } else if (typeInfo->Name == GFS.strFixedString
-        || typeInfo->Name == GFS.strStatusIDs) {
-        SetString(attributeIndex, FixedString(value));
 
-    } else if (typeInfo->Name == GFS.strGuid) {
+    switch (attribute.Type) {
+    case RPGEnumerationType::GUID:
+    {
         auto guid = Guid::ParseGuidString(value);
         if (!guid) {
-            OsiError("Couldn't set " << Name << "." << attributeName << ": Value (\"" << value << "\") is not a valid GUID");
+            OsiError("Couldn't set " << Name << "." << attribute.Name << ": Value (\"" << value << "\") is not a valid GUID");
             return false;
         }
 
-        SetGuid(attributeIndex, guid);
-
-    } else if (typeInfo->Name == GFS.strConditions
-        || typeInfo->Name == GFS.strTargetConditions
-        || typeInfo->Name == GFS.strUseConditions) {
+        SetGuid(attribute.Index, guid);
+        break;
+    }
+    
+    case RPGEnumerationType::Conditions:
+    {
         auto index = stats->GetOrCreateConditions(value);
-        IndexedProperties[attributeIndex] = index;
-
-    } else if (typeInfo->Name == GFS.strTranslatedString) {
-        SetTranslatedString(attributeIndex, TranslatedString::FromString(value));
-
-    } else if (typeInfo->Name == GFS.strRollConditions) {
+        IndexedProperties[attribute.Index] = index;
+        break;
+    }
+    
+    case RPGEnumerationType::TranslatedString:
+    {
+        SetTranslatedString(attribute.Index, TranslatedString::FromString(value));
+        break;
+    }
+    
+    case RPGEnumerationType::RollConditions:
+    {
         if (*value) {
             auto index = stats->GetOrCreateConditions(value);
             if (index >= 0) {
@@ -345,60 +258,79 @@ bool Object::SetString(FixedString const& attributeName, const char * value)
                 cond.Conditions.Id = index;
                 Array<RollCondition> conditions;
                 conditions.push_back(cond);
-                SetRollConditions(attributeName, conditions);
+                SetRollConditions(attribute, conditions);
             } else {
-                SetRollConditions(attributeName, {});
+                SetRollConditions(attribute, {});
             }
         } else {
-            SetRollConditions(attributeName, {});
+            SetRollConditions(attribute, {});
         }
+        break;
+    }
 
-    } else if (typeInfo->Values.size() > 0) {
-        auto enumEntry = typeInfo->Values.find(FixedString(value));
-        if (enumEntry != typeInfo->Values.end()) {
-            auto enumIndex = enumEntry.Value();
-            if (RPGEnumeration::IsFlagType(typeInfo->Name)) {
-                SetInt64Flags(attributeIndex, enumIndex ? (1ll << (enumIndex - 1)) : 0);
-            } else {
-                IndexedProperties[attributeIndex] = (int32_t)enumIndex;
-            }
-        } else {
-            OsiError("Couldn't set " << Name << "." << attributeName << ": Value (\"" << value << "\") is not a valid enum label");
-            return false;
-        }
-
-    } else {
-        OsiError("Couldn't set " << Name << "." << attributeName << " to string value: Inappropriate type: " << typeInfo->Name);
+    default:
+        OsiError("Couldn't set " << Name << "." << attribute.Name << " to string value: Inappropriate type: " << attribute.TypeName);
         return false;
     }
 
     return true;
 }
 
-bool Object::SetInt(FixedString const& attributeName, int64_t value)
+bool Object::SetFixedString(StatModifierCache const& attribute, FixedString const& value)
 {
-    int attributeIndex;
-    auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
-    if (typeInfo == nullptr) {
-        OsiError("Couldn't fetch type info for " << Name << "." << attributeName);
+    switch (attribute.Type) {
+    case RPGEnumerationType::AIFlags:
+    {
+        AIFlags = value;
+        break;
+    }
+    
+    case RPGEnumerationType::FixedString:
+    {
+        SetString(attribute.Index, value);
+        break;
+    }
+
+    case RPGEnumerationType::Enumeration:
+    case RPGEnumerationType::Flags:
+    {
+        auto enumIndex = attribute.Enum->LabelToIndex.try_get(value);
+        if (enumIndex) {
+            if (attribute.Type == RPGEnumerationType::Flags) {
+                SetInt64Flags(attribute.Index, *enumIndex ? (1ll << (*enumIndex - 1)) : 0);
+            } else {
+                IndexedProperties[attribute.Index] = (int32_t)*enumIndex;
+            }
+        } else {
+            OsiError("Couldn't set " << Name << "." << attribute.Name << ": Value (\"" << value << "\") is not a valid enum label");
+            return false;
+        }
+        break;
+    }
+
+    default:
+        OsiError("Couldn't set " << Name << "." << attribute.Name << " to FixedString value: Inappropriate type: " << attribute.TypeName);
         return false;
     }
 
-    if (typeInfo->Name == GFS.strConstantInt) {
-        IndexedProperties[attributeIndex] = (int32_t)value;
-    } else if (typeInfo->Values.size() > 0) {
-        if (RPGEnumeration::IsFlagType(typeInfo->Name)) {
-            SetInt64Flags(attributeIndex, value);
+    return true;
+}
+
+bool Object::SetInt(StatModifierCache const& attribute, int64_t value)
+{
+    if (attribute.Type == RPGEnumerationType::Int) {
+        IndexedProperties[attribute.Index] = (int32_t)value;
+    } else if (attribute.Type == RPGEnumerationType::Enumeration) {
+        if (value >= 0 && value < (int)attribute.Enum->Labels.size()) {
+            IndexedProperties[attribute.Index] = (int32_t)value;
         } else {
-            if (value >= 0 && value < (int)typeInfo->Values.size()) {
-                IndexedProperties[attributeIndex] = (int32_t)value;
-            } else {
-                OsiError("Couldn't set " << Name << "." << attributeName << ": Enum index (\"" << value << "\") out of range");
-                return false;
-            }
+            OsiError("Couldn't set " << Name << "." << attribute.Name << ": Enum index (\"" << value << "\") out of range");
+            return false;
         }
+    } else if (attribute.Type == RPGEnumerationType::Flags) {
+        SetInt64Flags(attribute.Index, value);
     } else {
-        OsiError("Couldn't set " << Name << "." << attributeName << " to integer value: Inappropriate type: " << typeInfo->Name);
+        OsiError("Couldn't set " << Name << "." << attribute.Name << " to integer value: Inappropriate type: " << attribute.TypeName);
         return false;
     }
 
@@ -419,19 +351,12 @@ void Object::SetFloat(int attributeIndex, std::optional<float> value)
     }
 }
 
-bool Object::SetFloat(FixedString const& attributeName, std::optional<float> value)
+bool Object::SetFloat(StatModifierCache const& attribute, std::optional<float> value)
 {
-    int attributeIndex;
-    auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
-    if (typeInfo == nullptr) {
-        OsiError("Couldn't fetch type info for " << Name << "." << attributeName);
-        return false;
-    }
-
-    if (typeInfo->Name == GFS.strConstantFloat) {
-        SetFloat(attributeIndex, value);
+    if (attribute.Type == RPGEnumerationType::Float) {
+        SetFloat(attribute.Index, value);
     } else {
-        OsiError("Couldn't set " << Name << "." << attributeName << " to float value: Inappropriate type: " << typeInfo->Name);
+        OsiError("Couldn't set " << Name << "." << attribute.Name << " to float value: Inappropriate type: " << attribute.TypeName);
         return false;
     }
 
@@ -448,19 +373,12 @@ void Object::SetInt64Flags(int attributeIndex, int64_t value)
     }
 }
 
-bool Object::SetInt64(FixedString const& attributeName, int64_t value)
+bool Object::SetInt64(StatModifierCache const& attribute, int64_t value)
 {
-    int attributeIndex;
-    auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
-    if (typeInfo == nullptr) {
-        OsiError("Couldn't fetch type info for " << Name << "." << attributeName);
-        return false;
-    }
-
-    if (RPGEnumeration::IsFlagType(typeInfo->Name)) {
-        SetInt64Flags(attributeIndex, value);
+    if (attribute.Type == RPGEnumerationType::Flags) {
+        SetInt64Flags(attribute.Index, value);
     } else {
-        OsiError("Couldn't set " << Name << "." << attributeName << " to int64 value: Inappropriate type: " << typeInfo->Name);
+        OsiError("Couldn't set " << Name << "." << attribute.Name << " to int64 value: Inappropriate type: " << attribute.TypeName);
         return false;
     }
 
@@ -481,19 +399,12 @@ void Object::SetGuid(int attributeIndex, std::optional<Guid> value)
     }
 }
 
-bool Object::SetGuid(FixedString const& attributeName, std::optional<Guid> value)
+bool Object::SetGuid(StatModifierCache const& attribute, std::optional<Guid> value)
 {
-    int attributeIndex;
-    auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
-    if (typeInfo == nullptr) {
-        OsiError("Couldn't fetch type info for " << Name << "." << attributeName);
-        return false;
-    }
-
-    if (typeInfo->Name == GFS.strGuid) {
-        SetGuid(attributeIndex, value);
+    if (attribute.Type == RPGEnumerationType::GUID) {
+        SetGuid(attribute.Index, value);
     } else {
-        OsiError("Couldn't set " << Name << "." << attributeName << " to GUID value: Inappropriate type: " << typeInfo->Name);
+        OsiError("Couldn't set " << Name << "." << attribute.Name << " to GUID value: Inappropriate type: " << attribute.TypeName);
         return false;
     }
 
@@ -514,45 +425,30 @@ void Object::SetTranslatedString(int attributeIndex, std::optional<TranslatedStr
     }
 }
 
-bool Object::SetTranslatedString(FixedString const& attributeName, std::optional<TranslatedString> value)
+bool Object::SetTranslatedString(StatModifierCache const& attribute, std::optional<TranslatedString> value)
 {
-    int attributeIndex;
-    auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
-    if (typeInfo == nullptr) {
-        OsiError("Couldn't fetch type info for " << Name << "." << attributeName);
-        return false;
-    }
-
-    if (typeInfo->Name == GFS.strTranslatedString) {
-        SetTranslatedString(attributeIndex, value);
+    if (attribute.Type == RPGEnumerationType::TranslatedString) {
+        SetTranslatedString(attribute.Index, value);
     } else {
-        OsiError("Couldn't set " << Name << "." << attributeName << " to TranslatedString value: Inappropriate type: " << typeInfo->Name);
+        OsiError("Couldn't set " << Name << "." << attribute.Name << " to TranslatedString value: Inappropriate type: " << attribute.TypeName);
         return false;
     }
 
     return true;
 }
 
-bool Object::SetFlags(FixedString const& attributeName, Array<STDString> const& value)
+bool Object::SetFlags(StatModifierCache const& attribute, Array<FixedString> const& value)
 {
-    int attributeIndex;
-    auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
-    if (typeInfo == nullptr) {
-        OsiError("Couldn't fetch type info for " << Name << "." << attributeName);
+    if (attribute.Type != RPGEnumerationType::Flags) {
+        OsiError("Couldn't set " << Name << "." << attribute.Name << " to flag array: Inappropriate type: " << attribute.TypeName);
         return false;
     }
 
-    if (!RPGEnumeration::IsFlagType(typeInfo->Name)) {
-        OsiError("Couldn't set " << Name << "." << attributeName << " to flag array: Inappropriate type: " << typeInfo->Name);
-        return false;
-    }
-
-    auto stats = GetStaticSymbols().GetStats();
     int64_t flags{ 0 };
     for (auto const& flag : value) {
-        auto flagValue = stats->EnumLabelToIndex(typeInfo->Name, flag.c_str());
+        auto flagValue = attribute.Enum->LabelToIndex.try_get(flag);
         if (!flagValue) {
-            OsiError("Couldn't set " << Name << "." << attributeName << ": Value (\"" << flag << "\") is not a valid enum label");
+            OsiError("Couldn't set " << Name << "." << attribute.Name << ": Value (\"" << flag << "\") is not a valid enum label");
             return false;
         }
 
@@ -561,50 +457,36 @@ bool Object::SetFlags(FixedString const& attributeName, Array<STDString> const& 
         }
     }
 
-    SetInt64Flags(attributeIndex, flags);
+    SetInt64Flags(attribute.Index, flags);
     return true;
 }
 
-bool Object::SetFunctors(FixedString const& attributeName, std::optional<Array<FunctorGroup>> const& value)
+bool Object::SetFunctors(StatModifierCache const& attribute, std::optional<Array<FunctorGroup>> const& value)
 {
-    int attributeIndex;
-    auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
-    if (typeInfo == nullptr) {
-        OsiError("Couldn't fetch type info for " << Name << "." << attributeName);
-        return false;
-    }
-
-    if (typeInfo->Name != GFS.strStatsFunctors) {
-        OsiError("Couldn't set " << Name << "." << attributeName << " to stats functors: Inappropriate type: " << typeInfo->Name);
+    if (attribute.Type != RPGEnumerationType::StatsFunctors) {
+        OsiError("Couldn't set " << Name << "." << attribute.Name << " to stats functors: Inappropriate type: " << attribute.TypeName);
         return false;
     }
 
     OsiErrorS("Temporarily disabled until functors are mapped");
     return false;
     if (value) {
-        Functors.set(attributeName, *value);
+        Functors.set(attribute.Name, *value);
     } else {
         // FIXME - clearing stats functors not implemented!
     }
     return true;
 }
 
-bool Object::SetRollConditions(FixedString const& attributeName, std::optional<Array<RollCondition>> const& value)
+bool Object::SetRollConditions(StatModifierCache const& attribute, std::optional<Array<RollCondition>> const& value)
 {
-    int attributeIndex;
-    auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
-    if (typeInfo == nullptr) {
-        OsiError("Couldn't fetch type info for " << Name << "." << attributeName);
-        return false;
-    }
-
-    if (typeInfo->Name != GFS.strRollConditions) {
-        OsiError("Couldn't set " << Name << "." << attributeName << " to stats functors: Inappropriate type: " << typeInfo->Name);
+    if (attribute.Type != RPGEnumerationType::RollConditions) {
+        OsiError("Couldn't set " << Name << "." << attribute.Name << " to roll conditions: Inappropriate type: " << attribute.TypeName);
         return false;
     }
 
     if (value) {
-        RollConditions.set(attributeName, *value);
+        RollConditions.set(attribute.Name, *value);
     } else {
         // FIXME - clearing roll conditions not implemented!
     }

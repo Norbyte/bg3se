@@ -16,9 +16,6 @@
     <ClCompile Include="GameDefinitions\GameHelpers.cpp">
       <Filter>GameDefinitions</Filter>
     </ClCompile>
-    <ClCompile Include="GameDefinitions\Stats\StatsObject.inl">
-      <Filter>GameDefinitions\Stats</Filter>
-    </ClCompile>
     <ClCompile Include="GameHooks\DataLibraries.cpp">
       <Filter>GameHooks</Filter>
     </ClCompile>
@@ -543,6 +540,7 @@
     <ClInclude Include="GameDefinitions\MaterialParameters.h" />
     <ClInclude Include="GameDefinitions\Camera.h" />
     <ClInclude Include="GameDefinitions\Components\Hotbar.h" />
+    <ClInclude Include="GameDefinitions\Stats\Cache.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -815,6 +813,15 @@
     </None>
     <None Include="GameDefinitions\Symbols.inl">
       <Filter>GameDefinitions</Filter>
+    </None>
+    <None Include="GameDefinitions\Stats\Cache.inl">
+      <Filter>GameDefinitions\Stats</Filter>
+    </None>
+    <None Include="GameDefinitions\Stats\StatsObjectLua.inl">
+      <Filter>GameDefinitions\Stats</Filter>
+    </None>
+    <None Include="GameDefinitions\Stats\StatsObject.inl">
+      <Filter>GameDefinitions\Stats</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

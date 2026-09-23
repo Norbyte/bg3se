@@ -23,6 +23,8 @@ enum class RPGEnumerationType
     // Legacy DOS2 type, unused
     MemorizationRequirements,
     TranslatedString,
+    // Not technically a type, but is stored separately from other modifiers
+    AIFlags,
     Unknown
 };
 
@@ -57,8 +59,6 @@ struct ModifierList : public Noncopyable<ModifierList>
 {
     CNamedElementManager<Modifier> Attributes;
     FixedString Name;
-
-    Modifier* GetAttributeInfo(FixedString const& name, int * attributeIndex) const;
 
     inline FixedString const& GetElementName() const
     {
@@ -193,9 +193,6 @@ struct RPGStats : public ProtectedGameObject<RPGStats>
     TranslatedString* GetOrCreateTranslatedString(int& tsId);
     std::optional<STDString*> GetConditions(int conditionsId);
     int GetOrCreateConditions(STDString const& conditions);
-
-    std::optional<int> EnumLabelToIndex(FixedString const& enumName, char const* enumLabel);
-    FixedString EnumIndexToLabel(FixedString const& enumName, int index);
 };
 
 Object * StatFindObject(char const * name, bool warnOnError = true);

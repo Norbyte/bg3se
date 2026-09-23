@@ -12,7 +12,7 @@ BEGIN_NS(stats)
 struct ExportedConditionalRoll
 {
     RollType Type;
-    stats::ConditionId Conditions;
+    ConditionId Conditions;
 };
 
 struct Functor
@@ -24,7 +24,7 @@ struct Functor
     FixedString UniqueName;
     Guid FunctorUuid;
     Array<ExportedConditionalRoll> RollConditions;
-    stats::ConditionId StatsConditions;
+    ConditionId StatsConditions;
     PropertyContext PropertyContext{ 0 };
     int32_t StoryActionId{ 0 };
     ObserverType ObserverType{ ObserverType::None };
@@ -239,7 +239,7 @@ struct ApplyStatusFunctor : public Functor
     FixedString StatusId; // Arg1
     FixedString StatusSpecificParam1; // Arg4
     STDString StatusConditions; // Arg7
-    stats::ConditionId Conditions; // Arg7
+    ConditionId Conditions; // Arg7
     int StatusSpecificParam2{ -1 }; // Arg5
     int StatusSpecificParam3{ -1 }; // Arg6
     bool RequiresConcentration{ false };

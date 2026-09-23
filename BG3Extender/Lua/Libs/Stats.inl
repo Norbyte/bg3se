@@ -597,18 +597,20 @@ std::optional<int64_t> EnumLabelToIndex(FixedString const& enumName, FixedString
 
 bool AddAttribute(FixedString const& modifierList, FixedString const& modifierName, FixedString const& typeName)
 {
-    if (GetStaticSymbols().GetStats()->Objects.Values.Size() > 0) {
+    auto stats = GetStaticSymbols().GetStats();
+    if (stats->Objects.Values.Size() > 0) {
         OsiError("It is not safe to modify stats types after stats data files were loaded!");
         OsiError("(Try using the StatsStructureLoaded event)");
         return false;
     } 
     
-    auto modList = GetStaticSymbols().GetStats()->ModifierLists.GetByName(modifierList);
-    if (!modList) {
+    auto modListIndex = stats->ModifierLists.GetHandleByName(modifierList);
+    if (modListIndex == -1) {
         OsiError("No such modifier list: " << modifierList);
         return false;
     }
-    
+
+    auto modList = stats->ModifierLists.GetByHandle(modListIndex);
     if (modList->Attributes.GetByName(modifierName)) {
         OsiError("Modifier list already has an attribute named '" << modifierName << "'");
         return false;
@@ -624,17 +626,20 @@ bool AddAttribute(FixedString const& modifierList, FixedString const& modifierNa
     modifier->EnumerationIndex = valueListIdx;
     modifier->Name = modifierName;
     modList->Attributes.Insert(modifier);
+    gStatStructureCache.Invalidate();
     return true;
 }
 
 std::optional<int32_t> AddEnumerationValue(FixedString const& typeName, FixedString const& enumLabel)
 {
-    auto valueList = GetStaticSymbols().GetStats()->ModifierValueLists.GetByName(typeName);
-    if (!valueList) {
+    auto stats = GetStaticSymbols().GetStats();
+    auto valueListIndex = stats->ModifierValueLists.GetHandleByName(typeName);
+    if (valueListIndex == -1) {
         OsiError("No such stats value type: " << typeName);
         return {};
     }
 
+    auto valueList = stats->ModifierValueLists.GetByHandle(valueListIndex);
     if (valueList->GetPropertyType() != RPGEnumerationType::Enumeration) {
         OsiError("Stats value type is not an enumeration: " << typeName);
         return {};
@@ -647,6 +652,8 @@ std::optional<int32_t> AddEnumerationValue(FixedString const& typeName, FixedStr
 
     auto value = valueList->Values.size();
     valueList->Values.insert(std::make_pair(enumLabel, value));
+    gStatStructureCache.Invalidate();
+
     return value;
 }
 

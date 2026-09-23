@@ -269,6 +269,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="GameDefinitions\RootTemplates.h" />
     <ClInclude Include="GameDefinitions\Skeleton.h" />
     <ClInclude Include="GameDefinitions\Sound.h" />
+    <ClInclude Include="GameDefinitions\Stats\Cache.h" />
     <ClInclude Include="GameDefinitions\Stats\Common.h" />
     <ClInclude Include="GameDefinitions\Stats\Entries.h" />
     <ClInclude Include="GameDefinitions\Stats\Expression.h" />
@@ -400,7 +401,9 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClCompile Include="GameDefinitions\GameHelpers.cpp" />
     <ClCompile Include="GameDefinitions\GlobalFixedStrings.cpp" />
     <ClCompile Include="GameDefinitions\Stats\Stats.cpp" />
-    <ClCompile Include="GameDefinitions\Stats\StatsObject.inl" />
+    <None Include="GameDefinitions\Stats\StatsObject.inl">
+      <FileType>Document</FileType>
+    </None>
     <ClCompile Include="GameHooks\DataLibraries.cpp" />
     <ClCompile Include="GameHooks\DataLibrariesBG3Game.cpp" />
     <ClCompile Include="GameHooks\EngineHooks.cpp" />
@@ -508,8 +511,10 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="GameDefinitions\PropertyMaps\UI.inl" />
     <None Include="GameDefinitions\Render.inl" />
     <None Include="GameDefinitions\RootTemplates.inl" />
+    <None Include="GameDefinitions\Stats\Cache.inl" />
     <None Include="GameDefinitions\Stats\Expression.inl" />
     <None Include="GameDefinitions\Stats\Functors.inl" />
+    <None Include="GameDefinitions\Stats\StatsObjectLua.inl" />
     <None Include="GameDefinitions\Status.inl" />
     <None Include="GameDefinitions\Surface.inl" />
     <None Include="GameDefinitions\Symbols.inl" />

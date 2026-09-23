@@ -50,7 +50,23 @@ namespace bg3se
     }
 
     template <class T>
-    using GameUniquePtr = std::unique_ptr<T, decltype(&GameDelete<T>)>;
+    struct GameDeleter
+    {
+        void operator ()(T* obj) const noexcept
+        {
+            GameDelete(obj);
+        }
+    };
+
+
+    template <class T>
+    using GameUniquePtr = std::unique_ptr<T, GameDeleter<T>>;
+
+    template <class T, class... Args>
+    GameUniquePtr<T> MakeUnique(Args&&... args)
+    {
+        return GameUniquePtr<T>(GameAlloc<T>(std::forward<Args>(args)...));
+    }
 
     template <class T>
     class GameAllocator

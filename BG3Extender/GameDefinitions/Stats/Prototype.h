@@ -181,19 +181,19 @@ struct PassivePrototype : public Noncopyable<PassivePrototype>
     uint32_t Properties{ 0 };
     FixedString Name;
     DescriptionInfo Description;
-    stats::ConditionId EnabledConditions;
+    ConditionId EnabledConditions;
     uint64_t EnabledContext{ 0 };
     FixedString ToggleOnEffect;
     FixedString ToggleOffEffect;
     uint64_t StatsFunctorContext{ 0 };
-    stats::ConditionId ConditionsIndex;
-    stats::Functors StatsFunctors;
-    stats::Functors ToggleOnFunctors;
-    stats::Functors ToggleOffFunctors;
+    ConditionId ConditionsIndex;
+    Functors StatsFunctors;
+    Functors ToggleOnFunctors;
+    Functors ToggleOffFunctors;
     FixedString ToggleGroup;
     uint64_t ToggleOffContext{ 0 };
     uint64_t BoostContext{ 0 };
-    stats::ConditionId BoostConditionsIndex;
+    ConditionId BoostConditionsIndex;
     Array<Guid> Boosts;
     int32_t PriorityOrder{ 0 };
     FixedString TooltipConditionalDamage;
@@ -206,8 +206,8 @@ struct [[bg3::hidden]] PassivePrototypeManager : public ProtectedGameObject<Pass
     LegacyRefMap<FixedString, PassivePrototype> Passives;
     bool Initialized;
 
-    void SyncStat(stats::Object* object);
-    bool SyncStat(stats::Object* object, PassivePrototype* proto);
+    void SyncStat(Object* object);
+    bool SyncStat(Object* object, PassivePrototype* proto);
 };
 
 
@@ -217,16 +217,16 @@ struct InterruptPrototype
     DescriptionInfo Description;
     uint16_t InterruptContext{ 0 };
     uint8_t InterruptContextScope{ 0 };
-    stats::ConditionId Conditions;
+    ConditionId Conditions;
     FixedString Container;
-    stats::ConditionId RollCondition;
+    ConditionId RollCondition;
     Array<ActionResourceCost> Costs;
     FixedString Stack;
     Functors PropertiesFunctors;
     Functors SuccessFunctors;
     Functors FailureFunctors;
     uint8_t InterruptDefaultValue{ 0 };
-    stats::ConditionId EnableCondition;
+    ConditionId EnableCondition;
     uint64_t EnableContext{ 0 };
     uint8_t InterruptFlags{ 0 };
 };

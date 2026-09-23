@@ -2,6 +2,7 @@
 #include <Extender/ScriptExtender.h>
 #include <Lua/LuaBinding.h>
 #include <GameDefinitions/Stats/Stats.h>
+#include <GameDefinitions/Stats/Cache.h>
 #include <Lua/Shared/LuaStats.h>
 
 BEGIN_NS(lua::stats)
@@ -106,14 +107,13 @@ void ClearStatsFunctors(Object* object, FixedString key, char const* value)
 
 bool ObjectHelpers::SetRawAttribute(Object* object, FixedString key, char const* value)
 {
-    int attrIndex{ 0 };
-    auto info = object->GetAttributeInfo(key, attrIndex);
+    auto info = gStatStructureCache.GetCachedAttribute(object->ModifierListIndex, key);
     if (info == nullptr) {
         OsiError("Stats object '" << object->Name << "' has no attribute named '" << key << "'");
         return false;
     }
 
-    if (info->GetPropertyType() == RPGEnumerationType::StatsFunctors) {
+    if (info->Type == RPGEnumerationType::StatsFunctors) {
         ClearStatsFunctors(object, key, value);
     }
 
@@ -188,119 +188,13 @@ int ObjectHelpers::FallbackNext(lua_State* L, LifetimeHandle lifetime, Object co
 
 PropertyOperationResult LuaStatGetAttribute(lua_State* L, stats::Object const* object, FixedString const& attributeName)
 {
-    StackCheck _(L, 1);
-    auto stats = GetStaticSymbols().GetStats();
-
-    int attributeIndex{ -1 };
-    auto attrInfo = object->GetAttributeInfo(attributeName, attributeIndex);
+    auto attrInfo = gStatStructureCache.GetCachedAttribute(object->ModifierListIndex, attributeName);
     if (!attrInfo) {
         OsiError("Stat object '" << object->Name << "' has no attribute named '" << attributeName << "'");
         return PropertyOperationResult::NoSuchProperty;
     }
 
-    switch (attrInfo->GetPropertyType()) {
-    case RPGEnumerationType::Int:
-    {
-        auto value = object->GetInt(attributeName);
-        LuaWrite(L, value);
-        break;
-    }
-
-    case RPGEnumerationType::Int64:
-    {
-        auto value = object->GetInt64(attributeName);
-        LuaWrite(L, value);
-        break;
-    }
-
-    case RPGEnumerationType::Float:
-    {
-        auto value = object->GetFloat(attributeName);
-        LuaWrite(L, value);
-        break;
-    }
-
-    case RPGEnumerationType::FixedString:
-    case RPGEnumerationType::Enumeration:
-    case RPGEnumerationType::Conditions:
-    {
-        auto value = object->GetString(attributeName);
-        if (value) {
-            push(L, *value);
-        } else {
-            push(L, "");
-        }
-        break;
-    }
-
-    case RPGEnumerationType::GUID:
-    {
-        auto value = object->GetGuid(attributeName);
-        LuaWrite(L, value);
-        break;
-    }
-
-    case RPGEnumerationType::Flags:
-    {
-        auto value = object->GetFlags(attributeName);
-        LuaWrite(L, value);
-        break;
-    }
-
-    case RPGEnumerationType::Requirements:
-    {
-        LuaWrite(L, object->Requirements);
-        break;
-    }
-
-    // Deprecated type
-    case RPGEnumerationType::MemorizationRequirements:
-    {
-        push(L, nullptr);
-        break;
-    }
-
-    case RPGEnumerationType::TranslatedString:
-    {
-        auto value = object->GetTranslatedString(attributeName);
-        LuaWrite(L, value);
-        break;
-    }
-
-    case RPGEnumerationType::RollConditions:
-    {
-        auto conditions = object->GetRollConditions(attributeName);
-        if (conditions && *conditions) {
-            lua_newtable(L);
-            for (auto const& cond : **conditions) {
-                auto condition = stats->GetConditions(cond.Conditions.Id);
-                if (condition && *condition) {
-                    settable(L, cond.Name, **condition);
-                }
-            }
-        } else {
-            push(L, nullptr);
-        }
-        break;
-    }
-
-    case RPGEnumerationType::StatsFunctors:
-    {
-        auto functors = object->GetFunctors(attributeName);
-        if (functors) {
-            push(L, **functors, lua::GetCurrentLifetime());
-        } else {
-            push(L, nullptr);
-        }
-        break;
-    }
-
-    default:
-        OsiError("Don't know how to fetch values of type '" << attrInfo->Name << "'");
-        push(L, nullptr);
-        break;
-    }
-
+    object->TryPushValue(L, *attrInfo);
     return PropertyOperationResult::Success;
 }
 
@@ -323,156 +217,17 @@ PropertyOperationResult LuaStatSetAttribute(lua_State* L, stats::Object* object,
         }
     }
 
-    auto stats = GetStaticSymbols().GetStats();
-        
-    int index;
-    auto attrInfo = object->GetAttributeInfo(attributeName, index);
+    auto attrInfo = gStatStructureCache.GetCachedAttribute(object->ModifierListIndex, attributeName);
     if (!attrInfo) {
         LuaError("Object '" << object->Name << "' has no attribute named '" << attributeName << "'");
         return PropertyOperationResult::NoSuchProperty;
     }
 
-    auto attrType = attrInfo->GetPropertyType();
-
-    switch (lua_type(L, valueIdx)) {
-    case LUA_TSTRING:
-    {
-        auto value = luaL_checkstring(L, valueIdx);
-        object->SetString(attributeName, value);
-        break;
-    }
-
-    case LUA_TNUMBER:
-    {
-        switch (attrType) {
-        case RPGEnumerationType::Int64:
-            object->SetInt64(attributeName, (int64_t)luaL_checkinteger(L, valueIdx));
-            break;
-
-        case RPGEnumerationType::Float:
-            object->SetFloat(attributeName, (float)luaL_checknumber(L, valueIdx));
-            break;
-
-        default:
-            object->SetInt(attributeName, (int64_t)luaL_checkinteger(L, valueIdx));
-            break;
-        }
-        break;
-    }
-
-    case LUA_TTABLE:
-    {
-        switch (attrType) {
-        case RPGEnumerationType::Flags:
-        {
-            Array<STDString> flags;
-            lua_pushvalue(L, valueIdx);
-            LuaRead(L, flags);
-            lua_pop(L, 1);
-            object->SetFlags(attributeName, flags);
-            break;
-        }
-
-        case RPGEnumerationType::RollConditions:
-        {
-            HashMap<FixedString, STDString> rolls;
-            lua_pushvalue(L, valueIdx);
-            LuaRead(L, rolls);
-            lua_pop(L, 1);
-
-            Array<stats::Object::RollCondition> conditions;
-            for (auto const& kv : rolls) {
-                auto conditionsId = stats->GetOrCreateConditions(kv.Value());
-                if (conditionsId >= 0) {
-                    stats::Object::RollCondition roll;
-                    roll.Name = kv.Key();
-                    roll.Conditions.Id = conditionsId;
-                    conditions.push_back(roll);
-                }
-            }
-
-            object->SetRollConditions(attributeName, conditions);
-            break;
-        }
-
-        /*case RPGEnumerationType::StatsFunctors:
-        {
-            Functors* functor = stats->ConstructFunctorSet(attributeName);
-            lua_pushvalue(L, valueIdx);
-            LuaRead(L, functor);
-            lua_pop(L, 1);
-
-            Array<stats::Object::FunctorInfo> functors;
-            if (functor) {
-                stats::Object::FunctorInfo functorInfo;
-                functorInfo.Name = GFS.strDefault;
-                functorInfo.Functor = functor;
-                functors.Add(functorInfo);
-            }
-
-            object->SetFunctors(attributeName, functors);
-            break;
-        }*/
-
-        case RPGEnumerationType::Requirements:
-        {
-            Array<stats::Requirement> requirements;
-            lua_pushvalue(L, valueIdx);
-            LuaRead(L, requirements);
-            lua_pop(L, 1);
-            object->Requirements = requirements;
-            break;
-        }
-
-        case RPGEnumerationType::TranslatedString:
-        {
-            TranslatedString ts;
-            lua_pushvalue(L, valueIdx);
-            LuaRead(L, ts);
-            lua_pop(L, 1);
-            object->SetTranslatedString(attributeName, ts);
-            break;
-        }
-
-        default:
-            LuaError("Cannot use table value for stat property " << attributeName << " of type " << (unsigned)attrType << "!");
-            return PropertyOperationResult::UnsupportedType;
-        }
-        break;
-    }
-
-    case LUA_TNIL:
-    {
-        switch (attrType) {
-        case RPGEnumerationType::Float:
-            object->SetFloat(attributeName, {});
-            break;
-
-        case RPGEnumerationType::GUID:
-            object->SetGuid(attributeName, {});
-            break;
-
-        case RPGEnumerationType::TranslatedString:
-            object->SetTranslatedString(attributeName, {});
-            break;
-
-        case RPGEnumerationType::StatsFunctors:
-            object->SetFunctors(attributeName, {});
-            break;
-
-        default:
-            LuaError("Cannot use nil value for stat property " << attributeName << " of type " << (unsigned)attrType << "!");
-            return PropertyOperationResult::UnsupportedType;
-        }
-        break;
-    }
-
-    default:
-        LuaError("Lua property values of type '" << GetDebugName(L, valueIdx) << "' are not supported");
+    if (object->TrySetValue(L, *attrInfo, valueIdx)) {
+        return PropertyOperationResult::Success;
+    } else {
         return PropertyOperationResult::UnsupportedType;
     }
-
-    return PropertyOperationResult::Success;
 }
 
 END_NS()

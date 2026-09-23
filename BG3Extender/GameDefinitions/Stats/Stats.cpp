@@ -8,6 +8,9 @@
 
 #include <GameDefinitions/Stats/Functors.inl>
 #include <GameDefinitions/Stats/Expression.inl>
+#include <GameDefinitions/Stats/Cache.inl>
+#include <GameDefinitions/Stats/StatsObject.inl>
+#include <GameDefinitions/Stats/StatsObjectLua.inl>
 
 BEGIN_NS(stats)
 
@@ -234,6 +237,10 @@ RPGEnumerationType RPGEnumeration::GetPropertyType() const
         return RPGEnumerationType::TranslatedString;
     }
 
+    if (Name == GFS.strAIFlags) {
+        return RPGEnumerationType::AIFlags;
+    }
+
     if (Values.size() > 0) {
         if (IsFlagType(Name)) {
             return RPGEnumerationType::Flags;
@@ -243,17 +250,6 @@ RPGEnumerationType RPGEnumeration::GetPropertyType() const
     }
         
     return RPGEnumerationType::Unknown;
-}
-
-Modifier * ModifierList::GetAttributeInfo(FixedString const& name, int * attributeIndex) const
-{
-    auto index = Attributes.GetHandleByName(name);
-    if (index == -1) {
-        return nullptr;
-    } else {
-        *attributeIndex = index;
-        return Attributes.GetByHandle(index);
-    }
 }
 
 bool RPGStats::ObjectExists(FixedString const& statsId, FixedString const& type)
@@ -348,39 +344,6 @@ void RPGStats::SyncWithPrototypeManager(Object* object)
         if (interruptMgr && *interruptMgr) {
             (*interruptMgr)->SyncStat(object);
         }
-    }
-}
-
-std::optional<int> RPGStats::EnumLabelToIndex(FixedString const& enumName, char const* enumLabel)
-{
-    auto rpgEnum = ModifierValueLists.GetByName(enumName);
-    if (rpgEnum == nullptr) {
-        OsiError("No enum named '" << enumName << "' exists");
-        return {};
-    }
-
-    auto index = rpgEnum->Values.find(FixedString(enumLabel));
-    if (index == rpgEnum->Values.end()) {
-        return {};
-    } else {
-        return index.Value();
-    }
-}
-
-FixedString RPGStats::EnumIndexToLabel(FixedString const& enumName, int index)
-{
-    auto rpgEnum = ModifierValueLists.GetByName(enumName);
-    if (rpgEnum == nullptr) {
-        OsiError("No enum named '" << enumName << "' exists");
-        return FixedString{};
-    }
-
-    auto value = rpgEnum->Values.find_by_value(index);
-    if (value != rpgEnum->Values.end()) {
-        return value.Key();
-    }
-    else {
-        return FixedString{};
     }
 }
 

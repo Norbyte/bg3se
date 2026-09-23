@@ -1,5 +1,6 @@
 #include <stdafx.h>
 #include <Extender/Client/ScriptExtenderClient.h>
+#include <GameDefinitions/Stats/Cache.h>
 #include <Extender/ScriptExtender.h>
 #include <Extender/Version.h>
 #include <shlwapi.h>
@@ -260,6 +261,10 @@ void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
                 lua->OnLevelLoading();
             }
         }
+        break;
+
+    case GameState::UnloadModule:
+        stats::gStatStructureCache.Invalidate();
         break;
     }
 

@@ -187,12 +187,14 @@ struct FunctorGroup
     Array<Functor*> GetFunctors() const;
 };
 
+struct StatModifierCache;
+
 struct Object : public Noncopyable<Object>
 {
     struct RollCondition
     {
         FixedString Name;
-        stats::ConditionId Conditions;
+        ConditionId Conditions;
     };
 
     void* VMT{ nullptr };
@@ -213,28 +215,33 @@ struct Object : public Noncopyable<Object>
         return Name;
     }
 
-    RPGEnumeration* GetAttributeInfo(FixedString const& attributeName, int& attributeIndex) const;
-    std::optional<STDString> GetString(FixedString const& attributeName) const;
     std::optional<FixedString> GetFixedString(FixedString const& attributeName) const;
-    std::optional<int> GetInt(FixedString const& attributeName) const;
-    std::optional<float> GetFloat(FixedString const& attributeName) const;
-    std::optional<int64_t> GetInt64(FixedString const& attributeName) const;
-    std::optional<Guid> GetGuid(FixedString const& attributeName) const;
-    std::optional<TranslatedString> GetTranslatedString(FixedString const& attributeName) const;
-    std::optional<Array<FixedString>> GetFlags(FixedString const& attributeName) const;
-    std::optional<Array<FunctorGroup> const*> GetFunctors(FixedString const& attributeName) const;
-    std::optional<Array<FunctorGroup>*> GetFunctors(FixedString const& attributeName);
-    std::optional<Array<RollCondition> const*> GetRollConditions(FixedString const& attributeName) const;
-    std::optional<Array<RollCondition>*> GetRollConditions(FixedString const& attributeName);
-    bool SetString(FixedString const& attributeName, const char* value);
-    bool SetInt(FixedString const& attributeName, int64_t value);
-    bool SetFloat(FixedString const& attributeName, std::optional<float> value);
-    bool SetInt64(FixedString const& attributeName, int64_t value);
-    bool SetGuid(FixedString const& attributeName, std::optional<Guid> value);
-    bool SetTranslatedString(FixedString const& attributeName, std::optional<TranslatedString> value);
-    bool SetFlags(FixedString const& attributeName, Array<STDString> const& value);
-    bool SetFunctors(FixedString const& attributeName, std::optional<Array<FunctorGroup>> const& value);
-    bool SetRollConditions(FixedString const& attributeName, std::optional<Array<RollCondition>> const& value);
+    FixedString const* GetFixedStringRef(StatModifierCache const& attribute) const;
+    std::optional<int> GetInt(StatModifierCache const& attribute) const;
+    std::optional<float> GetFloat(StatModifierCache const& attribute) const;
+    std::optional<int64_t> GetInt64(StatModifierCache const& attribute) const;
+    std::optional<Guid> GetGuid(StatModifierCache const& attribute) const;
+    std::optional<TranslatedString> GetTranslatedString(StatModifierCache const& attribute) const;
+    std::optional<Array<FixedString>> GetFlags(StatModifierCache const& attribute) const;
+    std::optional<Array<FunctorGroup> const*> GetFunctors(StatModifierCache const& attribute) const;
+    std::optional<Array<FunctorGroup>*> GetFunctors(StatModifierCache const& attribute);
+    std::optional<Array<RollCondition> const*> GetRollConditions(StatModifierCache const& attribute) const;
+    std::optional<Array<RollCondition>*> GetRollConditions(StatModifierCache const& attribute);
+    std::optional<StringView> GetConditions(StatModifierCache const& attribute) const;
+
+    bool SetString(StatModifierCache const& attribute, const char* value);
+    bool SetFixedString(StatModifierCache const& attribute, FixedString const& value);
+    bool SetInt(StatModifierCache const& attribute, int64_t value);
+    bool SetFloat(StatModifierCache const& attribute, std::optional<float> value);
+    bool SetInt64(StatModifierCache const& attribute, int64_t value);
+    bool SetGuid(StatModifierCache const& attribute, std::optional<Guid> value);
+    bool SetTranslatedString(StatModifierCache const& attribute, std::optional<TranslatedString> value);
+    bool SetFlags(StatModifierCache const& attribute, Array<FixedString> const& value);
+    bool SetFunctors(StatModifierCache const& attribute, std::optional<Array<FunctorGroup>> const& value);
+    bool SetRollConditions(StatModifierCache const& attribute, std::optional<Array<RollCondition>> const& value);
+
+    void TryPushValue(lua_State* L, StatModifierCache const& attribute) const;
+    bool TrySetValue(lua_State* L, StatModifierCache const& attribute, int index);
 
     bool CopyFrom(Object* source);
 
