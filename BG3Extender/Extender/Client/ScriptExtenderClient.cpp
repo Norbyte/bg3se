@@ -265,6 +265,7 @@ void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
 
     case GameState::UnloadModule:
         stats::gStatStructureCache.Invalidate();
+        stats::gStatStructureCache.GetValuePool().Clear();
         break;
     }
 

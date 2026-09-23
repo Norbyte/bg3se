@@ -36,6 +36,45 @@ void StatModifierListCache::Build(ModifierList const& modifierList, StatStructur
 	}
 }
 
+void StatValuePools::Clear()
+{
+	FixedStrings.clear();
+	Int64s.clear();
+	Floats.clear();
+	Guids.clear();
+	TranslatedStrings.clear();
+}
+
+void StatValuePools::Refresh()
+{
+	auto stats = GetStaticSymbols().GetStats();
+
+	FixedStrings.clear();
+	for (uint32_t i = 1; i < stats->FixedStrings.size(); i++) {
+		FixedStrings.set(stats->FixedStrings[i], (int32_t)i);
+	}
+
+	Int64s.clear();
+	for (uint32_t i = 1; i < stats->Int64s.size(); i++) {
+		Int64s.set(*stats->Int64s[i], (int32_t)i);
+	}
+
+	Floats.clear();
+	for (uint32_t i = 1; i < stats->Floats.size(); i++) {
+		Floats.set(stats->Floats[i], (int32_t)i);
+	}
+
+	Guids.clear();
+	for (uint32_t i = 1; i < stats->GUIDs.size(); i++) {
+		Guids.set(stats->GUIDs[i], (int32_t)i);
+	}
+
+	TranslatedStrings.clear();
+	for (uint32_t i = 1; i < stats->TranslatedStrings.size(); i++) {
+		TranslatedStrings.set(stats->TranslatedStrings[i], (int32_t)i);
+	}
+}
+
 StatModifierCache const* StatStructureCache::GetCachedAttribute(uint32_t modifierListIndex, FixedString const& attribute)
 {
 	RebuildIfNecessary();
@@ -48,6 +87,11 @@ StatModifierCache const* StatStructureCache::GetCachedAttribute(uint32_t modifie
 void StatStructureCache::Invalidate()
 {
 	invalidated_ = true;
+}
+
+void StatStructureCache::OnStatsLoaded()
+{
+	values_.Refresh();
 }
 
 void StatStructureCache::RebuildIfNecessary()

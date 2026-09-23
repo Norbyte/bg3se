@@ -41,9 +41,20 @@ struct TranslatedString
     RuntimeStringHandle Handle;
     RuntimeStringHandle ArgumentString;
 
+    inline bool operator == (TranslatedString const& o) const
+    {
+        return Handle == o.Handle;
+    }
+
     static TranslatedString FromString(StringView const& sv);
     std::optional<StringView> Get() const;
 };
+
+template <>
+inline uint64_t HashMapHash<TranslatedString>(TranslatedString const& v)
+{
+    return HashMapHash(v.Handle);
+}
 
 struct TranslatedFSString
 {

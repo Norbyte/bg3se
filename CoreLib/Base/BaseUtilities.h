@@ -95,6 +95,11 @@ inline constexpr uint64_t Hash(uint64_t v)
     return v;
 }
 
+inline constexpr uint64_t Hash(int64_t v)
+{
+    return (uint64_t)v;
+}
+
 inline constexpr uint64_t Hash(float v)
 {
     if (v >= 9.223372e18f) {

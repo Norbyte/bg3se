@@ -182,15 +182,15 @@ struct RPGStats : public ProtectedGameObject<RPGStats>
     void SyncWithPrototypeManager(Object* object);
 
     std::optional<FixedString*> GetFixedString(int stringId);
-    FixedString* GetOrCreateFixedString(int& stringId);
+    int CreatePooledFixedString(FixedString const& value);
     std::optional<int64_t*> GetInt64(int int64Id);
-    int64_t* GetOrCreateInt64(int& int64Id);
+    int CreatePooledInt64(int64_t value);
     std::optional<float*> GetFloat(int floatId);
-    float* GetOrCreateFloat(int& floatId);
+    int CreatePooledFloat(float value);
     std::optional<Guid*> GetGuid(int guidId);
-    Guid* GetOrCreateGuid(int& guidId);
+    int CreatePooledGuid(Guid value);
     std::optional<TranslatedString*> GetTranslatedString(int tsId);
-    TranslatedString* GetOrCreateTranslatedString(int& tsId);
+    int CreatePooledTranslatedString(TranslatedString const& value);
     std::optional<STDString*> GetConditions(int conditionsId);
     int GetOrCreateConditions(STDString const& conditions);
 };

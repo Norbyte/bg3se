@@ -39,13 +39,32 @@ struct StatStructureCacheData
     Array<GameUniquePtr<StatEnumerationCache>> Enumerations;
 };
 
+struct StatValuePools
+{
+    void Clear();
+    void Refresh();
+
+    HashMap<FixedStringNoRef, int32_t> FixedStrings;
+    HashMap<int64_t, int32_t> Int64s;
+    HashMap<float, int32_t> Floats;
+    HashMap<Guid, int32_t> Guids;
+    HashMap<TranslatedString, int32_t> TranslatedStrings;
+};
+
 class StatStructureCache
 {
 public:
     StatModifierCache const* GetCachedAttribute(uint32_t modifierListIndex, FixedString const& attribute);
     void Invalidate();
+    void OnStatsLoaded();
+
+    inline StatValuePools& GetValuePool()
+    {
+        return values_;
+    }
 
 private:
+    StatValuePools values_;
     GameUniquePtr<StatStructureCacheData> liveData_;
     GameUniquePtr<StatStructureCacheData> buildData_;
     GameUniquePtr<StatStructureCacheData> previousData_;

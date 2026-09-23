@@ -356,14 +356,15 @@ std::optional<FixedString*> RPGStats::GetFixedString(int stringId)
     }
 }
 
-FixedString* RPGStats::GetOrCreateFixedString(int& stringId)
+int RPGStats::CreatePooledFixedString(FixedString const& value)
 {
-    if (stringId < 0) {
-        stringId = (int)FixedStrings.size();
-        FixedStrings.push_back(FixedString{});
-    }
+    auto cachedId = gStatStructureCache.GetValuePool().FixedStrings.try_get(value);
+    if (cachedId) return *cachedId;
 
-    return &FixedStrings[stringId];
+    auto id = (int)FixedStrings.size();
+    FixedStrings.push_back(value);
+
+    return id;
 }
 
 std::optional<int64_t*> RPGStats::GetInt64(int attributeId)
@@ -375,16 +376,17 @@ std::optional<int64_t*> RPGStats::GetInt64(int attributeId)
     }
 }
 
-int64_t* RPGStats::GetOrCreateInt64(int& attributeId)
+int RPGStats::CreatePooledInt64(int64_t value)
 {
-    if (attributeId < 0) {
-        attributeId = (int)Int64s.Size();
-        auto val = GameAlloc<int64_t>();
-        *val = (int64_t)0;
-        Int64s.push_back(val);
-    }
+    auto cachedId = gStatStructureCache.GetValuePool().Int64s.try_get(value);
+    if (cachedId) return *cachedId;
 
-    return Int64s[attributeId];
+    auto val = GameAlloc<int64_t>();
+    *val = value;
+    auto id = (int)Int64s.size();
+    Int64s.push_back(val);
+
+    return id;
 }
 
 std::optional<float*> RPGStats::GetFloat(int attributeId)
@@ -396,14 +398,15 @@ std::optional<float*> RPGStats::GetFloat(int attributeId)
     }
 }
 
-float* RPGStats::GetOrCreateFloat(int& attributeId)
+int RPGStats::CreatePooledFloat(float value)
 {
-    if (attributeId < 0) {
-        attributeId = (int)Floats.Size();
-        Floats.push_back(.0f);
-    }
+    auto cachedId = gStatStructureCache.GetValuePool().Floats.try_get(value);
+    if (cachedId) return *cachedId;
 
-    return &Floats[attributeId];
+    auto id = (int)Floats.size();
+    Floats.push_back(value);
+
+    return id;
 }
 
 std::optional<Guid*> RPGStats::GetGuid(int attributeId)
@@ -415,14 +418,15 @@ std::optional<Guid*> RPGStats::GetGuid(int attributeId)
     }
 }
 
-Guid* RPGStats::GetOrCreateGuid(int& attributeId)
+int RPGStats::CreatePooledGuid(Guid value)
 {
-    if (attributeId < 0) {
-        attributeId = (int)GUIDs.Size();
-        GUIDs.push_back(Guid{});
-    }
+    auto cachedId = gStatStructureCache.GetValuePool().Guids.try_get(value);
+    if (cachedId) return *cachedId;
 
-    return &GUIDs[attributeId];
+    auto id = (int)GUIDs.size();
+    GUIDs.push_back(value);
+
+    return id;
 }
 
 std::optional<TranslatedString*> RPGStats::GetTranslatedString(int attributeId)
@@ -434,14 +438,15 @@ std::optional<TranslatedString*> RPGStats::GetTranslatedString(int attributeId)
     }
 }
 
-TranslatedString* RPGStats::GetOrCreateTranslatedString(int& attributeId)
+int RPGStats::CreatePooledTranslatedString(TranslatedString const& value)
 {
-    if (attributeId < 0) {
-        attributeId = (int)TranslatedStrings.Size();
-        TranslatedStrings.push_back(TranslatedString{});
-    }
+    auto cachedId = gStatStructureCache.GetValuePool().TranslatedStrings.try_get(value);
+    if (cachedId) return *cachedId;
 
-    return &TranslatedStrings[attributeId];
+    auto id = (int)TranslatedStrings.size();
+    TranslatedStrings.push_back(value);
+
+    return id;
 }
 
 std::optional<STDString*> RPGStats::GetConditions(int conditionsId)

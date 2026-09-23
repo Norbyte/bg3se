@@ -210,12 +210,8 @@ std::optional<StringView> Object::GetConditions(StatModifierCache const& attribu
 
 void Object::SetString(int attributeIndex, FixedString const& value)
 {
-    int poolIdx{ -1 };
-    auto fs = GetStaticSymbols().GetStats()->GetOrCreateFixedString(poolIdx);
-    if (fs != nullptr) {
-        *fs = value;
-        IndexedProperties[attributeIndex] = poolIdx;
-    }
+    auto poolIdx = GetStaticSymbols().GetStats()->CreatePooledFixedString(value);
+    IndexedProperties[attributeIndex] = poolIdx;
 }
 
 bool Object::SetString(StatModifierCache const& attribute, const char * value)
@@ -340,12 +336,7 @@ bool Object::SetInt(StatModifierCache const& attribute, int64_t value)
 void Object::SetFloat(int attributeIndex, std::optional<float> value)
 {
     if (value) {
-        int poolIdx{ -1 };
-        auto flt = GetStaticSymbols().GetStats()->GetOrCreateFloat(poolIdx);
-        if (flt != nullptr) {
-            *flt = *value;
-            IndexedProperties[attributeIndex] = poolIdx;
-        }
+        IndexedProperties[attributeIndex] = GetStaticSymbols().GetStats()->CreatePooledFloat(*value);
     } else {
         IndexedProperties[attributeIndex] = -1;
     }
@@ -365,12 +356,7 @@ bool Object::SetFloat(StatModifierCache const& attribute, std::optional<float> v
 
 void Object::SetInt64Flags(int attributeIndex, int64_t value)
 {
-    int poolIdx{ -1 };
-    auto i64 = GetStaticSymbols().GetStats()->GetOrCreateInt64(poolIdx);
-    if (i64 != nullptr) {
-        *i64 = value;
-        IndexedProperties[attributeIndex] = poolIdx;
-    }
+    IndexedProperties[attributeIndex] = GetStaticSymbols().GetStats()->CreatePooledInt64(value);
 }
 
 bool Object::SetInt64(StatModifierCache const& attribute, int64_t value)
@@ -388,12 +374,7 @@ bool Object::SetInt64(StatModifierCache const& attribute, int64_t value)
 void Object::SetGuid(int attributeIndex, std::optional<Guid> value)
 {
     if (value) {
-        int poolIdx{ -1 };
-        auto guid = GetStaticSymbols().GetStats()->GetOrCreateGuid(poolIdx);
-        if (guid != nullptr) {
-            *guid = *value;
-            IndexedProperties[attributeIndex] = poolIdx;
-        }
+        IndexedProperties[attributeIndex] = GetStaticSymbols().GetStats()->CreatePooledGuid(*value);
     } else {
         IndexedProperties[attributeIndex] = -1;
     }
@@ -414,12 +395,7 @@ bool Object::SetGuid(StatModifierCache const& attribute, std::optional<Guid> val
 void Object::SetTranslatedString(int attributeIndex, std::optional<TranslatedString> value)
 {
     if (value) {
-        int poolIdx{ -1 };
-        auto ts = GetStaticSymbols().GetStats()->GetOrCreateTranslatedString(poolIdx);
-        if (ts != nullptr) {
-            *ts = *value;
-            IndexedProperties[attributeIndex] = poolIdx;
-        }
+        IndexedProperties[attributeIndex] = GetStaticSymbols().GetStats()->CreatePooledTranslatedString(*value);
     } else {
         IndexedProperties[attributeIndex] = -1;
     }
