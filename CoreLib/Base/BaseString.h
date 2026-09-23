@@ -287,6 +287,10 @@ namespace bg3se
 
     struct FixedStringNoRef : public FixedStringId
     {
+        inline FixedStringNoRef()
+            : FixedStringId()
+        {}
+
         explicit FixedStringNoRef(StringView str);
         explicit FixedStringNoRef(char const* str);
 
@@ -469,6 +473,8 @@ namespace bg3se
 
     struct Guid
     {
+        static constexpr size_t StringLength = 36;
+
         static const Guid Null;
 
         uint64_t Val[2]{ 0 };
@@ -494,6 +500,7 @@ namespace bg3se
         }
 
         STDString ToString() const;
+        void ToString(std::span<char> str) const;
         static std::optional<Guid> Parse(StringView s);
         static std::optional<Guid> ParseGuidString(StringView nameGuid);
         static Guid Generate();

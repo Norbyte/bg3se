@@ -72,9 +72,11 @@ inline void push(lua_State* L, STDWString const& s)
     push(L, ToUTF8(s));
 }
 
-inline void push(lua_State* L, Guid const& s)
+inline void push(lua_State* L, Guid const& guid)
 {
-    push(L, s.ToString());
+    std::array<char, Guid::StringLength> str;
+    guid.ToString(str);
+    lua_pushlstring(L, str.data(), str.size());
 }
 
 inline void push(lua_State* L, StringView const& v)
