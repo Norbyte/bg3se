@@ -56,6 +56,13 @@ struct StaticSymbols : Noncopyable<StaticSymbols>
     esv::GameStateThreaded__GameStateWorker__DoWorkProc* esv__GameStateThreaded__GameStateWorker__DoWork{ nullptr };
     ecl::GameStateMachine__UpdateProc* ecl__GameStateMachine__Update{ nullptr };
     esv::GameStateMachine__UpdateProc* esv__GameStateMachine__Update{ nullptr };
+    ecl::CameraSystem__UpdateCameraProc* ecl__CameraSystem__UpdateCamera{ nullptr };
+    ecl::CameraSystem__UpdateCameraPitchProc* ecl__CameraSystem__UpdateCameraPitch{ nullptr };
+    ecl::CameraSystem__UpdateCameraZoomProc* ecl__CameraSystem__UpdateCameraZoom{ nullptr };
+    ecl::GameCameraBehavior__GetCameraDefinitionProc* ecl__GameCameraBehavior__GetCameraDefinition{ nullptr };
+    ecl::GameCameraBehavior__CalculatePitchProc* ecl__GameCameraBehavior__CalculatePitch{ nullptr };
+    ecl::CameraSystem__HandleInputProc* ecl__CameraSystem__HandleInput{ nullptr };
+    ecl::CameraSystem__SetDefaultZoomProc* ecl__CameraSystem__SetDefaultZoom{ nullptr };
     App__LoadGraphicSettingsProc* App__LoadGraphicSettings{ nullptr };
     input::InputManager** ls__gInputManager{ nullptr };
 
