@@ -58,6 +58,7 @@ struct StaticSymbols : Noncopyable<StaticSymbols>
     esv::GameStateMachine__UpdateProc* esv__GameStateMachine__Update{ nullptr };
     App__LoadGraphicSettingsProc* App__LoadGraphicSettings{ nullptr };
     input::InputManager** ls__gInputManager{ nullptr };
+    uint8_t const* ecl__MoveController__KeyboardModeGate{ nullptr };
 
     ecs::EntityWorld__UpdateProc* ecs__EntityWorld__Update{ nullptr };
     ecs::EntityWorld__FlushECBsProc* ecs__EntityWorld__FlushECBs{ nullptr };

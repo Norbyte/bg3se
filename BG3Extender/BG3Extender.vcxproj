@@ -33,6 +33,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
@@ -619,7 +620,13 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
   <ItemGroup>
     <Natvis Include="BG3SE.natvis" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Extender\Client\KeyboardMovement.cpp" />
+    <ClInclude Include="Extender\Client\KeyboardMovement.h" />
+    <MASM Include="Extender\Client\KeyboardMovementBridge.asm" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
   </ImportGroup>
 </Project>

@@ -1,4 +1,5 @@
 #include <stdafx.h>
+#include <Extender/Client/KeyboardMovement.h>
 #include <Extender/Client/ScriptExtenderClient.h>
 #include <GameDefinitions/Stats/Cache.h>
 #include <Extender/ScriptExtender.h>
@@ -105,6 +106,7 @@ void ScriptExtender::PostStartup()
     OPTICK_EVENT();
     entityHelpers_.Setup();
     visualHelpers_.Setup();
+    InitializeKeyboardMovementOverride();
     gExtender->GetPropertyMapManager().RegisterComponents(entityHelpers_);
     postStartupDone_ = true;
 }

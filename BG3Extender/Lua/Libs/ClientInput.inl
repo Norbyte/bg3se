@@ -1,4 +1,5 @@
 #include <Extender/ScriptExtender.h>
+#include <Extender/Client/KeyboardMovement.h>
 
 /// <lua_module>Input</lua_module>
 BEGIN_NS(ecl::lua::input)
@@ -42,6 +43,20 @@ bg3se::input::InputManager* GetInputManager()
 }
 
 
+/// Enables or disables the global keyboard movement override.
+/// Returns false if the native gate could not be installed.
+/// CharacterMove key bindings are required; other native movement rules remain.
+bool SetKeyboardMovementOverride(bool enabled)
+{
+    return ecl::SetKeyboardMovementOverride(enabled);
+}
+
+/// Returns whether the global keyboard movement override is enabled.
+bool GetKeyboardMovementOverride()
+{
+    return ecl::GetKeyboardMovementOverride();
+}
+
 void RegisterInputLib()
 {
     DECLARE_MODULE(Input, Client)
@@ -50,6 +65,8 @@ void RegisterInputLib()
     MODULE_FUNCTION(InjectKeyDown)
     MODULE_FUNCTION(InjectKeyUp)
     MODULE_FUNCTION(GetInputManager)
+    MODULE_FUNCTION(SetKeyboardMovementOverride)
+    MODULE_FUNCTION(GetKeyboardMovementOverride)
     END_MODULE()
 }
 

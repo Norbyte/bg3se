@@ -903,4 +903,9 @@
   <ItemGroup>
     <Natvis Include="BG3SE.natvis" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Extender\Client\KeyboardMovement.cpp"><Filter>Extender\Client</Filter></ClCompile>
+    <ClInclude Include="Extender\Client\KeyboardMovement.h"><Filter>Extender\Client</Filter></ClInclude>
+    <MASM Include="Extender\Client\KeyboardMovementBridge.asm"><Filter>Extender\Client</Filter></MASM>
+  </ItemGroup>
 </Project>
