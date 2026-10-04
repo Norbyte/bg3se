@@ -916,16 +916,16 @@ void* EntitySystemHelpersBase::CreateComponentImmediateRaw(EntityHandle entity, 
             *comp = GameAllocRaw(meta.ExternalSize);
             memset(*comp, 0, meta.ExternalSize);
             meta.Properties->Construct(*comp);
+            iwc->FinalizeAddComponent(entity, *meta.ComponentIndex, ptr);
             return *comp;
         } else {
             // Ensure we're using zeroed memory since not every component has proper default constructors
             // and could end up using leftover garbage from memory
             memset(ptr, 0, meta.InlineSize);
             meta.Properties->Construct(ptr);
+            iwc->FinalizeAddComponent(entity, *meta.ComponentIndex, ptr);
             return ptr;
         }
-
-        iwc->FinalizeAddComponent(entity, *meta.ComponentIndex, ptr);
     }
 
     return nullptr;
