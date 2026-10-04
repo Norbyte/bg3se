@@ -100,6 +100,7 @@ P_FUN(AddColorPicker, extui::TreeParent::AddColorPicker)
 P_FUN(AddProgressBar, extui::TreeParent::AddProgressBar)
 
 P_FUN(RemoveChild, extui::TreeParent::RemoveChild)
+P_FUN(RemoveAllChildren, extui::TreeParent::RemoveAllChildren)
 P_FUN(DetachChild, extui::TreeParent::DetachChild)
 P_FUN(AttachChild, extui::TreeParent::AttachChild)
 END_CLS()
@@ -128,6 +129,7 @@ P(Open)
 P(Closeable)
 P(Scaling)
 P(OnClose)
+P_RO(MainMenu)
 END_CLS()
 
 
@@ -198,6 +200,7 @@ END_CLS()
 BEGIN_CLS(extui::TableRow)
 INHERIT(extui::TreeParent)
 P_BITMASK(Flags)
+P(MinHeight)
 P_FUN(AddCell, extui::TableRow::AddCell)
 END_CLS()
 
