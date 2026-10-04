@@ -80,12 +80,14 @@ private:
     HashMap<FixedString, LuaDelegate<void(RegistryEntry, TimerHandle)>> persistentCallbacks_;
     std::priority_queue<TimerQueueEntry, Vector<TimerQueueEntry>, std::greater<TimerQueueEntry>> queue_;
     Array<PersistentTimer> pendingRestore_;
+    Array<TimerHandle> pendingRepeat_;
 
     State& state_;
     DeferredLuaDelegateQueue& eventQueue_;
     uint64_t handleFlags_{ 0 };
     double lastUpdate_{ .0f };
 
+    BaseTimer* Find(TimerHandle handle);
     void FireTimer(TimerQueueEntry const& entry);
     void RepeatOrReleaseTimer(BaseTimer& timer);
     void QueueTimer(BaseTimer const& timer);

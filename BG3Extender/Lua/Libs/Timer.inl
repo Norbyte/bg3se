@@ -110,6 +110,15 @@ void TimerManager::RegisterPersistentCallback(FixedString const& name, Ref callb
     persistentCallbacks_.set(name, LuaDelegate<void(RegistryEntry, TimerHandle)>(state_.GetState(), callback));
 }
 
+TimerManager::BaseTimer* TimerManager::Find(TimerHandle handle)
+{
+    if (handle & PersistentFlag) {
+        return persistentTimers_.Find((uint32_t)handle);
+    } else {
+        return ephemeralTimers_.Find((uint32_t)handle);
+    }
+}
+
 bool TimerManager::Cancel(TimerHandle handle)
 {
     if (handle & PersistentFlag) {
@@ -121,12 +130,7 @@ bool TimerManager::Cancel(TimerHandle handle)
 
 bool TimerManager::Pause(TimerHandle handle)
 {
-    BaseTimer* timer{ nullptr };
-    if (handle & PersistentFlag) {
-        timer = persistentTimers_.Find((uint32_t)handle);
-    } else {
-        timer = ephemeralTimers_.Find((uint32_t)handle);
-    }
+    auto timer = Find(handle);
 
     if (timer) {
         if (!timer->Paused) {
@@ -140,12 +144,7 @@ bool TimerManager::Pause(TimerHandle handle)
 
 bool TimerManager::Resume(TimerHandle handle)
 {
-    BaseTimer* timer{ nullptr };
-    if (handle & PersistentFlag) {
-        timer = persistentTimers_.Find((uint32_t)handle);
-    } else {
-        timer = ephemeralTimers_.Find((uint32_t)handle);
-    }
+    auto timer = Find(handle);
 
     if (timer) {
         if (timer->Paused) {
@@ -160,13 +159,7 @@ bool TimerManager::Resume(TimerHandle handle)
 
 bool TimerManager::IsPaused(TimerHandle handle)
 {
-    BaseTimer* timer{ nullptr };
-    if (handle & PersistentFlag) {
-        timer = persistentTimers_.Find((uint32_t)handle);
-    } else {
-        timer = ephemeralTimers_.Find((uint32_t)handle);
-    }
-
+    auto timer = Find(handle);
     return timer && timer->Paused;
 }
 
@@ -186,6 +179,14 @@ void TimerManager::Update(double time)
 
         FireTimer(entry);
     }
+
+    for (auto handle : pendingRepeat_) {
+        auto timer = Find(handle);
+        if (timer) {
+            QueueTimer(*timer);
+        }
+    }
+    pendingRepeat_.clear();
 }
 
 void TimerManager::FireTimer(TimerQueueEntry const& entry)
@@ -222,7 +223,7 @@ void TimerManager::RepeatOrReleaseTimer(BaseTimer& timer)
 {
     if (timer.Repeat > 0.0f) {
         timer.Time = lastUpdate_ + timer.Repeat;
-        QueueTimer(timer);
+        pendingRepeat_.push_back(timer.Handle);
     } else {
         if (timer.Handle & PersistentFlag) {
             persistentTimers_.Free((uint32_t)timer.Handle);
