@@ -741,7 +741,6 @@ struct ImmediateWorldCache : public ProtectedGameObject<ImmediateWorldCache>
     EntityHandleGenerator* HandleGenerator;
     __int64 field_158;
 
-    ComponentChanges* GetOrAddComponentChanges(ComponentTypeIndex type);
     bool RemoveComponent(EntityHandle entity, ComponentTypeIndex type);
     bool PrepareAddComponent(EntityHandle entity, ComponentTypeIndex type, void*& component);
     void FinalizeAddComponent(EntityHandle entity, ComponentTypeIndex type, void* component);

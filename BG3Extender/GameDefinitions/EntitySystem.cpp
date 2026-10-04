@@ -385,22 +385,19 @@ ImmediateWorldCache::ComponentChanges* ImmediateWorldCache::Changes::GetOrAddCom
     return components;
 }
 
-ImmediateWorldCache::ComponentChanges* ImmediateWorldCache::GetOrAddComponentChanges(ComponentTypeIndex type)
-{
-    auto typeIdx = (uint16_t)type;
-    auto typeInfo = EntityWorld->ComponentRegistry_.Get(type);
-    return WriteChanges.GetOrAddComponentChanges(typeInfo, Allocator);
-}
-
 bool ImmediateWorldCache::RemoveComponent(EntityHandle entity, ComponentTypeIndex type)
 {
     auto typeInfo = EntityWorld->ComponentRegistry_.Get(type);
+    if (!typeInfo) {
+        return false;
+    }
+
     auto component = EntityWorld->GetCommittedComponent(entity, type, typeInfo->InlineSize);
     if (!component) {
         return false;
     }
 
-    auto changes = GetOrAddComponentChanges(type);
+    auto changes = WriteChanges.GetOrAddComponentChanges(typeInfo, Allocator);
     auto change = changes->Components.find(entity);
 
     if (!change) {
@@ -424,11 +421,11 @@ bool ImmediateWorldCache::RemoveComponent(EntityHandle entity, ComponentTypeInde
 bool ImmediateWorldCache::PrepareAddComponent(EntityHandle entity, ComponentTypeIndex type, void*& component)
 {
     auto typeInfo = EntityWorld->ComponentRegistry_.Get(type);
-    if (EntityWorld->GetCommittedComponent(entity, type, typeInfo->InlineSize)) {
+    if (!typeInfo || EntityWorld->GetCommittedComponent(entity, type, typeInfo->InlineSize)) {
         return false;
     }
 
-    auto changes = GetOrAddComponentChanges(type);
+    auto changes = WriteChanges.GetOrAddComponentChanges(typeInfo, Allocator);
     auto change = changes->Components.find(entity);
 
     if (!change) {
@@ -942,6 +939,13 @@ bool EntitySystemHelpersBase::RemoveComponent(EntityHandle entity, ExtComponentT
     }
 
     GetEntityWorld()->Deferred()->RemoveComponent(entity, *meta.ComponentIndex, meta.InlineSize, meta.Properties->ProxyDestroy);
+    // Need to check for component existence before appending to the ECB; 
+    // deleting from a not yet committed (i.e. still in ECB) entity or a nonexistent component via the ECB will crash
+    auto storage = GetEntityWorld()->GetEntityStorage(entity);
+    if (!storage || storage->ComponentTypeToIndex.find(*meta.ComponentIndex) == storage->ComponentTypeToIndex.end()) {
+        return false;
+    }
+
     return true;
 }
 

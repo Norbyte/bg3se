@@ -119,8 +119,9 @@ bool EntityProxyMetatable::RemoveComponent(lua_State* L, EntityHandle entity, Ex
 bool EntityProxyMetatable::RemoveComponentImmediate(lua_State* L, EntityHandle entity, ExtComponentType component)
 {
     auto ecs = GetEntitySystem(L);
-    auto typeId = *ecs->GetComponentIndex(component);
-    return ecs->GetEntityWorld()->Cache->RemoveComponent(entity, typeId);
+    auto typeId = ecs->GetComponentIndex(component);
+    return typeId 
+        && ecs->GetEntityWorld()->Cache->RemoveComponent(entity, *typeId);
 }
 
 UserReturn EntityProxyMetatable::GetComponent(lua_State* L, EntityHandle entity, ExtComponentType component)
@@ -639,7 +640,11 @@ int EntityProxyMetatable::ToString(lua_State* L, CppObjectMetadata& self)
     StackCheck _(L, 1);
     char entityName[100];
     auto handle = GetHandle(self);
-    sprintf_s(entityName, "Entity (%016llx)", handle.Handle);
+    if (IsAlive(L, handle)) {
+        sprintf_s(entityName, "Entity (%016llx)", handle.Handle);
+    } else {
+        sprintf_s(entityName, "Entity (%016llx) [DEAD]", handle.Handle);
+    }
     push(L, entityName);
     return 1;
 }
