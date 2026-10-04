@@ -347,6 +347,14 @@ TimerHandle WaitFor(lua_State* L, float delay, Ref callback, std::optional<float
 {
     auto state = State::FromLua(L);
 
+    if (isnan(delay) || delay < .0f) {
+        delay = .0f;
+    }
+
+    if (repeat && (isnan(*repeat) || *repeat < .0f)) {
+        *repeat = .0f;
+    }
+
     return state->GetTimers().GameTimer().Add(delay / 1000.0f, callback, repeat ? (*repeat / 1000.0f) : 0.0f);
 }
 
@@ -358,6 +366,14 @@ TimerHandle WaitForPersistent(lua_State* L, float delay, FixedString callback, R
         luaL_error(L, "Persistent timers are only supported on the server");
     }
 
+    if (isnan(delay) || delay < .0f) {
+        delay = .0f;
+    }
+
+    if (repeat && (isnan(*repeat) || *repeat < .0f)) {
+        *repeat = .0f;
+    }
+
     json::StringifyContext ctx;
     ctx.Beautify = false;
     auto str = json::Stringify(L, ctx, args.Index());
@@ -367,6 +383,14 @@ TimerHandle WaitForPersistent(lua_State* L, float delay, FixedString callback, R
 TimerHandle WaitForRealtime(lua_State* L, float delay, Ref callback, std::optional<float> repeat)
 {
     auto state = State::FromLua(L);
+
+    if (isnan(delay) || delay < .0f) {
+        delay = .0f;
+    }
+
+    if (repeat && (isnan(*repeat) || *repeat < .0f)) {
+        *repeat = .0f;
+    }
 
     return state->GetTimers().RealtimeTimer().Add(delay / 1000.0f, callback, repeat ? (*repeat / 1000.0f) : 0.0f);
 }
