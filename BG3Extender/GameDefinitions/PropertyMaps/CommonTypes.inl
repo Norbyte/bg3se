@@ -92,6 +92,8 @@ BEGIN_CLS(stats::FunctorGroup)
 P(TextKey)
 // Lua read-only helper until RO properties or transparent index support is added
 P_GETTER(Functors, GetFunctors)
+P_FUN(AddNew, stats::FunctorGroup::AddNew)
+P_FUN(Remove, stats::FunctorGroup::Remove)
 END_CLS()
 
 

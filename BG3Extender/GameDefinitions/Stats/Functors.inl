@@ -19,6 +19,21 @@ Functor* Functors::AddNew(FunctorId action)
     }
 }
 
+bool Functors::RemoveFunctor(Functor* action)
+{
+    return this->Remove(action);
+}
+
+Functor* FunctorGroup::AddNew(FunctorId action)
+{
+    return Functors->AddNew(action);
+}
+
+bool FunctorGroup::Remove(Functor* action)
+{
+    return Functors->Remove(action);
+}
+
 Functor::~Functor()
 {}
 

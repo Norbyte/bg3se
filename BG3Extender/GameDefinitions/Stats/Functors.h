@@ -213,9 +213,10 @@ struct Functors : public stats::CNamedElementManager<Functor>
     // Lua getter helpers
     Array<Functor*>* LuaGetFunctorList() const;
     Functor* AddNew(FunctorId action);
+    bool RemoveFunctor(Functor* action);
     //# P_GETTER(FunctorList, LuaGetFunctorList)
     //# P_FUN(AddNew, stats::Functors::AddNew)
-    //# P_FUN(Remove, stats::Functors::Remove)
+    //# P_FUN(Remove, stats::Functors::RemoveFunctor)
 };
 
 

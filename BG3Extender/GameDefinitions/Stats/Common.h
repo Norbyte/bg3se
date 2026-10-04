@@ -184,6 +184,12 @@ struct FunctorGroup
     FixedString TextKey;
     Functors* Functors;
 
+    // Lua helpers
+    Functor* AddNew(FunctorId action);
+    bool Remove(Functor* functor);
+    //# P_FUN(AddNew, stats::FunctorGroup::AddNew)
+    //# P_FUN(Remove, stats::FunctorGroup::Remove)
+
     Array<Functor*> GetFunctors() const;
 };
 
