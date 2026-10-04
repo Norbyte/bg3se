@@ -1764,7 +1764,10 @@ void IMGUIObjectManager::ClientUpdate()
 
 void IMGUIObjectManager::Clear()
 {
-    for (auto window : windows_) {
+    // Copy to ensure we don't skip any windows since DestroyRenderable() deletes
+    // from the windows_ array which can cause the loop to miss items
+    Array<HandleType> windows = windows_;
+    for (auto window : windows) {
         DestroyRenderable(window);
     }
     
