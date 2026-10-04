@@ -222,7 +222,13 @@ void TimerManager::FireTimer(TimerQueueEntry const& entry)
 void TimerManager::RepeatOrReleaseTimer(BaseTimer& timer)
 {
     if (timer.Repeat > 0.0f) {
-        timer.Time = lastUpdate_ + timer.Repeat;
+        timer.Time += timer.Repeat;
+        // We try to avoid timer drift if possible; if the timer fell significantly behind
+        // (i.e. lag or repeat time < frame time), compensate by adjusting
+        // to the current game time.
+        if (timer.Time < lastUpdate_ - (2.0f * timer.Repeat)) {
+            timer.Time = lastUpdate_;
+        }
         pendingRepeat_.push_back(timer.Handle);
     } else {
         if (timer.Handle & PersistentFlag) {
