@@ -880,7 +880,8 @@ void* EntitySystemHelpersBase::CreateComponentRaw(EntityHandle entity, ExtCompon
     }
 
     ComponentFrameStorageIndex index;
-    auto ptr = GetEntityWorld()->Deferred()->CreateComponentRaw(entity, *meta.ComponentIndex, meta.InlineSize, index, meta.Properties->ProxyDestroy);
+    auto dtor = meta.IsProxy ? (void*)meta.Properties->ProxyDestroy : (void*)meta.Properties->Destroy;
+    auto ptr = GetEntityWorld()->Deferred()->CreateComponentRaw(entity, *meta.ComponentIndex, meta.InlineSize, index, dtor);
 
     if (meta.IsProxy) {
         auto external = GameAllocRaw(meta.ExternalSize);
@@ -938,7 +939,6 @@ bool EntitySystemHelpersBase::RemoveComponent(EntityHandle entity, ExtComponentT
         return false;
     }
 
-    GetEntityWorld()->Deferred()->RemoveComponent(entity, *meta.ComponentIndex, meta.InlineSize, meta.Properties->ProxyDestroy);
     // Need to check for component existence before appending to the ECB; 
     // deleting from a not yet committed (i.e. still in ECB) entity or a nonexistent component via the ECB will crash
     auto storage = GetEntityWorld()->GetEntityStorage(entity);
@@ -946,6 +946,8 @@ bool EntitySystemHelpersBase::RemoveComponent(EntityHandle entity, ExtComponentT
         return false;
     }
 
+    auto dtor = meta.IsProxy ? (void*)meta.Properties->ProxyDestroy : (void*)meta.Properties->Destroy;
+    GetEntityWorld()->Deferred()->RemoveComponent(entity, *meta.ComponentIndex, meta.InlineSize, dtor);
     return true;
 }
 
