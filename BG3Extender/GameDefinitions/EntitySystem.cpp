@@ -1147,6 +1147,28 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
     initialized_ = true;
 }
 
+void EntitySystemHelpersBase::UnmapMissingComponents()
+{
+    // Remove components that have a valid ID but are not registered in the current EntityWorld
+    // (i.e. server-only components on the client and vice versa).
+    // This ensures we won't try to access null ComponentRegistry or ComponentOps entries.
+    for (uint32_t i = 0; i < (uint32_t)ExtComponentType::Max; i++) {
+        auto& desc = extComponentMap_[i];
+        if (desc.ComponentIndex
+            && World->ComponentRegistry_.Get(*desc.ComponentIndex) == nullptr) {
+            
+            ecsComponentData_.GetOrAdd(*desc.ComponentIndex).ExtType = {};
+            BindExtComponent(*desc.ComponentIndex, {});
+            desc.ComponentIndex = {};
+
+            if (desc.ReplicationIndex) {
+                ecsComponentData_.GetOrAdd(*desc.ReplicationIndex).ExtType = {};
+                desc.ReplicationIndex = {};
+            }
+        }
+    }
+}
+
 void EntitySystemHelpersBase::ValidatePropertyMapBindings()
 {
     for (uint32_t componentType = 0; componentType < extComponentMap_.size(); componentType++) {
@@ -1157,14 +1179,14 @@ void EntitySystemHelpersBase::ValidatePropertyMapBindings()
     }
 }
 
-void EntitySystemHelpersBase::BindExtComponent(ComponentTypeIndex componentIndex, ExtComponentType type)
+void EntitySystemHelpersBase::BindExtComponent(ComponentTypeIndex componentIndex, std::optional<ExtComponentType> type)
 {
     auto idx = (uint32_t)SparseHashMapHash(componentIndex);
     if (idx >= componentMap_.size()) {
         componentMap_.resize(idx + 1);
     }
 
-    componentMap_[idx] = &extComponentMap_[(unsigned)type];
+    componentMap_[idx] = type ? &extComponentMap_[(unsigned)*type] : nullptr;
 }
 
 void EntitySystemHelpersBase::MapComponentIndices(char const* componentName, ExtComponentType type, std::size_t size, bool isProxy, bool oneFrame)
@@ -1388,6 +1410,10 @@ void EntitySystemHelpersBase::Bind()
     // The underlying EntityWorld pointer should never change after binding
     se_assert(world == nullptr || World == nullptr || world == World);
     World = world;
+
+    if (World != nullptr) {
+        UnmapMissingComponents();
+    }
 }
 
 void EntitySystemHelpersBase::PreUpdate()

@@ -349,6 +349,7 @@ public:
     }
 
     void Bind();
+    void UnmapMissingComponents();
     void PreUpdate();
     void PostUpdate();
     void OnFlushECBs();
@@ -415,7 +416,7 @@ private:
     void BindStaticData(std::string_view name, resource::StaticDataTypeIndex id);
     void BindComponent(std::string_view name, ComponentTypeIndex id);
     void BindReplication(std::string_view name, ReplicationTypeIndex id);
-    void BindExtComponent(ComponentTypeIndex componentIndex, ExtComponentType type);
+    void BindExtComponent(ComponentTypeIndex componentIndex, std::optional<ExtComponentType> type);
     void* GetRawComponent(Guid const& guid, ExtComponentType type);
     void* GetRawComponent(FixedString const& guid, ExtComponentType type);
 
