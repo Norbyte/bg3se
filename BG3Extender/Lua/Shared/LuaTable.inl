@@ -69,14 +69,17 @@ UserReturn FindValueMap(lua_State* L, CppObjectMetadata& meta, TValue* value)
             }
         }
     } else {
-        push(L, nullptr);
+        push(L, nullptr); // initial key
         while (impl->Next(L, meta, -1)) {
             auto eq = luaV_rawequalobj(index2addr(L, -1), value);
             lua_pop(L, 1);
+            lua_remove(L, -2);
             if (eq) {
                 return 1;
             }
         }
+
+        lua_pop(L, 1); // last key
     }
 
     push(L, nullptr);
@@ -91,10 +94,11 @@ UserReturn FindValueSet(lua_State* L, CppObjectMetadata& meta, TValue* value)
     for (unsigned i = 0; i < sz; i++) {
         if (impl->GetElementAt(L, meta, i + 1)) {
             auto eq = luaV_rawequalobj(index2addr(L, -1), value);
+            lua_pop(L, 1);
             if (eq) {
+                push(L, i + 1);
                 return 1;
             }
-            lua_pop(L, 1);
         }
     }
 
