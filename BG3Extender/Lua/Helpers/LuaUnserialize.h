@@ -68,10 +68,11 @@ PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, Stati
 
         obj->clear();
         obj->Resize(size);
-        int i = 0;
-        for (auto idx : iterate(L, index)) {
-            obj[i++] = {};
-            Unserialize(L, idx, &obj[i++]);
+        for (uint32_t i = 0; i < size; i++) {
+            lua_rawgeti(L, index, i + 1);
+            (*obj)[i] = TK{};
+            Unserialize(L, -1, &(*obj)[i]);
+            lua_pop(L, 1);
         }
 
         return PropertyOperationResult::Success;
@@ -271,7 +272,7 @@ PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, std::
         for (uint32_t i = 0; i < obj->size(); i++) {
             lua_rawgeti(L, index, i + 1);
             (*obj)[i] = TK{};
-            Unserialize(L, index + 1, &(*obj)[i]);
+            Unserialize(L, -1, &(*obj)[i]);
             lua_pop(L, 1);
         }
 
@@ -304,7 +305,7 @@ PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, std::
         for (uint32_t i = 0; i < obj->size(); i++) {
             lua_rawgeti(L, index, i + 1);
             (*obj)[i] = T{};
-            Unserialize(L, index + 1, &(*obj)[i]);
+            Unserialize(L, -1, &(*obj)[i]);
             lua_pop(L, 1);
         }
 
@@ -334,13 +335,10 @@ PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, BitAr
     for (uint32_t i = 0; i < obj->size(); i++) {
         lua_rawgeti(L, index, i + 1);
         bool value;
-        Unserialize(L, index + 1, &value);
-        if (value)
-        {
+        Unserialize(L, -1, &value);
+        if (value) {
             obj->Set(i);
-        }
-        else
-        {
+        } else {
             obj->Clear(i);
         }
         lua_pop(L, 1);
