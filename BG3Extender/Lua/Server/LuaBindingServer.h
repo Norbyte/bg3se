@@ -99,7 +99,7 @@ public:
     {
         VMCallEntry _(this);
         auto L = GetState();
-        lua_checkstack(L, (int)args.size() + 1);
+        lua_checkstack(L, (int)args.size() + 2);
         auto stackSize = lua_gettop(L);
 
         try {

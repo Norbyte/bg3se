@@ -386,6 +386,7 @@ int OsiFunction::OsiQuery(lua_State * L) const
         push(L, handled);
         return 1;
     } else {
+        lua_checkstack(L, outParams);
         if (handled) {
             for (uint32_t i = 0; i < numParams; i++) {
                 if (function_->Signature->OutParamList.isOutParam(i)) {

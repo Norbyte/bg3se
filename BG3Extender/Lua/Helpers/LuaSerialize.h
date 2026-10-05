@@ -6,6 +6,7 @@ template <class TA>
 void SerializeArrayNonlinear(lua_State* L, TA const* obj)
 {
     StackCheck _(L, 1);
+    lua_checkstack(L, 3);
     lua_createtable(L, (int)obj->size(), 0);
     for (uint32_t i = 0; i < obj->size(); i++) {
         Serialize(L, &(*obj)[i]);
@@ -17,6 +18,7 @@ template <class TV>
 void SerializeArrayLinear(lua_State* L, TV const* v, uint32_t size)
 {
     StackCheck _(L, 1);
+    lua_checkstack(L, 3);
     lua_createtable(L, (int)size, 0);
     for (uint32_t i = 0; i < size; i++) {
         Serialize(L, v + i);
@@ -96,6 +98,7 @@ template <class TWord, unsigned Words>
 void SerializeArray(lua_State* L, BitArray<TWord, Words> const* obj)
 {
     StackCheck _(L, 1);
+    lua_checkstack(L, 3);
     lua_createtable(L, obj->size(), 0);
     for (uint32_t i = 0; i < obj->size(); i++) {
         bool isSet = obj->IsSet(i);
@@ -114,6 +117,7 @@ template <class TK, class TV>
 void SerializeMap(lua_State* L, HashMap<TK, TV> const* obj)
 {
     StackCheck _(L, 1);
+    lua_checkstack(L, 3);
     lua_createtable(L, 0, (int)obj->size());
     for (auto& kv : *obj) {
         Serialize(L, &kv.Key());
@@ -126,6 +130,7 @@ template <class TK, class TV>
 void SerializeMap(lua_State* L, LegacyRefMap<TK, TV> const* obj)
 {
     StackCheck _(L, 1);
+    lua_checkstack(L, 3);
     lua_createtable(L, 0, (int)obj->size());
     for (auto& kv : *obj) {
         Serialize(L, &kv.Key);
@@ -138,6 +143,7 @@ template <class TK, class TV>
 void SerializeMap(lua_State* L, LegacyMap<TK, TV> const* obj)
 {
     StackCheck _(L, 1);
+    lua_checkstack(L, 3);
     lua_createtable(L, 0, (int)obj->size());
     for (auto& kv : *obj) {
         Serialize(L, &kv.Key);

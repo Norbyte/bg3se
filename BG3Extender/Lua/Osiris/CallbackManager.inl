@@ -156,7 +156,7 @@ void OsirisCallbackManager::RunHandler(ServerState& lua, uint64_t nodeRef, Regis
         }
     }
 
-    lua_checkstack(L, stackArgs);
+    lua_checkstack(L, stackArgs + 1);
     auto stackSize = lua_gettop(L);
 
     try {
@@ -230,7 +230,7 @@ void OsirisCallbackManager::RunHandler(ServerState& lua, uint64_t nodeRef, Regis
         stackArgs++;
     }
 
-    lua_checkstack(L, stackArgs);
+    lua_checkstack(L, stackArgs + 1);
     auto stackSize = lua_gettop(L);
 
     try {

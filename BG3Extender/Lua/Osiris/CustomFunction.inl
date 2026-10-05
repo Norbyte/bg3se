@@ -19,7 +19,7 @@ bool CustomLuaCall::Call(OsiArgumentDesc const & params)
     VMCallEntry _(&*lua);
 
     auto L = lua->GetState();
-    lua_checkstack(L, params.Count() + 1);
+    lua_checkstack(L, params.Count() + 2);
     handler_.Push(L);
 
     auto param = &params;
@@ -76,7 +76,7 @@ bool ServerState::QueryInternal(char const* mod, char const* name, RegistryEntry
     VMCallEntry _(this);
 
     auto L = GetState();
-    lua_checkstack(L, params.Count() + 1);
+    lua_checkstack(L, params.Count() + 2);
     auto stackSize = lua_gettop(L);
     if (func) {
         func->Push(L);

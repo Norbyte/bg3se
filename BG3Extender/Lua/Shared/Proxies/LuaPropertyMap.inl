@@ -332,6 +332,7 @@ PropertyOperationResult CustomPropertyManager::SetProperty(lua_State* L, Generic
 void SerializeRawObject(lua_State* L, void const* obj, GenericPropertyMap const& pm)
 {
     StackCheck _(L, 1);
+    lua_checkstack(L, 3);
     lua_createtable(L, 0, (int)pm.Properties.size());
     for (auto it : pm.IterableProperties) {
         auto const& prop = pm.Properties.values()[it.Value()];

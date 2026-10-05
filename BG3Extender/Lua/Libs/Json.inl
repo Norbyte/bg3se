@@ -569,6 +569,8 @@ void Stringify(lua_State * L, int index, unsigned depth, StringifyContext& ctx, 
         throw std::runtime_error("Recursion depth exceeded while stringifying JSON");
     }
 
+    lua_checkstack(L, 5);
+
     switch (lua_type(L, index)) {
     case LUA_TNIL:
         writer.Null();
