@@ -786,8 +786,14 @@ FixedString do_get(lua_State* L, int index, Overload<FixedString>)
         return FixedString{};
     }
 
+    if (!ttisnumber(o)) {
+        luaL_checktype(L, index, LUA_TSTRING);
+    }
+
+    // Avoid in-place conversion of type to string
+    lua_pushvalue(L, index);
     size_t len;
-    auto str = luaL_checklstring(L, index, &len);
+    auto str = luaL_checklstring(L, -1, &len);
     auto fs = FixedString(StringView(str, len));
     lua_pop(L, 1);
     return fs;
@@ -810,8 +816,14 @@ FixedStringNoRef do_get(lua_State* L, int index, Overload<FixedStringNoRef>)
         return FixedString{};
     }
 
+    if (!ttisnumber(o)) {
+        luaL_checktype(L, index, LUA_TSTRING);
+    }
+
+    // Avoid in-place conversion of type to string
+    lua_pushvalue(L, index);
     size_t len;
-    auto str = luaL_checklstring(L, index, &len);
+    auto str = luaL_checklstring(L, -1, &len);
     auto fs = FixedStringNoRef{ StringView(str, len) };
     lua_pop(L, 1);
     return fs;
