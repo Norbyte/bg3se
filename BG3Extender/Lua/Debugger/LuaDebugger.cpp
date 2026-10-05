@@ -284,6 +284,7 @@ namespace bg3se::lua::dbg
         auto closure = clLvalue(ar->i_ci->func);
         auto proto = closure->p;
         auto pc = (int)(ar->i_ci->u.l.savedpc - proto->code) - 1;
+        lua_checkstack(L, proto->sizelocvars + proto->sizeupvalues + 3); // values, closure, chunk, traceback handler
 
         int variableIdx = 1;
         int localIdx = 1;

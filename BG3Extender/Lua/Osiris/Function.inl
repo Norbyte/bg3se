@@ -433,6 +433,7 @@ int OsiFunction::OsiUserQuery(lua_State * L) const
         argType = argType->Next;
     }
 
+    lua_checkstack(L, outParams);
     auto node = (*gExtender->GetServer().Osiris().GetGlobals().Nodes)->Db.Elements[function_->Node.Id - 1];
     bool valid = node->IsValid(&args, adapter_.Id);
     if (valid) {
