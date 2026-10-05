@@ -118,6 +118,7 @@ bool ServerState::QueryInternal(char const* mod, char const* name, RegistryEntry
         if (numReturnValues == 1) {
             auto retType = lua_type(L, -1);
             if (retType != LUA_TBOOLEAN) {
+                lua_pop(L, numReturnValues);
                 OsiError("Handler for '" << name << "' returned type " << retType << "; expected boolean");
                 return false;
             }
