@@ -161,6 +161,7 @@ inline bool Validate(ComponentHandle const* b, Overload<ComponentHandle>) { retu
 inline bool Validate(NetId const* b, Overload<NetId>) { return true; }
 inline bool Validate(UserId const* b, Overload<UserId>) { return true; }
 inline bool Validate(Version const* b, Overload<Version>) { return true; }
+inline bool Validate(lua::ImguiHandle const* b, Overload<lua::ImguiHandle>) { return true; }
 
 struct STDStringInternals
 {

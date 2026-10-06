@@ -244,6 +244,12 @@ PropertyOperationResult Unserialize(lua_State* L, int index, T* obj);
 END_NS()
 
 
+BEGIN_SE()
+
+MARK_BY_VALUE_TYPE(lua::ImguiHandle)
+
+END_SE()
+
 #include <Lua/Shared/LuaLifetime.h>
 #include <Lua/Shared/LuaCustomizations.h>
 
