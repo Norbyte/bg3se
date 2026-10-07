@@ -15,8 +15,9 @@ void PostMessageToServer(lua_State* L, StringView channel, StringView payload, s
         // Fall back to normal network message passing if we're unable to look up info for the local user
         if (localUserId) {
             bg3se::net::LocalMessage msg;
-            BuildMessage(L, msg, *localUserId, channel, payload, moduleGuid, requestHandler, replyId, binary.value_or(false));
-            gExtender->GetServer().GetNetworkManager().PushLocalMessage(std::move(msg));
+            if (BuildMessage(L, msg, *localUserId, channel, payload, moduleGuid, requestHandler, replyId, binary.value_or(false))) {
+                gExtender->GetServer().GetNetworkManager().PushLocalMessage(std::move(msg));
+            }
             return;
         }
     }

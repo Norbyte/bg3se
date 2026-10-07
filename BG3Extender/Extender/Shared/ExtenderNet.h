@@ -21,7 +21,8 @@ class ExtenderMessage : public Message
 {
 public:
     static constexpr NetMessage MessageId = NetMessage::NETMSG_SCRIPT_EXTENDER;
-    static constexpr uint32_t MaxPayloadLength = 0xfffff;
+    static constexpr uint32_t MaxPayloadLength = 0xff000;
+    static constexpr uint32_t MaxTotalMessageLength = 0xfffff;
 
     ExtenderMessage();
     ~ExtenderMessage() override;

@@ -1,4 +1,5 @@
 #include <Lua/Libs/Net.h>
+#include <Extender/Shared/ExtenderNet.h>
 
 /// <lua_module>Net</lua_module>
 BEGIN_NS(lua::net)
@@ -34,6 +35,11 @@ void NetworkRequestSystem::Update()
 bg3se::net::ExtenderMessage* BuildMessage(lua_State* L, UserId userId, StringView channel, StringView payload, std::optional<Guid> moduleGuid,
     std::optional<FunctionRef> requestHandler, std::optional<RequestId> replyId, bool binary)
 {
+    if (payload.size() >= bg3se::net::ExtenderMessage::MaxPayloadLength) {
+        OsiError("Channel " << channel << ": Tried to write net message of size " << payload.size() << ", max size is " << bg3se::net::ExtenderMessage::MaxPayloadLength);
+        return nullptr;
+    }
+
     bg3se::net::BaseNetworkManager* networkMgr;
     se_assert(GetCurrentContextType() != ContextType::None);
     if (GetCurrentContextType() == ContextType::Server) {
@@ -70,9 +76,14 @@ bg3se::net::ExtenderMessage* BuildMessage(lua_State* L, UserId userId, StringVie
     return msg;
 }
 
-void BuildMessage(lua_State* L, bg3se::net::LocalMessage& msg, UserId userId, StringView channel, StringView payload,
+bool BuildMessage(lua_State* L, bg3se::net::LocalMessage& msg, UserId userId, StringView channel, StringView payload,
     std::optional<Guid> moduleGuid, std::optional<FunctionRef> requestHandler, std::optional<RequestId> replyId, bool binary)
 {
+    if (payload.size() >= bg3se::net::ExtenderMessage::MaxPayloadLength) {
+        OsiError("Channel " << channel << ": Tried to write net message of size " << payload.size() << ", max size is " << bg3se::net::ExtenderMessage::MaxPayloadLength);
+        return false;
+    }
+
     msg.Channel = channel;
     msg.Payload = payload;
     if (moduleGuid) {
@@ -87,6 +98,7 @@ void BuildMessage(lua_State* L, bg3se::net::LocalMessage& msg, UserId userId, St
     }
     msg.User = userId;
     msg.Binary = binary;
+    return true;
 }
 
 END_NS()
