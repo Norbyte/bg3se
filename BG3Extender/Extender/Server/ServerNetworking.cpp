@@ -97,7 +97,7 @@ void NetworkManager::OnClientConnectMessage(net::MessageContext* context, net::C
         if (helloMsg != nullptr) {
             auto hello = helloMsg->GetMessage().mutable_c2s_extender_hello();
             hello->set_version((uint32_t)net::ProtoVersion::Current);
-            Send(helloMsg, context->UserID);
+            GetServer()->SendMessageSinglePeer((TPeerId)context->UserID.GetPeerId(), helloMsg);
         } else {
             OsiErrorS("Could not get free message!");
         }
@@ -136,7 +136,7 @@ net::GameServer * NetworkManager::GetServer() const
 net::ExtenderMessage * NetworkManager::GetFreeMessage(UserId userId)
 {
     if (userId && !CanSendExtenderMessages(userId.GetPeerId())) {
-        ERR("Attempted to send extender message to user %d that does not understand extender protocol!", userId.Id);
+        ERR("Attempted to send message to user %d that does not understand extender protocol!", userId.Id);
         return nullptr;
     }
 
@@ -175,7 +175,11 @@ void NetworkManager::Send(net::ExtenderMessage * msg, UserId userId)
 {
     auto server = GetServer();
     if (server != nullptr) {
-        server->SendMessageSinglePeer((TPeerId)userId.GetPeerId(), msg);
+        if (CanSendExtenderMessages(userId.GetPeerId())) {
+            server->SendMessageSinglePeer((TPeerId)userId.GetPeerId(), msg);
+        } else {
+            ERR("Not sending unicast message to peer %d as it does not understand extender protocol!", userId.GetPeerId());
+        }
     }
 }
 
@@ -191,7 +195,7 @@ void NetworkManager::Broadcast(net::ExtenderMessage * msg, UserId excludeUserId,
                 peerIds.push_back(peerId);
             }
         } else {
-            WARN("Not sending extender message to peer %d as it does not understand extender protocol!", peerId);
+            WARN("Not broadcasting message to peer %d as it does not understand extender protocol!", peerId);
         }
     }
 
@@ -210,7 +214,7 @@ void NetworkManager::BroadcastToConnectedPeers(net::ExtenderMessage* msg, UserId
                 peerIds.push_back(peerId);
             }
         } else {
-            WARN("Not sending extender message to peer %d as it does not understand extender protocol!", peerId);
+            WARN("Not broadcasting message to peer %d as it does not understand extender protocol!", peerId);
         }
     }
 

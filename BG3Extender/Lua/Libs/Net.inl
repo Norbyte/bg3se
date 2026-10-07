@@ -51,10 +51,10 @@ bg3se::net::ExtenderMessage* BuildMessage(lua_State* L, UserId userId, StringVie
         return nullptr;
     }
 
-    auto msg = networkMgr->GetFreeMessage(ReservedUserId);
+    auto msg = networkMgr->GetFreeMessage(userId);
     if (msg != nullptr) {
         auto postMsg = msg->GetMessage().mutable_post_lua();
-        postMsg->set_channel_name(channel.data());
+        postMsg->set_channel_name(channel.data(), channel.size());
         postMsg->set_payload(payload.data(), payload.size());
         if (moduleGuid) {
             postMsg->set_module(moduleGuid->ToString().c_str());
