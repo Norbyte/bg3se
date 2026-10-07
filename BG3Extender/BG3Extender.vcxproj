@@ -265,6 +265,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="GameDefinitions\Picking.h" />
     <ClInclude Include="GameDefinitions\Progression.h" />
     <ClInclude Include="GameDefinitions\Render.h" />
+    <ClInclude Include="GameDefinitions\RenderFramework.h" />
     <ClInclude Include="GameDefinitions\Resources.h" />
     <ClInclude Include="GameDefinitions\RootTemplates.h" />
     <ClInclude Include="GameDefinitions\Skeleton.h" />

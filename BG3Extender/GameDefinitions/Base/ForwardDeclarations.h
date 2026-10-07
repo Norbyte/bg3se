@@ -5,6 +5,17 @@ struct lua_State;
 union SDL_Event;
 struct SDL_Window;
 
+struct ID3D11SamplerState;
+struct ID3D11ShaderResourceView;
+struct ID3D11UnorderedAccessView;
+struct ID3D11Resource;
+struct ID3D11Buffer;
+struct ID3D11VertexShader;
+struct ID3D11PixelShader;
+struct ID3D11ComputeShader;
+struct ID3D11DeviceContext;
+struct ID3DUserDefinedAnnotation;
+
 namespace Json
 {
     class Value;
@@ -21,9 +32,6 @@ namespace Noesis
 }
 
 BEGIN_SE()
-
-struct ID3D11ShaderResourceView;
-struct ID3D11Resource;
 
 struct LegacyPropertyMapBase;
 
@@ -81,6 +89,8 @@ struct BoundComponent;
 struct UuidComponent;
 struct UuidToHandleMappingComponent;
 
+struct Lighting;
+
 union TextureDescriptor;
 struct MeshBinding;
 struct Scene;
@@ -107,6 +117,11 @@ class SDLManager;
 
 class ExtensionStateBase;
 
+namespace rf
+{
+    struct Texture;
+}
+
 namespace resource
 {
     struct GuidResource;
@@ -119,6 +134,7 @@ namespace resource
     struct EffectResource;
     struct TextureResource;
     struct VisualResource;
+    struct Atmosphere;
 }
 
 namespace net

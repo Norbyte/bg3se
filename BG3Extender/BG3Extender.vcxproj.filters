@@ -541,6 +541,7 @@
     <ClInclude Include="GameDefinitions\Camera.h" />
     <ClInclude Include="GameDefinitions\Components\Hotbar.h" />
     <ClInclude Include="GameDefinitions\Stats\Cache.h" />
+    <ClInclude Include="GameDefinitions\RenderFramework.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

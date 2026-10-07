@@ -705,6 +705,7 @@ sources = [
     'GameDefinitions/Stats/Entries.h',
     'GameDefinitions/Physics.h',
     'GameDefinitions/Picking.h',
+    'GameDefinitions/RenderFramework.h',
     'GameDefinitions/Render.h',
     'GameDefinitions/Resources.h',
     'GameDefinitions/Skeleton.h',

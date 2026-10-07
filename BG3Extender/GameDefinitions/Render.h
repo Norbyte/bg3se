@@ -3,6 +3,7 @@
 #include <GameDefinitions/AllSparkShared.h>
 #include <GameDefinitions/MaterialParameters.h>
 #include <GameDefinitions/Resources.h>
+#include <GameDefinitions/RenderFramework.h>
 
 BEGIN_SE()
 
@@ -298,19 +299,6 @@ struct Material : public ProtectedGameObject<Material>
     void* GetOrCreateConstantBuffer(uint8_t shaderIndex);
 };
 
-struct SBBinding
-{
-    uint8_t field_0;
-    uint8_t DxVsIndex;
-    uint8_t field_2;
-    uint8_t field_3;
-    uint8_t field_4;
-    uint8_t DxPsIndex;
-    uint8_t field_6;
-    uint8_t VkBindingIndex;
-    uint8_t VkDescriptorSet;
-};
-
 struct MaterialRenderingData
 {
     EntityHandle Handle;
@@ -320,8 +308,8 @@ struct MaterialRenderingData
     uint8_t field_19;
     uint16_t EngineCBSize;
     uint16_t MaterialCBSize;
-    SBBinding EngineBinding;
-    SBBinding MaterialBinding;
+    rf::sb::Binding EngineBinding;
+    rf::sb::Binding MaterialBinding;
     [[bg3::hidden]] void* MaterialCB;
     [[bg3::hidden]] uint64_t MaterialCBBufferSize;
 
