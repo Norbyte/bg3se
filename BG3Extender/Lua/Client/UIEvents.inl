@@ -148,11 +148,13 @@ void DeferredUIEvents::PostUpdateNoesis()
     Array<lua::PersistentRegistryEntry> callbacks;
     std::swap(callbacks, noesisThreadCallbacks_);
 
+    dispatchingOnRenderThread_ = true;
     auto L = state_.GetState();
     for (auto& callback : callbacks) {
         LuaDelegate<void()> handler(L, callback.ToRef(L));
         handler.Call(L, {});
     }
+    dispatchingOnRenderThread_ = false;
 }
 
 bool DeferredUIEvents::HasAnyNoesisThreadCallbacks() const

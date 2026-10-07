@@ -36,6 +36,7 @@
   - [NetChannel Examples](#net-channel-examples)
   - [Utility functions](#net-utils)
 - [Noesis UI](#noesis-ui)
+  - [Accessing Noesis](#noesis-threading)
   - [Custom ViewModels](#noesis-viewmodels)
   - [UI input and world interaction](#ui-input-and-world-interaction)
 - [Stats](#stats)
@@ -1242,6 +1243,26 @@ Returns true if the client it was called from is the host, always return true fr
 
 <a id="noesis-ui"></a>
 ## Noesis UI - `Ext.UI`
+
+<a id="noesis-threading"></a>
+### Accessing Noesis
+
+Since Noesis rendering is performed parallel with Lua code, manipulating Noesis objects has a slight risk of crashing the game. Starting from SE v33, code that uses Noesis objects (i.e. anything returned from `Ext.UI.GetRoot()`) must be done via `Ext.UI.Defer()` to ensure that UI operations from Lua are safe:
+
+#### Ext.UI.Defer(callback)
+
+Queues `callback` to run once at the start of the next UI update. Code within the callback can freely read/write Noesis without risk of crashing.
+
+Example:
+```lua
+Ext.UI.Defer(function ()
+    -- Runs in UI thread: safe to read and modify UI elements and viewmodels
+    Ext.UI.GetRoot():Find("ContentRoot").IsVisible = false
+end)
+```
+
+*Note 1:* The defer callback blocks UI rendering, so make sure the callback is as fast as possible to avoid UI lag
+*Note 2:* Changing game state (`Ext.Entity`, `Ext.Stats`, etc.) from the callback is not recommended since it can conflict with changes in the main game thread
 
 <a id="noesis-viewmodels"></a>
 ### Custom ViewModels

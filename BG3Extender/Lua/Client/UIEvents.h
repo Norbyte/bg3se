@@ -59,6 +59,11 @@ public:
     bool HasAnyNoesisThreadCallbacks() const;
     void DeferNoesisThreadCallback(lua::PersistentRegistryEntry&& handler);
 
+    inline bool IsDispatchingOnRenderThread() const
+    {
+        return dispatchingOnRenderThread_;
+    }
+
 private:
     struct DeferredCommand
     {
@@ -78,6 +83,7 @@ private:
     Array<DeferredCommand> commands_;
     Array<DeferredPropertyChange> propertyChanges_;
     Array<lua::PersistentRegistryEntry> noesisThreadCallbacks_;
+    bool dispatchingOnRenderThread_{ false };
 };
 
 END_SE()

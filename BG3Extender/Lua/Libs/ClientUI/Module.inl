@@ -53,9 +53,17 @@ END_NS()
 /// <lua_module>UI</lua_module>
 BEGIN_NS(ecl::lua::ui)
 
-Noesis::FrameworkElement* GetRoot()
+Noesis::FrameworkElement* GetRoot(lua_State* L)
 {
     Noesis::gStaticSymbols.Initialize();
+
+    if (!ClientState::FromLua(L)->GetDeferredUIEvents().IsDispatchingOnRenderThread()) {
+        WARN_ONCE(
+            "Accessing Noesis state (Ext.UI.GetRoot()) from the global context carries a risk of crashing; "
+            "use Ext.UI.Defer(...) to ensure Noesis is only accessed from a deferred context."
+        );
+    }
+
     return (*GetStaticSymbols().ls__gGlobalResourceManager)->UI->NoesisUIManager.MainCanvas;
 }
 
