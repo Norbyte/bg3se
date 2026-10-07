@@ -1879,6 +1879,10 @@ EntityHandle EntitySystemHelpersBase::GetEntityHandle(Guid const& uuid)
 
 resource::GuidResourceBankBase* EntitySystemHelpersBase::GetRawResourceManager(ExtResourceManagerType type)
 {
+    if (type >= ExtResourceManagerType::Max) {
+        return {};
+    }
+
     auto index = staticDataIndices_[(unsigned)type];
     if (index == resource::UndefinedStaticDataType || (unsigned)type >= std::size(staticDataIndices_)) {
         OsiError("No resource manager index mapping registered for " << type);

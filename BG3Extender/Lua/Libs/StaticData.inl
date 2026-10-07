@@ -181,7 +181,6 @@ public:
             return helper;
         }
 
-        auto& helpers = gExtender->GetServer().GetEntityHelpers();
         switch (type) {
             FOR_EACH_GUID_RESOURCE_TYPE()
 
@@ -228,12 +227,18 @@ Array<Guid>* GetGuidResourcesByModId(lua_State* L, ExtResourceManagerType type, 
 
 void ClearResourceBank(ExtResourceManagerType type)
 {
-    gGuidResourceHelpers.Get(type)->GetBank()->ClearInternal();
+    auto bank = gGuidResourceHelpers.Get(type)->GetBank();
+    if (bank) {
+        bank->ClearInternal();
+    }
 }
 
 void SyncResourceBank(ExtResourceManagerType type)
 {
-    gGuidResourceHelpers.Get(type)->GetBank()->PostLoad();
+    auto bank = gGuidResourceHelpers.Get(type)->GetBank();
+    if (bank) {
+        bank->PostLoad();
+    }
 }
 
 UserReturn CreateGuidResource(lua_State* L, ExtResourceManagerType type, std::optional<Guid> resourceGuid)
