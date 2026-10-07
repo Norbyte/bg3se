@@ -305,6 +305,8 @@ namespace phx
 namespace ui
 {
     struct GameUI;
+    struct DataContextProvider;
+    struct DeferredPredicatesManager;
 }
 
 namespace extui

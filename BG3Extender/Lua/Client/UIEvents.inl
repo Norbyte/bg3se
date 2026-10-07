@@ -143,6 +143,28 @@ void DeferredUIEvents::OnPropertyChanged(lua::PersistentRegistryEntry const& han
     });
 }
 
+void DeferredUIEvents::PostUpdateNoesis()
+{
+    Array<lua::PersistentRegistryEntry> callbacks;
+    std::swap(callbacks, noesisThreadCallbacks_);
+
+    auto L = state_.GetState();
+    for (auto& callback : callbacks) {
+        LuaDelegate<void()> handler(L, callback.ToRef(L));
+        handler.Call(L, {});
+    }
+}
+
+bool DeferredUIEvents::HasAnyNoesisThreadCallbacks() const
+{
+    return !noesisThreadCallbacks_.empty();
+}
+
+void DeferredUIEvents::DeferNoesisThreadCallback(lua::PersistentRegistryEntry&& handler)
+{
+    noesisThreadCallbacks_.push_back(std::move(handler));
+}
+
 END_NS()
 
 BEGIN_NS(ecl::lua::ui)

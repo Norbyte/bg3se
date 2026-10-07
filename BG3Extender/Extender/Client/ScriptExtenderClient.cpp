@@ -86,6 +86,7 @@ void ScriptExtender::Initialize()
 
     gameStateWorkerStart_.SetWrapper(&ScriptExtender::GameStateWorkerWrapper, this);
     gameStateMachineUpdate_.SetPrePostHook(&ScriptExtender::OnPreUpdate, &ScriptExtender::OnUpdate, this);
+    gExtender->GetEngineHooks().ui__deferred__PredicatesManager__UpdateFromUI.SetPreHook(&ScriptExtender::OnUiPredicatesManagerUpdate, this);
 
     sdl_.EnableHooks();
 }
@@ -359,6 +360,22 @@ void ScriptExtender::ShowVersionNumber()
         auto expandedVersion = STDString(*versionText) +
             "\r\nScript Extender v" + STDString(std::to_string(CurrentVersion)) + " loaded, built on " + BuildDate + ".";
         GetStaticSymbols().GetTranslatedStringRepository()->UpdateTranslatedString(rsh, expandedVersion);
+    }
+}
+
+void ScriptExtender::OnUiPredicatesManagerUpdate(ui::DeferredPredicatesManager*)
+{
+    // Non-threadsafe peek to check if we need to acquire the Lua state lock.
+    // (we need to wait for the main thread to finish processing Lua code if we do)
+    if (extensionState_ 
+        && extensionState_->GetClientLua()
+        && extensionState_->GetClientLua()->GetDeferredUIEvents().HasAnyNoesisThreadCallbacks()) {
+
+        ContextGuardAnyThread _(ContextType::Client);
+        ecl::LuaClientPin lua(*extensionState_);
+        if (lua) {
+            lua->GetDeferredUIEvents().PostUpdateNoesis();
+        }
     }
 }
 

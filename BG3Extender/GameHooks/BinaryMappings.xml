@@ -1168,5 +1168,25 @@
 		0f 28 d6 // movaps  xmm2, xmm6
 		<Target Type="Indirect" Offset="@ref3" Symbol="ui__DataContextProvider__ExecuteCommandQueues" />
     </Mapping>
+
+    <Mapping Name="ui::deferred::PredicatesManager::UpdateFromUI">
+		49 8b 8e a0 00 00 00 // mov     rcx, [r14+0A0h]
+		@ref1 e8 ?? ?? ?? ?? // call    ui__deferred__PredicatesManager__UpdateFromUI
+		90 // nop
+		48 8b cb // mov     rcx, rbx; lpCriticalSection
+		@ref2 ff 15 ?? ?? ?? ?? // call    cs:__imp_LeaveCriticalSection
+		48 89 5d ff // mov     [rbp+57h+var_58], rbx
+		48 8b cb // mov     rcx, rbx; lpCriticalSection
+		@ref3 ff 15 ?? ?? ?? ?? // call    cs:TryEnterCriticalSection
+		85 c0 // test    eax, eax
+		75 0a // jnz     short loc_1420C3139
+		48 8b cb // mov     rcx, rbx; lpCriticalSection
+		@ref4 ff 15 ?? ?? ?? ?? // call    cs:__imp_EnterCriticalSection
+		90 // nop
+		49 8b b6 b0 00 00 00 // mov     rsi, [r14+0B0h]
+		48 8d 7e 18 // lea     rdi, [rsi+18h]
+		48 89 7d 07 // mov     [rbp+57h+var_50], rdi
+		<Target Type="Indirect" Offset="@ref1" Symbol="ui__deferred__PredicatesManager__UpdateFromUI" />
+	</Mapping>
   </Mappings>
 </BinaryMappings>

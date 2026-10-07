@@ -123,7 +123,9 @@ END_NS()
 BEGIN_NS(ui)
 
 struct DataContextProvider;
+struct DeferredPredicatesManager;
 
 using DataContextProvider__ExecuteCommandQueuesProc = void(DataContextProvider*, void* /* ls::AnyView* */);
+using DeferredPredicatesManager__UpdateFromUIProc = void(DeferredPredicatesManager*);
 
 END_NS()

@@ -156,7 +156,6 @@ struct [[bg3::hidden]] GuidResourceBank : public GuidResourceBankBase
 {
     HashMap<Guid, T> Resources;
     STDString Path;
-    LegacyRefMap<Guid, Array<T const*>> ValuesByProgressionTable;
 };
 
 

@@ -149,6 +149,7 @@ struct StaticSymbols : Noncopyable<StaticSymbols>
     void* Noesis__VisualTreeHelper__HitTest{ nullptr };
 
     void* ui__DataContextProvider__ExecuteCommandQueues{ nullptr };
+    void* ui__deferred__PredicatesManager__UpdateFromUI{ nullptr };
 
     GlobalSwitches** ls__GlobalSwitches{ nullptr };
 

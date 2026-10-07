@@ -91,6 +91,7 @@ private:
     void OnIncLocalProgress(void* self, int progress, char const* state);
     void ShowLoadingProgress();
     void ShowVersionNumber();
+    void OnUiPredicatesManagerUpdate(ui::DeferredPredicatesManager*);
 };
 
 END_NS()

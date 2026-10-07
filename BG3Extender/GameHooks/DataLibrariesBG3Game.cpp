@@ -224,6 +224,7 @@ namespace bg3se
         SYM_OFF(Noesis__VisualTreeHelper__HitTest);
 
         SYM_OFF(ui__DataContextProvider__ExecuteCommandQueues);
+        SYM_OFF(ui__deferred__PredicatesManager__UpdateFromUI);
 
         SYM_OFF(AppInstance);
 

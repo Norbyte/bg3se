@@ -178,6 +178,13 @@ void EnableErrorReporting(bool enable)
     }
 }
 
+void Defer(lua_State* L, FunctionRef callback)
+{
+    ClientState::FromLua(L)->GetDeferredUIEvents().DeferNoesisThreadCallback(
+        PersistentRegistryEntry(L, callback.Index)
+    );
+}
+
 void RegisterUILib()
 {
     DECLARE_MODULE(UI, Client)
@@ -190,6 +197,7 @@ void RegisterUILib()
     MODULE_FUNCTION(GetPickingHelper)
     MODULE_FUNCTION(GetCursorControl)
     MODULE_FUNCTION(GetDragDrop)
+    MODULE_FUNCTION(Defer)
     MODULE_FUNCTION(EnableErrorReporting)
     END_MODULE()
 }
