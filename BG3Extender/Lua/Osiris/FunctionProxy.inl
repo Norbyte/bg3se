@@ -118,6 +118,8 @@ int OsiFunctionNameMetatable::LuaType(lua_State* L)
         switch (func->GetOsiFunction()->Type)
         {
         case FunctionType::Event:
+            type = OsiFunctionType::Event;
+            break;
 
         case FunctionType::Query:
         case FunctionType::SysQuery:

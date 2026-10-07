@@ -165,7 +165,7 @@ bool OsirisWrappers::CallWrapper(uint32_t FunctionId, OsiArgumentDesc * Params)
         wrappers->OsirisCallbacksAttachment->CallPreHook(FunctionId, Params);
     }
 
-    bool succeeded = gExtender->GetServer().Osiris().GetWrappers().CallOriginal(FunctionId, Params);
+    bool succeeded = osi.GetWrappers().CallOriginal(FunctionId, Params);
 
     if (wrappers && wrappers->OsirisCallbacksAttachment) {
         wrappers->OsirisCallbacksAttachment->CallPostHook(FunctionId, Params, succeeded);
@@ -176,7 +176,20 @@ bool OsirisWrappers::CallWrapper(uint32_t FunctionId, OsiArgumentDesc * Params)
 
 bool OsirisWrappers::QueryWrapper(uint32_t FunctionId, OsiArgumentDesc * Params)
 {
-    return gExtender->GetServer().Osiris().GetWrappers().QueryOriginal(FunctionId, Params);
+    auto& osi = gExtender->GetServer().Osiris();
+
+    auto wrappers = osi.GetVMTWrappers();
+    if (wrappers && wrappers->OsirisCallbacksAttachment) {
+        wrappers->OsirisCallbacksAttachment->CallPreHook(FunctionId, Params);
+    }
+
+    bool succeeded = gExtender->GetServer().Osiris().GetWrappers().QueryOriginal(FunctionId, Params);
+
+    if (wrappers && wrappers->OsirisCallbacksAttachment) {
+        wrappers->OsirisCallbacksAttachment->CallPostHook(FunctionId, Params, succeeded);
+    }
+
+    return succeeded;
 }
 
 void OsirisWrappers::ErrorWrapper(char const * Message)

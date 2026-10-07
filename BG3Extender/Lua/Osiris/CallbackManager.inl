@@ -317,7 +317,9 @@ void OsirisCallbackManager::RegisterNodeHandler(OsirisHookSignature const& sig, 
 
     uint64_t nodeRef;
 
-    if (func->Type == FunctionType::Event || func->Type == FunctionType::Call) {
+    if (func->Type == FunctionType::Event 
+        || func->Type == FunctionType::Call 
+        || func->Type == FunctionType::Query) {
         nodeRef = func->OsiFunctionId;
         if (sig.type == OsirisHookSignature::BeforeTrigger) {
             nodeRef |= BeforeFunctionRef;
