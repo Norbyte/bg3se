@@ -187,28 +187,28 @@ bool OsiFunction::MatchTuple(lua_State * L, int firstIndex, TupleVec const & tup
             auto const & v = tuple.Values[i];
             switch (GetBaseType((ValueType)v.TypeId)) {
             case ValueType::Integer:
-                if (v.Value.Int32 != lua_tointeger(L, firstIndex + i)) {
+                if (v.Value.Int32 != get<int32_t>(L, firstIndex + i)) {
                     return false;
                 }
                 break;
 
             case ValueType::Integer64:
-                if (v.Value.Int64 != lua_tointeger(L, firstIndex + i)) {
+                if (v.Value.Int64 != get<int64_t>(L, firstIndex + i)) {
                     return false;
                 }
                 break;
 
             case ValueType::Real:
-                if (abs(v.Value.Float - lua_tonumber(L, firstIndex + i)) > 0.00001f) {
+                if (abs(v.Value.Float - get<float>(L, firstIndex + i)) > 0.00001f) {
                     return false;
                 }
                 break;
 
             case ValueType::String:
             {
-                auto str = lua_tostring(L, firstIndex + i);
+                auto str = get<char const*>(L, firstIndex + i);
                 auto tval = v.GetString();
-                if (!str || _stricmp(tval, str) != 0) {
+                if (_stricmp(tval, str) != 0) {
                     return false;
                 }
                 break;
@@ -216,13 +216,10 @@ bool OsiFunction::MatchTuple(lua_State * L, int firstIndex, TupleVec const & tup
 
             case ValueType::GuidString:
             {
-                auto str = lua_tostring(L, firstIndex + i);
-                if (!str) return false;
-
-                auto len = strlen(str);
+                auto str = get<StringView>(L, firstIndex + i);
                 auto tval = v.GetString();
                 auto valueLen = strlen(tval);
-                if (valueLen < 36 || len < 36 || _stricmp(&tval[valueLen - 36], &str[len - 36]) != 0) {
+                if (valueLen < 36 || str.size() < 36 || _stricmp(&tval[valueLen - 36], &str[str.size() - 36]) != 0) {
                     return false;
                 }
                 break;

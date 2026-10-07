@@ -52,16 +52,16 @@ bool ServerState::Query(char const* mod, char const* name, RegistryEntry * func,
         auto stackRemaining = lua_gettop(L) - stackSize;
         if (stackRemaining > 0) {
             if (mod != nullptr) {
-                LuaError("Call to mod query '" << mod << "'.'" << func << "' failed: " << lua_tostring(L, -1));
+                LuaError("Call to mod query '" << mod << "'.'" << name << "' failed: " << lua_tostring(L, -1));
             } else {
-                LuaError("Call to mod query '" << func << "' failed: " << lua_tostring(L, -1));
+                LuaError("Call to mod query '" << name << "' failed: " << lua_tostring(L, -1));
             }
             lua_pop(L, stackRemaining);
         } else {
             if (mod != nullptr) {
-                LuaError("Internal error during call to mod query '" << mod << "'.'" << func << "'");
+                LuaError("Internal error during call to mod query '" << mod << "'.'" << name << "'");
             } else {
-                LuaError("Internal error during call to mod query '" << func << "'");
+                LuaError("Internal error during call to mod query '" << name << "'");
             }
         }
 
