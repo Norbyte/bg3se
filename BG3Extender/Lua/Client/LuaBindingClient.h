@@ -2,6 +2,7 @@
 
 #include <Lua/LuaBinding.h>
 #include <Lua/Shared/Proxies/LuaEvent.h>
+#include <Lua/Client/CameraEvents.h>
 #include <Lua/Client/ClientEvents.h>
 #include <Lua/Client/ClientEntityReplicationEvents.h>
 #include <Lua/Client/UIEvents.h>
@@ -60,6 +61,7 @@ public:
 
 private:
     ExtensionLibraryClient library_;
+    CameraEventHooks cameraHooks_;
     ClientEntityReplicationEventHooks replicationHooks_;
     UIEventHooks uiEvents_;
     DeferredUIEvents deferredUIEvents_;

@@ -9,6 +9,7 @@
 #include <GameDefinitions/Status.inl>
 #include <GameDefinitions/Surface.inl>
 #include <GameDefinitions/Symbols.inl>
+#include <GameDefinitions/Components/Camera.inl>
 #include <GameDefinitions/Components/Effect.inl>
 #include <GameDefinitions/Components/Level.inl>
 #include <GameDefinitions/Components/Spell.inl>

@@ -6,7 +6,17 @@ _I._PublishedEvents = {
     "MouseWheelInput",
     "ControllerAxisInput",
     "ControllerButtonInput",
-    "ViewportResized"
+    "ViewportResized",
+    "CameraUpdating",
+    "CameraUpdated",
+    "CameraPitchUpdating",
+    "CameraPitchCalculated",
+    "CameraPitchUpdated",
+    "CameraZoomUpdated",
+    "CameraInput",
+    "CameraInputHandled",
+    "CameraZoomResetting",
+    "CameraZoomReset"
 }
 
 Ext.IsClient = function ()
