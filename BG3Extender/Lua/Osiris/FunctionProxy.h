@@ -12,7 +12,7 @@ using namespace bg3se::lua;
 
 
 class OsiFunctionNameMetatable : public LightCppValueMetatable<OsiFunctionNameMetatable>,
-    public Indexable, public Callable, public Stringifiable
+    public Indexable, public Callable, public Stringifiable, public EqualityComparable
 {
 public:
     static constexpr MetatableTag MetaTag = MetatableTag::OsiFunctionName;
@@ -41,6 +41,7 @@ public:
     static int Index(lua_State* L, CppObjectMetadata& self);
     static int Call(lua_State* L, CppObjectMetadata& self);
     static int ToString(lua_State* L, CppObjectMetadata& self);
+    static bool IsEqual(lua_State* L, CppObjectMetadata& self, int otherIndex);
     static char const* GetTypeName(lua_State* L, CppObjectMetadata& self);
 
 private:

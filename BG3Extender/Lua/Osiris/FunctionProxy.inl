@@ -47,6 +47,12 @@ int OsiFunctionNameMetatable::ToString(lua_State* L, CppObjectMetadata& self)
     return 1;
 }
 
+bool OsiFunctionNameMetatable::IsEqual(lua_State* L, CppObjectMetadata& self, int otherIndex)
+{
+    CppObjectMetadata other;
+    return lua_try_get_cppvalue(L, otherIndex, MetatableTag::OsiFunctionName, other)
+        && Get(L, other) == Get(L, self);
+}
 
 char const* OsiFunctionNameMetatable::GetTypeName(lua_State* L, CppObjectMetadata& self)
 {
