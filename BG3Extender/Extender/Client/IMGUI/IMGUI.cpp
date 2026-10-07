@@ -293,11 +293,6 @@ void StyledRenderable::PushStyleChanges(DrawingContext& context)
 
     if (ItemFlags != (GuiItemFlags)0) ImGui::PushItemFlag((ImGuiItemFlags)ItemFlags, true);
     if (ItemWidth) ImGui::SetNextItemWidth(context.Scale(*ItemWidth));
-
-    if (RequestActivate) {
-        ImGui::ActivateItemByID(ImGui::GetCurrentWindow()->GetID(Label.c_str()));
-        RequestActivate = false;
-    }
 }
 
 
@@ -336,6 +331,11 @@ void StyledRenderable::PushWindowStyleChanges(DrawingContext& context, ImFont*& 
         ImGui::SetCursorPos(ImVec2(pos.x + offset.x, pos.y + offset.y));
     } else if (AbsolutePosition) {
         ImGui::SetCursorPos(ToImVec(*AbsolutePosition));
+    }
+
+    if (RequestActivate) {
+        ImGui::ActivateItemByID(ImGui::GetCurrentWindow()->GetID(Label.c_str()));
+        RequestActivate = false;
     }
 
     if (SameLine) ImGui::SameLine();
