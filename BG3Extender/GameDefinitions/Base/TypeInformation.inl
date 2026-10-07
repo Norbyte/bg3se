@@ -90,7 +90,7 @@ void TypeInformation::DeferredInitialize()
         KeyType.GetStatic()->DeferredInitialize();
         ElementType.GetStatic()->DeferredInitialize();
         if (!TypeName && KeyType && ElementType) {
-            TypeName = FixedString(STDString("LegacyMap<") + KeyType.Get().TypeName.GetString() + ", " + ElementType.Get().TypeName.GetString() + ">");
+            TypeName = FixedString(STDString("Map<") + KeyType.Get().TypeName.GetString() + ", " + ElementType.Get().TypeName.GetString() + ">");
             TypeInformationRepository::GetInstance().RegisterType(this);
         }
         break;
