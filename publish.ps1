@@ -87,7 +87,6 @@ function Create-PDBDir
 	Copy-Item "x64\Release\CrashReporter.exe" -Destination $PDBDir\CrashReporter.exe
 	Copy-Item "x64\Game Release\BG3ScriptExtender.dll" -Destination $PDBDir\BG3ScriptExtender.dll
 	Copy-Item "x64\Game Release\BG3ScriptExtender.symtab" -Destination $PDBDir\BG3ScriptExtender.symtab
-	Copy-Item External\protobuf\bin\libprotobuf-lite.dll -Destination $PDBDir\libprotobuf-lite.dll
 
 	if ($Channel -eq "Devel" -Or $Channel -eq "Nightly") {
 		New-Item $PDBDir\DAP -ItemType "directory"
@@ -106,7 +105,6 @@ function Create-Update-Package ($BuildDir, $ZipPath)
 	git show -s --format="BG3SE Version: Commit %H, %cD" > $BuildDir\Version.txt
 
 	Copy-Item "x64\Release\CrashReporter.exe" -Destination $BuildDir\CrashReporter.exe
-	Copy-Item External\protobuf\bin\libprotobuf-lite.dll -Destination $BuildDir\libprotobuf-lite.dll
 	
 	Copy-Item "x64\Game Release\BG3ScriptExtender.dll" -Destination $BuildDir\BG3ScriptExtender.dll
 	Copy-Item "x64\Game Release\BG3ScriptExtender.symtab" -Destination $BuildDir\BG3ScriptExtender.symtab
@@ -120,7 +118,6 @@ function Create-Offline-Package ($BuildDir, $ZipPath)
 	Remove-Item $BuildDir -Recurse -ErrorAction SilentlyContinue
 	New-Item $BuildDir -ItemType "directory"
 
-	Copy-Item External\protobuf\bin\libprotobuf-lite.dll -Destination $BuildDir\libprotobuf-lite.dll
 	Copy-Item "x64\Game Release\BG3ScriptExtender.dll" -Destination $BuildDir\DWrite.dll
 	
 	Remove-Item $ZipPath -ErrorAction SilentlyContinue
