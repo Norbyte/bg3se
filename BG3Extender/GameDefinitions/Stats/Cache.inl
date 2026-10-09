@@ -6,11 +6,26 @@ StatStructureCache gStatStructureCache;
 
 void StatEnumerationCache::Build(RPGEnumeration const& enumeration)
 {
-	Labels.resize(enumeration.Values.size());
+	if (enumeration.Values.size() == 0) {
+		return;
+	}
+
+	int32_t maxValue = 0;
 	for (auto const& kv : enumeration.Values) {
-		se_assert(kv.Value >= 0 && kv.Value < (int32_t)Labels.size());
-		Labels[kv.Value] = kv.Key;
-		LabelToIndex.set(kv.Key, kv.Value);
+		maxValue = std::max(maxValue, kv.Value);
+	}
+
+	// Cap value list size in case the enum contains irrationally large values
+	maxValue = std::min(maxValue, (int32_t)enumeration.Values.size() * 10);
+	Labels.resize(maxValue + 1);
+
+	for (auto const& kv : enumeration.Values) {
+		if (kv.Value >= 0 && kv.Value <= maxValue) {
+			Labels[kv.Value] = kv.Key;
+			LabelToIndex.set(kv.Key, kv.Value);
+		} else {
+			WARN("Label '%s' (%d) in enumeration '%s' is out of range and will be ignored", kv.Key.GetString(), kv.Value, enumeration.Name.GetString());
+		}
 	}
 }
 

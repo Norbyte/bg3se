@@ -136,7 +136,10 @@ std::optional<Array<FixedString>> Object::GetFlags(StatModifierCache const& attr
             flagSet.reserve(std::popcount((uint64_t)**flags));
             for (uint32_t i = 1; i < attribute.Enum->Labels.size(); i++) {
                 if (**flags & (1ull << (i - 1))) {
-                    flagSet.push_back(attribute.Enum->Labels[i]);
+                    auto label = attribute.Enum->Labels[i];
+                    if (label) {
+                        flagSet.push_back(label);
+                    }
                 }
             }
         }
