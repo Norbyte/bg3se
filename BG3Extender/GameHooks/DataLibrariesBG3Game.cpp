@@ -131,6 +131,7 @@ namespace bg3se
         SYM_OFF(ls__ThreadRegistry__RequestThreadIndex);
         SYM_OFF(ls__FileReader__ctor);
         SYM_OFF(ls__FileReader__dtor);
+        SYM_OFF(ls__FileSystem__CollectFilesWithGlob);
         SYM_OFF(ls__PathRoots);
         SYM_OFF(App__Ctor);
         SYM_OFF(App__UpdatePaths);

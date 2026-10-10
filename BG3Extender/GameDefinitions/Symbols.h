@@ -36,6 +36,7 @@ struct StaticSymbols : Noncopyable<StaticSymbols>
     ThreadRegistry::RequestThreadIndexProc* ls__ThreadRegistry__RequestThreadIndex{ nullptr };
     FileReader__CtorProc* ls__FileReader__ctor{ nullptr };
     FileReader__DtorProc* ls__FileReader__dtor{ nullptr };
+    FileSystem__CollectFilesWithGlobProc* ls__FileSystem__CollectFilesWithGlob{ nullptr };
     STDString** ls__PathRoots{ nullptr };
     App__CtorProc* App__Ctor{ nullptr };
     App__UpdatePathsProc* App__UpdatePaths{ nullptr };

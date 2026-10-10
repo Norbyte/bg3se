@@ -6,9 +6,9 @@
 
 namespace bg3se::script {
 
-bool IsSafeRelativePath(STDString const& path)
+bool IsSafeRelativePath(StringView path, bool isGlob = false, bool allowEmpty = false)
 {
-    if (path.empty()) {
+    if (!allowEmpty && path.empty()) {
         OsiError("IO path cannot be empty");
         return false;
     }
@@ -16,7 +16,7 @@ bool IsSafeRelativePath(STDString const& path)
     // File naming rules per https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file
     for (auto c : path) {
         // Note: since path is UTF-8, we let all code points > 0x80 through
-        if (c < 0x20 || c == '<' || c == '>' || c == ':' || c == '"' || c == '|' || c == '?' || c == '*') {
+        if (c < 0x20 || c == '<' || c == '>' || c == ':' || c == '"' || c == '|' || c == '?' || (c == '*' && !isGlob)) {
             OsiError("Illegal character in filename: '" << path << "'");
             return false;
         }
@@ -27,7 +27,7 @@ bool IsSafeRelativePath(STDString const& path)
         return false;
     }
 
-    if (path.find("..") != STDString::npos) {
+    if (path.find("..") != StringView::npos) {
         OsiError("Path cannot contain traversal: '" << path << "'");
         return false;
     }
@@ -39,7 +39,7 @@ std::optional<STDWString> GetPathForExternalIo(std::string_view scriptPath, Path
 {
     STDString path(scriptPath);
 
-    if (!IsSafeRelativePath(path)) {
+    if (!IsSafeRelativePath(scriptPath)) {
         return {};
     }
 
@@ -54,7 +54,7 @@ std::optional<STDWString> GetPathForExternalIo(std::string_view scriptPath, Path
 
 std::optional<STDString> LoadExternalFile(std::string_view path, PathRootType root)
 {
-    if (!IsSafeRelativePath(STDString(path))) {
+    if (!IsSafeRelativePath(path)) {
         return {};
     }
 
@@ -79,6 +79,26 @@ std::optional<STDString> LoadExternalFile(std::string_view path, PathRootType ro
     }
 
     return {};
+}
+
+Array<STDString> FindFiles(StringView path, StringView glob, PathRootType root, bool recursive, bool checkPackedFiles)
+{
+    if (!IsSafeRelativePath(path, false, root == PathRootType::UserProfile) || !IsSafeRelativePath(glob, true)) {
+        return {};
+    }
+
+    auto dir = GetStaticSymbols().ToPath(path, root);
+    Array<Path> paths;
+    (GetStaticSymbols().ls__FileSystem__CollectFilesWithGlob)(dir, glob, recursive, paths, checkPackedFiles);
+
+    unsigned stripSize = dir.size() + ((*dir.rbegin() == '/') ? 0 : 1);
+
+    Array<STDString> names;
+    for (auto const& path : paths) {
+        names.push_back(path.Name.substr(stripSize));
+    }
+
+    return names;
 }
 
 bool CreateParentDirectoryRecursive(std::wstring_view path)
