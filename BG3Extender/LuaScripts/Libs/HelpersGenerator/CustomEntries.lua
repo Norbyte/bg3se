@@ -9,6 +9,11 @@ local SubscribableEventType = [[--- @class SubscribableEvent<T>:{ (Subscribe:fun
 return {
     Specific = {SubscribableEventType = SubscribableEventType},
 
+    Events = {
+        NetModMessage = "LuaNetMessageEvent",
+        Log = "LuaLogEvent"
+    },
+
     Builtins = {
 [[
 --- @alias FunctionRef function
@@ -16,6 +21,15 @@ return {
     },
 
     Misc = {
+[[
+--- @class LuaLogEvent
+--- @field Stopped boolean
+--- @field ActionPrevented boolean
+--- @field Module string
+--- @field Topic string
+--- @field Level string
+--- @field Message any[]
+]],
 [[--#region Extender Functions / Globals
 
 --- @alias NetListenerCallback fun(channel:string, payload:string, user:UserId?)

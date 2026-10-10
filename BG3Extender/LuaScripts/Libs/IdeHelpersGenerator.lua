@@ -4,7 +4,7 @@ local _format = string.format
 
 local NEWLINE = "\r\n"
 
----@type {Specific:table<string,string>, Misc:string[], Entity:string}
+---@type {Specific:table<string,string>, Misc:string[], Entity:string, Events:table<string,string>}
 local _CustomEntries = Ext.Utils.Include(nil, "builtin://Libs/HelpersGenerator/CustomEntries.lua")
 
 ---@type table<string,{Before:string?, After:string?, Replace:string?}>
@@ -808,13 +808,13 @@ function Generator:EmitClassEventData(type)
 
     local name = self:MakeTypeName(type.TypeName)
     local context = "any"
-    local _,_,eventName = string.find(name, serverEventParamsPattern)
+    local _,_,eventName = string.find(type.TypeName, serverEventParamsPattern)
     if not eventName then
-        _,_,eventName = string.find(name, clientEventParamsPattern)
+        _,_,eventName = string.find(type.TypeName, clientEventParamsPattern)
         if eventName then
             context = "client"
         else
-            _,_,eventName = string.find(name, bothContextEventParamsPattern)
+            _,_,eventName = string.find(type.TypeName, bothContextEventParamsPattern)
         end
     else
         context = "server"
@@ -1049,10 +1049,14 @@ end
 local function GenerateSubscriptionEvents(self)
     for _,k in pairs(Ext._Internal._PublishedSharedEvents) do
         if not eventTypeGenerationDataIndex[k] then
-            if _DEBUG then
-                Ext.Log.PrintWarning("Found unregistered event, assuming empty event", k)
+            local eventType = _CustomEntries.Events[k]
+            if not eventType then
+                eventType = "LuaEmptyEvent"
+                if _DEBUG then
+                    Ext.Log.PrintWarning("Found unregistered event, assuming empty event", k)
+                end
             end
-            eventTypeGenerationData[#eventTypeGenerationData+1] = {Type="LuaEmptyEvent", Event = k, Context = "any"}
+            eventTypeGenerationData[#eventTypeGenerationData+1] = {Type=eventType, Event = k, Context = "any"}
         end
     end
     table.sort(eventTypeGenerationData, function(a,b) return a.Event < b.Event end)
