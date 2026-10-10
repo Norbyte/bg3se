@@ -1,4 +1,5 @@
 #include <stdafx.h>
+#include <Extender/Client/KeyboardMovement.h>
 #include <Lua/Shared/LuaStats.h>
 #include <Lua/Client/LuaBindingClient.h>
 #include <Lua/Shared/LuaModule.h>
@@ -62,6 +63,7 @@ ClientState::ClientState(ExtensionState& state, uint32_t generationId)
 
 ClientState::~ClientState()
 {
+    ecl::SetKeyboardMovementOverride(false);
     auto & sym = GetStaticSymbols();
 
     ecl::lua::ui::ReleasePropertyChangeHandlers(L);
