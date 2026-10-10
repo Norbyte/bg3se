@@ -460,6 +460,9 @@ std::optional<STDString*> RPGStats::GetConditions(int conditionsId)
 
 int RPGStats::GetOrCreateConditions(STDString const& conditions)
 {
+    auto cachedId = gStatStructureCache.GetCachedCondition(conditions);
+    if (cachedId) return *cachedId;
+
     if (conditions.empty()) {
         return -1;
     }

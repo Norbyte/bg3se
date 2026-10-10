@@ -297,8 +297,13 @@ MathParam do_get(lua_State* L, int index, Overload<MathParam>)
 
 stats::ConditionId do_get(lua_State* L, int index, Overload<stats::ConditionId>)
 {
-    luaL_error(L, "Setting ConditionId values is not supported");
-    return {};
+    auto conditions = get<std::optional<StringView>>(L, index);
+    if (!conditions) {
+        return {};
+    }
+
+    auto id = GetStaticSymbols().GetStats()->GetOrCreateConditions(STDString(*conditions));
+    return stats::ConditionId{ id };
 }
 
 StatsExpressionRef do_get(lua_State* L, int index, Overload<StatsExpressionRef>)

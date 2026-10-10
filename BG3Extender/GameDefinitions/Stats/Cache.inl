@@ -99,6 +99,13 @@ StatModifierCache const* StatStructureCache::GetCachedAttribute(uint32_t modifie
 	return modifierList->NameToModifier.get_or_default(attribute);
 }
 
+std::optional<int32_t> StatStructureCache::GetCachedCondition(STDString const& condition)
+{
+	RebuildIfNecessary();
+	auto idx = liveData_->ConditionToIndex.try_get(condition);
+	return idx ? *idx : std::optional<int32_t>{};
+}
+
 void StatStructureCache::Invalidate()
 {
 	invalidated_ = true;
@@ -134,6 +141,10 @@ void StatStructureCache::Rebuild()
 
 	for (uint32_t i = 0; i < stats->ModifierLists.Values.size(); i++) {
 		CacheModifierList(i, *stats->ModifierLists.Values[i]);
+	}
+
+	for (uint32_t i = 0; i < stats->Conditions.size(); i++) {
+		buildData_->ConditionToIndex.set(stats->Conditions[i], i);
 	}
 
 	previousData_.reset();

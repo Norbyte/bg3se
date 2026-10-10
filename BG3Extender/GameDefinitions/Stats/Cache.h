@@ -37,6 +37,7 @@ struct StatStructureCacheData
 {
     Array<GameUniquePtr<StatModifierListCache>> Modifiers;
     Array<GameUniquePtr<StatEnumerationCache>> Enumerations;
+    HashMap<STDString, int32_t> ConditionToIndex;
 };
 
 struct StatValuePools
@@ -55,6 +56,7 @@ class StatStructureCache
 {
 public:
     StatModifierCache const* GetCachedAttribute(uint32_t modifierListIndex, FixedString const& attribute);
+    std::optional<int32_t> GetCachedCondition(STDString const& condition);
     void Invalidate();
     void OnStatsLoaded();
 
