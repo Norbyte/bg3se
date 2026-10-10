@@ -291,30 +291,112 @@ private:
         const DXGI_SWAP_CHAIN_DESC1* pDesc,
         const DXGI_SWAP_CHAIN_FULLSCREEN_DESC* pFullscreenDesc,
         IDXGIOutput* pRestrictToOutput,
-        IDXGISwapChain1** ppSwapChain, 
+        IDXGISwapChain1** ppSwapChain,
         HRESULT result)
     {
-        IMGUI_DEBUG("DXGICreateSwapChainForHwnd -> %p, %d", *ppSwapChain, result);
-        IMGUI_DEBUG("Device %p, HWND %d, %d x %d, fmt %d, usage %d, flags %x", pDevice, hWnd, pDesc->Width, pDesc->Height,
+        IMGUI_DEBUG("DXGICreateSwapChainForHwnd -> %p, %d",
+            ppSwapChain != nullptr ? *ppSwapChain : nullptr, result);
+
+        if (!SUCCEEDED(result)
+            || ppSwapChain == nullptr
+            || *ppSwapChain == nullptr
+            || pDevice == nullptr
+            || pDesc == nullptr) {
+            return;
+        }
+
+        IMGUI_DEBUG(
+            "Device %p, HWND %p, %d x %d, fmt %d, usage %d, flags %x",
+            pDevice, (void*)hWnd, pDesc->Width, pDesc->Height,
             pDesc->Format, pDesc->BufferUsage, pDesc->Flags);
 
-        if (!SUCCEEDED(result)) return;
-        
-        swapChain_ = *ppSwapChain;
+        // FG / interop layers may create auxiliary swap chains while handling
+        // the game's CreateSwapChainForHwnd call. Only bind the ImGui backend
+        // to swap chains created from BG3's D3D11 device.
+        ID3D11Device* candidateDevice{ nullptr };
+
+        if (FAILED(pDevice->QueryInterface(IID_PPV_ARGS(&candidateDevice)))
+            || candidateDevice == nullptr) {
+            IMGUI_DEBUG("Ignoring non-D3D11 swap chain %p", *ppSwapChain);
+            return;
+        }
+
+        bool isGameDevice = (device_ != nullptr && candidateDevice == device_);
+        candidateDevice->Release();
+
+        if (!isGameDevice) {
+            IMGUI_DEBUG(
+                "Ignoring swap chain %p created for a different D3D11 device",
+                *ppSwapChain);
+            return;
+        }
+
+        // OptiScaler's DX11 -> DX12 FG bridge creates a hidden 1x1 D3D11
+        // helper swap chain. Do not let helper swap chains become BG3SE's
+        // ImGui presentation target.
+        RECT clientRect{};
+
+        if (GetClientRect(hWnd, &clientRect)) {
+            auto clientWidth = clientRect.right - clientRect.left;
+            auto clientHeight = clientRect.bottom - clientRect.top;
+
+            if (clientWidth <= 32 || clientHeight <= 32) {
+                IMGUI_DEBUG(
+                    "Ignoring helper swap chain %p on tiny HWND %p (%ld x %ld)",
+                    *ppSwapChain, (void*)hWnd, clientWidth, clientHeight);
+                return;
+            }
+        }
+
+        auto newSwapChain = *ppSwapChain;
+
+        auto present = (*(void***)newSwapChain)[8];
+        auto resizeBuffers = (*(void***)newSwapChain)[13];
+
+        auto resolvedPresent = ResolveFunctionTrampoline(present);
+        auto resolvedResizeBuffers = ResolveFunctionTrampoline(resizeBuffers);
+
+        // Keep track of the actual functions currently hooked.
+        // A DX11 -> DX12 FG layer may replace the game-facing swap chain with
+        // a wrapper whose Present/ResizeBuffers vtable differs from the native
+        // D3D11 swap chain.
+        static void* presentHookTarget{ nullptr };
+        static void* resizeBuffersHookTarget{ nullptr };
+
+        bool needsRebind =
+            !DXGISwapChainPresentHook_.IsWrapped()
+            || !DXGISwapChainResizeBuffersHook_.IsWrapped()
+            || presentHookTarget != resolvedPresent
+            || resizeBuffersHookTarget != resolvedResizeBuffers;
+
+        if (needsRebind) {
+            IMGUI_DEBUG(
+                "Binding DX11 ImGui to swap chain %p (Present %p, ResizeBuffers %p)",
+                newSwapChain, present, resizeBuffers);
+
+            DetourTransactionBegin();
+            DetourUpdateThread(GetCurrentThread());
+
+            if (DXGISwapChainPresentHook_.IsWrapped()) {
+                DXGISwapChainPresentHook_.Unwrap();
+            }
+
+            if (DXGISwapChainResizeBuffersHook_.IsWrapped()) {
+                DXGISwapChainResizeBuffersHook_.Unwrap();
+            }
+
+            DXGISwapChainPresentHook_.Wrap(resolvedPresent);
+            DXGISwapChainResizeBuffersHook_.Wrap(resolvedResizeBuffers);
+
+            DetourTransactionCommit();
+
+            presentHookTarget = resolvedPresent;
+            resizeBuffersHookTarget = resolvedResizeBuffers;
+        }
+
+        swapChain_ = newSwapChain;
         width_ = pDesc->Width;
         height_ = pDesc->Height;
-
-        if (DXGISwapChainPresentHook_.IsWrapped()) return;
-
-        auto createSwapChain = (*(void***)swapChain_)[8];
-        auto resizeBuffers = (*(void***)swapChain_)[13];
-
-        IMGUI_DEBUG("Hooking DXGISwapChainPresent");
-        DetourTransactionBegin();
-        DetourUpdateThread(GetCurrentThread());
-        DXGISwapChainPresentHook_.Wrap(ResolveFunctionTrampoline(createSwapChain));
-        DXGISwapChainResizeBuffersHook_.Wrap(ResolveFunctionTrampoline(resizeBuffers));
-        DetourTransactionCommit();
 
         if (swapChain_ != nullptr && device_ != nullptr) {
             ui_.OnRenderBackendInitialized();
