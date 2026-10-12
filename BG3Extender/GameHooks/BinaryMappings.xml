@@ -284,6 +284,16 @@
       <Target Type="Absolute" Offset="0" Symbol="App__LoadGraphicSettings" />
     </Mapping>
 
+    <!-- Optional keyboard movement gate; the fall-through path overwrites EAX. -->
+    <Mapping Name="ecl::CharacterTask_MoveController::KeyboardModeGate" AllowFail="true">
+      80 3d ?? ?? ?? ?? 00 // cmp byte ptr [controllerMode], 0
+      0f 84 26 02 00 00 // je original rejection path
+      49 8b 4f 68 // mov rcx, [r15+Character]
+      8b 05 ?? ?? ?? ?? // mov eax, [user sentinel]
+      39 81 28 01 00 00 // cmp [rcx+user identity], eax
+      <Target Type="Absolute" Offset="0" Symbol="ecl__MoveController__KeyboardModeGate" />
+    </Mapping>
+
     <Mapping Name="ls::gInputManager">
       0f 28 44 24 30 // movaps  xmm0, [rsp+88h+var_58]
       @str1 48 8d 05 ?? ?? ?? ?? // lea     rax, aPlayerprofiles_2; "PlayerProfiles/Eoc/keyboard_WhiteBoxing"...
