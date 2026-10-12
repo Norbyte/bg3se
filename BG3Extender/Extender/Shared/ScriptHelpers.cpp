@@ -134,7 +134,7 @@ bool SaveExternalFile(std::string_view path, PathRootType root, StringView conte
 
     if (!CreateParentDirectoryRecursive(*absolutePath)) return false;
 
-    std::ofstream f(absolutePath->c_str(), std::ios::out | std::ios::binary);
+    std::ofstream f(absolutePath->c_str(), std::ios::out | std::ios::binary | (append ? std::ios::app : 0));
     if (!f.good()) {
         OsiError("Could not open file for writing: '" << path << "'");
         return false;
