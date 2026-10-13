@@ -59,7 +59,7 @@ void ObjectHelpers::SetPersistence(Object* obj, bool persist)
     WARN_ONCE("Ext.Stats.SetPersistence() is deprecated");
 }
 
-void ClearStatsFunctors(Object* object, FixedString key, char const* value)
+void ClearStatsFunctors(Object* object, FixedString key, StringView value)
 {
     // We need to delete the functors beforehand, otherwise updating them will
     // delete the functor object while inherited stats entries may still use it
@@ -105,11 +105,22 @@ void ClearStatsFunctors(Object* object, FixedString key, char const* value)
     object->Functors.remove(key);
 }
 
-bool ObjectHelpers::SetRawAttribute(Object* object, FixedString key, char const* value)
+bool ObjectHelpers::SetRawAttribute(Object* object, FixedString key, StringView value)
 {
     auto info = gStatStructureCache.GetCachedAttribute(object->ModifierListIndex, key);
     if (info == nullptr) {
         OsiError("Stats object '" << object->Name << "' has no attribute named '" << key << "'");
+        return false;
+    }
+
+    if ((info->Type == RPGEnumerationType::FixedString
+        || info->Type == RPGEnumerationType::TranslatedString
+        || info->Type == RPGEnumerationType::MemorizationRequirements
+        || info->Type == RPGEnumerationType::Enumeration
+        || info->Type == RPGEnumerationType::Flags
+        || info->Type == RPGEnumerationType::AIFlags)
+        && value.size() >= 2047) {
+        ERR("Attempted to set too long value for stats attribute '%s'", key.GetString());
         return false;
     }
 
@@ -118,7 +129,7 @@ bool ObjectHelpers::SetRawAttribute(Object* object, FixedString key, char const*
     }
 
     auto set = GetStaticSymbols().stats__Object__SetPropertyString;
-    set(object, key, value);
+    set(object, key, value.data());
 
     return true;
 }

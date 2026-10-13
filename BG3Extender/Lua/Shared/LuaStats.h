@@ -21,7 +21,7 @@ struct ObjectHelpers
 
     static void Sync(Object* obj, std::optional<bool> persist);
     static void SetPersistence(Object* obj, bool persist);
-    static bool SetRawAttribute(Object* obj, FixedString key, char const* value);
+    static bool SetRawAttribute(Object* obj, FixedString key, StringView value);
     static bool CopyFrom(Object* obj, FixedString parent);
 
     static PropertyOperationResult FallbackGet(lua_State* L, lua::LifetimeHandle lifetime, Object const* object, bg3se::FixedString const& prop);
