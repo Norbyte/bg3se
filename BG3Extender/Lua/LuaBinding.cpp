@@ -368,8 +368,10 @@ void* LuaAlloc(void* ud, void* ptr, size_t osize, size_t nsize)
     } else {
         auto newBuf = GameAllocRaw(nsize);
         if (ptr != nullptr) {
-            memcpy(newBuf, ptr, std::min(nsize, osize));
-            GameFree(ptr);
+            if (newBuf != nullptr) {
+                memcpy(newBuf, ptr, std::min(nsize, osize));
+                GameFree(ptr);
+            }
         }
 
         return newBuf;
