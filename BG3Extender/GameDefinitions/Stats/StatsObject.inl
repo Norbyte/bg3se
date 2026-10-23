@@ -481,8 +481,8 @@ bool Object::CopyFrom(Object* source)
         auto stats = GetStaticSymbols().GetStats();
         auto objModifier = stats->ModifierLists.GetByHandle(ModifierListIndex);
         auto copyModifier = stats->ModifierLists.GetByHandle(source->ModifierListIndex);
-        OsiError("Cannot copy stats from object '" << source->Name << "' (a " << copyModifier->Name
-            << ") to an object of type " << objModifier->Name);
+        OsiError("Cannot copy stats from object '" << source->Name << "' (a " << (copyModifier ? copyModifier->Name.GetString() : "(Unknown)")
+            << ") to an object of type " << (objModifier ? objModifier->Name.GetString() : "(Unknown)"));
         return false;
     }
 
