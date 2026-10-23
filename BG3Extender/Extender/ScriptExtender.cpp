@@ -323,6 +323,7 @@ void ScriptExtender::OnECSUpdateGuarded(ecs::EntityWorld__UpdateProc* wrapped, e
             }
         }
     } else {
+        DisableCrashReporting _;
         wrapped(entityWorld, time);
     }
 }
