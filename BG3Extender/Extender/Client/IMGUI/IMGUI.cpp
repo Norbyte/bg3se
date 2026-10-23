@@ -1472,7 +1472,7 @@ void InputText::StyledRender(DrawingContext& context)
     if (reloadText_) {
         auto id = ImGui::GetCurrentWindow()->GetID(Label.c_str());
         auto state = ImGui::GetInputTextState(id);
-        if (state != nullptr) {
+        if (state != nullptr && (state->Flags & ImGuiInputTextFlags_ReadOnly) == 0) {
             state->ReloadUserBufAndKeepSelection();
         }
         reloadText_ = false;
