@@ -317,7 +317,7 @@ void StyledRenderable::PushWindowStyleChanges(DrawingContext& context, ImFont*& 
         if (info) font = info->Font;
     }
 
-    if (font) ImGui::PushFont(font);
+    if (font && font->IsLoaded()) ImGui::PushFont(font);
 
     if (!IDContext.empty()) {
         ImGui::PushID(IDContext.data(), IDContext.data() + IDContext.size());
@@ -352,7 +352,7 @@ void StyledRenderable::PopWindowStyleChanges(ImFont* font)
         ImGui::PopID();
     }
 
-    if (font) ImGui::PopFont();
+    if (font && font->IsLoaded()) ImGui::PopFont();
 }
 
 
