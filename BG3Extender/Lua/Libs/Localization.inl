@@ -15,9 +15,11 @@ std::optional<StringView> TranslatedStringRepository::GetTranslatedString(Runtim
             text = FallbackPool->Texts.try_get(handle);
         }
     }
+
+    auto result = text ? *text : std::optional<StringView>{};
     Lock.ReadUnlock();
 
-    return text ? *text : std::optional<StringView>{};
+    return result;
 }
 
 void TranslatedStringRepository::UpdateTranslatedString(RuntimeStringHandle const& handle, StringView translated)

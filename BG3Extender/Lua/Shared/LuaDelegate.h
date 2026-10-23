@@ -24,6 +24,10 @@ public:
         : ref_(L, local)
     {}
 
+    inline LuaDelegate(lua_State* L, RegistryEntry const& entry)
+        : ref_(entry)
+    {}
+
     inline LuaDelegate(lua_State* L, FunctionRef const& f)
         : ref_(L, f.Index)
     {}

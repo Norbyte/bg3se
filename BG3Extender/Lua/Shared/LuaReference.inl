@@ -154,6 +154,13 @@ RegistryEntry & RegistryEntry::operator = (RegistryEntry&& other) noexcept
     return *this;
 }
 
+
+int32_t RegistryEntry::GetGlobalIndex() const
+{
+    se_assert(global_ != -1);
+    return manager_->GetGlobalIndex(global_);
+}
+
 void RegistryEntry::Push(lua_State* L) const
 {
     se_assert(global_ != -1);
@@ -245,8 +252,8 @@ PersistentRegistryEntry& PersistentRegistryEntry::operator = (PersistentRegistry
 void PersistentRegistryEntry::Release()
 {
     if (global_ != -1) {
-        auto state = gExtender->GetCurrentExtensionState()->GetLua();
-        if (state && state->GetGenerationId() == generationId_) {
+        auto state = gExtender->GetCurrentExtensionState();
+        if (state && state->GetLua() && state->GetLua()->GetGenerationId() == generationId_) {
             manager_->DecRef(global_);
         }
 

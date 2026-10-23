@@ -189,7 +189,7 @@ void EnableErrorReporting(bool enable)
 void Defer(lua_State* L, FunctionRef callback)
 {
     ClientState::FromLua(L)->GetDeferredUIEvents().DeferNoesisThreadCallback(
-        PersistentRegistryEntry(L, callback.Index)
+        RegistryEntry(L, callback.Index)
     );
 }
 

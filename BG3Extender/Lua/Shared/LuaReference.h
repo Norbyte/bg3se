@@ -63,11 +63,7 @@ public:
         return global_ != -1;
     }
 
-    inline int GetRef() const
-    {
-        return global_;
-    }
-
+    int32_t GetGlobalIndex() const;
     void Push(lua_State* L) const;
     void Reset();
 
@@ -143,8 +139,8 @@ public:
         : type_(type), index_(index)
     {}
 
-    inline Ref(RegistryEntry const& ref)
-        : type_(ref ? RefType::Registry : RefType::None), index_(ref ? ref.GetRef() : 0)
+    inline explicit Ref(RegistryEntry const& ref)
+        : type_(ref ? RefType::Registry : RefType::None), index_(ref ? ref.GetGlobalIndex() : 0)
     {}
 
     inline Ref(Ref const& ref)

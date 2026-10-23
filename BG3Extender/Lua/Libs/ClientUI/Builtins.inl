@@ -681,7 +681,9 @@ void LuaDelegateCommand::Execute(BaseComponent* param) const
     ContextGuardAnyThread ctx(ContextType::Client);
     ecl::LuaClientPin pin(ecl::ExtensionState::Get());
     if (pin && handler_.IsValid(pin->GetState())) {
-        pin->GetDeferredUIEvents().OnCommand(handler_, const_cast<LuaDelegateCommand*>(this), param);
+        pin->GetDeferredUIEvents().OnCommand(
+            lua::RegistryEntry{ pin->GetState(), handler_.ToRef(pin->GetState()) }, 
+            const_cast<LuaDelegateCommand*>(this), param);
     }
 }
 

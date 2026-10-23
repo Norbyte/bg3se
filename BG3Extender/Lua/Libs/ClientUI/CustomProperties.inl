@@ -112,7 +112,9 @@ public:
                 ContextGuardAnyThread ctx(ContextType::Client);
                 ecl::LuaClientPin pin(ecl::ExtensionState::Get());
                 if (pin && writeCallback_.IsValid(pin->GetState())) {
-                    pin->GetDeferredUIEvents().OnPropertyChanged(writeCallback_, static_cast<BaseComponent*>(ptr), this->GetName());
+                    pin->GetDeferredUIEvents().OnPropertyChanged(
+                        lua::RegistryEntry{ pin->GetState(), writeCallback_.ToRef(pin->GetState()) },
+                        static_cast<BaseComponent*>(ptr), this->GetName());
                 }
             }
         }
@@ -135,7 +137,9 @@ public:
                 ContextGuardAnyThread ctx(ContextType::Client);
                 ecl::LuaClientPin pin(ecl::ExtensionState::Get());
                 if (pin && writeCallback_.IsValid(pin->GetState())) {
-                    pin->GetDeferredUIEvents().OnPropertyChanged(writeCallback_, static_cast<BaseComponent*>(ptr), this->GetName());
+                    pin->GetDeferredUIEvents().OnPropertyChanged(
+                        lua::RegistryEntry{ pin->GetState(), writeCallback_.ToRef(pin->GetState()) },
+                        static_cast<BaseComponent*>(ptr), this->GetName());
                 }
             }
         }

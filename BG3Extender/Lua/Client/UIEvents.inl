@@ -115,17 +115,17 @@ void DeferredUIEvents::PostUpdate()
 
     auto L = state_.GetState();
     for (auto const& command : commands) {
-        LuaDelegate<void(Noesis::BaseCommand*, Noesis::BaseComponent*)> handler(L, command.Handler.ToRef(L));
+        LuaDelegate<void(Noesis::BaseCommand*, Noesis::BaseComponent*)> handler(L, command.Handler);
         handler.Call(L, { command.Command.GetPtr(), command.Parameter.GetPtr() });
     }
 
     for (auto const& change : propertyChanges) {
-        LuaDelegate<void(Noesis::BaseComponent*, Noesis::Symbol)> handler(L, change.Handler.ToRef(L));
+        LuaDelegate<void(Noesis::BaseComponent*, Noesis::Symbol)> handler(L, change.Handler);
         handler.Call(L, { change.Object.GetPtr(), change.Property });
     }
 }
 
-void DeferredUIEvents::OnCommand(lua::PersistentRegistryEntry const& handler, Noesis::BaseCommand* command, Noesis::BaseComponent* parameter)
+void DeferredUIEvents::OnCommand(lua::RegistryEntry const& handler, Noesis::BaseCommand* command, Noesis::BaseComponent* parameter)
 {
     commands_.push_back(DeferredCommand{
         .Handler = handler,
@@ -134,7 +134,7 @@ void DeferredUIEvents::OnCommand(lua::PersistentRegistryEntry const& handler, No
     });
 }
 
-void DeferredUIEvents::OnPropertyChanged(lua::PersistentRegistryEntry const& handler, Noesis::BaseComponent* object, Noesis::Symbol property)
+void DeferredUIEvents::OnPropertyChanged(lua::RegistryEntry const& handler, Noesis::BaseComponent* object, Noesis::Symbol property)
 {
     propertyChanges_.push_back(DeferredPropertyChange{
         .Handler = handler,
@@ -145,13 +145,13 @@ void DeferredUIEvents::OnPropertyChanged(lua::PersistentRegistryEntry const& han
 
 void DeferredUIEvents::PostUpdateNoesis()
 {
-    Array<lua::PersistentRegistryEntry> callbacks;
+    Array<lua::RegistryEntry> callbacks;
     std::swap(callbacks, noesisThreadCallbacks_);
 
     dispatchingOnRenderThread_ = true;
     auto L = state_.GetState();
     for (auto& callback : callbacks) {
-        LuaDelegate<void()> handler(L, callback.ToRef(L));
+        LuaDelegate<void()> handler(L, callback);
         handler.Call(L, {});
     }
     dispatchingOnRenderThread_ = false;
@@ -162,7 +162,7 @@ bool DeferredUIEvents::HasAnyNoesisThreadCallbacks() const
     return !noesisThreadCallbacks_.empty();
 }
 
-void DeferredUIEvents::DeferNoesisThreadCallback(lua::PersistentRegistryEntry&& handler)
+void DeferredUIEvents::DeferNoesisThreadCallback(lua::RegistryEntry&& handler)
 {
     noesisThreadCallbacks_.push_back(std::move(handler));
 }

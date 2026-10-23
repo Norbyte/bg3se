@@ -52,12 +52,12 @@ public:
 
     void PostUpdate();
 
-    void OnCommand(lua::PersistentRegistryEntry const& handler, Noesis::BaseCommand* command, Noesis::BaseComponent* parameter);
-    void OnPropertyChanged(lua::PersistentRegistryEntry const& handler, Noesis::BaseComponent* object, Noesis::Symbol property);
+    void OnCommand(lua::RegistryEntry const& handler, Noesis::BaseCommand* command, Noesis::BaseComponent* parameter);
+    void OnPropertyChanged(lua::RegistryEntry const& handler, Noesis::BaseComponent* object, Noesis::Symbol property);
 
     void PostUpdateNoesis();
     bool HasAnyNoesisThreadCallbacks() const;
-    void DeferNoesisThreadCallback(lua::PersistentRegistryEntry&& handler);
+    void DeferNoesisThreadCallback(lua::RegistryEntry&& handler);
 
     inline bool IsDispatchingOnRenderThread() const
     {
@@ -67,14 +67,14 @@ public:
 private:
     struct DeferredCommand
     {
-        lua::PersistentRegistryEntry Handler;
+        lua::RegistryEntry Handler;
         Ptr<Noesis::BaseCommand> Command;
         Ptr<Noesis::BaseComponent> Parameter;
     };
     
     struct DeferredPropertyChange
     {
-        lua::PersistentRegistryEntry Handler;
+        lua::RegistryEntry Handler;
         Ptr<Noesis::BaseComponent> Object;
         Noesis::Symbol Property;
     };
@@ -82,7 +82,7 @@ private:
     ClientState& state_;
     Array<DeferredCommand> commands_;
     Array<DeferredPropertyChange> propertyChanges_;
-    Array<lua::PersistentRegistryEntry> noesisThreadCallbacks_;
+    Array<lua::RegistryEntry> noesisThreadCallbacks_;
     bool dispatchingOnRenderThread_{ false };
 };
 
