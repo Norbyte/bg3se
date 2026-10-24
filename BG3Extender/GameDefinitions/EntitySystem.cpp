@@ -17,51 +17,105 @@
 
 BEGIN_NS(ecs)
 
-const unsigned ComponentSizeBuckets[65] = {
-    0, 
-    0, 1, 2, 2, 3, 3, 3, 3,
-    4, 4, 4, 4, 5, 5, 5, 5,
-    6, 6, 6, 6, 7, 7, 7, 7,
-    8, 8, 8, 8, 9, 9, 9, 9,
-    10, 10, 10, 10, 10, 10, 10, 10,
-    11, 11, 11, 11, 11, 11, 11, 11,
-    12, 12, 12, 12, 12, 12, 12, 12,
-    13, 13, 13, 13, 13, 13, 13, 13
+// Size of each allocator bucket
+constexpr const unsigned FrameAllocatorBucketBytes[14] = { 1, 2, 4, 8, 12, 16, 20, 24, 28, 32, 40, 48, 56, 64 };
+
+// Maps component size to allocation units (>64 byte components are always in bucket 13)
+constexpr const unsigned ComponentSizeBuckets[65] = {
+    0, // 0 byte components always take at least 1 byte
+    0, // bucket 0 -> 1 byte
+    1, // bucket 1 -> 2 byte
+    2, 2, // bucket 2 -> 4 byte
+    3, 3, 3, 3, // bucket 3 -> 8 byte
+    4, 4, 4, 4, // bucket 4 -> 12 byte
+    5, 5, 5, 5, // bucket 5 -> 16 byte
+    6, 6, 6, 6, // bucket 6 -> 20 byte
+    7, 7, 7, 7, // bucket 7 -> 24 byte
+    8, 8, 8, 8, // bucket 8 -> 28 byte
+    9, 9, 9, 9, // bucket 9 -> 32 byte
+    10, 10, 10, 10, 10, 10, 10, 10, // bucket 10 -> 40 byte
+    11, 11, 11, 11, 11, 11, 11, 11, // bucket 11 -> 48 byte
+    12, 12, 12, 12, 12, 12, 12, 12, // bucket 12 -> 56 byte
+    13, 13, 13, 13, 13, 13, 13, 13  // bucket 13 -> 64 byte
 };
 
-const unsigned FrameAllocatorComponentsPerPage[14][9] = {
-    { 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40 },
-    { 0x20, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40 },
-    { 0x10, 0x20, 0x30, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40 },
-    { 0x08, 0x10, 0x18, 0x28, 0x40, 0x40, 0x40, 0x40, 0x40 },
-    { 0x05, 0x0A, 0x10, 0x1A, 0x2A, 0x40, 0x40, 0x40, 0x40 },
-    { 0x04, 0x08, 0x0C, 0x14, 0x20, 0x34, 0x40, 0x40, 0x40 },
-    { 0x03, 0x06, 0x09, 0x10, 0x19, 0x29, 0x40, 0x40, 0x40 },
-    { 0x02, 0x05, 0x08, 0x0D, 0x15, 0x22, 0x38, 0x40, 0x40 },
-    { 0x02, 0x04, 0x06, 0x0B, 0x12, 0x1D, 0x30, 0x40, 0x40 },
-    { 0x02, 0x04, 0x06, 0x0A, 0x10, 0x1A, 0x2A, 0x40, 0x40 },
-    { 0x01, 0x03, 0x04, 0x08, 0x0C, 0x14, 0x21, 0x36, 0x40 },
-    { 0x01, 0x02, 0x04, 0x06, 0x0A, 0x11, 0x1C, 0x2D, 0x40 },
-    { 0x01, 0x02, 0x03, 0x05, 0x09, 0x0E, 0x18, 0x26, 0x40 },
-    { 0x01, 0x02, 0x03, 0x05, 0x08, 0x0D, 0x15, 0x22, 0x40 }
+constexpr unsigned MaxComponentsPerBucket = 0x40;
+constexpr const unsigned Fibonacci[9] = { 1, 2, 3, 5, 8, 13, 21, 34, 55 };
+
+#define COMPS_PER_PAGE(bucket, page) std::min<unsigned>(Fibonacci[page] * 64 / FrameAllocatorBucketBytes[bucket], MaxComponentsPerBucket)
+
+#define COMPS_PER_BUCKET(bucket) { \
+        COMPS_PER_PAGE(bucket, 0), \
+        COMPS_PER_PAGE(bucket, 1), \
+        COMPS_PER_PAGE(bucket, 2), \
+        COMPS_PER_PAGE(bucket, 3), \
+        COMPS_PER_PAGE(bucket, 4), \
+        COMPS_PER_PAGE(bucket, 5), \
+        COMPS_PER_PAGE(bucket, 6), \
+        COMPS_PER_PAGE(bucket, 7), \
+        MaxComponentsPerBucket /* Last bucket is always full-size */ \
+    }
+
+// Number of components per page per size bucket for 1th, 2nd, ..., 8th page
+// Allocations after the 8th page use size slot [8]
+constexpr const unsigned FrameAllocatorComponentsPerPage[14][9] = {
+    COMPS_PER_BUCKET(0),
+    COMPS_PER_BUCKET(1),
+    COMPS_PER_BUCKET(2),
+    COMPS_PER_BUCKET(3),
+    COMPS_PER_BUCKET(4),
+    COMPS_PER_BUCKET(5),
+    COMPS_PER_BUCKET(6),
+    COMPS_PER_BUCKET(7),
+    COMPS_PER_BUCKET(8),
+    COMPS_PER_BUCKET(9),
+    COMPS_PER_BUCKET(10),
+    COMPS_PER_BUCKET(11),
+    COMPS_PER_BUCKET(12),
+    COMPS_PER_BUCKET(13)
 };
 
-const unsigned FrameAllocatorComponentsAggregate[14][9] = {
-    { 0x40, 0x80, 0xC0, 0x100, 0x140, 0x180, 0x1C0, 0x200, 0x240 },
-    { 0x20, 0x60, 0xA0, 0xE0,  0x120, 0x160, 0x1A0, 0x1E0, 0x220 },
-    { 0x10, 0x30, 0x60, 0xA0,  0xE0,  0x120, 0x160, 0x1A0, 0x1E0 },
-    { 0x08, 0x18, 0x30, 0x58,  0x98,  0xD8,  0x118, 0x158, 0x198 },
-    { 0x05, 0x0F, 0x1F, 0x39,  0x63,  0xA3,  0xE3,  0x123, 0x163 },
-    { 0x04, 0x0C, 0x18, 0x2C,  0x4C,  0x80,  0xC0,  0x100, 0x140 },
-    { 0x03, 0x09, 0x12, 0x22,  0x3B,  0x64,  0xA4,  0xE4,  0x124 },
-    { 0x02, 0x07, 0x0F, 0x1C,  0x31,  0x53,  0x8B,  0xCB,  0x10B },
-    { 0x02, 0x06, 0x0C, 0x17,  0x29,  0x46,  0x76,  0xB6,  0xF6 },
-    { 0x02, 0x06, 0x0C, 0x16,  0x26,  0x40,  0x6A,  0xAA,  0xEA },
-    { 0x01, 0x04, 0x08, 0x10,  0x1C,  0x30,  0x51,  0x87,  0xC7 },
-    { 0x01, 0x03, 0x07, 0x0D,  0x17,  0x28,  0x44,  0x71,  0xB1 },
-    { 0x01, 0x03, 0x06, 0x0B,  0x14,  0x22,  0x3A,  0x60,  0xA0 },
-    { 0x01, 0x03, 0x06, 0x0B,  0x13,  0x20,  0x37,  0x57,  0x98 }
+constexpr unsigned CalcFrameAllocatorComponentsAggregate(unsigned bucket, unsigned fib)
+{
+    if (fib == 0) {
+        return FrameAllocatorComponentsPerPage[bucket][0];
+    } else {
+        return FrameAllocatorComponentsPerPage[bucket][fib]
+            + CalcFrameAllocatorComponentsAggregate(bucket, fib - 1);
+    }
+}
+
+#define COMPS_PER_BUCKET_AGGREGATE(bucket) { \
+        CalcFrameAllocatorComponentsAggregate(bucket, 0), \
+        CalcFrameAllocatorComponentsAggregate(bucket, 1), \
+        CalcFrameAllocatorComponentsAggregate(bucket, 2), \
+        CalcFrameAllocatorComponentsAggregate(bucket, 3), \
+        CalcFrameAllocatorComponentsAggregate(bucket, 4), \
+        CalcFrameAllocatorComponentsAggregate(bucket, 5), \
+        CalcFrameAllocatorComponentsAggregate(bucket, 6), \
+        CalcFrameAllocatorComponentsAggregate(bucket, 7), \
+        CalcFrameAllocatorComponentsAggregate(bucket, 8)  \
+    }
+
+// [0..7] = Number of components in total up to page 8
+// [8] = Number of components per page after page 8
+constexpr const unsigned FrameAllocatorComponentsAggregate[14][9] = {
+    COMPS_PER_BUCKET_AGGREGATE(0),
+    COMPS_PER_BUCKET_AGGREGATE(1),
+    COMPS_PER_BUCKET_AGGREGATE(2),
+    COMPS_PER_BUCKET_AGGREGATE(3),
+    COMPS_PER_BUCKET_AGGREGATE(4),
+    COMPS_PER_BUCKET_AGGREGATE(5),
+    COMPS_PER_BUCKET_AGGREGATE(6),
+    COMPS_PER_BUCKET_AGGREGATE(7),
+    COMPS_PER_BUCKET_AGGREGATE(8),
+    COMPS_PER_BUCKET_AGGREGATE(9),
+    COMPS_PER_BUCKET_AGGREGATE(10),
+    COMPS_PER_BUCKET_AGGREGATE(11),
+    COMPS_PER_BUCKET_AGGREGATE(12),
+    COMPS_PER_BUCKET_AGGREGATE(13)
 };
+
 
 void* QueryDescription::GetFirstMatchingComponent(std::size_t componentSize)
 {
