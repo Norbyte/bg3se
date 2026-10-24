@@ -120,10 +120,15 @@ void ExtenderMessage::Serialize(BitstreamSerializer & serializer)
     if (serializer.IsWriting) {
         uint32_t size = (uint32_t)msg.ByteSizeLong();
         if (size <= MaxTotalMessageLength) {
-            serializer.WriteBytes(&size, sizeof(size));
-            void * buf = GameAllocRaw(size);
-            msg.SerializeToArray(buf, size);
-            serializer.WriteBytes(buf, size);
+            void* buf = GameAllocRaw(size);
+            if (msg.SerializeToArray(buf, size)) {
+                serializer.WriteBytes(&size, sizeof(size));
+                serializer.WriteBytes(buf, size);
+            } else {
+                uint32_t dummy = 0;
+                serializer.WriteBytes(&dummy, sizeof(dummy));
+                OsiError("Failed to serialize extender message");
+            }
             GameFree(buf);
         } else {
             // Zero length indicates that a packet failed to serialize

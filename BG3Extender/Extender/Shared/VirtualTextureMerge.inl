@@ -3,6 +3,7 @@
 BEGIN_NS(vt)
 
 #define VT_EXPECT(expr) if (!(expr)) [[unlikely]] { throw std::runtime_error(#expr); }
+#define VT_RANGE_CHECK(capacity, offset, count, elem) VT_EXPECT(offset <= capacity && count <= (capacity - offset) / sizeof(elem))
 
 FourCCNode FourCCNode::FindNext(uint32_t tag)
 {
@@ -92,6 +93,7 @@ STDWString FourCCNode::ReadString(uint32_t tag)
 
     auto ccVal = val.Node->ValuePtr();
     auto ccSize = val.Node->ValueLength();
+    VT_EXPECT(ccSize >= 2);
     return STDWString((wchar_t const*)ccVal, ccSize / 2 - 1);
 }
 
@@ -121,10 +123,11 @@ struct GTSFile
 
     void ReadHeader()
     {
+        VT_EXPECT(Buf.size() >= sizeof(GTSHeader));
         auto buf = Buf.data();
         Header = reinterpret_cast<GTSHeader*>(buf);
         VT_EXPECT(Header->Magic == GTSHeader::GRPGMagic);
-        VT_EXPECT(Header->CurrentVersion == GTSHeader::CurrentVersion);
+        VT_EXPECT(Header->Version == GTSHeader::CurrentVersion);
         VT_EXPECT(Header->TileWidth == 0x90 && Header->TileHeight == 0x90 && Header->TileBorder == 8);
         VT_EXPECT(Header->PageSize == 1024 * 1024);
         VT_EXPECT(Header->NumLayers == 3);
@@ -135,7 +138,9 @@ struct GTSFile
     {
         auto buf = Buf.data();
         Layers = std::span<GTSTileSetLayer>(reinterpret_cast<GTSTileSetLayer*>(buf + Header->LayersOffset), Header->NumLayers);
+        VT_RANGE_CHECK(Buf.size(), Header->LayersOffset, Header->NumLayers, GTSTileSetLayer);
         Levels = std::span<GTSTileSetLevel>(reinterpret_cast<GTSTileSetLevel*>(buf + Header->LevelsOffset), Header->NumLevels);
+        VT_RANGE_CHECK(Buf.size(), Header->LevelsOffset, Header->NumLevels, GTSTileSetLevel);
         PerLevelFlatTileIndices.resize(Header->NumLevels);
 
         VT_EXPECT(Levels[0].Width <= 0x1000 && Levels[0].Height <= 0x1000);
@@ -145,6 +150,7 @@ struct GTSFile
             auto off = Levels[i].FlatTileIndicesOffset;
             auto sz = Levels[i].Height * Levels[i].Width * Header->NumLayers;
             PerLevelFlatTileIndices[i] = std::span<uint32_t>(reinterpret_cast<uint32_t*>(buf + off), sz);
+            VT_RANGE_CHECK(Buf.size(), off, sz, uint32_t);
 
             for (auto index : PerLevelFlatTileIndices[i]) {
                 VT_EXPECT((index & 0x80000000u) != 0 || index < Header->NumFlatTileInfos);
@@ -152,11 +158,13 @@ struct GTSFile
         }
 
         ParameterBlocks = std::span<GTSParameterBlockHeader>(reinterpret_cast<GTSParameterBlockHeader*>(buf + Header->ParameterBlockHeadersOffset), Header->ParameterBlockHeadersCount);
+        VT_RANGE_CHECK(Buf.size(), Header->ParameterBlockHeadersOffset, Header->ParameterBlockHeadersCount, GTSParameterBlockHeader);
 
         ParameterBlockBlobs.resize((uint32_t)ParameterBlocks.size());
         for (uint32_t i = 0; i < Header->ParameterBlockHeadersCount; i++)
         {
             void* data = buf + ParameterBlocks[i].FileInfoOffset;
+            VT_RANGE_CHECK(Buf.size(), ParameterBlocks[i].FileInfoOffset, ParameterBlocks[i].ParameterBlockSize, uint8_t);
 
             switch (ParameterBlocks[i].Codec) {
             case GTSCodec::Uniform:
@@ -195,8 +203,11 @@ struct GTSFile
     {
         auto buf = Buf.data();
         PageFiles = std::span<GTSPageFileInfo>(reinterpret_cast<GTSPageFileInfo*>(buf + Header->PageFileMetadataOffset), Header->NumPageFiles);
+        VT_RANGE_CHECK(Buf.size(), Header->PageFileMetadataOffset, Header->NumPageFiles, GTSPageFileInfo);
         PackedTileIDs = std::span<GTSPackedTileID>(reinterpret_cast<GTSPackedTileID*>(buf + Header->PackedTileIDsOffset), Header->NumPackedTileIDs);
+        VT_RANGE_CHECK(Buf.size(), Header->PackedTileIDsOffset, Header->NumPackedTileIDs, GTSPackedTileID);
         FlatTileInfos = std::span<GTSFlatTileInfo>(reinterpret_cast<GTSFlatTileInfo*>(buf + Header->FlatTileInfoOffset), Header->NumFlatTileInfos);
+        VT_RANGE_CHECK(Buf.size(), Header->FlatTileInfoOffset, Header->NumFlatTileInfos, GTSFlatTileInfo);
 
         for (auto const& tileInfo : FlatTileInfos) {
             VT_EXPECT(tileInfo.PackedTileIndex < Header->NumPackedTileIDs);
@@ -216,6 +227,7 @@ struct GTSFile
         auto buf = Buf.data();
         VT_EXPECT(Header->FourCCListSize > 0);
         FourCC = FourCCNode(reinterpret_cast<GTSFourCCMetadata*>(buf + Header->FourCCListOffset), Header->FourCCListSize);
+        VT_RANGE_CHECK(Buf.size(), Header->FourCCListOffset, Header->FourCCListSize, uint8_t);
 
         auto meta = FourCC.Enter('META');
         auto atls = meta.Enter('ATLS');
@@ -560,6 +572,9 @@ struct GTSStitchedFile
         std::span<uint32_t>& srcIndices, Array<uint32_t>& dstIndices,
         uint32_t offsetX, uint32_t offsetY, uint32_t offsetFlatTile)
     {
+        VT_EXPECT(offsetX <= dstLevel.Width && srcLevel.Width <= dstLevel.Width - offsetX
+            && offsetY <= dstLevel.Height && srcLevel.Height <= dstLevel.Height - offsetY);
+
         for (uint32_t y = 0; y < srcLevel.Height; y++) {
             for (uint32_t x = 0; x < srcLevel.Width; x++) {
                 for (uint32_t layer = 0; layer < Layers.size(); layer++) {

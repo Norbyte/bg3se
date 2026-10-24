@@ -75,7 +75,13 @@ bool MergeGTS(HashMap<STDString, GTSMapping>& relativePaths)
     DEBUG("Building %d output tile sets", groups.size());
 
     for (auto const& group : groups) {
-        auto mergedPath = MergeGTS(group);
+        std::optional<STDString> mergedPath;
+        try {
+            mergedPath = MergeGTS(group);
+        } catch (std::runtime_error& e) {
+            ERR("(#%d) Failed to merge VT group: %s", group.Index, e.what());
+        }
+
         if (mergedPath) {
             for (auto gts : group.TileSets) {
                 for (auto& input : relativePaths) {
