@@ -1,4 +1,5 @@
 param($Channel)
+$ErrorActionPreference = "Stop"
 
 if ($Channel -ne "Devel" -And $Channel -ne "Release" -And $Channel -ne "Nightly") {
 	Write-Error -Message "Usage: publish.ps1 <Channel>"
@@ -70,6 +71,9 @@ function Build-Extender
 
 	Write-Output " ===== BUILDING GAME EXTENDER ===== "
 	msbuild BG3Tools.sln "/p:Configuration=Game Release" /t:Build /m /nologo /verbosity:quiet /consoleloggerparameters:summary
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Build failed: $LASTEXITCODE"
+    }
 	
 	Write-Output " ===== BUILDING SYMTAB ===== "
 	x64\Release\SymbolTableGenerator.exe "x64\Game Release\BG3ScriptExtender.pdb" "x64\Game Release\BG3ScriptExtender.symtab"
