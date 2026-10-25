@@ -98,15 +98,18 @@ struct CanInteractComponent : public BaseComponent
 {
     DEFINE_COMPONENT(CanInteract, "eoc::CanInteractComponent")
 
+    //# P_BITMASK(Flags)
     CanInteractFlags Flags;
-    uint16_t Flags2;
+    //# P_BITMASK(State)
+    [[bg3::legacy(Flags2)]] CanInteractStateFlags State;
 };
 
 struct CanSpeakComponent : public BaseComponent
 {
     DEFINE_COMPONENT(CanSpeak, "eoc::CanSpeakComponent")
 
-    uint16_t Flags;
+    //# P_BITMASK(Flags)
+    SpeakingCapabilityFlags Flags;
 };
 
 struct OriginComponent : public BaseComponent

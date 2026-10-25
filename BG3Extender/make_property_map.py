@@ -817,11 +817,12 @@ if cur_names != propmap_names + preprocessor.names:
 else:
     print("No property map name changes detected")
 
-if cur_maps != propmap + preprocessor.lines:
-    with open('GameDefinitions/Generated/PropertyMaps.inl', 'w') as f:
-        f.write(propmap + preprocessor.lines)
-else:
+if cur_maps == propmap + preprocessor.lines:
     print("No property map changes detected")
+
+# Always rewrite PropertyMaps.inl as change detection is based on that
+with open('GameDefinitions/Generated/PropertyMaps.inl', 'w') as f:
+    f.write(propmap + preprocessor.lines)
 
 if cur_components != component_names:
     with open('GameDefinitions/Generated/ComponentTypes.inl', 'w') as f:
@@ -833,6 +834,7 @@ property_meta = '#pragma once\n'
 property_meta += 'BEGIN_SE()\n'
 property_meta += 'static constexpr int StructRegistrySize = ' + str(shared.next_struct_id) + ';\n'
 property_meta += 'END_SE()\n'
+
 if cur_meta != property_meta:
     with open('GameDefinitions/Generated/PropertyMapMeta.h', 'w') as f:
         f.write(property_meta)

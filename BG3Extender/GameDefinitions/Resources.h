@@ -663,8 +663,10 @@ struct DialogResource : public LoadableResource
     Array<uint8_t> SpeakerSlotsWithLines;
     STDString Name;
     uint8_t TimelineSplitScreenPriority;
-    uint8_t Flags;
-    uint8_t Flags2;
+    //# P_BITMASK(Flags)
+    DialogResourceFlags Flags;
+    //# P_BITMASK(Flags2)
+    DialogResourceFlags2 Flags2;
 };
 
 struct DiffusionProfileResource : public LoadableResource
@@ -975,7 +977,8 @@ struct SoundResource : public Resource
     float Duration;
     float MaxDistance;
     AudioCodec SoundCodec;
-    uint8_t Flags;
+    //# P_BITMASK(Flags)
+    SoundResourceFlags Flags;
 };
 
 struct TerrainBrushResource : public LoadableResource

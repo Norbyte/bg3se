@@ -1492,20 +1492,49 @@ BEGIN_BITMASK(CanMoveFlags, uint16_t)
 END_ENUM()
 
 BEGIN_BITMASK(CanInteractFlags, uint16_t)
-    EV(CanInteract, 1)
-    EV(CanUsePortals, 2)
+    EV(CanInteract, 1) // Legacy
+    EV(CanBasicItemInteractions, 1)
+    EV(CanUsePortals, 2) // Legacy
+    EV(CanUseDoors, 2)
     EV(CanUseLadder, 4)
-    EV(CanUseFlag8, 8)
+    EV(CanUseFlag8, 8) // Legacy
+    EV(CanUseContainers, 8)
+    EV(CanPickup, 0x10)
+    EV(CanConsumeItems, 0x20)
+    EV(CanMoveObjects, 0x40)
+END_ENUM()
+
+BEGIN_BITMASK(CanInteractStateFlags, uint16_t)
+    EV(Encumbered, 1)
+    EV(Shapeshifted, 2)
 END_ENUM()
 
 BEGIN_BITMASK(CanDoActionsFlags, uint16_t)
     EV(CanCastSpells, 1)
     EV(CanAttack, 2)
-    EV(CanDoFlag4, 4)
+    EV(CanDoFlag4, 4) // Legacy
+    EV(CanDoWorldActions, 4)
     EV(CanCastRituals, 8)
     EV(CanPickpocket, 0x10)
     EV(CanLockpick, 0x20)
     EV(CanDisarmTrap, 0x40)
+END_ENUM()
+
+BEGIN_BITMASK(AwarenessCapabilityFlags, uint16_t)
+    EV(CanSee, 1)
+    EV(SpotSneakers, 2)
+    EV(DetectCrimes, 4)
+    EV(AvoidTraps, 8)
+    EV(ActivateTriggers, 0x10)
+    EV(DetectVictimOnlyCrimes, 0x20)
+END_ENUM()
+
+BEGIN_BITMASK(SpeakingCapabilityFlags, uint16_t)
+    EV(Spells, 1)
+    EV(Dialogue, 2)
+    EV(VoiceBark, 4)
+    EV(PlayVocals, 8)
+    EV(PlayPNC, 0x10)
 END_ENUM()
 
 BEGIN_BITMASK(ConstructionTileFlags, uint8_t)
