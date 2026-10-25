@@ -306,11 +306,14 @@ struct [[bg3::hidden]] ResourceBank
 struct [[bg3::hidden]] ResourcePackage
 {
     void* VMT;
-    ResourceContainer Container;
+    // Editor only
+    // ResourceContainer Container;
     ResourceBank* Bank;
     FixedString PackageName;
     STDString Path;
-    bool field_38;
+    // Release build only
+    LegacyRefMap<FixedString, resource::Resource*> Resources;
+    bool IsStandardModule;
 };
 
 struct [[bg3::hidden]] ResourceManager
@@ -1206,6 +1209,7 @@ END_NS()
 
 BEGIN_NS(lua)
 
+LUA_POLYMORPHIC(resource::Resource);
 LUA_POLYMORPHIC(resource::PhysicsResource::ObjectTemplate::PhysicsObject);
 
 END_NS()
