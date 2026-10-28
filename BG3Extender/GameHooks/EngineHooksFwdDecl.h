@@ -131,3 +131,12 @@ using DataContextProvider__ExecuteCommandQueuesProc = void(DataContextProvider*,
 using DeferredPredicatesManager__UpdateFromUIProc = void(DeferredPredicatesManager*);
 
 END_NS()
+
+BEGIN_SE()
+
+struct ModManager;
+
+// Writes the active mod list (ModManager::Settings) to the profile's modsettings.lsx
+using ModManager__SaveSettingsProc = void (ModManager* self);
+
+END_SE()

@@ -48,6 +48,8 @@ struct StaticSymbols : Noncopyable<StaticSymbols>
     ecl::CursorControl** ecl__gCursorControl{ nullptr };
     ecl::DragDropManager** ls__gDragDropManager{ nullptr };
 
+    ModManager__SaveSettingsProc* ls__ModManager__SaveSettings{ nullptr };
+
     TranslatedStringRepository** ls__gTranslatedStringRepository{ nullptr };
     TranslatedStringKeyManager** ls__gTranslatedStringKeyManager{ nullptr };
 

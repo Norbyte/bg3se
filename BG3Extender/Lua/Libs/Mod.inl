@@ -87,6 +87,34 @@ ModManager* GetModManager(lua_State* L)
     return ExtensionStateBase::FromLua(L).GetModManager();
 }
 
+/// <summary>
+/// Writes the client's active mod list (`GetModManager().Settings.Mods`, changed from Lua or not)
+/// to the profile's `modsettings.lsx`, as the game's mod manager does when a mod is turned on or
+/// off. The game puts each mod's dependencies before it while saving, and loads the list on its
+/// next start. Client only: the game's mod manager saves the client's list.
+/// </summary>
+void SaveSettings(lua_State* L)
+{
+    if (!State::FromLua(L)->IsClient()) {
+        luaL_error(L, "Ext.Mod.SaveSettings is client-only");
+        return;
+    }
+
+    auto save = GetStaticSymbols().ls__ModManager__SaveSettings;
+    if (save == nullptr) {
+        luaL_error(L, "ModManager::SaveSettings was not found in this game version");
+        return;
+    }
+
+    auto modManager = GetModManager(L);
+    if (modManager == nullptr) {
+        luaL_error(L, "No mod manager");
+        return;
+    }
+
+    save(modManager);
+}
+
 void RegisterModLib()
 {
     DECLARE_MODULE(Mod, Both)
@@ -96,6 +124,7 @@ void RegisterModLib()
     MODULE_FUNCTION(GetMod)
     MODULE_FUNCTION(GetBaseMod)
     MODULE_FUNCTION(GetModManager)
+    MODULE_FUNCTION(SaveSettings)
     END_MODULE()
 }
 
