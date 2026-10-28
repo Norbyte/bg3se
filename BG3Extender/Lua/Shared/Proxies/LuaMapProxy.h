@@ -197,9 +197,10 @@ public:
         if constexpr (std::is_default_constructible_v<TValue>) {
             auto key = get<TKey>(L, luaKeyIndex);
             if (lua_type(L, luaValueIndex) == LUA_TNIL) {
-                // FIXME - add support for remove() in refmaps!
-                // obj->Remove(key);
-                return false;
+                auto it = obj->find(key);
+                if (it != obj->end()) {
+                    obj->erase(it);
+                }
             } else {
                 auto value = get<TValue>(L, luaValueIndex);
                 obj->insert(key, value);
