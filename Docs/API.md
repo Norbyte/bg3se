@@ -1788,6 +1788,10 @@ General utility helpers.
 - `Ext.Utils.IsValidHandle(handle): boolean`
 - `Ext.Utils.ProfileBegin(name)` / `Ext.Utils.ProfileEnd()`
 
+### Dialogues
+
+- `Ext.Utils.GetDialogManager(): DialogManager?` - the dialogue manager of the current context. The server and the client each have their own, with their own copies of the dialogues (`CachedDialogs`).
+
 
 <a id="audio"></a>
 ## Audio - `Ext.Audio`
