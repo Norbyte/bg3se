@@ -1870,6 +1870,17 @@ Access to static game resources such as Races, Classes, and other UUID-based eng
 
 Common manager types include: `ClassDescription`, `Progression`, `Feat`, `Race`, `Background`, `God`, etc.
 
+### Loading resources
+
+- `Ext.StaticData.LoadResource(resourceGuid, bankType): Dialog?` - loads a resource the game only loads when it needs it, and holds a reference on it until `ReleaseResource`; calling it again while the reference is held returns the same object. Only `Dialog` is supported: the dialogue is loaded into the dialogue manager of the current context (`Ext.Utils.GetDialogManager`), the way the game does before playing it. The client only loads the dialogues it plays; this gives it a copy of any other one.
+- `Ext.StaticData.ReleaseResource(resourceGuid, bankType): boolean` - releases the reference held by `LoadResource`, if it is still held; the game unloads the dialogue once nothing else uses it.
+
+```lua
+local dialog = Ext.StaticData.LoadResource("b5d2ec35-9852-8b1b-aba8-c404cc93ab32", "Dialog")
+-- ...
+Ext.StaticData.ReleaseResource("b5d2ec35-9852-8b1b-aba8-c404cc93ab32", "Dialog")
+```
+
 <a id="resources"></a>
 ## Resources - `Ext.Resource`
 

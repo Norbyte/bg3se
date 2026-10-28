@@ -133,3 +133,19 @@ using DataContextProvider__ExecuteCommandQueuesProc = void(DataContextProvider*,
 using DeferredPredicatesManager__UpdateFromUIProc = void(DeferredPredicatesManager*);
 
 END_NS()
+
+BEGIN_NS(resource)
+
+struct DialogResource;
+
+END_NS()
+
+BEGIN_NS(dlg)
+
+struct Dialog;
+struct DialogManager;
+
+// Loads a dialogue into the manager's cache, or takes another reference on the cached copy
+using DialogManager__LoadDialogProc = Dialog* (DialogManager* self, resource::DialogResource* resource, void* a3, void* a4);
+
+END_NS()
