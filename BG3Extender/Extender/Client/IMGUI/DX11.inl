@@ -141,6 +141,7 @@ public:
 
     void NewFrame() override
     {
+        std::lock_guard _(globalResourceLock_);
         curViewport_ = (curViewport_ + 1) % viewports_.size();
         GImGui->Viewports[0] = &viewports_[curViewport_].Viewport;
 
@@ -149,6 +150,7 @@ public:
             IMGUI_DEBUG("Rebuilding font atlas");
             renderObjectsCreated_ = false;
             ImGui_ImplDX11_InvalidateDeviceObjects();
+            drawViewport_ = -1;
             requestReloadFonts_ = false;
             initializationFailed_ = false;
         }
@@ -172,6 +174,7 @@ public:
     void FinishFrame() override
     {
         OPTICK_EVENT(Optick::Category::Rendering);
+        std::lock_guard _(globalResourceLock_);
         auto& vp = viewports_[curViewport_].Viewport;
         auto& drawLists = viewports_[curViewport_].ClonedDrawLists;
 
@@ -326,6 +329,7 @@ private:
         /* [in] */ UINT SyncInterval,
         /* [in] */ UINT Flags)
     {
+        std::lock_guard _(globalResourceLock_);
         if (pSwapChain != swapChain_
             || !initialized_
             || initializationFailed_
@@ -373,6 +377,7 @@ private:
     bool renderObjectsCreated_{ false };
     bool initializationFailed_{ false };
     bool requestReloadFonts_{ false };
+    std::mutex globalResourceLock_;
     uint32_t width_{ 0 };
     uint32_t height_{ 0 };
 
