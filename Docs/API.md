@@ -52,6 +52,7 @@
 - [Templates](#templates)
 - [Static Data](#static-data)
 - [Resources](#resources)
+  - [Resource Packages](#resource-packages)
 - [Level](#level)
 - [Math Library](#math)
 - [Engine Events](#engine-events)
@@ -1851,10 +1852,66 @@ Access to visual resources including Meshes, Materials, and Textures, via resour
 
 ### Methods
 
-- `Ext.Resource.Get(resourceId, bankType)`
+- `Ext.Resource.Get(resourceId, bankType): ResourceResource?`
 - `Ext.Resource.GetAll(bankType): FixedString[]`
+- `Ext.Resource.GetPackages(): FixedString[]`
+- `Ext.Resource.GetPackageResources(packageName, [bankType]): FixedString[]`
+- `Ext.Resource.GetPackageResource(packageName, resourceId, [bankType]): ResourceResource?`
 
 Common bank types include `Visual`, `Material`, `Texture`, `Animation`, `Effect`, `Sound`, `Script`, etc.
+
+Resources are returned as their specific type (eg. `ResourceVisualResource` for `Visual` resources, `ResourceTextureResource` for `Texture` resources).
+
+<a id="resource-packages"></a>
+### Resource Packages
+
+Resources are loaded from resource packages. `Get` and `GetAll` search all loaded resources, while the package functions only look at the resources defined in a single package; this is useful for finding out where a resource was defined.
+Package names are based on the location of the package in the mod (eg. `GustavX/Assets/Characters/Dragonborn/Female_Armor`).
+
+#### Ext.Resource.GetPackages(): FixedString[]
+
+Returns the path of all loaded resource packages.
+
+Example:
+```lua
+for _, name in ipairs(Ext.Resource.GetPackages()) do
+    _P(name)
+end
+```
+
+#### Ext.Resource.GetPackageResources(packageName, [bankType]): FixedString[]
+
+Returns the GUID of all resources defined in the specified package.
+When the optional parameter `bankType` is specified, it'll only return resources of the specified type.
+If the package doesn't exist, an empty table is returned.
+
+Example:
+```lua
+local package = "GustavX/Assets/Characters/Dragonborn/Female_Armor"
+-- All resources in the package
+_D(Ext.Resource.GetPackageResources(package))
+-- Only the Visual resources in the package
+_D(Ext.Resource.GetPackageResources(package, "Visual"))
+```
+
+#### Ext.Resource.GetPackageResource(packageName, resourceId, [bankType]): Resource?
+
+Returns the specified resource from the package.
+Returns `nil` if the package doesn't exist, the package doesn't contain a resource with the specified GUID, or (when `bankType` is specified) the resource is not of the specified type.
+
+Example:
+```lua
+-- Find all packages that define the specified resource
+local function FindResourcePackages(resourceId)
+    local packages = {}
+    for _, name in ipairs(Ext.Resource.GetPackages()) do
+        if Ext.Resource.GetPackageResource(name, resourceId) ~= nil then
+            table.insert(packages, name)
+        end
+    end
+    return packages
+end
+```
 
 <a id="level"></a>
 ## Levels, Pathfinding & Physics - `Ext.Level`

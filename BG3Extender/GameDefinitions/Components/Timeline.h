@@ -288,8 +288,8 @@ struct PeanutSlotData
 
 struct TimelinePlayerActor
 {
-    PlayerId Player;
     EntityHandle Actor;
+    PlayerId Player;
 };
 
 

@@ -230,8 +230,10 @@ struct Tag : public resource::GuidResource
     FixedString Name;
     STDString Description;
     FixedString Icon;
-    uint32_t Categories{ 0 }; // FIXME - map to flags
-    uint32_t Properties{ 0 }; // FIXME - map to flags
+    //# P_BITMASK(Categories)
+    TagCategoryFlags Categories{ 0 };
+    //# P_BITMASK(Properties)
+    TagPropertyFlags Properties{ 0 };
     TranslatedString DisplayName;
     TranslatedString DisplayDescription;
 };
@@ -304,7 +306,7 @@ struct Origin : public resource::GuidResource
     Array<stats::PassivePrototype*> PassivePrototypes;
     Array<Guid> AppearanceTags;
     Array<Guid> ReallyTags;
-    uint32_t Flags{ 0 };
+    OriginFlags Flags{ 0 };
     STDString Overview;
     STDString CloseUpA;
     STDString CloseUpB;
@@ -530,7 +532,7 @@ struct Flag : public resource::GuidResource
 
     FixedString Name;
     STDString Description;
-    uint8_t Usage{ 0 }; // FIXME - map to flags
+    FlagType Usage{ 0 };
 };
 
 struct FeatRequirement
@@ -1569,13 +1571,13 @@ struct ShapeshiftRule : public resource::GuidResource
 
     struct TypedInt
     {
-        uint8_t Type{ 0 };
+        ShapeshiftChangeType Type{ 0 };
         int32_t Value{ 0 };
     };
 
     struct TypedFloat
     {
-        uint8_t Type{ 0 };
+        ShapeshiftChangeType Type{ 0 };
         float Value{ .0f };
     };
 
@@ -1590,10 +1592,10 @@ struct ShapeshiftRule : public resource::GuidResource
     bool ApplyTagsFromTemplate{ false };
     Array<Guid> TagsAdd;
     Array<Guid> TagsRemove;
-    uint16_t ActionCapabilities{ 0 };
-    uint16_t InteractionsCapabilities{ 0 };
-    uint16_t AwarenessCapabilities{ 0 };
-    uint16_t SpeakingCapabilities{ 0 };
+    CanDoActionsFlags ActionCapabilities{ 0 };
+    CanInteractFlags InteractionsCapabilities{ 0 };
+    AwarenessCapabilityFlags AwarenessCapabilities{ 0 };
+    SpeakingCapabilityFlags SpeakingCapabilities{ 0 };
     bool ChangeRace{ false };
     bool ChangeBodyType{ false };
     bool UseShapeshiftIdentity{ false };
@@ -1622,17 +1624,17 @@ struct ShapeshiftRule : public resource::GuidResource
     STDString PathInfluence;
     std::optional<Guid> DummyClass;
     bool BlockLevelUp{ false };
-    uint8_t FlagsInheritanceType{ 0 };
-    uint8_t DefaultBoostsInheritanceType{ 0 };
-    uint8_t PersonalStatusImmunitiesInheritanceType{ 0 };
-    uint8_t SpellCastingAbilityInheritanceType{ 0 };
-    uint8_t PassivesInheritanceType{ 0 };
-    uint8_t ResistancesInheritanceType{ 0 };
-    uint8_t DifficultyStatusesInheritanceType{ 0 };
-    uint8_t ProficiencyGroupsInheritanceType{ 0 };
-    uint8_t BloodSurfaceTypeInheritanceType{ 0 };
-    uint8_t HitBloodTypeInheritanceType{ 0 };
-    uint8_t DeathActionsInheritanceType{ 0 };
+    ShapeshiftInheritanceType FlagsInheritanceType{ 0 };
+    ShapeshiftInheritanceType DefaultBoostsInheritanceType{ 0 };
+    ShapeshiftInheritanceType PersonalStatusImmunitiesInheritanceType{ 0 };
+    ShapeshiftInheritanceType SpellCastingAbilityInheritanceType{ 0 };
+    ShapeshiftInheritanceType PassivesInheritanceType{ 0 };
+    ShapeshiftInheritanceType ResistancesInheritanceType{ 0 };
+    ShapeshiftInheritanceType DifficultyStatusesInheritanceType{ 0 };
+    ShapeshiftInheritanceType ProficiencyGroupsInheritanceType{ 0 };
+    ShapeshiftInheritanceType BloodSurfaceTypeInheritanceType{ 0 };
+    ShapeshiftInheritanceType HitBloodTypeInheritanceType{ 0 };
+    ShapeshiftInheritanceType DeathActionsInheritanceType{ 0 };
 };
 
 

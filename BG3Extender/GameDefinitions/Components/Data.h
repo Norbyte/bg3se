@@ -372,6 +372,7 @@ struct CanDoActionsComponent : public BaseComponent
 {
     DEFINE_COMPONENT(CanDoActions, "eoc::CanDoActionsComponent")
 
+    //# P_BITMASK(Flags)
     CanDoActionsFlags Flags;
 };
 
@@ -387,6 +388,7 @@ struct CanMoveComponent : public BaseComponent
 {
     DEFINE_COMPONENT(CanMove, "eoc::CanMoveComponent")
 
+    //# P_BITMASK(Flags)
     CanMoveFlags Flags;
     [[bg3::legacy(field_2)]] uint16_t Encumbrance;
     [[bg3::legacy(field_4)]] MovementSpeedType SpeedLimit;
@@ -396,7 +398,8 @@ struct CanSenseComponent : public BaseComponent
 {
     DEFINE_COMPONENT(CanSense, "eoc::CanSenseComponent")
 
-    uint16_t Flags;
+    //# P_BITMASK(Flags)
+    AwarenessCapabilityFlags Flags;
 };
 
 struct ConcentrationComponent : public BaseComponent
