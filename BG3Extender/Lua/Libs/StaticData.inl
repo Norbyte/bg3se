@@ -250,28 +250,15 @@ UserReturn CreateGuidResource(lua_State* L, ExtResourceManagerType type, std::op
     return 1;
 }
 
-#define FOR_RESOURCE_TYPE(ty)                                                            		  \
-    case ResourceBankType::ty: MakeObjectRef(L, static_cast<ty##Resource*>(resource)); break;
-
-UserReturn GetResource(lua_State* L, FixedString const& resourceGuid, ResourceBankType type)
+Resource* GetResource(lua_State* L, FixedString const& resourceGuid, ResourceBankType type)
 {
     auto bank = GetStaticSymbols().GetCurrentResourceBank();
     if (!bank) {
         LuaError("Resource manager not available");
-        push(L, nullptr);
-        return 1;
+        return nullptr;
     }
 
-    auto resource = bank->GetResource(type, resourceGuid);
-    if (resource != nullptr) {
-        switch (type)
-        {
-            FOR_EACH_NONGUID_RESOURCE_TYPE()
-        }
-    } else {
-        push(L, nullptr);
-    }
-    return 1;
+    return bank->GetResource(type, resourceGuid);
 }
 
 
@@ -290,6 +277,76 @@ Array<FixedString> GetAllResources(ResourceBankType type)
     }
 
     return ids;
+}
+
+
+Array<FixedString> GetPackages()
+{
+    OPTICK_EVENT();
+    auto bank = GetStaticSymbols().GetCurrentResourceBank();
+    if (!bank) {
+        LuaError("Resource manager not available");
+        return {};
+    }
+
+    Array<FixedString> ids;
+    for (auto const& package : bank->Packages) {
+        ids.push_back(package.Key);
+    }
+
+    return ids;
+}
+
+
+Array<FixedString> GetPackageResources(FixedString const& packageName, std::optional<ResourceBankType> type)
+{
+    OPTICK_EVENT();
+    auto bank = GetStaticSymbols().GetCurrentResourceBank();
+    if (!bank) {
+        LuaError("Resource manager not available");
+        return {};
+    }
+
+    auto package = bank->Packages.try_get(packageName);
+    if (!package) {
+        return {};
+    }
+
+    Array<FixedString> ids;
+    for (auto const& resource : (*package)->Resources) {
+        if (!type || *type == (ResourceBankType)resource.Value->GetType()) {
+            ids.push_back(resource.Key);
+        }
+    }
+
+    return ids;
+}
+
+
+Resource* GetPackageResource(FixedString const& packageName, FixedString const& resourceId, std::optional<ResourceBankType> type)
+{
+    OPTICK_EVENT();
+    auto bank = GetStaticSymbols().GetCurrentResourceBank();
+    if (!bank) {
+        LuaError("Resource manager not available");
+        return nullptr;
+    }
+
+    auto package = bank->Packages.try_get(packageName);
+    if (!package) {
+        return nullptr;
+    }
+
+    auto resource = (*package)->Resources.try_get(resourceId);
+    if (resource) {
+        if (type && type != (ResourceBankType)(*resource)->GetType()) {
+            return nullptr;
+        }
+
+        return *resource;
+    } else {
+        return nullptr;
+    }
 }
 
 TextureAtlasMap* GetTextureAtlasManager()
@@ -337,6 +394,9 @@ void RegisterStaticDataLib()
     BEGIN_MODULE()
     MODULE_NAMED_FUNCTION("Get", GetResource)
     MODULE_NAMED_FUNCTION("GetAll", GetAllResources)
+    MODULE_NAMED_FUNCTION("GetPackages", GetPackages)
+    MODULE_NAMED_FUNCTION("GetPackageResources", GetPackageResources)
+    MODULE_NAMED_FUNCTION("GetPackageResource", GetPackageResource)
     END_MODULE()
 }
 

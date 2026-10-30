@@ -306,11 +306,14 @@ struct [[bg3::hidden]] ResourceBank
 struct [[bg3::hidden]] ResourcePackage
 {
     void* VMT;
-    ResourceContainer Container;
+    // Editor only
+    // ResourceContainer Container;
     ResourceBank* Bank;
     FixedString PackageName;
     STDString Path;
-    bool field_38;
+    // Release build only
+    LegacyRefMap<FixedString, resource::Resource*> Resources;
+    bool IsStandardModule;
 };
 
 struct [[bg3::hidden]] ResourceManager
@@ -660,8 +663,10 @@ struct DialogResource : public LoadableResource
     Array<uint8_t> SpeakerSlotsWithLines;
     STDString Name;
     uint8_t TimelineSplitScreenPriority;
-    uint8_t Flags;
-    uint8_t Flags2;
+    //# P_BITMASK(Flags)
+    DialogResourceFlags Flags;
+    //# P_BITMASK(Flags2)
+    DialogResourceFlags2 Flags2;
 };
 
 struct DiffusionProfileResource : public LoadableResource
@@ -972,7 +977,8 @@ struct SoundResource : public Resource
     float Duration;
     float MaxDistance;
     AudioCodec SoundCodec;
-    uint8_t Flags;
+    //# P_BITMASK(Flags)
+    SoundResourceFlags Flags;
 };
 
 struct TerrainBrushResource : public LoadableResource
@@ -1206,6 +1212,7 @@ END_NS()
 
 BEGIN_NS(lua)
 
+LUA_POLYMORPHIC(resource::Resource);
 LUA_POLYMORPHIC(resource::PhysicsResource::ObjectTemplate::PhysicsObject);
 
 END_NS()

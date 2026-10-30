@@ -93,12 +93,20 @@ inline SymbolManagerInternals* GetSymbolManager()
 inline char const* SymbolManager::GetString(uint32_t index)
 {
     auto syms = GetSymbolManager();
+    char const* str;
+
+    auto lock = GetStaticSymbols().Noesis__SymbolManager__Lock;
+    AcquireSRWLockShared(lock);
+
     // Handle possibly corrupted symbol ptrs
     if (index < syms->Strings.Size()) {
-        return syms->Strings[index];
+        str = syms->Strings[index];
     } else {
-        return "";
+        str = "";
     }
+
+    ReleaseSRWLockShared(lock);
+    return str;
 }
 
 inline const Type* Reflection::GetType(Symbol name)

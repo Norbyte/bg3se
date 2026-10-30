@@ -118,11 +118,12 @@ try:
 except FileNotFoundError:
     pass
 
-if cur_enumerations != preprocessor.lines:
-    with open('GameDefinitions/Generated/Enumerations.inl', 'w') as f:
-        f.write(preprocessor.lines)
-else:
+if cur_enumerations == preprocessor.lines:
     print("No enumeration changes detected")
+
+# Always rewrite Enumerations.inl as change detection is based on that
+with open('GameDefinitions/Generated/Enumerations.inl', 'w') as f:
+    f.write(preprocessor.lines)
 
 if cur_extenumerations != external_preprocessor.lines:
     with open('GameDefinitions/Generated/ExternalEnumerations.inl', 'w') as f:
@@ -135,7 +136,8 @@ enum_meta += 'BEGIN_SE()\n'
 enum_meta += 'static constexpr int EnumTypeRegistrySize = ' + str(shared.next_enum_id) + ';\n'
 enum_meta += 'static constexpr int BitmaskTypeRegistrySize = ' + str(shared.next_bitmask_id) + ';\n'
 enum_meta += 'END_SE()\n'
-if cur_enum_meta != enum_meta:
+
+if cur_enum_meta == enum_meta:
     with open('GameDefinitions/Generated/EnumerationMeta.h', 'w') as f:
         f.write(enum_meta)
 else:
