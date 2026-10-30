@@ -62,7 +62,7 @@ public:
         DetourTransactionBegin();
         DetourUpdateThread(GetCurrentThread());
         auto createInstance = vkGetInstanceProcAddr(nullptr, "vkCreateInstance");
-        CreateInstanceHook_.Wrap(ResolveFunctionTrampoline(createInstance));
+        CreateInstanceHook_.Wrap(createInstance);
         DetourTransactionCommit();
 
         CreateInstanceHook_.SetPostHook(&VulkanBackend::vkCreateInstanceHooked, this);
@@ -373,8 +373,8 @@ private:
             DetourUpdateThread(GetCurrentThread());
             auto createDevice = vkGetInstanceProcAddr(instance_, "vkCreateDevice");
             auto destroyDevice = vkGetInstanceProcAddr(instance_, "vkDestroyDevice");
-            CreateDeviceHook_.Wrap(ResolveFunctionTrampoline(createDevice));
-            DestroyDeviceHook_.Wrap(ResolveFunctionTrampoline(destroyDevice));
+            CreateDeviceHook_.Wrap(createDevice);
+            DestroyDeviceHook_.Wrap(destroyDevice);
             DetourTransactionCommit();
         }
     }
@@ -438,10 +438,10 @@ private:
 
             DetourTransactionBegin();
             DetourUpdateThread(GetCurrentThread());
-            CreatePipelineCacheHook_.Wrap(ResolveFunctionTrampoline(createPipelineCache));
-            CreateSwapchainKHRHook_.Wrap(ResolveFunctionTrampoline(createSwapchainKHR));
-            DestroySwapchainKHRHook_.Wrap(ResolveFunctionTrampoline(destroySwapchainKHR));
-            QueuePresentKHRHook_.Wrap(ResolveFunctionTrampoline(queuePresentKHR));
+            CreatePipelineCacheHook_.Wrap(createPipelineCache);
+            CreateSwapchainKHRHook_.Wrap(createSwapchainKHR);
+            DestroySwapchainKHRHook_.Wrap(destroySwapchainKHR);
+            QueuePresentKHRHook_.Wrap(queuePresentKHR);
             DetourTransactionCommit();
         }
     }
