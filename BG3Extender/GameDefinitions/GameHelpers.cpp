@@ -609,6 +609,19 @@ void MakePolymorphicRef(lua_State* L, aspk::KeyFrameData* value, LifetimeHandle 
 #undef V
 }
 
+#define FOR_RESOURCE_TYPE(ty) \
+    case ResourceBankType::ty: MakeDirectObjectRef(L, static_cast<resource::ty##Resource*>(value), lifetime); break;
+
+void MakePolymorphicRef(lua_State* L, resource::Resource* value, LifetimeHandle lifetime)
+{
+    switch ((ResourceBankType)value->GetType()) {
+        FOR_EACH_NONGUID_RESOURCE_TYPE()
+        default: MakeDirectObjectRef(L, value, lifetime); break;
+    }
+}
+
+#undef FOR_RESOURCE_TYPE
+
 void MakePolymorphicRef(lua_State* L, resource::PhysicsResource::ObjectTemplate::PhysicsObject* value, LifetimeHandle lifetime)
 {
     if (value->GetType().GetStringView() == "box")
