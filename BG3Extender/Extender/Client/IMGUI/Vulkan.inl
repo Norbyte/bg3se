@@ -195,7 +195,11 @@ public:
 
         if (requestReloadFonts_) {
             IMGUI_DEBUG("Rebuilding font atlas");
+            for (auto const& image : swapchain_.images_) {
+                VK_CHECK(vkWaitForFences(device_, 1, &image.fence, VK_TRUE, UINT64_MAX));
+            }
             ImGui_ImplVulkan_DestroyFontsTexture();
+            drawViewport_ = -1;
             requestReloadFonts_ = false;
         }
 
