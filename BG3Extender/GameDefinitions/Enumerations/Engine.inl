@@ -16,6 +16,7 @@ BEGIN_ENUM(LuaTypeId, uint32_t)
     EV(Nullable, 14)
     EV(Module, 15)
     EV(Variant, 16)
+    EV(Event, 17)
 END_ENUM()
 
 BEGIN_ENUM(PathRootType, int)

@@ -20,7 +20,7 @@
 #include <Lua/Libs/Timer.h>
 #include <Lua/Libs/Level.h>
 #include <Lua/Libs/Net.h>
-#include <GameDefinitions/Ai.h>
+#include <Lua/Shared/SharedEvents.h>
 
 #include <mutex>
 #include <unordered_set>
@@ -128,26 +128,7 @@ namespace bg3se::lua
     public:
         static_assert(LUA_EXTRASPACE >= sizeof(LuaExtraSpace), "Should have enough extra space in Lua for state");
 
-        enum RestrictionFlag
-        {
-            // Disable Osiris calls
-            RestrictOsiris = 1 << 0,
-            // Disable handle/guid to object conversion functions (Lua only)
-            RestrictHandleConversion = 1 << 1,
-
-            // Permit calls only available during module load state
-            ScopeModuleLoad = 1 << 16,
-            // Permit calls only available during session load state
-            ScopeSessionLoad = 1 << 17,
-            // Permit calls only available during module resume state
-            ScopeModuleResume = 1 << 18,
-            // Permit calls only available during initial module load state (before loading any files)
-            ScopeModulePreLoad = 1 << 19,
-
-            RestrictAll = 0x0000ffff,
-        };
-
-        uint32_t RestrictionFlags{ 0 };
+        RestrictionFlag RestrictionFlags{ 0 };
         std::unordered_set<int32_t> OverriddenLevelMaps;
 
         State(ExtensionStateBase& state, uint32_t generationId, bool isServer);
@@ -166,6 +147,11 @@ namespace bg3se::lua
         inline static State* FromLua(lua_State* L)
         {
             return GetExtra(L)->State;
+        }
+
+        inline bool IsRestricted(RestrictionFlag flag) const
+        {
+            return (uint32_t)(RestrictionFlags & flag) != 0;
         }
 
         inline lua_State * GetState()
@@ -279,20 +265,15 @@ namespace bg3se::lua
         void LoadBootstrap(STDString const& path, STDString const& modTable);
         virtual void OnGameSessionLoading();
         virtual void OnGameSessionLoaded();
-        void OnModuleLoadStarted();
-        void OnStatsLoaded();
-        void OnModuleResume();
         void OnLevelLoading();
-        void OnResetCompleted();
         void OnShutdown();
         virtual void OnUpdate(GameTime const& time);
-        void OnStatsStructureLoaded();
         void OnNetMessageReceived(StringView channel, StringView payload, StringView moduleUuid, int32_t requestId,
             int32_t replyId, UserId userId, bool binary);
         void OnFindPath(AiGrid* self, AiPathId pathId);
 
         template <class... Ret, class... Args>
-        bool CallExtRet(char const * func, uint32_t restrictions, std::tuple<Ret...>& ret, Args... args)
+        bool CallExtRet(char const * func, RestrictionFlag restrictions, std::tuple<Ret...>& ret, Args... args)
         {
             VMCallEntry _(this);
             auto lifetime = lifetimeStack_.GetCurrent();
@@ -302,7 +283,7 @@ namespace bg3se::lua
         }
 
         template <class... Args>
-        bool CallExt(char const * func, uint32_t restrictions, Args... args)
+        bool CallExt(char const * func, RestrictionFlag restrictions, Args... args)
         {
             VMCallEntry _(this);
             auto lifetime = lifetimeStack_.GetCurrent();
@@ -312,13 +293,22 @@ namespace bg3se::lua
         }
 
         template <class TEvent>
-        EventResult ThrowEvent(char const* eventName, TEvent& evt, bool canPreventAction = false, uint32_t restrictions = 0)
+        EventResult ThrowEvent(typename TEvent::ParamsType& evt, std::optional<bool> canPreventAction = {})
         {
-            static_assert(std::is_base_of_v<EventBase, TEvent>, "Event object must be a descendant of EventBase");
+            static_assert(IsEvent<TEvent>, "Event not registered with the event manager");
+            return ThrowEvent<typename TEvent::ParamsType>(EventID<TEvent>, evt, canPreventAction);
+        }
+
+        template <class TEventParams>
+        EventResult ThrowEvent(EventTypeId eventId, TEventParams& evt, std::optional<bool> canPreventAction = {})
+        {
+            static_assert(std::is_base_of_v<EventBase, TEventParams>, "Event object must be a descendant of EventBase");
+            auto meta = gEventRegistry.Get(eventId);
+
             VMCallEntry _(this);
             PushInternalFunction(L, "_ThrowEvent");
             MakeObjectRef(L, &evt);
-            return DispatchEvent(evt, eventName, canPreventAction, restrictions);
+            return DispatchEvent(evt, meta->LuaEventName, canPreventAction.value_or(meta->CanPreventAction), meta->Restrictions);
         }
 
         std::optional<int> LoadScript(STDString const & script, STDString const & name = "", int globalsIdx = 0);
@@ -348,13 +338,13 @@ namespace bg3se::lua
         net::NetworkRequestSystem networkRequests_;
 
         void OpenLibs();
-        EventResult DispatchEvent(EventBase& evt, char const* eventName, bool canPreventAction, uint32_t restrictions);
+        EventResult DispatchEvent(EventBase& evt, FixedString const& eventName, bool canPreventAction, RestrictionFlag restrictions);
     };
 
     class Restriction
     {
     public:
-        inline Restriction(State & state, uint32_t flags)
+        inline Restriction(State & state, RestrictionFlag flags)
             : state_(state), oldFlags_(state_.RestrictionFlags)
         {
             state_.RestrictionFlags |= flags;
@@ -367,33 +357,7 @@ namespace bg3se::lua
 
     private:
         State & state_;
-        uint32_t oldFlags_;
-    };
-
-
-    struct DoConsoleCommandEvent : public EventBase
-    {
-        STDString Command;
-    };
-
-    struct TickEvent : public EventBase
-    {
-        GameTime Time;
-    };
-
-    struct NetMessageEvent : public EventBase
-    {
-        StringView Channel;
-        StringView Payload;
-        std::optional<Guid> Module;
-        std::optional<net::RequestId> RequestId;
-        UserId UserID;
-        bool Binary{ false };
-    };
-
-    struct FindPathEvent : public EventBase
-    {
-        AiPath* Path{ nullptr };
+        RestrictionFlag oldFlags_;
     };
 }
 

@@ -13,6 +13,7 @@ BEGIN_NS(lua)
 
 void RegisterLibraries();
 void InitObjectProxyPropertyMaps();
+void InitEventRegistry();
 void RegisterSharedMetatables(lua_State* L);
 
 END_NS()
@@ -140,7 +141,6 @@ public:
 
     std::optional<STDString> GetModPersistentVars(STDString const& modTable);
     void RestoreModPersistentVars(STDString const& modTable, STDString const& vars);
-    void OnGameStateChanged(GameState fromState, GameState toState);
 
     bool Query(char const* mod, char const* name, RegistryEntry * func,
         std::vector<CustomFunctionParam> const & signature, OsiArgumentDesc & params);

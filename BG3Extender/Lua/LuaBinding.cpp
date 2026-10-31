@@ -1,6 +1,7 @@
 #include <stdafx.h>
 #include <Extender/ScriptExtender.h>
 #include <GameDefinitions/RootTemplates.h>
+#include <GameDefinitions/Ai.h>
 #include <Lua/LuaBinding.h>
 #include "resource.h"
 #include <fstream>
@@ -548,7 +549,7 @@ LifetimeHandle State::GetCurrentLifetime()
 void State::LoadBootstrap(STDString const& path, STDString const& modTable)
 {
     OPTICK_EVENT(Optick::Category::IO);
-    CallExt("_LoadBootstrap", RestrictAll, path, modTable);
+    CallExt("_LoadBootstrap", RestrictionFlag::All, path, modTable);
 }
 
 void State::FinishStartup()
@@ -622,32 +623,14 @@ std::optional<int> State::LoadScript(STDString const & script, STDString const &
 
 void State::OnGameSessionLoading()
 {
-    EmptyEvent params;
-    ThrowEvent("SessionLoading", params, false, RestrictAll | ScopeSessionLoad);
+    lua::EmptyEventParams params;
+    ThrowEvent<SessionLoadingEvent>(params);
 }
 
 void State::OnGameSessionLoaded()
 {
-    EmptyEvent params;
-    ThrowEvent("SessionLoaded", params, false, RestrictAll);
-}
-
-void State::OnModuleLoadStarted()
-{
-    EmptyEvent params;
-    ThrowEvent("ModuleLoadStarted", params, false, RestrictAll | ScopeModulePreLoad);
-}
-
-void State::OnStatsLoaded()
-{
-    EmptyEvent params;
-    ThrowEvent("StatsLoaded", params, false, RestrictAll | ScopeModuleLoad);
-}
-
-void State::OnModuleResume()
-{
-    EmptyEvent params;
-    ThrowEvent("ModuleResume", params, false, RestrictAll | ScopeModuleResume);
+    lua::EmptyEventParams params;
+    ThrowEvent<SessionLoadedEvent>(params);
 }
 
 void State::OnLevelLoading()
@@ -656,16 +639,10 @@ void State::OnLevelLoading()
     modVariableManager_.Invalidate();
 }
 
-void State::OnResetCompleted()
-{
-    EmptyEvent params;
-    ThrowEvent("ResetCompleted", params, false, 0);
-}
-
 void State::OnShutdown()
 {
-    EmptyEvent params;
-    ThrowEvent("Shutdown", params, false, 0);
+    EmptyEventParams params;
+    ThrowEvent<ShutdownEvent>(params);
 }
 
 void State::OnUpdate(GameTime const& time)
@@ -674,8 +651,8 @@ void State::OnUpdate(GameTime const& time)
     pathfinding_.Update();
     networkRequests_.Update();
 
-    TickEvent params{ .Time = time };
-    ThrowEvent("Tick", params, false, 0);
+    TickEventParams params{ .Time = time };
+    ThrowEvent<TickEvent>(params);
 
     {
         OPTICK_EVENT("GC");
@@ -689,12 +666,6 @@ void State::OnUpdate(GameTime const& time)
     }
 }
 
-void State::OnStatsStructureLoaded()
-{
-    EmptyEvent params;
-    ThrowEvent("StatsStructureLoaded", params, false, 0);
-}
-
 void State::OnNetMessageReceived(StringView channel, StringView payload, StringView moduleUuid, int32_t requestId,
     int32_t replyId, UserId userId, bool binary)
 {
@@ -703,7 +674,7 @@ void State::OnNetMessageReceived(StringView channel, StringView payload, StringV
         return;
     }
 
-    NetMessageEvent params {
+    NetMessageEventParams params {
         .Channel = channel,
         .Payload = payload,
         .Module = !moduleUuid.empty() ? Guid::Parse(moduleUuid) : std::optional<Guid>{},
@@ -713,9 +684,9 @@ void State::OnNetMessageReceived(StringView channel, StringView payload, StringV
     };
     if (!params.RequestId && !params.Module) {
         // Only dispatch legacy network messages through the old NetMessage event
-        ThrowEvent("NetMessage", params);
+        ThrowEvent<NetMessageEvent>(params);
     } else {
-        ThrowEvent("NetModMessage", params);
+        ThrowEvent<NetModMessageEvent>(params);
     }
 }
 
@@ -724,19 +695,20 @@ void State::OnFindPath(AiGrid* self, AiPathId pathId)
     auto path = self->PathMap.get_or_default(pathId);
     if (!path || path->SearchStarted) return;
 
-    FindPathEvent params;
-    params.Path = path;
-    ThrowEvent("FindPath", params);
+    FindPathEventParams params{
+        .Path = path
+    };
+    ThrowEvent<FindPathEvent>(params);
 }
 
-EventResult State::DispatchEvent(EventBase& evt, char const* eventName, bool canPreventAction, uint32_t restrictions)
+EventResult State::DispatchEvent(EventBase& evt, FixedString const& eventName, bool canPreventAction, RestrictionFlag restrictions)
 {
-    OPTICK_SCRIPT_EVENT(eventName, "", 0);
+    OPTICK_SCRIPT_EVENT(eventName.GetString(), "", 0);
     auto stackSize = lua_gettop(L) - 2;
 
     try {
         Restriction restriction(*this, restrictions);
-        evt.Name = FixedString(eventName);
+        evt.Name = eventName;
         evt.CanPreventAction = canPreventAction;
 
         if (!CheckedCall(L, 1, "_ThrowEvent")) {

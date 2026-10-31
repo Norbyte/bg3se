@@ -174,10 +174,11 @@ void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
     }
 
     if (extensionState_) {
-        LuaServerPin lua(*extensionState_);
-        if (lua) {
-            lua->OnGameStateChanged(fromState, toState);
-        }
+        esv::lua::GameStateChangedEventParams params{
+            .FromState = fromState,
+            .ToState = toState
+        };
+        extensionState_->ThrowEvent<ServerGameStateChangedEvent>(params);
     }
 }
 

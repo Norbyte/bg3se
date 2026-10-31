@@ -3,6 +3,7 @@
 #include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/RootTemplates.h>
+#include <GameDefinitions/Ai.h>
 
 BEGIN_NS(esv)
 

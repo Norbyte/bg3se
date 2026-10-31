@@ -1,13 +1,5 @@
 local _I = Ext._Internal
 
-_I._PublishedEvents = {
-    "DealDamage",
-    "DealtDamage",
-    "BeforeDealDamage",
-    "ExecuteFunctor",
-    "AfterExecuteFunctor"
-}
-
 Ext.IsClient = function ()
     return false
 end

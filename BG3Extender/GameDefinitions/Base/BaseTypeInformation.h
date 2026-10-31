@@ -102,6 +102,7 @@ struct TypeInformation
     lua::GenericPropertyMap* PropertyMap{ nullptr };
     FixedString ComponentName;
     FixedString SystemName;
+    FixedString EventName;
 
     void DeferredInitialize();
     void Validate();
@@ -112,10 +113,11 @@ struct TypeInformation
 struct StaticTypeInformationRepository
 {
 public:
-    void Initialize(int32_t numStructs, int32_t numEnums, int32_t numBitfields);
+    void Initialize(int32_t numStructs, int32_t numEnums, int32_t numBitfields, int32_t numEvents);
     void RegisterStruct(TypeInformation& ty, StructTypeId id);
     void RegisterEnum(TypeInformation& ty, EnumTypeId id);
     void RegisterBitfield(TypeInformation& ty, BitfieldTypeId id);
+    void RegisterEvent(TypeInformation& ty, EventTypeId id);
 
     inline StaticTypeInformation* GetStructRef(StructTypeId id)
     {
@@ -133,6 +135,12 @@ public:
     {
         assert((int)id >= 0 && (int)id < (int)bitfields_.size());
         return (bitfields_.data() + (int32_t)id);
+    }
+
+    inline StaticTypeInformation* GetEventRef(EventTypeId id)
+    {
+        assert((int)id >= 0 && (int)id < (int)events_.size());
+        return (events_.data() + (int32_t)id);
     }
 
     inline TypeInformation* GetStruct(StructTypeId id) const
@@ -153,11 +161,18 @@ public:
         return (bitfields_.data() + (int32_t)id)->Type;
     }
 
+    inline TypeInformation* GetEvent(EventTypeId id) const
+    {
+        assert((int)id >= 0 && (int)id < (int)events_.size());
+        return (events_.data() + (int32_t)id)->Type;
+    }
+
 private:
     Array<StaticTypeInformation> builtins_;
     Array<StaticTypeInformation> structs_;
     Array<StaticTypeInformation> enums_;
     Array<StaticTypeInformation> bitfields_;
+    Array<StaticTypeInformation> events_;
     Array<StaticTypeInformation> dynamics_;
 };
 
@@ -346,7 +361,13 @@ inline StaticTypeInformation& GetStaticTypeInfoInternal(Overload<T>) requires Is
 }
 
 template <class T>
-StaticTypeInformation& GetStaticTypeInfoInternal(Overload<T>) requires !IsStruct<T> && !IsEnum<T> && !IsBitfield<T>
+inline StaticTypeInformation& GetStaticTypeInfoInternal(Overload<T>) requires IsEvent<T>
+{
+    return *gStaticTypeInformationRepository.GetEventRef(EventID<T>);
+}
+
+template <class T>
+StaticTypeInformation& GetStaticTypeInfoInternal(Overload<T>) requires !IsStruct<T> && !IsEnum<T> && !IsBitfield<T> && !IsEvent<T>
 {
     static StaticTypeInformation info{ nullptr, MakeDeferredTypeInitializer(Overload<T>{}) };
     return info;

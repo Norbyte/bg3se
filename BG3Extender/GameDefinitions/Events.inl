@@ -1,0 +1,31 @@
+EVENT_NS(SessionLoading, SessionLoading, lua, EmptyEventParams, Both, false, lua::RestrictionFlag::All | lua::RestrictionFlag::ScopeSessionLoad)
+EVENT_NS(SessionLoaded, SessionLoaded, lua, EmptyEventParams, Both, false, lua::RestrictionFlag::All)
+EVENT_NS(ModuleLoadStarted, ModuleLoadStarted, lua, EmptyEventParams, Both, false, lua::RestrictionFlag::All | lua::RestrictionFlag::ScopeModulePreLoad)
+EVENT_NS(StatsLoaded, StatsLoaded, lua, EmptyEventParams, Both, false, lua::RestrictionFlag::All | lua::RestrictionFlag::ScopeModuleLoad)
+EVENT_NS(StatsStructureLoaded, StatsStructureLoaded, lua, EmptyEventParams, Both, false, lua::RestrictionFlag::None)
+EVENT_NS(ModuleResume, ModuleResume, lua, EmptyEventParams, Both, false, lua::RestrictionFlag::All | lua::RestrictionFlag::ScopeModuleResume)
+EVENT_NS(ResetCompleted, ResetCompleted, lua, EmptyEventParams, Both, false, lua::RestrictionFlag::None)
+EVENT_NS(Shutdown, Shutdown, lua, EmptyEventParams, Both, false, lua::RestrictionFlag::None)
+EVENT_NS(Tick, Tick, lua, TickEventParams, Both, false, lua::RestrictionFlag::None)
+EVENT_NS(ServerGameStateChanged, GameStateChanged, esv::lua, GameStateChangedEventParams, Server, false, lua::RestrictionFlag::None)
+EVENT_NS(ClientGameStateChanged, GameStateChanged, ecl::lua, GameStateChangedEventParams, Client, false, lua::RestrictionFlag::None)
+
+EVENT_NS(DoConsoleCommand, DoConsoleCommand, lua, DoConsoleCommandEventParams, Both, false, lua::RestrictionFlag::None)
+
+EVENT_NS(KeyInput, KeyInput, ecl::lua, KeyInputEventParams, Client, false, lua::RestrictionFlag::None)
+EVENT_NS(MouseButtonInput, MouseButtonInput, ecl::lua, MouseButtonEventParams, Client, false, lua::RestrictionFlag::None)
+EVENT_NS(MouseWheelInput, MouseWheelInput, ecl::lua, MouseWheelEventParams, Client, false, lua::RestrictionFlag::None)
+EVENT_NS(ControllerAxisInput, ControllerAxisInput, ecl::lua, ControllerAxisEventParams, Client, false, lua::RestrictionFlag::None)
+EVENT_NS(ControllerButtonInput, ControllerButtonInput, ecl::lua, ControllerButtonEventParams, Client, false, lua::RestrictionFlag::None)
+EVENT_NS(ViewportResized, ViewportResized, ecl::lua, ViewportResizedEventParams, Client, false, lua::RestrictionFlag::None)
+
+EVENT_NS(NetMessage, NetMessage, lua, NetMessageEventParams, Both, false, lua::RestrictionFlag::None)
+EVENT_NS(NetModMessage, NetModMessage, lua, NetMessageEventParams, Both, false, lua::RestrictionFlag::None)
+
+EVENT_NS(FindPath, FindPath, lua, FindPathEventParams, Both, false, lua::RestrictionFlag::None)
+
+EVENT_NS(ExecuteFunctor, ExecuteFunctor, esv::lua, ExecuteFunctorEventParams, Server, false, lua::RestrictionFlag::None)
+EVENT_NS(AfterExecuteFunctor, AfterExecuteFunctor, esv::lua, AfterExecuteFunctorEventParams, Server, false, lua::RestrictionFlag::None)
+EVENT_NS(BeforeDealDamage, BeforeDealDamage, esv::lua, BeforeDealDamageEventParams, Server, false, lua::RestrictionFlag::None)
+EVENT_NS(DealDamage, DealDamage, esv::lua, DealDamageEventParams, Server, false, lua::RestrictionFlag::None)
+EVENT_NS(DealtDamage, DealtDamage, esv::lua, DealtDamageEventParams, Server, false, lua::RestrictionFlag::None)

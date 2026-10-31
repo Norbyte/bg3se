@@ -25,6 +25,7 @@ P_RO(IsBuiltin)
 P_RO(ModuleRole)
 P_RO(ComponentName)
 P_RO(SystemName)
+P_RO(EventName)
 END_CLS()
 
 
@@ -145,4 +146,14 @@ END_CLS()
 BEGIN_CLS(gn::GenomeVariant)
 P_GETTER(Type, GetTypeName)
 P_GETTER(Value, LuaGetValue)
+END_CLS()
+
+
+BEGIN_CLS(lua::EventBase)
+P_RO(Name)
+P_RO(CanPreventAction)
+P_RO(ActionPrevented)
+P_RO(Stopped)
+P_FUN(StopPropagation, lua::EventBase::StopPropagation)
+P_FUN(PreventAction, lua::EventBase::PreventAction)
 END_CLS()

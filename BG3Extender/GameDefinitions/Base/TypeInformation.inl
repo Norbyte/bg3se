@@ -382,12 +382,13 @@ TypeInformation& TypeInformationRepository::RegisterType(char const* name, LuaTy
 
 StaticTypeInformationRepository gStaticTypeInformationRepository;
 
-void StaticTypeInformationRepository::Initialize(int32_t numStructs, int32_t numEnums, int32_t numBitfields)
+void StaticTypeInformationRepository::Initialize(int32_t numStructs, int32_t numEnums, int32_t numBitfields, int32_t numEvents)
 {
     se_assert(structs_.empty());
     structs_.resize(numStructs);
     enums_.resize(numEnums);
     bitfields_.resize(numBitfields);
+    events_.resize(numEvents);
 }
 
 void StaticTypeInformationRepository::RegisterStruct(TypeInformation& ty, StructTypeId id)
@@ -409,6 +410,13 @@ void StaticTypeInformationRepository::RegisterBitfield(TypeInformation& ty, Bitf
     se_assert((uint32_t)id < bitfields_.size());
     se_assert(bitfields_[(int32_t)id].Type == nullptr);
     bitfields_[(int32_t)id].Type = &ty;
+}
+
+void StaticTypeInformationRepository::RegisterEvent(TypeInformation& ty, EventTypeId id)
+{
+    se_assert((uint32_t)id < events_.size());
+    se_assert(events_[(int32_t)id].Type == nullptr);
+    events_[(int32_t)id].Type = &ty;
 }
 
 END_SE()

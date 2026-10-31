@@ -47,10 +47,8 @@ void Hooks::OnParseDataBuffers(stats::RPGStats* self)
 {
     stats::gStatStructureCache.Invalidate();
 
-    LuaVirtualPin lua(gExtender->GetCurrentExtensionState());
-    if (lua) {
-        lua->OnStatsStructureLoaded();
-    }
+    lua::EmptyEventParams evt;
+    gExtender->GetCurrentExtensionState()->ThrowEvent<StatsStructureLoadedEvent>(evt);
 
     gExtender->GetStatLoadOrderHelper().OnLoadFinished();
 }

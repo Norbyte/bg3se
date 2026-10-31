@@ -46,7 +46,7 @@ int OsiFunction::LuaCall(lua_State * L) const
     }
 
     auto state = State::FromLua(L);
-    if (state->RestrictionFlags & State::RestrictOsiris) {
+    if (state->IsRestricted(RestrictionFlag::Osiris)) {
         return luaL_error(L, "Attempted to call Osiris function in restricted context");
     }
 
@@ -107,7 +107,7 @@ int OsiFunction::LuaGet(lua_State * L) const
     }
 
     auto state = State::FromLua(L);
-    if (state->RestrictionFlags & State::RestrictOsiris) {
+    if (state->IsRestricted(RestrictionFlag::Osiris)) {
         return luaL_error(L, "Attempted to read Osiris database in restricted context");
     }
 
@@ -148,7 +148,7 @@ int OsiFunction::LuaDelete(lua_State * L) const
     }
 
     auto state = State::FromLua(L);
-    if (state->RestrictionFlags & State::RestrictOsiris) {
+    if (state->IsRestricted(RestrictionFlag::Osiris)) {
         return luaL_error(L, "Attempted to delete from Osiris database in restricted context");
     }
 
@@ -168,7 +168,7 @@ int OsiFunction::LuaDeferredNotification(lua_State * L) const
     }
 
     auto state = State::FromLua(L);
-    if (state->RestrictionFlags & State::RestrictOsiris) {
+    if (state->IsRestricted(RestrictionFlag::Osiris)) {
         return luaL_error(L, "Attempted to call Osiris function in restricted context");
     }
 

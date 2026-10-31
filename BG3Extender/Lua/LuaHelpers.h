@@ -31,6 +31,26 @@ END_SE()
 
 BEGIN_NS(lua)
 
+enum class RestrictionFlag
+{
+    // Disable Osiris calls
+    Osiris = 1 << 0,
+    // Disable handle/guid to object conversion functions (Lua only)
+    HandleConversion = 1 << 1,
+
+    // Permit calls only available during module load state
+    ScopeModuleLoad = 1 << 16,
+    // Permit calls only available during session load state
+    ScopeSessionLoad = 1 << 17,
+    // Permit calls only available during module resume state
+    ScopeModuleResume = 1 << 18,
+    // Permit calls only available during initial module load state (before loading any files)
+    ScopeModulePreLoad = 1 << 19,
+
+    None = 0,
+    All = 0x0000ffff,
+};
+
 #if !defined(NDEBUG)
 // Ensures that the size of the Lua stack matches the expected value.
 // Since there are no built-in checks in Lua function boundaries, an incorrect push

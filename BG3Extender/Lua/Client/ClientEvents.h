@@ -4,13 +4,13 @@ BEGIN_NS(ecl::lua)
 
 using namespace bg3se::lua;
 
-struct GameStateChangedEvent : public lua::EventBase
+struct GameStateChangedEventParams : public lua::EventBase
 {
     ecl::GameState FromState;
     ecl::GameState ToState;
 };
 
-struct KeyInputEvent : public lua::EventBase
+struct KeyInputEventParams : public lua::EventBase
 {
     SDLKeyEvent Event;
     SDLScanCode Key;
@@ -19,7 +19,7 @@ struct KeyInputEvent : public lua::EventBase
     bool Repeat;
 };
 
-struct MouseButtonEvent : public lua::EventBase
+struct MouseButtonEventParams : public lua::EventBase
 {
     int Button;
     bool Pressed;
@@ -28,7 +28,7 @@ struct MouseButtonEvent : public lua::EventBase
     int Y;
 };
 
-struct MouseWheelEvent : public lua::EventBase
+struct MouseWheelEventParams : public lua::EventBase
 {
     float ScrollX;
     float ScrollY;
@@ -36,14 +36,14 @@ struct MouseWheelEvent : public lua::EventBase
     int Y;
 };
 
-struct ControllerAxisEvent : public lua::EventBase
+struct ControllerAxisEventParams : public lua::EventBase
 {
     int32_t DeviceId;
     SDLControllerAxis Axis;
     float Value;
 };
 
-struct ControllerButtonEvent : public lua::EventBase
+struct ControllerButtonEventParams : public lua::EventBase
 {
     int32_t DeviceId;
     SDLKeyEvent Event;
@@ -51,7 +51,7 @@ struct ControllerButtonEvent : public lua::EventBase
     bool Pressed;
 };
 
-struct ViewportResizedEvent : public lua::EventBase
+struct ViewportResizedEventParams : public lua::EventBase
 {
     int Width;
     int Height;

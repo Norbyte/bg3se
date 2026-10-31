@@ -141,6 +141,18 @@ namespace bg3se
             return server_;
         }
 
+        template <class TEvent>
+        lua::EventResult ThrowEvent(typename TEvent::ParamsType& evt, std::optional<bool> canPreventAction = {})
+        {
+            static_assert(IsEvent<TEvent>, "Event not registered with the event manager");
+            LuaVirtualPin lua(this);
+            if (lua) {
+                return lua->ThrowEvent<TEvent>(evt, canPreventAction);
+            } else {
+                return lua::EventResult::Skipped;
+            }
+        }
+
         static std::unordered_set<std::string_view> sAllFeatureFlags;
     protected:
         friend class LuaVirtualPin;

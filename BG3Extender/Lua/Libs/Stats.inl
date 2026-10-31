@@ -456,12 +456,12 @@ bool CopyStats(Object* obj, FixedString const& copyFrom)
 Object* Create(lua_State * L, FixedString const& statName, FixedString const& modifierList, std::optional<FixedString> copyFromTemplate, std::optional<bool> byRef)
 {
     auto lua = State::FromLua(L);
-    if (lua->RestrictionFlags & State::ScopeModulePreLoad) {
+    if (lua->IsRestricted(RestrictionFlag::ScopeModulePreLoad)) {
         luaL_error(L, "Stat functions unavailable during module preload");
         return nullptr;
     }
 
-    if (!(lua->RestrictionFlags & State::ScopeModuleLoad)) {
+    if (!lua->IsRestricted(RestrictionFlag::ScopeModuleLoad)) {
         if (gExtender->GetServer().IsInContext()) {
             static bool syncWarningShown{ false };
             if (!syncWarningShown) {

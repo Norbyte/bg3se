@@ -4,21 +4,7 @@ local _I = Ext._Internal
 
 Mods = {}
 
-_I._PublishedSharedEvents = {
-    "ModuleLoadStarted",
-    "StatsLoaded",
-    "ModuleResume",
-    "SessionLoading",
-    "SessionLoaded",
-    "GameStateChanged",
-    "ResetCompleted",
-    "Shutdown",
-    "DoConsoleCommand",
-    "Tick",
-    "StatsStructureLoaded",
-    "FindPath",
-    "NetMessage",
-    "NetModMessage",
+_I._PublishedLocalEvents = {
     -- Thrown by Log module
     "Log"
 }

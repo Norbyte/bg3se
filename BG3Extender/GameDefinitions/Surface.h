@@ -4,6 +4,7 @@
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/Misc.h>
 #include <GameDefinitions/ObjectFactory.h>
+#include <GameDefinitions/Ai.h>
 
 BEGIN_SE()
 

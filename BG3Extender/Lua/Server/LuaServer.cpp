@@ -174,20 +174,10 @@ namespace bg3se::esv::lua
     }
 
 
-    void ServerState::OnGameStateChanged(GameState fromState, GameState toState)
-    {
-        GameStateChangedEvent params{
-            .FromState = fromState, 
-            .ToState = toState
-        };
-        ThrowEvent("GameStateChanged", params, false, 0);
-    }
-
-
     std::optional<STDString> ServerState::GetModPersistentVars(STDString const& modTable)
     {
         std::tuple<std::optional<char const*>> ret;
-        if (CallExtRet("_GetModPersistentVars", RestrictAll, ret, modTable)) {
+        if (CallExtRet("_GetModPersistentVars", RestrictionFlag::All, ret, modTable)) {
             return std::get<0>(ret);
         } else {
             return {};
@@ -197,7 +187,7 @@ namespace bg3se::esv::lua
 
     void ServerState::RestoreModPersistentVars(STDString const& modTable, STDString const& vars)
     {
-        CallExt("_RestoreModPersistentVars", RestrictAll, modTable, vars);
+        CallExt("_RestoreModPersistentVars", RestrictionFlag::All, modTable, vars);
     }
 
 
@@ -320,7 +310,6 @@ namespace bg3se::esv
     {
         ExtensionStateBase::BootstrapLua();
 
-        LuaServerPin lua(*this);
         auto gameState = GetStaticSymbols().GetServerState();
         if (gameState
             && (*gameState == esv::GameState::LoadLevel
@@ -329,7 +318,8 @@ namespace bg3se::esv
                 || *gameState == esv::GameState::Sync
                 || *gameState == esv::GameState::Paused
                 || *gameState == esv::GameState::Running)) {
-            lua->OnModuleResume();
+            lua::EmptyEventParams evt;
+            ThrowEvent<ModuleResumeEvent>(evt);
         }
     }
 

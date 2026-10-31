@@ -146,6 +146,7 @@
     <ClCompile Include="Extender\Client\SDL.cpp" />
     <ClCompile Include="GameDefinitions\GameDefinitionHelpers.cpp" />
     <ClCompile Include="Extender\Client\VisualHelpers.cpp" />
+    <ClCompile Include="Lua\Shared\Proxies\LuaEventRegistrations.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -542,6 +543,8 @@
     <ClInclude Include="GameDefinitions\Components\Hotbar.h" />
     <ClInclude Include="GameDefinitions\Stats\Cache.h" />
     <ClInclude Include="GameDefinitions\RenderFramework.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaEventTypes.h" />
+    <ClInclude Include="Lua\Shared\SharedEvents.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -610,9 +613,6 @@
     </None>
     <None Include="Extender\Shared\ThreadedExtenderState.inl">
       <Filter>Extender\Shared</Filter>
-    </None>
-    <None Include="GameDefinitions\PropertyMaps\Events.inl">
-      <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
     <None Include="Lua\Shared\Proxies\LuaArrayProxy.inl">
       <Filter>Lua\Shared\Proxies</Filter>
@@ -824,6 +824,12 @@
     <None Include="GameDefinitions\Stats\StatsObject.inl">
       <Filter>GameDefinitions\Stats</Filter>
     </None>
+    <None Include="GameDefinitions\Events.inl">
+      <Filter>GameDefinitions</Filter>
+    </None>
+    <None Include="make_events.py" />
+    <None Include="make_enumerations.py" />
+    <None Include="make_property_map.py" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

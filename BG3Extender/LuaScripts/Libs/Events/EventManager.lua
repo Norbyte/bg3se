@@ -33,11 +33,11 @@ end
 
 
 function EventManager:RegisterEvents()
-    for i,ev in pairs(_I._PublishedSharedEvents) do
+    for i,ev in pairs(Ext.Types.GetPublishedEvents()) do
         self:RegisterEngineEvent(ev)
     end
     
-    for i,ev in pairs(_I._PublishedEvents) do
+    for i,ev in pairs(_I._PublishedLocalEvents) do
         self:RegisterEngineEvent(ev)
     end
 

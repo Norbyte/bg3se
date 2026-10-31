@@ -252,12 +252,8 @@ void ScriptExtender::OnStatsLoadGuarded(stats::RPGStats__LoadProc* wrapped, stat
     statLoadOrderHelper_.OnLoadStarted();
     client_.LoadExtensionState(ExtensionStateContext::Load);
 
-    {
-        ecl::LuaClientPin lua(client_.GetExtensionState());
-        if (lua) {
-            lua->OnModuleLoadStarted();
-        }
-    }
+    lua::EmptyEventParams evt;
+    client_.GetExtensionState().ThrowEvent<ModuleLoadStartedEvent>(evt);
 
     {
         DisableCrashReporting _;
@@ -564,6 +560,7 @@ void ScriptExtender::PostStartup()
     // We need to initialize the function library here, as GlobalAllocator isn't available in Init().
     if (Libraries.PostStartupFindLibraries()) {
         lua::InitObjectProxyPropertyMaps();
+        lua::InitEventRegistry();
         TypeInformationRepository::GetInstance().Initialize();
         lua::RegisterLibraries();
         TypeInformationRepository::GetInstance().Finalize();

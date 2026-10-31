@@ -2,6 +2,7 @@
 
 #include <GameDefinitions/Generated/PropertyMapMeta.h>
 #include <GameDefinitions/Generated/EnumerationMeta.h>
+#include <GameDefinitions/Generated/EventsMeta.h>
 #include <Lua/Shared/Proxies/PropertyMapDependencies.h>
 
 BEGIN_SE()
@@ -72,9 +73,26 @@ inline constexpr char const* GetStaticSystemName()
     }
 }
 
+void RegisterEventTypeInformation()
+{
+    for (auto const& evt : lua::gEventRegistry.EventsById) {
+        auto& ty = TypeInformationRepository::GetInstance().RegisterType(evt.EngineEventName);
+        ty.Kind = LuaTypeId::Event;
+        ty.EventName = evt.LuaEventName;
+        ty.NativeName = evt.EngineEventName;
+        ty.ParentType = TypeInformationRef(*gStaticTypeInformationRepository.GetStructRef(evt.ParamsType));
+        switch (evt.Context) {
+        case lua::EventContext::Both: ty.ModuleRole = FixedString("Both"); break;
+        case lua::EventContext::Client: ty.ModuleRole = FixedString("Client"); break;
+        case lua::EventContext::Server: ty.ModuleRole = FixedString("Server"); break;
+        }
+        gStaticTypeInformationRepository.RegisterEvent(ty, evt.RegistryIndex);
+    }
+}
+
 void RegisterObjectProxyTypeInformation()
 {
-    gStaticTypeInformationRepository.Initialize(StructRegistrySize, EnumTypeRegistrySize, BitmaskTypeRegistrySize);
+    gStaticTypeInformationRepository.Initialize(StructRegistrySize, EnumTypeRegistrySize, BitmaskTypeRegistrySize, EventRegistrySize);
 
 #define GENERATING_TYPE_INFO
 #define ADD_TYPE(prop, type) ty.Members.insert(std::make_pair(FixedString(prop), GetTypeInfoRef<type>()));
@@ -124,6 +142,7 @@ void RegisterObjectProxyTypeInformation()
 #undef P_FALLBACK
 
     RegisterEnumerationTypeInformation();
+    RegisterEventTypeInformation();
 }
 
 END_SE()

@@ -42,10 +42,6 @@ public:
         return replicationHooks_;
     }
 
-    void OnGameStateChanged(GameState fromState, GameState toState);
-    bool IsEventCancelable(SDL_Event* event);
-    void OnInputEvent(SDL_Event* event, int* result);
-
     UIEventHooks& GetUIEvents()
     {
         return uiEvents_;

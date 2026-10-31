@@ -234,34 +234,26 @@ namespace bg3se
 
     void ExtensionStateBase::OnModuleLoadStarted()
     {
-        LuaVirtualPin lua(*this);
-        if (lua) {
-            lua->OnModuleLoadStarted();
-        }
+        lua::EmptyEventParams params;
+        ThrowEvent<ModuleLoadStartedEvent>(params);
     }
 
     void ExtensionStateBase::OnStatsLoaded()
     {
-        LuaVirtualPin lua(*this);
-        if (lua) {
-            lua->OnStatsLoaded();
-        }
+        lua::EmptyEventParams params;
+        ThrowEvent<StatsLoadedEvent>(params);
     }
 
     void ExtensionStateBase::OnModuleResume()
     {
-        LuaVirtualPin lua(*this);
-        if (lua) {
-            lua->OnModuleResume();
-        }
+        lua::EmptyEventParams params;
+        ThrowEvent<ModuleResumeEvent>(params);
     }
 
     void ExtensionStateBase::OnResetCompleted()
     {
-        LuaVirtualPin lua(*this);
-        if (lua) {
-            lua->OnResetCompleted();
-        }
+        lua::EmptyEventParams params;
+        ThrowEvent<ResetCompletedEvent>(params);
     }
 
     void ExtensionStateBase::OnUpdate(GameTime const& time)
@@ -534,7 +526,7 @@ namespace bg3se
             return;
         }
 
-        lua::Restriction restriction(*lua, lua::State::RestrictAll);
+        lua::Restriction restriction(*lua, lua::RestrictionFlag::All);
         for (auto const& mod : modManager->LoadOrderedModules) {
             auto configIt = modConfigs_.find(mod.Info.ModuleUUIDString);
             if (configIt != modConfigs_.end()) {

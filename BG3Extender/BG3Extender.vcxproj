@@ -83,6 +83,7 @@
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>python make_enumerations.py
+python make_events.py
 python make_property_map.py
 rem $(SolutionDir)\External\protoc\bin\protoc --cpp_out=$(SolutionDir)\BG3Extender\Osiris\Debugger Osiris\Debugger\osidebug.proto
 rem $(SolutionDir)\External\protoc\bin\protoc --cpp_out=$(SolutionDir)\BG3Extender\Lua\Debugger Lua\Debugger\LuaDebug.proto
@@ -120,6 +121,7 @@ $(SolutionDir)x64\Debug\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Project
     </Link>
     <PreBuildEvent>
       <Command>python make_enumerations.py
+python make_events.py
 python make_property_map.py
 $(SolutionDir)\External\protoc\bin\protoc --cpp_out=$(SolutionDir)\BG3Extender\Osiris\Debugger Osiris\Debugger\osidebug.proto
 $(SolutionDir)\External\protoc\bin\protoc --cpp_out=$(SolutionDir)\BG3Extender\Lua\Debugger Lua\Debugger\LuaDebug.proto
@@ -344,6 +346,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="Lua\Shared\Proxies\LuaEntityProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaEnumValue.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaEvent.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaEventTypes.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaImguiProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaLightCppObjectMeta.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaMapProxy.h" />
@@ -355,6 +358,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="Lua\Shared\Proxies\LuaUserVariableHolder.h" />
     <ClInclude Include="Lua\Shared\Proxies\PropertyMapDependencies.h" />
     <ClInclude Include="Lua\Shared\RawComponentRef.h" />
+    <ClInclude Include="Lua\Shared\SharedEvents.h" />
     <ClInclude Include="Lua\Shared\SystemEvents.h" />
     <ClInclude Include="Osiris\Debugger\Debugger.h" />
     <ClInclude Include="Osiris\Debugger\DebugInterface.h" />
@@ -402,6 +406,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClCompile Include="GameDefinitions\GameHelpers.cpp" />
     <ClCompile Include="GameDefinitions\GlobalFixedStrings.cpp" />
     <ClCompile Include="GameDefinitions\Stats\Stats.cpp" />
+    <None Include="GameDefinitions\Events.inl" />
     <None Include="GameDefinitions\Stats\StatsObject.inl">
       <FileType>Document</FileType>
     </None>
@@ -432,6 +437,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClCompile Include="Lua\Shared\LuaStats.cpp">
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
+    <ClCompile Include="Lua\Shared\Proxies\LuaEventRegistrations.cpp" />
     <ClCompile Include="Lua\Shared\Proxies\LuaObjectProxies.cpp">
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -506,7 +512,6 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="GameDefinitions\PropertyMaps\ClientObjects.inl" />
     <None Include="GameDefinitions\PropertyMaps\Stats.inl" />
     <None Include="GameDefinitions\PropertyMaps\CommonTypes.inl" />
-    <None Include="GameDefinitions\PropertyMaps\Events.inl" />
     <None Include="GameDefinitions\PropertyMaps\IMGUI.inl" />
     <None Include="GameDefinitions\PropertyMaps\ServerObjects.inl" />
     <None Include="GameDefinitions\PropertyMaps\UI.inl" />
@@ -608,6 +613,18 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="Lua\Shared\Proxies\LuaUserVariableHolder.inl" />
     <None Include="Lua\Shared\Proxies\PolymorphicPush.inl" />
     <None Include="Lua\Shared\SystemEvents.inl" />
+    <None Include="make_enumerations.py">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="make_events.py">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="make_property_map.py">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">true</ExcludedFromBuild>
+    </None>
     <None Include="Misc\ExtIdeHelpers.lua" />
     <None Include="Osiris\Debugger\osidebug.proto" />
   </ItemGroup>

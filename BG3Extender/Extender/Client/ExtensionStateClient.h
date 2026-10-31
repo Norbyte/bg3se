@@ -47,6 +47,7 @@ protected:
     void InitializeLuaState() override;
     void BootstrapLua() override;
     void FireInputEvents();
+    void FireInputEvent(SDL_Event* event, int* result);
 };
 
 END_NS()

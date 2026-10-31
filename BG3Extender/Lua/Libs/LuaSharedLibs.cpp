@@ -65,8 +65,6 @@ END_NS()
 
 BEGIN_NS(lua)
 
-void InitObjectProxyPropertyMaps();
-
 void RegisterSystemProxy(lua_State* L)
 {
     StackCheck _(L);

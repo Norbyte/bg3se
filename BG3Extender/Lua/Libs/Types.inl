@@ -371,6 +371,21 @@ bool AddCustomProperty(lua_State* L, FixedString const& typeName, FixedString co
     );
 }
 
+Array<FixedString> GetPublishedEvents(lua_State* L)
+{
+    Array<FixedString> names;
+    bool isClient = State::FromLua(L)->IsClient();
+    for (auto const& evt : gEventRegistry.EventsById) {
+        if (evt.Context == EventContext::Both
+            || (!isClient && evt.Context == EventContext::Server)
+            || (isClient && evt.Context == EventContext::Client)) {
+            names.push_back(evt.LuaEventName);
+        }
+    }
+
+    return names;
+}
+
 void RegisterTypesLib()
 {
     DECLARE_MODULE(Types, Both)
@@ -390,6 +405,7 @@ void RegisterTypesLib()
     MODULE_FUNCTION(GetFunctionLocation)
     MODULE_FUNCTION(AddCustomFunction)
     MODULE_FUNCTION(AddCustomProperty)
+    MODULE_FUNCTION(GetPublishedEvents)
     END_MODULE()
 }
 

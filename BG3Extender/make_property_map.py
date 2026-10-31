@@ -722,6 +722,7 @@ sources = [
     'GameDefinitions/Controllers/Controller.h',
     'GameDefinitions/Controllers/OsirisTask.h',
     'Lua/Shared/ExposedTypes.h',
+    'Lua/Shared/SharedEvents.h',
     'Lua/Client/ClientEvents.h',
     'Lua/Server/ServerEvents.h',
 ]

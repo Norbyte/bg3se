@@ -2,13 +2,13 @@
 
 BEGIN_NS(esv::lua)
 
-struct GameStateChangedEvent : public lua::EventBase
+struct GameStateChangedEventParams : public lua::EventBase
 {
     esv::GameState FromState;
     esv::GameState ToState;
 };
 
-struct DealDamageEvent : public lua::EventBase
+struct DealDamageEventParams : public lua::EventBase
 {
     bg3se::stats::DealDamageFunctor* Functor;
     EntityHandle Caster;
@@ -25,24 +25,24 @@ struct DealDamageEvent : public lua::EventBase
     bg3se::SpellId* SpellId2;
 };
 
-struct DealtDamageEvent : public esv::lua::DealDamageEvent
+struct DealtDamageEventParams : public DealDamageEventParams
 {
     HitResult* Result;
 };
 
-struct BeforeDealDamageEvent : public lua::EventBase
+struct BeforeDealDamageEventParams : public lua::EventBase
 {
     HitDesc* Hit;
     [[bg3::legacy(DamageSums)]] AttackDesc* Attack;
 };
 
-struct ExecuteFunctorEvent : public lua::EventBase
+struct ExecuteFunctorEventParams : public lua::EventBase
 {
     bg3se::stats::Functors* Functor;
     bg3se::stats::ContextData* Params;
 };
 
-struct AfterExecuteFunctorEvent : public lua::EventBase
+struct AfterExecuteFunctorEventParams : public lua::EventBase
 {
     bg3se::stats::Functors* Functor;
     bg3se::stats::ContextData* Params;

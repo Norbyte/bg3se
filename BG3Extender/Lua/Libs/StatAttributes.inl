@@ -215,12 +215,12 @@ PropertyOperationResult LuaStatSetAttribute(lua_State* L, stats::Object* object,
     StackCheck _(L);
     auto lua = State::FromLua(L);
 
-    if (lua->RestrictionFlags & State::ScopeModulePreLoad) {
+    if (lua->IsRestricted(RestrictionFlag::ScopeModulePreLoad)) {
         luaL_error(L, "Stat functions unavailable during module preload");
         return PropertyOperationResult::Unknown;
     }
 
-    if (!(lua->RestrictionFlags & State::ScopeModuleLoad)) {
+    if (!lua->IsRestricted(RestrictionFlag::ScopeModuleLoad)) {
         static bool syncWarningShown{ false };
         if (!syncWarningShown) {
             OsiWarn("Stats edited after ModuleLoad must be synced manually; make sure that you call Sync() on it when you're finished!");
