@@ -1353,3 +1353,20 @@ BEGIN_ENUM_NS(ecl, CharacterTaskType, ClientCharacterTaskType, uint32_t)
     EV(DefaultTargetAction, 22)
     EV(ClimbTo, 23)
 END_ENUM_NS()
+
+BEGIN_ENUM(NetMessage, uint32_t)
+    EV(NETMSG_HANDSHAKE, 1)
+    EV(NETMSG_HOST_WELCOME, 2)
+    EV(NETMSG_HOST_REFUSE, 3)
+    EV(NETMSG_HOST_REFUSEPLAYER, 4)
+    EV(NETMSG_CLIENT_JOINED, 8)
+    EV(NETMSG_CLIENT_LEFT, 9)
+    EV(NETMSG_HOST_LEFT, 5)
+    EV(NETMSG_CLIENT_CONNECT, 6)
+    EV(NETMSG_CLIENT_ACCEPT, 7)
+    // Message IDs 8 .. 325 not required by SE
+
+    // Leave a large enough gap in message ID-s to ensure the SE message doesnt conflict with
+    // an existing game message. Largest ID is 325 as of patch 8.
+    EV(NETMSG_SCRIPT_EXTENDER, 400)
+END_ENUM()

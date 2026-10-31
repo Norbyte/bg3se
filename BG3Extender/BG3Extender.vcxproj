@@ -505,7 +505,6 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="GameDefinitions\Enumerations\ECS.inl" />
     <None Include="GameDefinitions\Enumerations\Engine.inl" />
     <None Include="GameDefinitions\Enumerations\IMGUI.inl" />
-    <None Include="GameDefinitions\Enumerations\NetMessage.inl" />
     <None Include="GameDefinitions\Enumerations\Stats.inl" />
     <None Include="GameDefinitions\ExternalEnumerations\GUI.inl" />
     <None Include="GameDefinitions\GlobalFixedStrings.inl" />

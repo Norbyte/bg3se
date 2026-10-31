@@ -752,7 +752,6 @@
     <None Include="GameDefinitions\Enumerations\Stats.inl" />
     <None Include="GameDefinitions\Enumerations\Engine.inl" />
     <None Include="GameDefinitions\Enumerations\ECS.inl" />
-    <None Include="GameDefinitions\Enumerations\NetMessage.inl" />
     <None Include="Lua\Osiris\FunctionProxy.inl" />
     <None Include="Lua\Osiris\CallbackManager.inl" />
     <None Include="Lua\Osiris\NameCache.inl" />
