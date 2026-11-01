@@ -295,7 +295,7 @@ MathParam do_get(lua_State* L, int index, Overload<MathParam>)
     return val;
 }
 
-stats::ConditionId do_get(lua_State* L, int index, Overload<stats::ConditionId>)
+bg3se::stats::ConditionId do_get(lua_State* L, int index, Overload<bg3se::stats::ConditionId>)
 {
     auto conditions = get<std::optional<StringView>>(L, index);
     if (!conditions) {
@@ -303,7 +303,7 @@ stats::ConditionId do_get(lua_State* L, int index, Overload<stats::ConditionId>)
     }
 
     auto id = GetStaticSymbols().GetStats()->GetOrCreateConditions(STDString(*conditions));
-    return stats::ConditionId{ id };
+    return bg3se::stats::ConditionId{ id };
 }
 
 StatsExpressionRef do_get(lua_State* L, int index, Overload<StatsExpressionRef>)

@@ -2,6 +2,7 @@
 
 #include <Extender/Client/IMGUI/IMGUI.h>
 #include <Extender/Client/IMGUI/Objects.h>
+#include <Extender/Client/ExtensionStateClient.h>
 #include <Extender/Shared/ScriptHelpers.h>
 #include <CoreLib/Wrappers.h>
 

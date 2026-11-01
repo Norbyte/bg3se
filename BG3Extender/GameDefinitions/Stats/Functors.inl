@@ -1,3 +1,5 @@
+#include <GameDefinitions/Stats/Stats.h>
+
 BEGIN_NS(stats)
 
 Array<Functor*>* Functors::LuaGetFunctorList() const

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include <Lua/Debugger/LuaDebugger.h>
 #include <Extender/ScriptExtender.h>
+#include <Extender/Client/ExtensionStateClient.h>
 #include <lstate.h>
 #include <lapi.h>
 #include <lobject.h>

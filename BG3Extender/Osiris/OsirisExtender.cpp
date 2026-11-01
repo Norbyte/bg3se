@@ -2,6 +2,7 @@
 #include <Osiris/OsirisExtender.h>
 #include <Extender/Shared/ExtensionHelpers.h>
 #include <Extender/ScriptExtender.h>
+#include <Extender/Server/ExtensionStateServer.h>
 #include <iomanip>
 
 namespace bg3se

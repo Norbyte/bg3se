@@ -5,43 +5,6 @@
 #define USER_VAR_DBG(msg, ...)
 //#define USER_VAR_DBG(msg, ...) DEBUG(msg, __VA_ARGS__)
 
-BEGIN_NS(net)
-
-void ExtenderProtocolBase::DoSyncUserVars(MsgUserVars const& msg)
-{
-    auto state = gExtender->GetCurrentExtensionState();
-    for (auto const& var : msg.vars()) {
-        if (var.type() == UserVarType::MODULE_VAR) {
-            state->GetModVariables().NetworkSync(var);
-        } else {
-            state->GetUserVariables().NetworkSync(var);
-        }
-    }
-}
-
-void ExtenderProtocolBase::SyncUserVars(MsgUserVars const& msg)
-{
-    USER_VAR_DBG("Received sync message from peer");
-    auto state = gExtender->GetCurrentExtensionState();
-    if (!state) {
-        ERR("Tried to sync user vars without the extension state being initialized!");
-        return;
-    }
-
-    if (state->GetUserVariables().HasCache()) {
-        LuaVirtualPin lua(state);
-        if (lua) {
-            DoSyncUserVars(msg);
-        }
-    } else {
-        // If the Lua state was not yet initialized, it is safe to write uservars without a lock,
-        // since we won't enter the Lua VM
-        DoSyncUserVars(msg);
-    }
-}
-
-END_NS()
-
 BEGIN_SE()
 
 void UserVariable::SavegameVisit(ObjectVisitor* visitor)

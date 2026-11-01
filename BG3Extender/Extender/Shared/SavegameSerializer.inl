@@ -1,4 +1,5 @@
 #include <Extender/Shared/SavegameSerializer.h>
+#include <Extender/Server/ExtensionStateServer.h>
 #include <Extender/Version.h>
 
 BEGIN_SE()

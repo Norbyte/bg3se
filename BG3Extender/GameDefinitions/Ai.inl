@@ -2,6 +2,7 @@
 #include <GameDefinitions/Components/Components.h>
 #include <GameDefinitions/Components/Combat.h>
 #include <GameDefinitions/Components/Data.h>
+#include <GameDefinitions/Character.h>
 
 BEGIN_SE()
 

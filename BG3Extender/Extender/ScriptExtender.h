@@ -14,7 +14,7 @@
 #include <Lua/Debugger/LuaDebugger.h>
 #include <Lua/Debugger/LuaDebugMessages.h>
 #include <Lua/Shared/LuaBundle.h>
-#include <Lua/Shared/Proxies/LuaCppClass.h>
+#include <Lua/Shared/Proxies/LuaCppPropertyMapManager.h>
 #include <GameHooks/OsirisWrappers.h>
 #include <GameHooks/DataLibraries.h>
 #include <GameHooks/EngineHooks.h>
@@ -22,7 +22,6 @@
 #include <thread>
 #include <mutex>
 #include <shared_mutex>
-#include <ppl.h>
 
 namespace bg3se {
 

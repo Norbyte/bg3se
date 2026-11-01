@@ -1,5 +1,5 @@
-#include <stdafx.h>
 #include <Extender/Client/ClientNetworking.h>
+#include <Extender/Client/ExtensionStateClient.h>
 #include <Extender/ScriptExtender.h>
 
 BEGIN_NS(ecl)

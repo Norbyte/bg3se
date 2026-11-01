@@ -1,4 +1,5 @@
 #include <Lua/Shared/LuaMethodCallHelpers.h>
+#include <Extender/Shared/ExtensionState.h>
 
 BEGIN_NS(lua)
 

@@ -29,7 +29,7 @@ END_SE()
 #include <NsDrawing/CornerRadius.h>
 #include <NsGui/BaseCollection.h>
 
-#include <Extender/Client/IMGUI/IMGUI.h>
+#include <Extender/Client/IMGUI/IMGUIShared.h>
 
 #include <GameDefinitions/Base/TypeMetadata.h>
 #include <GameDefinitions/Base/LuaAnnotations.h>

@@ -1,6 +1,7 @@
 #include <stdafx.h>
 #include <Extender/Shared/Hooks.h>
 #include <Extender/ScriptExtender.h>
+#include <Extender/Shared/ExtensionState.h>
 #include <GameDefinitions/Net.h>
 #include <GameDefinitions/Stats/Cache.h>
 
@@ -47,8 +48,7 @@ void Hooks::OnParseDataBuffers(stats::RPGStats* self)
 {
     stats::gStatStructureCache.Invalidate();
 
-    lua::EmptyEventParams evt;
-    gExtender->GetCurrentExtensionState()->ThrowEvent<StatsStructureLoadedEvent>(evt);
+    gExtender->GetCurrentExtensionState()->OnStatsStructureLoaded();
 
     gExtender->GetStatLoadOrderHelper().OnLoadFinished();
 }

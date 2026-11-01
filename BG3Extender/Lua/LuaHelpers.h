@@ -291,6 +291,7 @@ END_NS()
 
 #include <Lua/LuaUserdata.h>
 #include <Lua/Shared/Proxies/LuaPropertyMap.h>
+#include <Lua/Shared/Proxies/LuaCppPropertyMapManager.h>
 #include <Lua/Shared/Proxies/LuaCppClass.h>
 #include <Lua/Shared/Proxies/LuaLightCppObjectMeta.h>
 #include <Lua/Shared/Proxies/LuaCppValue.h>

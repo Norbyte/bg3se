@@ -17,6 +17,8 @@ struct FileReader;
 struct AiGrid;
 struct Visual;
 
+using CoreLibInitProc = void (void*);
+
 using AiPathId = int32_t;
 
 using FileReader__CtorProc = FileReader* (FileReader* self, Path const& path, unsigned int type, unsigned int unknown);

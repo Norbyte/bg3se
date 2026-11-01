@@ -3,6 +3,7 @@
 #include "stdafx.h"
 #include "CustomFunctions.h"
 #include <Extender/ScriptExtender.h>
+#include <Extender/Server/ExtensionStateServer.h>
 #include <fstream>
 #include <sstream>
 

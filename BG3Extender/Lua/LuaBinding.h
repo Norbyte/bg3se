@@ -1,14 +1,9 @@
 #pragma once
 
 #include <Lua/LuaHelpers.h>
-#include <Lua/Shared/LuaLifetime.h>
 #include <Lua/Shared/Proxies/LuaEvent.h>
 #include <Lua/Shared/Proxies/LuaEntityProxy.h>
 #include <Lua/Shared/Proxies/LuaPropertyMapHelpers.h>
-#include <Lua/Shared/Proxies/LuaCppClass.h>
-#include <Lua/Shared/Proxies/LuaLightCppObjectMeta.h>
-#include <Lua/Shared/Proxies/LuaCppObjectProxy.h>
-#include <Lua/Shared/Proxies/LuaCppValue.h>
 #include <Lua/Shared/Proxies/LuaEnumValue.h>
 #include <Lua/Shared/Proxies/LuaBitfieldValue.h>
 #include <Lua/Shared/Proxies/LuaUserVariableHolder.h>

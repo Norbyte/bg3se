@@ -1,7 +1,9 @@
 #include <stdafx.h>
+#include <Extender/Client/ExtensionStateClient.h>
 #include <Extender/Client/ScriptExtenderClient.h>
 #include <GameDefinitions/Stats/Cache.h>
 #include <Extender/ScriptExtender.h>
+#include <Extender/Shared/ExtensionState.h>
 #include <Extender/Version.h>
 #include <shlwapi.h>
 
@@ -63,6 +65,9 @@ ScriptExtender::ScriptExtender(ExtenderConfig& config)
     config_(config)
 {
 }
+
+ScriptExtender::~ScriptExtender()
+{}
 
 void ScriptExtender::Initialize()
 {

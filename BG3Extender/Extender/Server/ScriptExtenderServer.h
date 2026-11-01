@@ -4,7 +4,6 @@
 #include <Extender/Shared/ExtenderConfig.h>
 #include <GameDefinitions/Osiris.h>
 #include <GameDefinitions/GuidResources.h>
-#include <Extender/Server/ExtensionStateServer.h>
 #include <GameHooks/OsirisWrappers.h>
 #include <GameDefinitions/Symbols.h>
 #include <Osiris/OsirisExtender.h>
@@ -16,7 +15,6 @@
 #include <thread>
 #include <mutex>
 #include <shared_mutex>
-#include <ppl.h>
 
 BEGIN_NS(esv)
 
@@ -24,6 +22,7 @@ class ScriptExtender : public ThreadedExtenderState
 {
 public:
     ScriptExtender(ExtenderConfig& config);
+    ~ScriptExtender();
 
     void Initialize();
     void PostStartup();

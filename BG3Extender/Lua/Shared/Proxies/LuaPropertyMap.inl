@@ -1,3 +1,4 @@
+#include <Lua/LuaHelpers.h>
 #include <Lua/Shared/Proxies/LuaPropertyMap.h>
 
 BEGIN_NS(lua)

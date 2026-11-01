@@ -1,6 +1,7 @@
 #pragma once
 
 #include <CoreLib/Base/Base.h>
+#include <Lua/LuaHelpers.h>
 
 #include <NsCore/BaseComponent.h>
 #include <NsCore/TypeClass.h>

@@ -2,10 +2,6 @@
 
 #include <GameDefinitions/Net.h>
 #include <concurrent_queue.h>
-#pragma warning(push)
-#pragma warning(disable:4267)
-#include <Extender/Shared/ExtenderProtocol.pb.h>
-#pragma warning(pop)
 
 BEGIN_NS(net)
 
@@ -34,7 +30,7 @@ public:
 
     inline MessageWrapper & GetMessage()
     {
-        return message_;
+        return *message_;
     }
 
     inline bool IsValid() const
@@ -43,7 +39,7 @@ public:
     }
 
 private:
-    MessageWrapper message_;
+    GameUniquePtr<MessageWrapper> message_;
     bool valid_{ false };
 };
 

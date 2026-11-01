@@ -1,10 +1,5 @@
 #pragma once
 
-#include <GameDefinitions/Character.h>
-#include <GameDefinitions/Item.h>
-#include <GameDefinitions/Misc.h>
-#include <GameDefinitions/Osiris.h>
-#include <GameDefinitions/Symbols.h>
 #include <CoreLib/SymbolMapper.h>
 #include <CoreLib/Wrappers.h>
 #include <optional>

@@ -523,8 +523,6 @@ namespace bg3se
 
     }
 
-    using CoreLibInitProc = void (void*);
-
     class TempStrings
     {
     public:

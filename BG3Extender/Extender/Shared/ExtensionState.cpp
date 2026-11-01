@@ -238,6 +238,12 @@ namespace bg3se
         ThrowEvent<ModuleLoadStartedEvent>(params);
     }
 
+    void ExtensionStateBase::OnStatsStructureLoaded()
+    {
+        lua::EmptyEventParams evt;
+        ThrowEvent<StatsStructureLoadedEvent>(evt);
+    }
+
     void ExtensionStateBase::OnStatsLoaded()
     {
         lua::EmptyEventParams params;

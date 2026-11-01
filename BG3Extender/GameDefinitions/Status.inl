@@ -1,3 +1,7 @@
+#include <GameDefinitions/Status.h>
+#include <GameDefinitions/Character.h>
+#include <GameDefinitions/Item.h>
+
 BEGIN_NS(lua)
 
 void MakePolymorphicRef(lua_State* L, esv::Status* v, LifetimeHandle lifetime)
@@ -121,6 +125,57 @@ void MakePolymorphicRef(lua_State* L, ecl::StatusVFX* v, LifetimeHandle lifetime
 
     // Aura, Material statuses unused
     MakeDirectObjectRef(L, v, lifetime);
+}
+
+END_NS()
+
+BEGIN_NS(esv)
+
+Status* StatusMachine::GetStatus(FixedString const& statusId) const
+{
+    for (auto status : Statuses) {
+        if (status->StatusId == statusId) {
+            return status;
+        }
+    }
+
+    return nullptr;
+}
+
+RefReturn<esv::Character> Character::LuaGetSelf() const
+{
+    WARN_ONCE("entity.ServerCharacter.Character is deprecated; use entity.ServerCharacter instead");
+    return const_cast<esv::Character*>(this);
+}
+
+RefReturn<esv::Item> Item::LuaGetSelf() const
+{
+    WARN_ONCE("entity.ServerItem.Item is deprecated; use entity.ServerItem instead");
+    return const_cast<esv::Item*>(this);
+}
+
+esv::Status * Character::GetStatus(FixedString statusId)
+{
+    if (StatusManager == nullptr) {
+        return nullptr;
+    }
+
+    return StatusManager->GetStatus(statusId);
+}
+
+esv::Status* Character::GetStatusByType(StatusType type)
+{
+    if (StatusManager == nullptr) {
+        return nullptr;
+    }
+
+    for (auto status : StatusManager->Statuses) {
+        if (status->GetStatusId() == type) {
+            return status;
+        }
+    }
+
+    return nullptr;
 }
 
 END_NS()

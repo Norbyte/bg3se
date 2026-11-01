@@ -11,6 +11,7 @@
 #include <GameDefinitions/Stats/Cache.inl>
 #include <GameDefinitions/Stats/StatsObject.inl>
 #include <GameDefinitions/Stats/StatsObjectLua.inl>
+#include <GameDefinitions/Stats/StatsLua.inl>
 
 BEGIN_NS(stats)
 

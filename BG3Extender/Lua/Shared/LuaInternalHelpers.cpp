@@ -4,6 +4,7 @@
 #include <Lua/Shared/LuaMethodCallHelpers.h>
 #include <Lua/LuaBinding.h>
 #include <Extender/ScriptExtender.h>
+#include <Extender/Shared/ExtensionState.h>
 
 #include <cstdint>
 #include <lua.h>

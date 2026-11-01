@@ -1,11 +1,18 @@
 #include "stdafx.h"
 #include <Extender/ScriptExtender.h>
+#include <Extender/Client/ExtensionStateClient.h>
+#include <Extender/Server/ExtensionStateServer.h>
 #include <Extender/Shared/Console.h>
 #include <GameDefinitions/Stats/Cache.h>
 #include "Version.h"
 #include "resource.h"
 #include <iomanip>
 #include <chrono>
+
+#pragma warning(push)
+#pragma warning(disable:4267)
+#include <Extender/Shared/ExtenderProtocol.pb.h>
+#pragma warning(pop)
 
 #include <Extender/Shared/UpdaterAPI.inl>
 #include <Extender/Shared/StatLoadOrderHelper.inl>

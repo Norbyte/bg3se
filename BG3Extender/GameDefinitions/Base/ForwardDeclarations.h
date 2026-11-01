@@ -116,6 +116,7 @@ struct App;
 class SDLManager;
 
 class ExtensionStateBase;
+enum class ExtensionStateContext;
 
 namespace rf
 {
@@ -150,6 +151,12 @@ namespace net
     struct Client;
     struct GameClient;
     struct GameServer;
+
+    // Symbols from .proto
+    class MessageWrapper;
+    class MsgUserVars;
+    class MsgC2SExtenderHello;
+    class UserVar;
 }
 
 namespace ecs
@@ -230,6 +237,7 @@ namespace esv
     namespace lua
     {
         class OsirisCallbackManager;
+        struct OsirisNameCache;
     }
 }
 
@@ -262,6 +270,8 @@ namespace lua
 {
     struct LifetimeHandle;
     class Ref;
+    struct AnyRef;
+    struct FunctionRef;
     class EntityHelper;
     class GenericPropertyMap;
     class CachedUserVariableManager;
@@ -270,6 +280,7 @@ namespace lua
     class EntityComponentEventHooks;
     class State;
 
+    class CppPropertyMapManager;
     struct CppObjectMetadata;
     struct CppObjectOpaque;
     struct CppValueOpaque;
@@ -282,6 +293,7 @@ namespace aspk
 {
     struct Input;
     struct Component;
+    struct EffectTimeline;
 }
 
 namespace gn

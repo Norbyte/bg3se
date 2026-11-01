@@ -1,5 +1,6 @@
 #include <GameDefinitions/Components/ServerData.h>
 #include <GameDefinitions/Surface.h>
+#include <Extender/Shared/ExtensionState.h>
 
 BEGIN_NS(esv)
 
@@ -48,7 +49,7 @@ BEGIN_NS(esv::surface)
 
 Surface* SurfaceComponent::GetSurface(lua_State* L) const
 {
-    auto level = lua::State::FromLua(L)->GetExtensionState().GetLevelManager()->CurrentLevel;
+    auto level = bg3se::lua::State::FromLua(L)->GetExtensionState().GetLevelManager()->CurrentLevel;
     if (!level) return nullptr;
 
     return ((Level*)level)->SurfaceManager->Get(SurfaceHandle);

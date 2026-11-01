@@ -3,6 +3,9 @@
 #include <DbgHelp.h>
 #include <psapi.h>
 #include <Extender/ScriptExtender.h>
+#include <Extender/Client/ExtensionStateClient.h>
+#include <Extender/Server/ExtensionStateServer.h>
+#include <Extender/Shared/ExtensionState.h>
 #include <Extender/Version.h>
 #include <Osiris/Shared/NodeHooks.h>
 #include <resource.h>

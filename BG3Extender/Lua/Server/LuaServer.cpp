@@ -5,6 +5,7 @@
 #include <Lua/Server/LuaBindingServer.h>
 #include <Lua/LuaSerializers.h>
 #include <Extender/ScriptExtender.h>
+#include <Extender/Server/ExtensionStateServer.h>
 #include <Extender/Shared/ScriptHelpers.h>
 #include <GameDefinitions/Components/All.h>
 #include <GameDefinitions/GuidResources.h>
@@ -15,29 +16,6 @@
 #include <Lua/LevelIteratorFunctions.inl>
 #include <Lua/Server/FunctorEvents.inl>
 #include <Lua/Server/ServerEntityReplicationEvents.inl>
-
-
-
-namespace bg3se::lua
-{
-    LifetimeHandle GetCurrentLifetime()
-    {
-        if (gExtender->GetServer().IsInContext()) {
-            return esv::lua::GetServerLifetime();
-        } else {
-            return ecl::lua::GetClientLifetime();
-        }
-    }
-
-    LifetimePool& GetLifetimePool()
-    {
-        if (gExtender->GetServer().IsInContext()) {
-            return esv::lua::GetServerLifetimePool();
-        } else {
-            return ecl::lua::GetClientLifetimePool();
-        }
-    }
-}
 
 namespace bg3se::esv::lua
 {

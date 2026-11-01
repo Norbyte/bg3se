@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Lua\Shared\LuaStats.cpp">
-      <Filter>Lua\Shared</Filter>
-    </ClCompile>
     <ClCompile Include="Lua\Server\LuaServer.cpp">
       <Filter>Lua\Server</Filter>
     </ClCompile>
@@ -140,8 +137,6 @@
     <ClCompile Include="Lua\LuaSerializers.cpp" />
     <ClCompile Include="Extender\Shared\ExtenderProtocol.pb.cc" />
     <ClCompile Include="Extender\Shared\ExtenderNet.cpp" />
-    <ClCompile Include="Extender\Client\ClientNetworking.cpp" />
-    <ClCompile Include="Extender\Server\ServerNetworking.cpp" />
     <ClCompile Include="Extender\Client\IMGUI\IMGUI.cpp" />
     <ClCompile Include="Extender\Client\SDL.cpp" />
     <ClCompile Include="GameDefinitions\GameDefinitionHelpers.cpp" />
@@ -545,6 +540,8 @@
     <ClInclude Include="GameDefinitions\RenderFramework.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaEventTypes.h" />
     <ClInclude Include="Lua\Shared\SharedEvents.h" />
+    <ClInclude Include="Extender\Client\IMGUI\IMGUIShared.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaCppPropertyMapManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -831,6 +828,11 @@
     <None Include="make_property_map.py" />
     <None Include="Lua\Libs\Internal.inl">
       <Filter>Lua\Libs</Filter>
+    </None>
+    <None Include="Extender\Server\ServerNetworking.inl" />
+    <None Include="Extender\Client\ClientNetworking.inl" />
+    <None Include="GameDefinitions\Stats\StatsLua.inl">
+      <Filter>GameDefinitions\Stats</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

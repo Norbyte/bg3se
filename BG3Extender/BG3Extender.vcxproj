@@ -138,6 +138,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="Extender\Client\ClientNetworking.h" />
     <ClInclude Include="Extender\Client\ExtensionStateClient.h" />
     <ClInclude Include="Extender\Client\IMGUI\Backends.h" />
+    <ClInclude Include="Extender\Client\IMGUI\IMGUIShared.h" />
     <ClInclude Include="Extender\Client\IMGUI\Objects.h" />
     <ClInclude Include="Extender\Client\ScriptExtenderClient.h" />
     <ClInclude Include="Extender\Client\SDLManager.h" />
@@ -343,6 +344,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="Lua\Shared\Proxies\LuaBitfieldValue.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaCppClass.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaCppObjectProxy.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaCppPropertyMapManager.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaCppValue.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaEntityProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaEnumValue.h" />
@@ -374,12 +376,16 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Extender\Client\ClientNetworking.cpp" />
+    <None Include="Extender\Client\ClientNetworking.inl">
+      <FileType>Document</FileType>
+    </None>
     <ClCompile Include="Extender\Client\ExtensionStateClient.cpp" />
     <ClCompile Include="Extender\Client\ScriptExtenderClient.cpp" />
     <ClCompile Include="Extender\ScriptExtender.cpp" />
     <ClCompile Include="Extender\Server\ScriptExtenderServer.cpp" />
-    <ClCompile Include="Extender\Server\ServerNetworking.cpp" />
+    <None Include="Extender\Server\ServerNetworking.inl">
+      <FileType>Document</FileType>
+    </None>
     <ClCompile Include="Extender\Shared\Console.cpp" />
     <ClCompile Include="Extender\Shared\CrashReporter.cpp" />
     <ClCompile Include="Extender\Shared\dllmain.cpp" />
@@ -408,6 +414,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClCompile Include="GameDefinitions\GlobalFixedStrings.cpp" />
     <ClCompile Include="GameDefinitions\Stats\Stats.cpp" />
     <None Include="GameDefinitions\Events.inl" />
+    <None Include="GameDefinitions\Stats\StatsLua.inl" />
     <None Include="GameDefinitions\Stats\StatsObject.inl">
       <FileType>Document</FileType>
     </None>
@@ -435,9 +442,6 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClCompile Include="Lua\Server\LuaServer.cpp" />
     <ClCompile Include="Lua\Shared\LuaBundle.cpp" />
     <ClCompile Include="Lua\Shared\LuaInternalHelpers.cpp" />
-    <ClCompile Include="Lua\Shared\LuaStats.cpp">
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
-    </ClCompile>
     <ClCompile Include="Lua\Shared\Proxies\LuaEventRegistrations.cpp" />
     <ClCompile Include="Lua\Shared\Proxies\LuaObjectProxies.cpp">
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>

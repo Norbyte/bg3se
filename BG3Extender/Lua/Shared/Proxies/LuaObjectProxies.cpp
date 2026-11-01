@@ -3,6 +3,7 @@
 #include <stdafx.h>
 
 #include <Lua/Shared/Proxies/PropertyMapDependencies.h>
+#include <Extender/Shared/ExtensionState.h>
 #include <Lua/Shared/Proxies/PolymorphicPush.inl>
 #include <GameDefinitions/Generated/PropertyMapMeta.h>
 

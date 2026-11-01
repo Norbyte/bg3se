@@ -1,8 +1,5 @@
 #pragma once
 
-#include <Osiris/Shared/CustomFunctions.h>
-#include <Extender/Shared/ExtensionState.h>
-#include <GameDefinitions/Stats/Stats.h>
 #include <GameDefinitions/Net.h>
 #include <CoreLib/Wrappers.h>
 #include <GameHooks/EngineHooksFwdDecl.h>

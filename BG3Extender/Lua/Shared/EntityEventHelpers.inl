@@ -1,3 +1,5 @@
+#include <Lua/Shared/EntityReplicationEvents.h>
+
 BEGIN_NS(lua)
 
 std::optional<LuaEntitySubscriptionId> EntityEventHelpers::SubscribeReplication(lua_State* L, EntityHandle entity, ExtComponentType component, RegistryEntry&& hook, std::optional<uint64_t> flags)

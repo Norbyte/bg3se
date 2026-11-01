@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include <Lua/Debugger/LuaDebugMessages.h>
 #include <Extender/ScriptExtender.h>
+#include <Extender/Server/ExtensionStateServer.h>
+#include <Extender/Client/ExtensionStateClient.h>
+#include <Extender/Shared/ExtensionState.h>
 #include <lstate.h>
 #include <sstream>
 #include <shlwapi.h>

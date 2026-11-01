@@ -1,7 +1,6 @@
 #pragma once
 
 #include <GameDefinitions/Base/Base.h>
-#include <GameDefinitions/Stats/Stats.h>
 #include <shared_mutex>
 
 BEGIN_NS(stats)

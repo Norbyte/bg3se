@@ -77,6 +77,7 @@ namespace bg3se
         virtual void OnGameSessionLoading();
         virtual void OnGameSessionLoaded();
         void OnModuleLoadStarted();
+        void OnStatsStructureLoaded();
         void OnStatsLoaded();
         void OnModuleResume();
         void OnResetCompleted();

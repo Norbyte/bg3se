@@ -1,5 +1,6 @@
 #include <stdafx.h>
 #include <Extender/ScriptExtender.h>
+#include <Extender/Server/ExtensionStateServer.h>
 #include "FunctionLibrary.h"
 #include <Extender/Version.h>
 

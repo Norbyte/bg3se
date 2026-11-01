@@ -2,7 +2,6 @@
 
 #include <Extender/Shared/ScriptExtenderBase.h>
 #include <Extender/Shared/ExtenderConfig.h>
-#include <Extender/Client/ExtensionStateClient.h>
 #include <Extender/Client/ClientNetworking.h>
 #include <Extender/Client/SDLManager.h>
 #include <Extender/Client/VisualHelpers.h>
@@ -13,7 +12,6 @@
 #include <thread>
 #include <mutex>
 #include <shared_mutex>
-#include <ppl.h>
 
 BEGIN_NS(ecl)
 
@@ -21,6 +19,7 @@ class ScriptExtender : public ThreadedExtenderState
 {
 public:
     ScriptExtender(ExtenderConfig& config);
+    ~ScriptExtender();
 
     void Initialize();
     void PostStartup();

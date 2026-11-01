@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GameDefinitions/AllSpark.h>
+
 BEGIN_SE()
 
 struct LightingDetails : public ProtectedGameObject<LightingDetails>

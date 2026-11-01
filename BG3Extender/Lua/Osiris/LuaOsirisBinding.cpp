@@ -1,6 +1,7 @@
 #include <stdafx.h>
 #include <Lua/Osiris/Binding.h>
 #include <Extender/ScriptExtender.h>
+#include <Extender/Server/ExtensionStateServer.h>
 
 #include <Lua/Osiris/ValueHelpers.inl>
 #include <Lua/Osiris/Function.inl>

@@ -2,6 +2,11 @@
 #include <Extender/Server/ScriptExtenderServer.h>
 #include <Extender/ScriptExtender.h>
 
+#pragma warning(push)
+#pragma warning(disable:4267)
+#include <Extender/Shared/ExtenderProtocol.pb.h>
+#pragma warning(pop)
+
 #include <Extender/Shared/SavegameSerializer.inl>
 
 #define STATIC_HOOK(name) decltype(bg3se::esv::ScriptExtender::name) * decltype(bg3se::esv::ScriptExtender::name)::gHook;
@@ -38,6 +43,9 @@ ScriptExtender::ScriptExtender(ExtenderConfig& config)
     osiris_(config)
 {
 }
+
+ScriptExtender::~ScriptExtender()
+{}
 
 void ScriptExtender::Initialize()
 {

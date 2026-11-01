@@ -2,6 +2,7 @@
 #include <Extender/Version.h>
 #include <Extender/Shared/Console.h>
 #include <Extender/ScriptExtender.h>
+#include <Extender/Shared/ExtensionState.h>
 
 BEGIN_SE()
 

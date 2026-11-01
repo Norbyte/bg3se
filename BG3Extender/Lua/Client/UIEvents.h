@@ -1,7 +1,7 @@
 #pragma once
 
 #include <NsGui/UIElement.h>
-#include <Lua/Shared/LuaReference.h>
+#include <Lua/LuaHelpers.h>
 
 BEGIN_NS(ecl::lua)
 

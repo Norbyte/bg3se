@@ -2,6 +2,7 @@
 #include "FunctionLibrary.h"
 #include <Extender/ScriptExtender.h>
 #include <GameDefinitions/Symbols.h>
+#include <Extender/Shared/ExtensionState.h>
 
 namespace bg3se
 {

@@ -1,6 +1,11 @@
 #include <Lua/Libs/Net.h>
 #include <Extender/Shared/ExtenderNet.h>
 
+#pragma warning(push)
+#pragma warning(disable:4267)
+#include <Extender/Shared/ExtenderProtocol.pb.h>
+#pragma warning(pop)
+
 /// <lua_module>Net</lua_module>
 BEGIN_NS(lua::net)
 

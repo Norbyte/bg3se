@@ -1,5 +1,7 @@
 #include <GameDefinitions/Stats/Stats.h>
 #include <GameDefinitions/Stats/Cache.h>
+#include <Lua/LuaHelpers.h>
+#include <Lua/LuaSerializers.h>
 
 BEGIN_NS(stats)
 

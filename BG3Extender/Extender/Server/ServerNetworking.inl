@@ -1,6 +1,6 @@
-#include <stdafx.h>
 #include <Extender/Server/ServerNetworking.h>
 #include <Extender/ScriptExtender.h>
+#include <Extender/Server/ExtensionStateServer.h>
 
 BEGIN_NS(esv)
 

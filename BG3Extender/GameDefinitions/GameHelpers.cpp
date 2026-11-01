@@ -4,6 +4,7 @@
 #include <GameDefinitions/Symbols.h>
 #include <Lua/Shared/Proxies/LuaPropertyMapHelpers.h>
 #include <Extender/ScriptExtender.h>
+#include <Extender/Shared/ExtensionHelpers.h>
 #include <GameDefinitions/Animation.h>
 #include <GameDefinitions/Resources.h>
 #include <GameDefinitions/Dialog.h>
@@ -202,55 +203,6 @@ namespace bg3se
         return nullptr;
     }
 
-    esv::Status* esv::StatusMachine::GetStatus(FixedString const& statusId) const
-    {
-        for (auto status : Statuses) {
-            if (status->StatusId == statusId) {
-                return status;
-            }
-        }
-
-        return nullptr;
-    }
-
-    RefReturn<esv::Character> esv::Character::LuaGetSelf() const
-    {
-        WARN_ONCE("entity.ServerCharacter.Character is deprecated; use entity.ServerCharacter instead");
-        return const_cast<esv::Character*>(this);
-    }
-
-    static bool ItemGetSelfCalled{ false };
-
-    RefReturn<esv::Item> esv::Item::LuaGetSelf() const
-    {
-        WARN_ONCE("entity.ServerItem.Item is deprecated; use entity.ServerItem instead");
-        return const_cast<esv::Item*>(this);
-    }
-
-    esv::Status * esv::Character::GetStatus(FixedString statusId)
-    {
-        if (StatusManager == nullptr) {
-            return nullptr;
-        }
-
-        return StatusManager->GetStatus(statusId);
-    }
-
-    esv::Status* esv::Character::GetStatusByType(StatusType type)
-    {
-        if (StatusManager == nullptr) {
-            return nullptr;
-        }
-
-        for (auto status : StatusManager->Statuses) {
-            if (status->GetStatusId() == type) {
-                return status;
-            }
-        }
-
-        return nullptr;
-    }
-
     GameObjectTemplate* TryToCacheTemplate(GameObjectTemplate* tmpl)
     {
         switch (tmpl->TemplateHandle.GetType()) {
@@ -382,108 +334,6 @@ namespace bg3se
 }
 
 BEGIN_NS(lua)
-
-void MakePolymorphicRef(lua_State* L, stats::ContextData* value, LifetimeHandle lifetime)
-{
-#define V(type) case FunctorContextType::type: \
-            MakeDirectObjectRef(L, static_cast<stats::type##ContextData*>(value), lifetime); break;
-
-    switch (value->Type) {
-        V(AttackTarget)
-        V(AttackPosition)
-        V(Move)
-        V(Target)
-        V(NearbyAttacked)
-        V(NearbyAttacking)
-        V(Equip)
-        V(Source)
-        V(Interrupt)
-
-    default:
-        MakeDirectObjectRef(L, value, lifetime);
-        break;
-    }
-
-#undef V
-}
-
-void MakePolymorphicRef(lua_State* L, stats::Functor* value, LifetimeHandle lifetime)
-{
-#define V(type) case stats::FunctorId::type: \
-            MakeDirectObjectRef(L, static_cast<stats::type##Functor*>(value), lifetime); break;
-
-    switch (value->TypeId) {
-        V(CustomDescription)
-        V(ApplyStatus)
-        V(SurfaceChange)
-        V(Resurrect)
-        V(Sabotage)
-        V(Summon)
-        V(Force)
-        V(Douse)
-        V(SwapPlaces)
-        V(Pickup)
-        V(CreateSurface)
-        V(CreateConeSurface)
-        V(RemoveStatus)
-        V(DealDamage)
-        V(ExecuteWeaponFunctors)
-        V(RegainHitPoints)
-        V(TeleportSource)
-        V(SetStatusDuration)
-        V(UseSpell)
-        V(UseActionResource)
-        V(UseAttack)
-        V(CreateExplosion)
-        V(BreakConcentration)
-        V(ApplyEquipmentStatus)
-        V(RestoreResource)
-        V(Spawn)
-        V(Stabilize)
-        V(Unlock)
-        V(ResetCombatTurn)
-        V(RemoveAuraByChildStatus)
-        V(SummonInInventory)
-        V(SpawnInInventory)
-        V(RemoveUniqueStatus)
-        V(DisarmWeapon)
-        V(DisarmAndStealWeapon)
-        V(SwitchDeathType)
-        V(TriggerRandomCast)
-        V(GainTemporaryHitPoints)
-        V(FireProjectile)
-        V(ShortRest)
-        V(CreateZone)
-        V(DoTeleport)
-        V(RegainTemporaryHitPoints)
-        V(RemoveStatusByLevel)
-        V(SurfaceClearLayer)
-        V(Unsummon)
-        V(CreateWall)
-        V(Counterspell)
-        V(AdjustRoll)
-        V(SpawnExtraProjectiles)
-        V(Kill)
-        V(TutorialEvent)
-        V(Drop)
-        V(ResetCooldowns)
-        V(SetRoll)
-        V(SetDamageResistance)
-        V(SetReroll)
-        V(SetAdvantage)
-        V(SetDisadvantage)
-        V(MaximizeRoll)
-        V(CameraWait)
-        V(ModifySpellCameraFocus)
-        V(Extender)
-
-    default:
-        MakeDirectObjectRef(L, value, lifetime);
-        break;
-    }
-
-#undef V
-}
 
 void MakePolymorphicRef(lua_State* L, IActionData* value, LifetimeHandle lifetime)
 {

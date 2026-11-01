@@ -1,5 +1,6 @@
 #include <stdafx.h>
 #include <Extender/ScriptExtender.h>
+#include <Extender/Client/ExtensionStateClient.h>
 #include <Extender/Client/SDLManager.h>
 #include <CoreLib/Wrappers.h>
 #include <imgui.h>

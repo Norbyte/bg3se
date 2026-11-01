@@ -7,6 +7,7 @@
 #include <chrono>
 #include <ctime>
 #include <psapi.h>
+#include <Lua/Osiris/CallbackManager.h>
 
 namespace bg3se
 {

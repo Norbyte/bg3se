@@ -1,5 +1,12 @@
 #include <stdafx.h>
 #include <Extender/Shared/ExtenderNet.h>
+#pragma warning(push)
+#pragma warning(disable:4267)
+#include <Extender/Shared/ExtenderProtocol.pb.h>
+#pragma warning(pop)
+
+#include <Extender/Client/ClientNetworking.inl>
+#include <Extender/Server/ServerNetworking.inl>
 
 BEGIN_NS(net)
 
@@ -106,6 +113,38 @@ void ExtenderProtocolBase::Reset()
 {
 }
 
+void ExtenderProtocolBase::DoSyncUserVars(MsgUserVars const& msg)
+{
+    auto state = gExtender->GetCurrentExtensionState();
+    for (auto const& var : msg.vars()) {
+        if (var.type() == UserVarType::MODULE_VAR) {
+            state->GetModVariables().NetworkSync(var);
+        } else {
+            state->GetUserVariables().NetworkSync(var);
+        }
+    }
+}
+
+void ExtenderProtocolBase::SyncUserVars(MsgUserVars const& msg)
+{
+    auto state = gExtender->GetCurrentExtensionState();
+    if (!state) {
+        ERR("Tried to sync user vars without the extension state being initialized!");
+        return;
+    }
+
+    if (state->GetUserVariables().HasCache()) {
+        LuaVirtualPin lua(state);
+        if (lua) {
+            DoSyncUserVars(msg);
+        }
+    } else {
+        // If the Lua state was not yet initialized, it is safe to write uservars without a lock,
+        // since we won't enter the Lua VM
+        DoSyncUserVars(msg);
+    }
+}
+
 ExtenderMessage::ExtenderMessage()
 {
     MsgId = MessageId;
@@ -164,7 +203,7 @@ net::Message * ExtenderMessage::CreateNew()
 
 void ExtenderMessage::Reset()
 {
-    GetMessage().Clear();
+    message_.reset(GameAlloc<MessageWrapper>());
     valid_ = false;
 }
 

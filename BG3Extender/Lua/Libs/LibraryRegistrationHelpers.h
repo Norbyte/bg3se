@@ -2,6 +2,9 @@
 
 #include <Lua/LuaBinding.h>
 #include <Extender/ScriptExtender.h>
+#include <Extender/Shared/ExtensionState.h>
+#include <Extender/Client/ExtensionStateClient.h>
+#include <Extender/Server/ExtensionStateServer.h>
 #include <Lua/Shared/LuaModule.inl>
 #include <Lua/Shared/LuaReference.inl>
 #include <Lua/Shared/Proxies/LuaPropertyMap.inl>

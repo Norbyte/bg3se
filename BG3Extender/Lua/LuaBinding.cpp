@@ -1,5 +1,7 @@
 #include <stdafx.h>
 #include <Extender/ScriptExtender.h>
+#include <Extender/Server/ExtensionStateServer.h>
+#include <Extender/Client/ExtensionStateClient.h>
 #include <GameDefinitions/RootTemplates.h>
 #include <GameDefinitions/Ai.h>
 #include <Lua/LuaBinding.h>
@@ -37,6 +39,24 @@ void nse_lua_report_handled_error(lua_State* L)
 }
 
 BEGIN_NS(lua)
+
+LifetimeHandle GetCurrentLifetime()
+{
+    if (gExtender->GetServer().IsInContext()) {
+        return esv::lua::GetServerLifetime();
+    } else {
+        return ecl::lua::GetClientLifetime();
+    }
+}
+
+LifetimePool& GetLifetimePool()
+{
+    if (gExtender->GetServer().IsInContext()) {
+        return esv::lua::GetServerLifetimePool();
+    } else {
+        return ecl::lua::GetClientLifetimePool();
+    }
+}
 
 void push(lua_State* L, EntityHandle const& h)
 {
@@ -83,7 +103,7 @@ void push(lua_State* L, TypeInformationRef const& v)
     }
 }
 
-void push(lua_State* L, stats::ConditionId const& h)
+void push(lua_State* L, bg3se::stats::ConditionId const& h)
 {
     auto val = h.Get();
     if (val) {

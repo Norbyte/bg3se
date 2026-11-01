@@ -5,7 +5,6 @@
 #include <GameDefinitions/Interrupt.h>
 #include <GameDefinitions/Hit.h>
 #include <GameDefinitions/Misc.h>
-#include <Lua/LuaHelpers.h>
 
 BEGIN_NS(stats)
 

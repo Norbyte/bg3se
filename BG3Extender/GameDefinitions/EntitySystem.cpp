@@ -6,6 +6,9 @@
 #include <GameDefinitions/GuidResources.h>
 #include <GameDefinitions/Components/All.h>
 #include <Extender/ScriptExtender.h>
+#include <Extender/Shared/ExtensionState.h>
+#include <Extender/Server/ExtensionStateServer.h>
+#include <Extender/Client/ExtensionStateClient.h>
 
 #undef DEBUG_INDEX_MAPPINGS
 

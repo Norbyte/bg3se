@@ -1,5 +1,6 @@
 #include <stdafx.h>
 #include <GameDefinitions/Symbols.h>
+#include <GameDefinitions/Stats/Entries.h>
 #include <Lua/LuaBinding.h>
 #include <Lua/LuaSerializers.h>
 #include <Extender/Shared/ExtensionHelpers.h>
@@ -53,7 +54,7 @@ namespace bg3se::lua
     LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureSubTable*& v)
     {
         if (!s.IsWriting && !v) {
-            v = GameAlloc<stats::TreasureSubTable>();
+            v = GameAlloc<bg3se::stats::TreasureSubTable>();
         }
 
         serialize(s, *v);
@@ -63,7 +64,7 @@ namespace bg3se::lua
     LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureCategory*& v)
     {
         if (!s.IsWriting && !v) {
-            v = GameAlloc<stats::TreasureCategory>();
+            v = GameAlloc<bg3se::stats::TreasureCategory>();
         }
 
         serialize(s, *v);
@@ -142,7 +143,7 @@ namespace bg3se::lua
     LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureSubTableCategory*& v)
     {
         if (!s.IsWriting && !v) {
-            v = GameAlloc<stats::TreasureSubTableCategory>();
+            v = GameAlloc<bg3se::stats::TreasureSubTableCategory>();
         }
 
         serialize(s, *v);

@@ -1,8 +1,5 @@
 #pragma once
 
-#include <Lua/Shared/Proxies/LuaPropertyMap.h>
-#include <Lua/Shared/Proxies/LuaCppClass.h>
-
 BEGIN_NS(lua)
 
 template <class TSubclass>

@@ -20,9 +20,6 @@ inline ImVec2 ToImVec(std::optional<glm::vec2> const& v, ImVec2 defaultVal = ImV
     return v ? ImVec2(v->x, v->y) : defaultVal;
 }
 
-using HandleType = uint64_t;
-static constexpr HandleType InvalidHandle = 0xffffffffffffffffull;
-
 class IMGUIObjectManager;
 
 class IMGUITextureLoader

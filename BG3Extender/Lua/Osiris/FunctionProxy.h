@@ -5,6 +5,7 @@
 #include <Osiris/Shared/CustomFunctions.h>
 #include <Extender/Shared/ExtensionHelpers.h>
 #include <Osiris/Shared/OsirisHelpers.h>
+#include <Extender/Server/ExtensionStateServer.h>
 
 BEGIN_NS(esv::lua)
 
