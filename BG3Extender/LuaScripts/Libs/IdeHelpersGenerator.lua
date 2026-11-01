@@ -330,16 +330,18 @@ function Generator:Build(opts)
 
             table.insert(self.Classes, type)
         elseif type.Kind == "Module" then
-            local index = #self.Modules+1
-            if _ModuleToClassField[typeName] then
-                local targetTypeName = _ModuleToClassField[typeName]
-                if moduleToClassField[targetTypeName] == nil then
-                    moduleToClassField[targetTypeName] = {}
+            if typeName ~= "Internal" then
+                local index = #self.Modules+1
+                if _ModuleToClassField[typeName] then
+                    local targetTypeName = _ModuleToClassField[typeName]
+                    if moduleToClassField[targetTypeName] == nil then
+                        moduleToClassField[targetTypeName] = {}
+                    end
+                    removeModuleFromExt[typeName] = index
+                    table.insert(moduleToClassField[targetTypeName], type)
                 end
-                removeModuleFromExt[typeName] = index
-                table.insert(moduleToClassField[targetTypeName], type)
+                self.Modules[index] = type
             end
-            self.Modules[index] = type
         elseif type.Kind == "Enumeration" then
             table.insert(self.Enumerations, type)
         elseif type.Kind == "Boolean" or type.Kind == "Integer" or type.Kind == "Float" or type.Kind == "String" or type.Kind == "Any" then

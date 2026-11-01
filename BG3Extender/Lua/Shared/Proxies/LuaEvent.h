@@ -2,6 +2,7 @@
 
 #include <Lua/LuaHelpers.h>
 #include <Lua/Shared/Proxies/LuaEventTypes.h>
+#include <GameDefinitions/Generated/EventsMeta.h>
 
 BEGIN_NS(lua)
 
@@ -57,6 +58,35 @@ struct EventBase
 
     void StopPropagation();
     void PreventAction();
+};
+
+// Stores hints to indicate whether an event is currently handled by any Lua subscribers or not.
+// Checked before acquiring the lua VM lock to avoid unnecessary waits.
+struct EventSubscriberHints
+{
+    std::array<std::atomic<uint32_t>, EventRegistrySize> Subscribers;
+
+    inline bool ShouldThrowEvent(EventTypeId id) const
+    {
+        return Subscribers[(uint32_t)id] > 0;
+    }
+
+    inline void Activate(EventTypeId id)
+    {
+        Subscribers[(uint32_t)id] = 1;
+    }
+
+    inline void Deactivate(EventTypeId id)
+    {
+        Subscribers[(uint32_t)id] = 0;
+    }
+
+    inline void DeactivateAll()
+    {
+        for (auto& sub : Subscribers) {
+            sub = 0;
+        }
+    }
 };
 
 END_NS()

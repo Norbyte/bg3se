@@ -519,6 +519,12 @@ State::State(ExtensionStateBase& state, uint32_t generationId, bool isServer)
 State::~State()
 {}
 
+
+lua::EventSubscriberHints& State::GetEventHints()
+{
+    return state_.GetEventHints();
+}
+
 void State::Initialize()
 {
     entityHooks_.BindECS();
@@ -532,6 +538,8 @@ void State::Shutdown()
 
     GetEntitySystemHelpers()->GetTracer().StopTracing();
     GetEntitySystemHelpers()->GetTracer().GetLog().Clear();
+
+    state_.GetEventHints().DeactivateAll();
 }
 
 LifetimeHandle State::GetCurrentLifetime()

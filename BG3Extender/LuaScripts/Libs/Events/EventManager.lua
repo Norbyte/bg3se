@@ -25,20 +25,20 @@ function EventManager:ThrowEvent(event)
 end
 
 
-function EventManager:RegisterEngineEvent(event)
-    local ev = SubscribableEvent:New(event, #self.EventsById + 1)
+function EventManager:RegisterEngineEvent(event, id)
+    local ev = SubscribableEvent:New(event, #self.EventsById + 1, id)
     self.Events[event] = ev
     table.insert(self.EventsById, ev)
 end
 
 
 function EventManager:RegisterEvents()
-    for i,ev in pairs(Ext.Types.GetPublishedEvents()) do
-        self:RegisterEngineEvent(ev)
+    for name,id in pairs(_I.EngineInternals.GetPublishedEvents()) do
+        self:RegisterEngineEvent(name, id)
     end
     
     for i,ev in pairs(_I._PublishedLocalEvents) do
-        self:RegisterEngineEvent(ev)
+        self:RegisterEngineEvent(ev, nil)
     end
 
     -- Support for Ext.RegisterConsoleCommand()

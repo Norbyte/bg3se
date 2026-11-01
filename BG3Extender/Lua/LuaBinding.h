@@ -261,6 +261,9 @@ namespace bg3se::lua
             return systemHooks_;
         }
 
+        // Not inline to avoid header dependency on ExtensionState.h
+        lua::EventSubscriberHints& GetEventHints();
+
         void FinishStartup();
         void LoadBootstrap(STDString const& path, STDString const& modTable);
         virtual void OnGameSessionLoading();
@@ -296,7 +299,12 @@ namespace bg3se::lua
         EventResult ThrowEvent(typename TEvent::ParamsType& evt, std::optional<bool> canPreventAction = {})
         {
             static_assert(IsEvent<TEvent>, "Event not registered with the event manager");
-            return ThrowEvent<typename TEvent::ParamsType>(EventID<TEvent>, evt, canPreventAction);
+
+            if (GetEventHints().ShouldThrowEvent(EventID<TEvent>)) {
+                return ThrowEvent<typename TEvent::ParamsType>(EventID<TEvent>, evt, canPreventAction);
+            } else {
+                return lua::EventResult::Skipped;
+            }
         }
 
         template <class TEventParams>

@@ -131,6 +131,11 @@ namespace bg3se
             return modVariables_;
         }
 
+        inline lua::EventSubscriberHints& GetEventHints()
+        {
+            return eventHints_;
+        }
+
         inline uint32_t GetEnterCount() const
         {
             return luaRefs_;
@@ -145,12 +150,15 @@ namespace bg3se
         lua::EventResult ThrowEvent(typename TEvent::ParamsType& evt, std::optional<bool> canPreventAction = {})
         {
             static_assert(IsEvent<TEvent>, "Event not registered with the event manager");
-            LuaVirtualPin lua(this);
-            if (lua) {
-                return lua->ThrowEvent<TEvent>(evt, canPreventAction);
-            } else {
-                return lua::EventResult::Skipped;
+
+            if (eventHints_.ShouldThrowEvent(EventID<TEvent>)) {
+                LuaVirtualPin lua(this);
+                if (lua) {
+                    return lua->ThrowEvent<typename TEvent::ParamsType>(EventID<TEvent>, evt, canPreventAction);
+                }
             }
+
+            return lua::EventResult::Skipped;
         }
 
         static std::unordered_set<std::string_view> sAllFeatureFlags;
@@ -179,6 +187,8 @@ namespace bg3se
         UserVariableManager userVariables_;
         ModVariableManager modVariables_;
         GameTime time_;
+
+        lua::EventSubscriberHints eventHints_;
 
         void LuaResetInternal();
         virtual void ShutdownLuaState() = 0;

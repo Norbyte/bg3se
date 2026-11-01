@@ -829,6 +829,9 @@
     <None Include="make_events.py" />
     <None Include="make_enumerations.py" />
     <None Include="make_property_map.py" />
+    <None Include="Lua\Libs\Internal.inl">
+      <Filter>Lua\Libs</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

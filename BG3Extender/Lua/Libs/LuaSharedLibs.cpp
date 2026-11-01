@@ -7,6 +7,7 @@
 #include <Lua/Libs/Debug.inl>
 #include <Lua/Libs/Entity.inl>
 #include <Lua/Libs/IO.inl>
+#include <Lua/Libs/Internal.inl>
 #include <Lua/Libs/Json.inl>
 #include <Lua/Libs/Level.inl>
 #include <Lua/Libs/Localization.inl>
@@ -122,6 +123,7 @@ void RegisterSharedLibraries()
     json::RegisterJsonLib();
     types::RegisterTypesLib();
     io::RegisterIOLib();
+    internal::RegisterInternalLib();
     loca::RegisterLocalizationLib();
     log::RegisterLogLib();
     math::RegisterMathLib();

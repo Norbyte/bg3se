@@ -2,7 +2,7 @@ local _I = Ext._Internal
 
 --- @class SubscriptionData
 --- @field Handler fun()
---- @field Index number
+--- @field Index integer
 --- @field Priority number
 --- @field Once boolean
 --- @field Options table
@@ -12,22 +12,25 @@ local _I = Ext._Internal
 
 --- @class SubscribableEvent
 --- @field First SubscriptionData
---- @field NextIndex number
---- @field IdPrefix number
+--- @field NextIndex integer
+--- @field IdPrefix integer
+--- @field EngineId integer|nil
 --- @field Name string
---- @field PendingDeletions number[]
+--- @field PendingDeletions integer[]
 --- @field PendingAdds SubscriptionData[]
---- @field EnterCount number
+--- @field EnterCount integer
 local SubscribableEvent = {}
 
 ---@param name string
----@param idPrefix number|nil
+---@param idPrefix integer|nil
+---@param engineId integer|nil
 ---@return SubscribableEvent
-function SubscribableEvent:Instantiate(name, idPrefix)
+function SubscribableEvent:Instantiate(name, idPrefix, engineId)
     return {
         First = nil,
         NextIndex = 1,
         IdPrefix = idPrefix or Ext.Math.Random(1, 0xfffffff),
+        EngineId = engineId,
         Name = name,
         PendingDeletions = {},
         PendingAdds = {},
@@ -57,6 +60,18 @@ function SubscribableEvent:Subscribe(handler, opts)
     return index | (self.IdPrefix << 32)
 end
 
+function SubscribableEvent:FirstSubscriberAdded()
+    if self.EngineId ~= nil then
+        _I.EngineInternals.ActivateEvent(self.EngineId)
+    end
+end
+
+function SubscribableEvent:LastSubscriberRemoved()
+    if self.EngineId ~= nil then
+        _I.EngineInternals.DeactivateEvent(self.EngineId)
+    end
+end
+
 ---@param node SubscriptionData
 ---@param sub SubscriptionData
 function SubscribableEvent:DoSubscribeBefore(node, sub)
@@ -76,6 +91,7 @@ end
 function SubscribableEvent:DoSubscribe(sub)
     if self.First == nil then
         self.First = sub
+        self:FirstSubscriberAdded()
         return
     end
 
@@ -108,6 +124,10 @@ function SubscribableEvent:RemoveNode(node)
 
     if self.First == node then
         self.First = node.Next
+
+        if self.First == nil then
+            self:LastSubscriberRemoved()
+        end
     end
 
     node.Prev = nil
