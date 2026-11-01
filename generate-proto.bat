@@ -1,12 +1,9 @@
 pushd .
 
-cd BG3Extender\Extender\Shared
-..\..\..\External\protoc\bin\protoc --cpp_out=. ExtenderProtocol.proto
+cd BG3Extender
 
-cd ..\..\Lua\Debugger
-..\..\..\External\protoc\bin\protoc --cpp_out=. LuaDebug.proto
-
-cd ..\..\Osiris\Debugger
-..\..\..\External\protoc\bin\protoc --cpp_out=. osidebug.proto
+..\External\protoc\bin\protoc --cpp_out=. Extender\Shared\ExtenderProtocol.proto
+..\External\protoc\bin\protoc --cpp_out=. Lua\Debugger\LuaDebug.proto
+..\External\protoc\bin\protoc --cpp_out=. Osiris\Debugger\osidebug.proto
 
 popd

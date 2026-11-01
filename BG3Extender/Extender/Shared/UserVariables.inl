@@ -165,14 +165,14 @@ void UserVariable::ToNetMessage(net::UserVar& var) const
     case UserVariableType::Composite:
     {
         auto const& s = std::get<STDString>(Value);
-        var.set_luaval(s.c_str(), s.size());
+        var.set_luaval(s);
         break;
     }
 
     case UserVariableType::CompositeBinary:
     {
         auto const& s = std::get<STDString>(Value);
-        var.set_binaryval(s.c_str(), s.size());
+        var.set_binaryval(s);
         break;
     }
     }
@@ -596,19 +596,19 @@ void UserVariableManager::NetworkSync(net::UserVar const& var)
     entityGuid.Val[0] = var.uuid1();
     entityGuid.Val[1] = var.uuid2();
 
-    USER_VAR_DBG("Received sync for %d/%s/%s", var.type(), entityGuid.ToString().c_str(), var.key().c_str());
+    USER_VAR_DBG("Received sync for %d/%s/%s", var.type(), entityGuid.ToString().c_str(), var.key().data());
     auto entity = GuidToEntity(entityGuid);
     if (!entity) return;
 
     FixedString key(var.key());
     auto proto = GetPrototype(key);
     if (!proto) {
-        ERR("Tried to sync variable '%s' that has no prototype!", var.key().c_str());
+        ERR("Tried to sync variable '%s' that has no prototype!", var.key().data());
         return;
     }
     
     if (!proto->NeedsSyncFor(!isServer_)) {
-        ERR("Tried to sync variable '%s' in illegal direction!", var.key().c_str());
+        ERR("Tried to sync variable '%s' in illegal direction!", var.key().data());
         return;
     }
 
@@ -903,7 +903,7 @@ void ModVariableManager::NetworkSync(net::UserVar const& var)
     modUuid.Val[0] = var.uuid1();
     modUuid.Val[1] = var.uuid2();
 
-    USER_VAR_DBG("Received sync for %s/%s", modUuid.ToString().c_str(), var.key().c_str());
+    USER_VAR_DBG("Received sync for %s/%s", modUuid.ToString().c_str(), var.key().data());
 
     auto map = GetMod(modUuid);
     if (!map) {
@@ -914,12 +914,12 @@ void ModVariableManager::NetworkSync(net::UserVar const& var)
     FixedString key(var.key());
     auto proto = map->GetPrototype(key);
     if (!proto) {
-        ERR("Tried to sync variable %s/%s that has no prototype!", modUuid.ToString().c_str(), var.key().c_str());
+        ERR("Tried to sync variable %s/%s that has no prototype!", modUuid.ToString().c_str(), var.key().data());
         return;
     }
 
     if (!proto->NeedsSyncFor(!isServer_)) {
-        ERR("Tried to sync variable %s/%s in illegal direction!", modUuid.ToString().c_str(), var.key().c_str());
+        ERR("Tried to sync variable %s/%s in illegal direction!", modUuid.ToString().c_str(), var.key().data());
         return;
     }
 

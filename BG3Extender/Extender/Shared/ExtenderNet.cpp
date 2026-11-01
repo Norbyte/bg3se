@@ -164,11 +164,7 @@ net::Message * ExtenderMessage::CreateNew()
 
 void ExtenderMessage::Reset()
 {
-#if defined(_DEBUG)
-    message_ = new MessageWrapper();
-#else
     GetMessage().Clear();
-#endif
     valid_ = false;
 }
 

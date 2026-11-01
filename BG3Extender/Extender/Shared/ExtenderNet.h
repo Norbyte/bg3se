@@ -34,11 +34,7 @@ public:
 
     inline MessageWrapper & GetMessage()
     {
-#if defined(_DEBUG)
-        return *message_;
-#else
         return message_;
-#endif
     }
 
     inline bool IsValid() const
@@ -47,11 +43,7 @@ public:
     }
 
 private:
-#if defined(_DEBUG)
-    MessageWrapper* message_{ nullptr };
-#else
     MessageWrapper message_;
-#endif
     bool valid_{ false };
 };
 

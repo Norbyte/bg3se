@@ -85,9 +85,9 @@
       <Command>python make_enumerations.py
 python make_events.py
 python make_property_map.py
-rem $(SolutionDir)\External\protoc\bin\protoc --cpp_out=$(SolutionDir)\BG3Extender\Osiris\Debugger Osiris\Debugger\osidebug.proto
-rem $(SolutionDir)\External\protoc\bin\protoc --cpp_out=$(SolutionDir)\BG3Extender\Lua\Debugger Lua\Debugger\LuaDebug.proto
-rem $(SolutionDir)\External\protoc\bin\protoc --cpp_out=$(SolutionDir)\BG3Extender\Extender\Shared Extender\Shared\ExtenderProtocol.proto
+rem $(SolutionDir)\External\protoc\bin\protoc --cpp_out=. Osiris\Debugger\osidebug.proto
+rem $(SolutionDir)\External\protoc\bin\protoc --cpp_out=. Lua\Debugger\LuaDebug.proto
+rem $(SolutionDir)\External\protoc\bin\protoc --cpp_out=. Extender\Shared\ExtenderProtocol.proto
 $(SolutionDir)x64\Debug\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(ProjectDir)Lua.bundle"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -96,7 +96,6 @@ $(SolutionDir)x64\Debug\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Project
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>ENABLE_SDL;ENABLE_IMGUI;ENABLE_UI;NS_STATIC_LIBRARY;_SILENCE_CXX20_IS_POD_DEPRECATION_WARNING;_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS;IMGUI_DISABLE_OBSOLETE_FUNCTIONS;NDEBUG;_WINDOWS;_USRDLL;OSI_EOCAPP;OSIINTERFACE_EXPORTS;OSI_EXTENSION_BUILD;_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
@@ -108,6 +107,7 @@ $(SolutionDir)x64\Debug\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Project
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <FloatingPointModel>Fast</FloatingPointModel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -123,10 +123,11 @@ $(SolutionDir)x64\Debug\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Project
       <Command>python make_enumerations.py
 python make_events.py
 python make_property_map.py
-$(SolutionDir)\External\protoc\bin\protoc --cpp_out=$(SolutionDir)\BG3Extender\Osiris\Debugger Osiris\Debugger\osidebug.proto
-$(SolutionDir)\External\protoc\bin\protoc --cpp_out=$(SolutionDir)\BG3Extender\Lua\Debugger Lua\Debugger\LuaDebug.proto
-$(SolutionDir)\External\protoc\bin\protoc --cpp_out=$(SolutionDir)\BG3Extender\Extender\Shared Extender\Shared\ExtenderProtocol.proto
-$(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(ProjectDir)Lua.bundle"</Command>
+$(SolutionDir)\External\protoc\bin\protoc --cpp_out=. Osiris\Debugger\osidebug.proto
+$(SolutionDir)\External\protoc\bin\protoc --cpp_out=. Lua\Debugger\LuaDebug.proto
+$(SolutionDir)\External\protoc\bin\protoc --cpp_out=. Extender\Shared\ExtenderProtocol.proto
+$(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(ProjectDir)Lua.bundle"
+</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>copy /Y "$(TargetPath)" "D:\Apps\Steam\steamapps\common\Baldurs Gate 3\bin\BG3ScriptExtender.dll"</Command>

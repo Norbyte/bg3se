@@ -44,7 +44,7 @@ void ExtenderProtocol::ProcessExtenderMessage(net::MessageContext& context, net:
 
     case net::MessageWrapper::kS2CKick:
     {
-        gExtender->GetLibraryManager().ShowStartupError(msg.s2c_kick().message().c_str(), true);
+        gExtender->GetLibraryManager().ShowStartupError(msg.s2c_kick().message().data(), true);
         break;
     }
 

@@ -137,7 +137,7 @@ enum_meta += 'static constexpr int EnumTypeRegistrySize = ' + str(shared.next_en
 enum_meta += 'static constexpr int BitmaskTypeRegistrySize = ' + str(shared.next_bitmask_id) + ';\n'
 enum_meta += 'END_SE()\n'
 
-if cur_enum_meta == enum_meta:
+if cur_enum_meta != enum_meta:
     with open('GameDefinitions/Generated/EnumerationMeta.h', 'w') as f:
         f.write(enum_meta)
 else:
