@@ -4,7 +4,7 @@ BEGIN_NS(lua)
 
 std::optional<LuaEntitySubscriptionId> EntityEventHelpers::SubscribeReplication(lua_State* L, EntityHandle entity, ExtComponentType component, RegistryEntry&& hook, std::optional<uint64_t> flags)
 {
-	auto replicationType = State::FromLua(L)->GetEntitySystemHelpers()->GetReplicationIndex(component);
+	auto replicationType = State::FromLua(L)->GetEntitySystemHelpers().GetReplicationIndex(component);
 	if (!replicationType) {
 		luaL_error(L, "No replication events are available for components of type %s", EnumInfo<ExtComponentType>::GetStore().Find((EnumUnderlyingType)component).GetString());
 	}
@@ -22,12 +22,12 @@ LuaEntitySubscriptionId EntityEventHelpers::Subscribe(lua_State* L, EntityHandle
 	EntityComponentEvent event, EntityComponentEventFlags flags, RegistryEntry&& hook)
 {
 	auto state = State::FromLua(L);
-	auto componentType = state->GetEntitySystemHelpers()->GetComponentIndex(component);
+	auto componentType = state->GetEntitySystemHelpers().GetComponentIndex(component);
 	if (!componentType) {
 		luaL_error(L, "No events are available for components of type %s", EnumInfo<ExtComponentType>::GetStore().Find((EnumUnderlyingType)component).GetString());
 	}
 
-	auto const& meta = state->GetEntitySystemHelpers()->GetComponentMeta(component);
+	auto const& meta = state->GetEntitySystemHelpers().GetComponentMeta(component);
 	if (meta.OneFrame) {
 		if ((event & EntityComponentEvent::Destroy) == EntityComponentEvent::Destroy) {
 			luaL_error(L, "Destroy events are not available for one-frame components (%s)", EnumInfo<ExtComponentType>::GetStore().Find((EnumUnderlyingType)component).GetString());
@@ -48,7 +48,7 @@ LuaEntitySubscriptionId EntityEventHelpers::Subscribe(lua_State* L, EntityHandle
 LuaEntitySubscriptionId EntityEventHelpers::SubscribeSystemUpdate(lua_State* L, ExtSystemType systemType, RegistryEntry&& hook, bool postUpdate, bool once)
 {
 	auto state = State::FromLua(L);
-	auto system = state->GetEntitySystemHelpers()->GetSystemEntry(systemType);
+	auto system = state->GetEntitySystemHelpers().GetSystemEntry(systemType);
 	if (!system || !system->System) {
 		luaL_error(L, "System %s not registered", EnumInfo<ExtSystemType>::GetStore().Find((EnumUnderlyingType)systemType).GetString());
 		return {};

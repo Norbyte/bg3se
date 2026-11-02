@@ -519,7 +519,7 @@ void CustomFunctionInjector::ThrowEvent(FunctionHandle handle, OsiArgumentDesc *
         CustomEventGuard guard;
         if (guard.CanThrowEvent()) {
             auto osiris = gExtender->GetServer().Osiris().GetDynamicGlobals().OsirisObject;
-            gExtender->GetServer().Osiris().GetWrappers().Event.CallOriginal(osiris, it->second, args);
+            wrappers_.Event.CallOriginal(osiris, it->second, args);
         } else {
             OsiError("Maximum Osiris event depth (" << gCustomEventDepth << ") exceeded");
         }

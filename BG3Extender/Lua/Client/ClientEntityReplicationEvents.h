@@ -57,7 +57,7 @@ struct DummyFieldTracker : public ecs::FieldTracker
 class ClientEntityReplicationEventHooks : public EntityReplicationEventHooks
 {
 public:
-    ClientEntityReplicationEventHooks(State& state);
+    ClientEntityReplicationEventHooks(ClientState& state);
     ~ClientEntityReplicationEventHooks();
 
     std::optional<SubscriptionIndex> Subscribe(ecs::ReplicationTypeIndex type, EntityHandle entity, uint64_t fields, RegistryEntry&& hook) override;
@@ -66,7 +66,7 @@ public:
     void PostUpdate();
 
 private:
-    State& state_;
+    ClientState& state_;
     BitSet<> hookedReplicationComponentMask_;
     Array<ReplicationHooks> hookedReplicationComponents_;
     SaltedPool<ReplicationHook> subscriptions_;

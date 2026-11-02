@@ -139,9 +139,9 @@ Noesis::BaseComponent* Instantiate(lua_State* L, STDString name, std::optional<N
     return inst;
 }
 
-PlayerPickingHelper* GetPickingHelper(uint16_t playerIndex)
+PlayerPickingHelper* GetPickingHelper(lua_State* L, uint16_t playerIndex)
 {
-    auto picking = ecl::ExtensionState::Get().GetClientLua()->GetEntitySystemHelpers()->GetSystem<ecl::PickingHelperManager>();
+    auto picking = ecl::lua::ClientState::FromLua(L)->GetEntitySystemHelpers().GetSystem<ecl::PickingHelperManager>();
     auto it = picking->PlayerHelpers.find(playerIndex);
     if (it != picking->PlayerHelpers.end()) {
         return it.Value();

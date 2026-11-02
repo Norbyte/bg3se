@@ -16,18 +16,6 @@ BEGIN_NS(ecl::lua)
 
 using namespace bg3se::lua;
 
-LifetimeHandle GetClientLifetime()
-{
-    se_assert(gExtender->GetClient().IsInContext());
-    return ExtensionState::Get().GetLua()->GetCurrentLifetime();
-}
-
-LifetimePool& GetClientLifetimePool()
-{
-    se_assert(gExtender->GetClient().IsInContext());
-    return ExtensionState::Get().GetLua()->GetLifetimePool();
-}
-
 void ExtensionLibraryClient::Register(lua_State * L)
 {
     ExtensionLibrary::Register(L);
@@ -57,7 +45,8 @@ ClientState::ClientState(ExtensionState& state, uint32_t generationId)
     : State(state, generationId, false),
     replicationHooks_(*this),
     uiEvents_(*this),
-    deferredUIEvents_(*this)
+    deferredUIEvents_(*this),
+    imgui_(GameAlloc<extui::IMGUIObjectManager>(*this))
 {}
 
 ClientState::~ClientState()
@@ -65,11 +54,7 @@ ClientState::~ClientState()
     auto & sym = GetStaticSymbols();
 
     ecl::lua::ui::ReleasePropertyChangeHandlers(L);
-
-    if (imgui_) {
-        gExtender->IMGUI().SetObjects(nullptr);
-        delete imgui_;
-    }
+    gExtender->IMGUI().SetObjects(nullptr);
 
     if (gExtender) {
         auto debugger = gExtender->GetLuaDebugger();
@@ -86,9 +71,9 @@ void ClientState::Initialize()
     StackCheck _(L, 0);
     library_.Register(L);
 
-    gExtender->GetClient().GetExtensionState().LuaLoadBuiltinFile("ClientStartup.lua");
+    GetExtensionState().LuaLoadBuiltinFile("ClientStartup.lua");
     // Ext is not writeable after loading SandboxStartup!
-    gExtender->GetClient().GetExtensionState().LuaLoadBuiltinFile("SandboxStartup.lua");
+    GetExtensionState().LuaLoadBuiltinFile("SandboxStartup.lua");
 
     auto debugger = gExtender->GetLuaDebugger();
     if (debugger) {
@@ -108,31 +93,9 @@ void ClientState::OnUpdate(GameTime const& time)
     deferredUIEvents_.PostUpdate();
 }
 
-
-ecs::EntityWorld* ClientState::GetEntityWorld()
-{
-    return gExtender->GetClient().GetEntityHelpers().GetEntityWorld();
-}
-
-
-ecs::EntitySystemHelpersBase* ClientState::GetEntitySystemHelpers()
-{
-    return &gExtender->GetClient().GetEntityHelpers();
-}
-
 EntityReplicationEventHooks* ClientState::GetReplicationEventHooks()
 {
     return &replicationHooks_;
-}
-
-extui::IMGUIObjectManager& ClientState::IMGUI()
-{
-    if (imgui_ == nullptr) {
-        imgui_ = new extui::IMGUIObjectManager();
-        gExtender->IMGUI().SetObjects(imgui_);
-    }
-
-    return *imgui_;
 }
 
 END_NS()

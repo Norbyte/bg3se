@@ -37,16 +37,16 @@ void EntityComponentEventHooks::FireDeferredEvents()
     Array<DeferredEvent> events;
     std::swap(events, deferredEvents_);
 
-    auto ecs = state_.GetEntitySystemHelpers();
+    auto& ecs = state_.GetEntitySystemHelpers();
     
     LuaVirtualPin lua(state_.GetExtensionState());
     if (lua) {
         for (auto& e : events) {
             auto hook = subscriptions_.Find(e.Index);
             if (hook != nullptr) {
-                auto meta = ecs->GetComponentMeta(e.Type);
+                auto meta = ecs.GetComponentMeta(e.Type);
                 if (meta) {
-                    auto component = ecs->GetRawComponent(e.Entity, *meta);
+                    auto component = ecs.GetRawComponent(e.Entity, *meta);
                     CallHandlerUnsafe(e.Entity, e.Type, e.Event, component, *hook, e.Index);
                 }
             }
@@ -183,7 +183,7 @@ void EntityComponentEventHooks::CallHandlerUnsafe(EntityHandle entity, ecs::Comp
     }
 
     auto L = state_.GetState();
-    auto componentType = state_.GetEntitySystemHelpers()->GetComponentType(type);
+    auto componentType = state_.GetEntitySystemHelpers().GetComponentType(type);
     hook.Hook.Push(L);
     Ref func(L, lua_absindex(L, -1));
 

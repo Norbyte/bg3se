@@ -6,27 +6,27 @@
 
 BEGIN_NS(lua)
 
-void PushComponent(lua_State* L, ecs::EntitySystemHelpersBase* helpers, EntityHandle const& handle, 
+void PushComponent(lua_State* L, ecs::EntitySystemHelpersBase& helpers, EntityHandle const& handle, 
     ExtComponentType componentType, LifetimeHandle lifetime);
 void PushComponent(lua_State* L, void* rawComponent, lua::GenericPropertyMap& pm, LifetimeHandle lifetime);
 
 class EntityHelper
 {
 public:
-    inline EntityHelper(EntityHandle const& handle, ecs::EntitySystemHelpersBase* ecs)
+    inline EntityHelper(EntityHandle const& handle, ecs::EntitySystemHelpersBase& ecs)
         : handle_(handle), ecs_(ecs)
     {}
 
     template <class T>
     bool HasComponent()
     {
-        return ecs_->GetComponent<T>(handle_) != nullptr;
+        return ecs_.GetComponent<T>(handle_) != nullptr;
     }
 
     template <class T>
     T* GetComponent()
     {
-        return ecs_->GetComponent<T>(handle_);
+        return ecs_.GetComponent<T>(handle_);
     }
 
     Array<ExtComponentType> GetAllComponentTypes() const;
@@ -39,7 +39,7 @@ public:
 
 private:
     EntityHandle handle_;
-    ecs::EntitySystemHelpersBase* ecs_;
+    ecs::EntitySystemHelpersBase& ecs_;
 };
 
 class EntityProxyMetatable : public LightCppValueMetatable<EntityProxyMetatable>,

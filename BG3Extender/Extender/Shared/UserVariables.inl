@@ -1120,8 +1120,8 @@ STDString CachedUserVariable::StringifyReference(lua_State* L, bool binary) cons
 }
 
 
-CachedUserVariableManager::CachedUserVariableManager(UserVariableManager& global, bool isServer)
-    : global_(global), isServer_(isServer)
+CachedUserVariableManager::CachedUserVariableManager(lua::State& state, UserVariableManager& global, bool isServer)
+    : state_(state), global_(global), isServer_(isServer)
 {
     global_.BindCache(this);
 }
@@ -1309,7 +1309,7 @@ void CachedUserVariableManager::Invalidate(EntityHandle entity, FixedString cons
 
 void CachedUserVariableManager::Flush()
 {
-    LuaVirtualPin lua;
+    LuaVirtualPin lua(state_.GetExtensionState());
 
     if (lua) {
         for (auto const& req : flushQueue_) {
@@ -1330,8 +1330,8 @@ void CachedUserVariableManager::Flush()
 
 
 
-CachedModVariableManager::CachedModVariableManager(ModVariableManager& global, bool isServer)
-    : global_(global), isServer_(isServer)
+CachedModVariableManager::CachedModVariableManager(lua::State& state, ModVariableManager& global, bool isServer)
+    : state_(state), global_(global), isServer_(isServer)
 {
     global_.BindCache(this);
 }
@@ -1518,7 +1518,7 @@ void CachedModVariableManager::Invalidate(uint32_t modIndex, FixedString const& 
 
 void CachedModVariableManager::Flush()
 {
-    LuaVirtualPin lua;
+    LuaVirtualPin lua(state_.GetExtensionState());
 
     if (lua) {
         for (auto const& req : flushQueue_) {

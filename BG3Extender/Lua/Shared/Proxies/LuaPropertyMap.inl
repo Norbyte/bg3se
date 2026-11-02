@@ -317,7 +317,7 @@ PropertyOperationResult CustomPropertyManager::SetProperty(lua_State* L, Generic
 
     if (customProp->Setter) {
         push(L, customProp->Setter);
-        LightObjectProxyMetatable::Make(L, pm, object, State::FromLua(L)->GetCurrentLifetime());
+        LightObjectProxyMetatable::Make(L, pm, object, GetCurrentLifetime(L));
         lua_pushvalue(L, index);
 
         if (lua_pcall(L, 2, 0, 0) != LUA_OK) {

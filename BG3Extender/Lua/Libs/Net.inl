@@ -9,8 +9,8 @@
 /// <lua_module>Net</lua_module>
 BEGIN_NS(lua::net)
 
-NetworkRequestSystem::NetworkRequestSystem()
-    : eventQueue_("Network event")
+NetworkRequestSystem::NetworkRequestSystem(State& state)
+    : eventQueue_(state, "Network event")
 {}
 
 RequestId NetworkRequestSystem::CreateRequest(LuaDelegate<void(STDString, bool)>&& callback)

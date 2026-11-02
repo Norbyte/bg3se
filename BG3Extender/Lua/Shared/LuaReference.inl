@@ -325,12 +325,12 @@ void RawComponentRef::Push(lua_State* L) const
 {
     if (ptr_ != nullptr) {
         auto state = State::FromLua(L);
-        auto ecs = state->GetEntitySystemHelpers();
+        auto& ecs = state->GetEntitySystemHelpers();
         auto ptr = reinterpret_cast<void*>((uintptr_t)ptr_ & 0x0000ffffffffffffull);
         ecs::ComponentTypeIndex type{ (uint16_t)((uintptr_t)ptr_ >> 48) };
-        auto meta = ecs->GetComponentMeta(type);
+        auto meta = ecs.GetComponentMeta(type);
         if (meta && meta->Properties) {
-            PushComponent(L, ptr, *meta->Properties, state->GetCurrentLifetime());
+            PushComponent(L, ptr, *meta->Properties, GetCurrentLifetime(L));
         } else {
             push(L, nullptr);
         }

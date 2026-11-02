@@ -152,7 +152,7 @@ namespace bg3se::lua::dbg
             case MetatableTag::ImguiObject:
             {
                 value->set_type_id(MsgValueType::USERDATA);
-                auto obj = ecl::ExtensionState::Get().GetClientLua()->IMGUI().GetRenderable(meta.Value);
+                auto obj = ecl::lua::ClientState::FromLua(L)->IMGUI().GetRenderable(meta.Value);
                 if (obj) {
                     value->set_stringval(obj->GetTypeName());
                 } else {
@@ -601,12 +601,7 @@ namespace bg3se::lua::dbg
                 return false;
             }
 
-            ExtensionStateBase* state{ nullptr };
-            if (context_ == DbgContext::SERVER) {
-                state = &gExtender->GetServer().GetExtensionState();
-            } else {
-                state = &gExtender->GetClient().GetExtensionState();
-            }
+            ExtensionStateBase* state = &ExtensionStateBase::FromLua(L);
 
             auto pathIt = state->GetLoadedFileFullPaths().find(ar->source);
             if (pathIt != state->GetLoadedFileFullPaths().end()) {
@@ -1270,10 +1265,10 @@ namespace bg3se::lua::dbg
     {
         if (!IsDebuggerReady()) return;
 
-        if (gExtender->GetServer().IsInContext()) {
-            server_.OnLuaHook(L, ar);
-        } else {
+        if (State::FromLua(L)->IsClient()) {
             client_.OnLuaHook(L, ar);
+        } else {
+            server_.OnLuaHook(L, ar);
         }
     }
 
@@ -1281,10 +1276,10 @@ namespace bg3se::lua::dbg
     {
         if (!IsDebuggerReady()) return;
 
-        if (gExtender->GetServer().IsInContext()) {
-            server_.OnLuaError(L, msg);
-        } else {
+        if (State::FromLua(L)->IsClient()) {
             client_.OnLuaError(L, msg);
+        } else {
+            server_.OnLuaError(L, msg);
         }
     }
 
@@ -1292,7 +1287,7 @@ namespace bg3se::lua::dbg
     {
         if (!IsDebuggerReady()) return;
 
-        if (gExtender->GetServer().IsInContext()) {
+        if (GetCurrentExtensionState()->IsServer()) {
             server_.OnGenericError(msg);
         } else {
             client_.OnGenericError(msg);
@@ -1303,10 +1298,10 @@ namespace bg3se::lua::dbg
     {
         if (!IsDebuggerReady()) return;
 
-        if (gExtender->GetServer().IsInContext()) {
-            server_.DebugBreak(L);
-        } else {
+        if (State::FromLua(L)->IsClient()) {
             client_.DebugBreak(L);
+        } else {
+            server_.DebugBreak(L);
         }
     }
 

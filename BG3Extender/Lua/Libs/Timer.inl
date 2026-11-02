@@ -284,7 +284,7 @@ TimerSystem::TimerSystem(State& state, bool isServer)
     : realtime_(state, eventQueue_, TimerManager::RealtimeFlag),
     game_(state, eventQueue_, 0),
     isServer_(isServer),
-    eventQueue_("Timer event")
+    eventQueue_(state, "Timer event")
 {}
 
 void TimerSystem::Update(double time)

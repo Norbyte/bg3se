@@ -3,7 +3,7 @@ BEGIN_NS(lua::entity)
 
 std::optional<Guid> HandleToUuid(lua_State* L, EntityHandle entity)
 {
-    auto uuid = State::FromLua(L)->GetEntitySystemHelpers()->GetComponent<UuidComponent>(entity);
+    auto uuid = State::FromLua(L)->GetEntitySystemHelpers().GetComponent<UuidComponent>(entity);
     if (uuid) {
         return uuid->EntityUuid;
     } else {
@@ -13,7 +13,7 @@ std::optional<Guid> HandleToUuid(lua_State* L, EntityHandle entity)
 
 EntityHandle UuidToHandle(lua_State* L, Guid uuid)
 {
-    return State::FromLua(L)->GetEntitySystemHelpers()->GetEntityHandle(uuid);
+    return State::FromLua(L)->GetEntitySystemHelpers().GetEntityHandle(uuid);
 }
 
 UserReturn Get(lua_State* L, lua::AnyRef entity)
@@ -29,7 +29,7 @@ UserReturn Get(lua_State* L, lua::AnyRef entity)
     case LUA_TSTRING:
     {
         auto uuid = get<Guid>(L, entity.Index);
-        auto handle = State::FromLua(L)->GetEntitySystemHelpers()->GetEntityHandle(uuid);
+        auto handle = State::FromLua(L)->GetEntitySystemHelpers().GetEntityHandle(uuid);
         if (handle) {
             EntityProxyMetatable::Make(L, handle);
         } else {
@@ -41,8 +41,8 @@ UserReturn Get(lua_State* L, lua::AnyRef entity)
     case LUA_TNUMBER:
     {
         auto netId = get<NetId>(L, entity.Index);
-        auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
-        auto handle = ecs->NetIdToEntity(netId);
+        auto& ecs = State::FromLua(L)->GetEntitySystemHelpers();
+        auto handle = ecs.NetIdToEntity(netId);
         if (handle) {
             EntityProxyMetatable::Make(L, *handle);
         } else {
@@ -72,7 +72,7 @@ UserReturn Get(lua_State* L, lua::AnyRef entity)
 HashMap<Guid, EntityHandle> GetAllEntitiesWithUuid(lua_State* L)
 {
     OPTICK_EVENT();
-    auto mappings = State::FromLua(L)->GetEntitySystemHelpers()->GetSingleton<UuidToHandleMappingComponent>();
+    auto mappings = State::FromLua(L)->GetEntitySystemHelpers().GetSingleton<UuidToHandleMappingComponent>();
     if (mappings) {
         return mappings->Mappings;
     } else {
@@ -83,14 +83,14 @@ HashMap<Guid, EntityHandle> GetAllEntitiesWithUuid(lua_State* L)
 Array<EntityHandle> GetAllEntitiesWithComponent(lua_State* L, ExtComponentType component)
 {
     OPTICK_EVENT();
-    auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
-    auto componentType = ecs->GetComponentIndex(component);
+    auto& ecs = State::FromLua(L)->GetEntitySystemHelpers();
+    auto componentType = ecs.GetComponentIndex(component);
     if (!componentType) return {};
 
     Array<EntityHandle> entities;
-    auto world = State::FromLua(L)->GetEntitySystemHelpers()->GetEntityWorld();
+    auto world = State::FromLua(L)->GetEntitySystemHelpers().GetEntityWorld();
 
-    auto const& meta = ecs->GetComponentMeta(component);
+    auto const& meta = ecs.GetComponentMeta(component);
     if (meta.SingleComponentQuery != ecs::UndefinedQuery) {
         auto& query = world->Queries.Queries[(unsigned)meta.SingleComponentQuery];
         if (ecs::IsOneFrame(*componentType)) {
@@ -133,7 +133,7 @@ Array<EntityHandle> GetAllEntities(lua_State* L)
     OPTICK_EVENT();
     Array<EntityHandle> entities;
 
-    auto world = State::FromLua(L)->GetEntitySystemHelpers()->GetEntityWorld();
+    auto world = State::FromLua(L)->GetEntitySystemHelpers().GetEntityWorld();
     for (auto cls : world->Storage->Storages) {
         std::copy(cls->InstanceToPageMap.keys().begin(), cls->InstanceToPageMap.keys().end(), std::back_inserter(entities));
     }
@@ -144,8 +144,8 @@ Array<EntityHandle> GetAllEntities(lua_State* L)
 Array<EntityHandle> GetEntitiesAroundPosition(lua_State* L, glm::vec3 position, float radius, 
     std::optional<bool> includeCharacters, std::optional<bool> includeItems)
 {
-    auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
-    auto grid = ecs->GetSingleton<spatial_grid::DataComponent>();
+    auto& ecs = State::FromLua(L)->GetEntitySystemHelpers();
+    auto grid = ecs.GetSingleton<spatial_grid::DataComponent>();
 
     if (grid) {
         return grid->Grid.Collect(position, radius, includeCharacters.value_or(true), includeItems.value_or(true));
@@ -156,13 +156,13 @@ Array<EntityHandle> GetEntitiesAroundPosition(lua_State* L, glm::vec3 position, 
 
 EntityHandle Create(lua_State* L)
 {
-    auto world = State::FromLua(L)->GetEntitySystemHelpers()->GetEntityWorld();
+    auto world = State::FromLua(L)->GetEntitySystemHelpers().GetEntityWorld();
     return world->Deferred()->CreateEntityImmediate();
 }
 
 bool Destroy(lua_State* L, EntityHandle entity)
 {
-    auto world = State::FromLua(L)->GetEntitySystemHelpers()->GetEntityWorld();
+    auto world = State::FromLua(L)->GetEntitySystemHelpers().GetEntityWorld();
     return world->Deferred()->DestroyEntity(entity);
 }
 
@@ -242,8 +242,8 @@ bool Unsubscribe(lua_State* L, LuaEntitySubscriptionId handle)
 
 void SetupTracing(lua_State* L, EntityTracingOptions options)
 {
-    auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
-    auto& opts = ecs->GetTracer().GetOptions();
+    auto& ecs = State::FromLua(L)->GetEntitySystemHelpers();
+    auto& opts = ecs.GetTracer().GetOptions();
     opts.TrackECB = options.TrackECB;
     opts.TrackImmediateWorldCache = options.TrackImmediateWorldCache;
     opts.TrackReplication = options.TrackReplication;
@@ -251,7 +251,7 @@ void SetupTracing(lua_State* L, EntityTracingOptions options)
     opts.ExcludeModificationTypes.Clear();
 
     for (auto const& component : options.ExcludeModificationComponents) {
-        auto componentTypeIndex = ecs->GetComponentIndex(component);
+        auto componentTypeIndex = ecs.GetComponentIndex(component);
         if (componentTypeIndex) {
             if (!ecs::IsOneFrame(*componentTypeIndex)) {
                 opts.ExcludeModificationTypes.Set((unsigned)*componentTypeIndex);
@@ -270,35 +270,35 @@ void EnableTracing(lua_State* L, bool enable)
     if (enable) {
         WARN_ONCE("Entity tracing is a development tool designed for tracking entity changes; it should not be used in production!");
 
-        State::FromLua(L)->GetEntitySystemHelpers()->GetTracer().StartTracing();
+        State::FromLua(L)->GetEntitySystemHelpers().GetTracer().StartTracing();
     } else {
-        State::FromLua(L)->GetEntitySystemHelpers()->GetTracer().StopTracing();
+        State::FromLua(L)->GetEntitySystemHelpers().GetTracer().StopTracing();
     }
 }
 
 ecs::ECSChangeLog* GetTrace(lua_State* L)
 {
-    return &State::FromLua(L)->GetEntitySystemHelpers()->GetTracer().GetLog();
+    return &State::FromLua(L)->GetEntitySystemHelpers().GetTracer().GetLog();
 }
 
 void ClearTrace(lua_State* L)
 {
-    State::FromLua(L)->GetEntitySystemHelpers()->GetTracer().GetLog().Clear();
+    State::FromLua(L)->GetEntitySystemHelpers().GetTracer().GetLog().Clear();
 }
 
 Array<StringView> GetRegisteredComponentTypes(lua_State* L, std::optional<bool> oneFrame, std::optional<bool> mapped)
 {
     Array<StringView> types;
     
-    auto helpers = State::FromLua(L)->GetEntitySystemHelpers();
-    auto const& registry = helpers->GetEntityWorld()->ComponentRegistry_;
+    auto& helpers = State::FromLua(L)->GetEntitySystemHelpers();
+    auto const& registry = helpers.GetEntityWorld()->ComponentRegistry_;
     for (unsigned i = 0; i < registry.Bitmask.Size; i++) {
         if (registry.Bitmask[i]) {
             auto const& component = registry.Types[i];
-            auto name = helpers->GetComponentName(component.TypeId);
+            auto name = helpers.GetComponentName(component.TypeId);
             if (name 
                 && (!oneFrame || IsOneFrame(component.TypeId) == *oneFrame)
-                && (!mapped || (bool)helpers->GetComponentType(component.TypeId) == *mapped)) {
+                && (!mapped || (bool)helpers.GetComponentType(component.TypeId) == *mapped)) {
                 types.push_back(*name);
             }
         }

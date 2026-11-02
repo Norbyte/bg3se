@@ -461,14 +461,8 @@ Object* Create(lua_State * L, FixedString const& statName, FixedString const& mo
         return nullptr;
     }
 
-    if (!lua->IsRestricted(RestrictionFlag::ScopeModuleLoad)) {
-        if (gExtender->GetServer().IsInContext()) {
-            static bool syncWarningShown{ false };
-            if (!syncWarningShown) {
-                OsiWarn("Stats entres created after ModuleLoad must be synced manually; make sure that you call SyncStat() on it when you're finished!");
-                syncWarningShown = true;
-            }
-        }
+    if (!lua->IsRestricted(RestrictionFlag::ScopeModuleLoad) && !State::FromLua(L)->IsClient()) {
+        WARN_ONCE("Stats entres created after ModuleLoad must be synced manually; make sure that you call SyncStat() on it when you're finished!");
     }
 
     auto stats = GetStaticSymbols().GetStats();

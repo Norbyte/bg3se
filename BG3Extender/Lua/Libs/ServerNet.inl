@@ -9,7 +9,7 @@ void BroadcastMessage(lua_State* L, StringView channel, StringView payload, std:
 {
     esv::Character* excludeCharacter = nullptr;
     if (excludeCharacterGuid) {
-        excludeCharacter = State::FromLua(L)->GetEntitySystemHelpers()->GetComponent<esv::Character>(*excludeCharacterGuid);
+        excludeCharacter = State::FromLua(L)->GetEntitySystemHelpers().GetComponent<esv::Character>(*excludeCharacterGuid);
         if (!excludeCharacter) {
             WARN("BroadcastMessage(): Invalid excludeCharacter GUID: %s", excludeCharacterGuid->ToString().c_str());
         }
@@ -58,7 +58,7 @@ void PostMessageToUserInternal(lua_State* L, UserId userId, StringView channel, 
 void PostMessageToClient(lua_State* L, Guid characterGuid, StringView channel, StringView payload, std::optional<Guid> moduleGuid,
     std::optional<FunctionRef> requestHandler, std::optional<RequestId> replyId, std::optional<bool> binary)
 {
-    auto character = State::FromLua(L)->GetEntitySystemHelpers()->GetComponent<esv::Character>(characterGuid);
+    auto character = State::FromLua(L)->GetEntitySystemHelpers().GetComponent<esv::Character>(characterGuid);
     if (character == nullptr) {
         OsiError("Attempted to send message to nonexistent character " << characterGuid << " on channel '" << channel << "'!");
         return;
@@ -85,7 +85,7 @@ void PostMessageToUser(lua_State* L, int userId, StringView channel, StringView 
 
 std::optional<bool> PlayerHasExtender(lua_State* L, Guid characterGuid)
 {
-    auto character = State::FromLua(L)->GetEntitySystemHelpers()->GetComponent<esv::Character>(characterGuid);
+    auto character = State::FromLua(L)->GetEntitySystemHelpers().GetComponent<esv::Character>(characterGuid);
     if (character == nullptr || character->UserID == ReservedUserId) return {};
 
     // FIXME - access server from Lua context!

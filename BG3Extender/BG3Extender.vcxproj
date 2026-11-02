@@ -311,6 +311,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="Lua\Libs\Level.h" />
     <ClInclude Include="Lua\Libs\LibraryRegistrationHelpers.h" />
     <ClInclude Include="Lua\Libs\Net.h" />
+    <ClInclude Include="Lua\Libs\StaticData.h" />
     <ClInclude Include="Lua\Libs\Timer.h" />
     <ClInclude Include="Lua\LuaBinding.h" />
     <ClInclude Include="Lua\Helpers\LuaGet.h" />
@@ -541,9 +542,6 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="Lua\Client\ClientEntityReplicationEvents.inl" />
     <None Include="Lua\Client\UIEvents.inl" />
     <None Include="Lua\Debugger\LuaDebug.proto" />
-    <None Include="Lua\LevelIteratorFunctions.inl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
-    </None>
     <None Include="Lua\Libs\ClientAudio.inl" />
     <None Include="Lua\Libs\ClientIMGUI.inl" />
     <None Include="Lua\Libs\ClientInput.inl" />

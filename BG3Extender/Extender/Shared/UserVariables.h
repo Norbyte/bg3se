@@ -287,7 +287,7 @@ struct CachedUserVariable
 class CachedUserVariableManager
 {
 public:
-    CachedUserVariableManager(UserVariableManager& global, bool isServer);
+    CachedUserVariableManager(lua::State& state, UserVariableManager& global, bool isServer);
     ~CachedUserVariableManager();
 
     inline UserVariableManager& GetGlobal() const
@@ -322,6 +322,7 @@ private:
         HashMap<FixedString, CachedUserVariable> Vars;
     };
 
+    lua::State& state_;
     UserVariableManager& global_;
     bool isServer_;
     HashMap<EntityHandle, EntityVariables> vars_;
@@ -337,7 +338,7 @@ private:
 class CachedModVariableManager
 {
 public:
-    CachedModVariableManager(ModVariableManager& global, bool isServer);
+    CachedModVariableManager(lua::State& state, ModVariableManager& global, bool isServer);
     ~CachedModVariableManager();
 
     inline ModVariableManager& GetGlobal() const
@@ -373,6 +374,7 @@ private:
         HashMap<FixedString, CachedUserVariable> Vars;
     };
 
+    lua::State& state_;
     ModVariableManager& global_;
     bool isServer_;
     HashMap<uint32_t, ModVariables> vars_;

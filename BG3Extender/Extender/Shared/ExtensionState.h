@@ -122,6 +122,11 @@ namespace bg3se
             return loadedFileFullPaths_;
         }
 
+        inline ecs::EntitySystemHelpersBase& GetEntitySystemHelpers()
+        {
+            return entityHelpers_;
+        }
+
         inline UserVariableManager& GetUserVariables()
         {
             return userVariables_;
@@ -185,6 +190,7 @@ namespace bg3se
         std::unordered_map<STDString, STDString> loadedFiles_;
         std::unordered_map<STDString, STDString> loadedFileFullPaths_;
 
+        ecs::EntitySystemHelpersBase& entityHelpers_;
         UserVariableManager userVariables_;
         ModVariableManager modVariables_;
         GameTime time_;

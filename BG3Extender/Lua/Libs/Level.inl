@@ -8,9 +8,9 @@
 BEGIN_NS(lua::level)
 
 
-PathfindingSystem::PathfindingSystem(LevelManager& levelManager)
+PathfindingSystem::PathfindingSystem(State& state, LevelManager& levelManager)
     : levelManager_(levelManager),
-    eventQueue_("Pathfinding event")
+    eventQueue_(state, "Pathfinding event")
 {}
 
 PathfindingSystem::~PathfindingSystem()
@@ -184,7 +184,7 @@ AiPath* BeginPathfinding(lua_State* L, EntityHandle source, glm::vec3 target, Lu
 {
     auto path = State::FromLua(L)->GetPathfinding().CreatePathRequest(std::move(callback));
     if (path) {
-        path->SetSourceEntity(*State::FromLua(L)->GetEntitySystemHelpers(), source);
+        path->SetSourceEntity(State::FromLua(L)->GetEntitySystemHelpers(), source);
         path->SetTarget(target);
     }
 
@@ -195,7 +195,7 @@ AiPath* BeginPathfindingImmediate(lua_State* L, EntityHandle source, glm::vec3 t
 {
     auto path = State::FromLua(L)->GetPathfinding().CreatePathRequestImmediate();
     if (path) {
-        path->SetSourceEntity(*State::FromLua(L)->GetEntitySystemHelpers(), source);
+        path->SetSourceEntity(State::FromLua(L)->GetEntitySystemHelpers(), source);
         path->SetTarget(target);
     }
 

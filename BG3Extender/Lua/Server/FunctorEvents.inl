@@ -3,42 +3,43 @@
 BEGIN_NS(esv::lua)
 
 template <class TParams>
-void LuaTriggerFunctorPreExecEvent(bg3se::stats::Functors* self, TParams* params)
+void LuaTriggerFunctorPreExecEvent(State& state, bg3se::stats::Functors* self, TParams* params)
 {
     ExecuteFunctorEventParams evt{
         .Functor = self,
         .Params = params
     };
-    gExtender->GetServer().GetExtensionState().ThrowEvent<ExecuteFunctorEvent>(evt);
+    state.GetExtensionState().ThrowEvent<ExecuteFunctorEvent>(evt);
 }
 
 template <class TParams>
-void LuaTriggerFunctorPostExecEvent(bg3se::stats::Functors* self, TParams* params, HitResult* hit)
+void LuaTriggerFunctorPostExecEvent(State& state, bg3se::stats::Functors* self, TParams* params, HitResult* hit)
 {
     AfterExecuteFunctorEventParams evt{ 
         .Functor = self, 
         .Params = params, 
         .Hit = hit
     };
-    gExtender->GetServer().GetExtensionState().ThrowEvent<AfterExecuteFunctorEvent>(evt);
+    state.GetExtensionState().ThrowEvent<AfterExecuteFunctorEvent>(evt);
 }
 
 template <class TParams>
 void FunctorEventHooks::OnFunctorExecute(bg3se::stats::ExecuteFunctorProc<TParams>* next, HitResult* hit, bg3se::stats::Functors* self, TParams* params)
 {
-    LuaTriggerFunctorPreExecEvent<TParams>(self, params);
+    LuaTriggerFunctorPreExecEvent<TParams>(state_, self, params);
     next(hit, self, params);
-    LuaTriggerFunctorPostExecEvent<TParams>(self, params, hit);
+    LuaTriggerFunctorPostExecEvent<TParams>(state_, self, params, hit);
 }
 
 void FunctorEventHooks::OnInterruptFunctorExecute(bg3se::stats::ExecuteInterruptFunctorProc* next, HitResult* hit, ecs::EntityWorld* world, bg3se::stats::Functors* self, bg3se::stats::InterruptContextData* params)
 {
-    LuaTriggerFunctorPreExecEvent(self, params);
+    LuaTriggerFunctorPreExecEvent(state_, self, params);
     next(hit, world, self, params);
-    LuaTriggerFunctorPostExecEvent(self, params, hit);
+    LuaTriggerFunctorPostExecEvent(state_, self, params, hit);
 }
 
-FunctorEventHooks::FunctorEventHooks()
+FunctorEventHooks::FunctorEventHooks(State& state)
+    : state_(state)
 {
     auto& hooks = gExtender->GetEngineHooks();
     hooks.stats__DealDamageFunctor__ApplyDamage.SetWrapper(&FunctorEventHooks::OnDealDamage, this);
@@ -95,7 +96,7 @@ HitResult* FunctorEventHooks::OnDealDamage(bg3se::stats::DealDamageFunctor__Appl
             .Caster2 = *sourceHandle2,
             .SpellId2 = spellId2
         };
-        gExtender->GetServer().GetExtensionState().ThrowEvent<DealDamageEvent>(evt);
+        state_.GetExtensionState().ThrowEvent<DealDamageEvent>(evt);
     }
 
     auto ret = next(result, functor, casterHandle, targetHandle, position, isFromItem, spellId, storyActionId, originator, classResourceMgr, 
@@ -117,7 +118,7 @@ HitResult* FunctorEventHooks::OnDealDamage(bg3se::stats::DealDamageFunctor__Appl
         evt.Caster2 = *sourceHandle2;
         evt.SpellId2 = spellId2;
         evt.Result = result;
-        gExtender->GetServer().GetExtensionState().ThrowEvent<DealtDamageEvent>(evt);
+        state_.GetExtensionState().ThrowEvent<DealtDamageEvent>(evt);
     }
 
     return ret;
@@ -131,7 +132,7 @@ void FunctorEventHooks::OnEntityDamageEvent(bg3se::esv::StatsSystem__ThrowDamage
             .Hit = hit,
             .Attack = attack
         };
-        gExtender->GetServer().GetExtensionState().ThrowEvent<BeforeDealDamageEvent>(evt);
+        state_.GetExtensionState().ThrowEvent<BeforeDealDamageEvent>(evt);
     }
 
     next(statsSystem, temp5, hit, attack, a5, a6);

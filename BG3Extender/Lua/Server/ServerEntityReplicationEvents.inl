@@ -131,7 +131,7 @@ void ServerEntityReplicationEventHooks::OnEntityReplication(ecs::EntityWorld& wo
     }
 
     if (!events.empty()) {
-        esv::LuaServerPin lua(gExtender->GetServer().GetExtensionState());
+        LuaVirtualPin lua(state_.GetExtensionState());
         if (lua) {
             for (auto const& e : events) {
                 auto sub = subscriptions_.Find(e.Index);
@@ -146,7 +146,7 @@ void ServerEntityReplicationEventHooks::OnEntityReplication(ecs::EntityWorld& wo
 void ServerEntityReplicationEventHooks::CallHandler(EntityHandle entity, uint64_t fields, ecs::ReplicationTypeIndex type, ReplicationHook const& hook)
 {
     auto L = state_.GetState();
-    auto componentType = state_.GetEntitySystemHelpers()->GetComponentType(type);
+    auto componentType = state_.GetEntitySystemHelpers().GetComponentType(type);
     hook.Hook.Push(L);
     Ref func(L, lua_absindex(L, -1));
 

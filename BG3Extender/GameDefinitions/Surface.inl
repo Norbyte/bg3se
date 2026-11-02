@@ -16,8 +16,8 @@ SurfaceAction* SurfaceManager::CreateAction(SurfaceActionType type)
     auto action = ctor(*factory, type, ComponentHandle::NullHandle);
 
     if (action) {
-        auto helpers = GetCurrentExtensionState()->GetLua()->GetEntitySystemHelpers();
-        auto classDescs = helpers->GetResourceManager<resource::ClassDescription>();
+        auto& helpers = GetCurrentExtensionState()->GetLua()->GetEntitySystemHelpers();
+        auto classDescs = helpers.GetResourceManager<resource::ClassDescription>();
         action->ClassDescriptionMgr = *classDescs;
     }
 

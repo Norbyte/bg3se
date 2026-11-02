@@ -6,7 +6,7 @@ BEGIN_NS(lua::level)
 class PathfindingSystem
 {
 public:
-    PathfindingSystem(LevelManager& levelManager);
+    PathfindingSystem(State& state, LevelManager& levelManager);
     ~PathfindingSystem();
 
     AiPath* CreatePathRequest(LuaDelegate<void(AiPath*)>&& callback);

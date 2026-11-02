@@ -237,11 +237,11 @@ void AiPath::SetPlayerWeightFunction(AiPlayerWeightFuncData const& params)
 
 void AiPath::UsePlayerWeighting(lua_State* L, std::optional<bool> avoidObstacles, std::optional<bool> avoidDynamics)
 {
-    auto helpers = lua::State::FromLua(L)->GetEntitySystemHelpers();
+    auto& helpers = lua::State::FromLua(L)->GetEntitySystemHelpers();
 
     bool inCombat{ false };
     if (Source) {
-        auto combat = helpers->GetComponent<eoc::combat::ParticipantComponent>(Source);
+        auto combat = helpers.GetComponent<eoc::combat::ParticipantComponent>(Source);
         if (combat) {
             inCombat = (bool)combat->CombatHandle;
         }

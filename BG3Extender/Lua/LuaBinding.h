@@ -15,6 +15,7 @@
 #include <Lua/Libs/Timer.h>
 #include <Lua/Libs/Level.h>
 #include <Lua/Libs/Net.h>
+#include <Lua/Libs/StaticData.h>
 #include <Lua/Shared/SharedEvents.h>
 
 #include <mutex>
@@ -26,7 +27,6 @@ namespace bg3se::lua
     void PushExtFunction(lua_State * L, char const * func);
     void PushInternalFunction(lua_State * L, char const * func);
     void PushModFunction(lua_State* L, char const* mod, char const* func);
-    LifetimeHandle GetCurrentLifetime();
 
     class ExtensionLibrary
     {
@@ -238,12 +238,22 @@ namespace bg3se::lua
             return networkRequests_;
         }
 
+        inline res::GuidResourceHelpers& GetGuidResourceHelpers()
+        {
+            return guidResourceHelpers_;
+        }
+
+        inline ecs::EntitySystemHelpersBase& GetEntitySystemHelpers() const
+        {
+            return entityHelpers_;
+        }
+
+        ecs::EntityWorld* GetEntityWorld() const;
+
         virtual void Initialize();
         virtual void Shutdown();
         virtual bool IsClient() = 0;
 
-        virtual ecs::EntityWorld* GetEntityWorld() = 0;
-        virtual ecs::EntitySystemHelpersBase* GetEntitySystemHelpers() = 0;
         virtual EntityReplicationEventHooks* GetReplicationEventHooks() = 0;
 
         EntityComponentEventHooks& GetComponentEventHooks()
@@ -321,6 +331,7 @@ namespace bg3se::lua
         bool startupDone_{ false };
         uint32_t generationId_;
         ExtensionStateBase& state_;
+        ecs::EntitySystemHelpersBase& entityHelpers_;
 
         LifetimePool lifetimePool_;
         LifetimeStack lifetimeStack_;
@@ -339,6 +350,7 @@ namespace bg3se::lua
         timer::TimerSystem timers_;
         level::PathfindingSystem pathfinding_;
         net::NetworkRequestSystem networkRequests_;
+        res::GuidResourceHelpers guidResourceHelpers_;
 
         void OpenLibs();
         EventResult DispatchEvent(EventBase& evt, FixedString const& eventName, bool canPreventAction, RestrictionFlag restrictions);

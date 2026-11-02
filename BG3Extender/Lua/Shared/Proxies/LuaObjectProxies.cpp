@@ -38,7 +38,7 @@ bool IsAliveEntity(EntityHandle const& handle)
     if (state) {
         auto lua = state->GetLua();
         if (lua) {
-            auto world = lua->GetEntitySystemHelpers()->GetEntityWorld();
+            auto world = lua->GetEntitySystemHelpers().GetEntityWorld();
             if (world) {
                 return IsAliveEntity(handle, *world);
             }
@@ -77,7 +77,7 @@ bool Validate(EntityHandle const* handle, Overload<EntityHandle>)
     if (state) {
         auto lua = state->GetLua();
         if (lua) {
-            auto world = lua->GetEntitySystemHelpers()->GetEntityWorld();
+            auto world = lua->GetEntitySystemHelpers().GetEntityWorld();
             if (world) {
                 return WasValidEntity(*handle, *world);
             }

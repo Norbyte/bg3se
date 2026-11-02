@@ -10,9 +10,6 @@ BEGIN_NS(ecl::lua)
 
 using namespace bg3se::lua;
 
-LifetimeHandle GetClientLifetime();
-LifetimePool& GetClientLifetimePool();
-
 class ExtensionLibraryClient : public ExtensionLibrary
 {
 public:
@@ -33,8 +30,6 @@ public:
     bool IsClient() override;
     void OnUpdate(GameTime const& time) override;
 
-    ecs::EntityWorld* GetEntityWorld() override;
-    ecs::EntitySystemHelpersBase* GetEntitySystemHelpers() override;
     EntityReplicationEventHooks* GetReplicationEventHooks() override;
 
     inline ClientEntityReplicationEventHooks& GetClientReplicationEventHooks()
@@ -52,14 +47,17 @@ public:
         return deferredUIEvents_;
     }
 
-    extui::IMGUIObjectManager& IMGUI();
+    extui::IMGUIObjectManager& IMGUI()
+    {
+        return *imgui_;
+    }
 
 private:
     ExtensionLibraryClient library_;
     ClientEntityReplicationEventHooks replicationHooks_;
     UIEventHooks uiEvents_;
     DeferredUIEvents deferredUIEvents_;
-    extui::IMGUIObjectManager* imgui_{ nullptr };
+    GameUniquePtr<extui::IMGUIObjectManager> imgui_;
 };
 
 END_NS()

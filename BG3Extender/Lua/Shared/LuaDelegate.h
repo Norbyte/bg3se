@@ -152,9 +152,10 @@ private:
 class DeferredLuaDelegateQueue
 {
 public:
-    inline DeferredLuaDelegateQueue(char const* name)
+    inline DeferredLuaDelegateQueue(State& state, char const* name)
+        : state_(state)
 #if USE_OPTICK
-        : description_(OPTICK_DESC(name, "", 0, IO))
+        , description_(OPTICK_DESC(name, "", 0, IO))
 #endif
     {}
 
@@ -176,10 +177,10 @@ public:
         queue_.push_back(call);
     }
 
-    void Flush(lua_State* L);
     void Flush();
 
 private:
+    State& state_;
     Array<GenericDeferredLuaDelegateCall*> queue_;
 #if USE_OPTICK
     ::Optick::EventDescription* description_;

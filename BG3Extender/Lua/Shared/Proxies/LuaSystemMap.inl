@@ -3,13 +3,13 @@
 BEGIN_NS(lua)
 
 #define T(cls) case cls::SystemType: \
-        MakeObjectRef(L, ecs->GetSystem<cls>()); \
+        MakeObjectRef(L, ecs.GetSystem<cls>()); \
         break;
 
 int SystemMapMetatable::Index(lua_State* L, CppObjectMetadata& self)
 {
     auto type = get<ExtSystemType>(L, 2);
-    auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
+    auto& ecs = State::FromLua(L)->GetEntitySystemHelpers();
 
     switch (type) {
 #include <GameDefinitions/Components/ExposedSystemTypes.inl>

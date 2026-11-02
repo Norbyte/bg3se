@@ -184,7 +184,7 @@ bool OsirisWrappers::QueryWrapper(uint32_t FunctionId, OsiArgumentDesc * Params)
         wrappers->OsirisCallbacksAttachment->CallPreHook(FunctionId, Params);
     }
 
-    bool succeeded = gExtender->GetServer().Osiris().GetWrappers().QueryOriginal(FunctionId, Params);
+    bool succeeded = osi.GetWrappers().QueryOriginal(FunctionId, Params);
 
     if (wrappers && wrappers->OsirisCallbacksAttachment) {
         wrappers->OsirisCallbacksAttachment->CallPostHook(FunctionId, Params, succeeded);

@@ -147,7 +147,7 @@ void CleanupSanityCheck()
 
 void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
 {
-    if (gExtender->GetConfig().SendCrashReports) {
+    if (config_.SendCrashReports) {
         // We need to initialize the crash reporter after the game engine has started,
         // otherwise the game will overwrite the top level exception filter
         InitCrashReporting();
@@ -169,7 +169,7 @@ void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
 
     if ((toState == GameState::InitMenu || toState == GameState::StartLoading)
         && !gExtender->GetLibraryManager().CriticalInitializationFailed()
-        && gExtender->GetConfig().InsanityCheck) {
+        && config_.InsanityCheck) {
         CleanupSanityCheck();
     }
 
@@ -238,7 +238,7 @@ void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
             gExtender->GetLibraryManager().ShowStartupError(STDString(*error), false, false);
         } else {
             #if defined(SE_IS_DEVELOPER_BUILD) && defined(NDEBUG)
-            if (!gExtender->GetConfig().DeveloperMode) {
+            if (!config_.DeveloperMode) {
                 gExtender->GetLibraryManager().ShowStartupError("This is an experimental version of the Script Extender meant for development use; things may frequently break here. It is recommended to switch back to the Release version unless you know what you are doing!", false, false);
             }
             #endif

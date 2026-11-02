@@ -1641,8 +1641,8 @@ void ProgressBar::StyledRender(DrawingContext& context)
 
 IMGUIObjectPoolInterface::~IMGUIObjectPoolInterface() {}
 
-IMGUIObjectManager::IMGUIObjectManager()
-    : eventQueue_("IMGUI event")
+IMGUIObjectManager::IMGUIObjectManager(lua::State& state)
+    : eventQueue_(state, "IMGUI event")
 {
     pools_[(unsigned)IMGUIObjectType::Window] = std::make_unique<IMGUIObjectPool<Window>>();
     pools_[(unsigned)IMGUIObjectType::ChildWindow] = std::make_unique<IMGUIObjectPool<ChildWindow>>();
@@ -1757,10 +1757,7 @@ void IMGUIObjectManager::EnableDemo(bool enable)
 void IMGUIObjectManager::ClientUpdate()
 {
     OPTICK_EVENT();
-    LuaVirtualPin lua(ecl::ExtensionState::Get());
-    if (lua) {
-        eventQueue_.Flush();
-    }
+    eventQueue_.Flush();
 }
 
 void IMGUIObjectManager::Clear()

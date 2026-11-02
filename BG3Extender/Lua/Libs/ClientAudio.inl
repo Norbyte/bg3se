@@ -61,7 +61,7 @@ SoundObjectId GetSoundObjectId(lua_State* L, int idx)
     case LUA_TLIGHTCPPOBJECT:
     {
         auto entity = get<EntityHandle>(L, idx);
-        auto sound = State::FromLua(L)->GetEntitySystemHelpers()->GetComponent<SoundComponent>(entity);
+        auto sound = State::FromLua(L)->GetEntitySystemHelpers().GetComponent<SoundComponent>(entity);
         if (sound && sound->ActiveData && sound->ActiveData->SoundObjectId != 0xffffffffffffffffull) {
             return SoundObjectId(sound->ActiveData->SoundObjectId);
         } else {

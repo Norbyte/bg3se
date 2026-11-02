@@ -1009,7 +1009,7 @@ private:
 class IMGUIObjectManager
 {
 public:
-    IMGUIObjectManager();
+    IMGUIObjectManager(lua::State& state);
     ~IMGUIObjectManager();
 
     inline lua::DeferredLuaDelegateQueue& GetEventQueue()

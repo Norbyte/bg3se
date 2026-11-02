@@ -70,8 +70,8 @@ void ExecuteFunctor(lua_State* L, Functor* functor, ContextData* context)
 template <class T>
 T* DefaultInitFunctorParams(lua_State* L)
 {
-    auto* helpers = State::FromLua(L)->GetEntitySystemHelpers();
-    auto classDescs = helpers->GetResourceManager<resource::ClassDescription>();
+    auto& helpers = State::FromLua(L)->GetEntitySystemHelpers();
+    auto classDescs = helpers.GetResourceManager<resource::ClassDescription>();
 
     static T ctx;
 

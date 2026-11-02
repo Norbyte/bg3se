@@ -13,25 +13,12 @@
 #include <GameDefinitions/Net.h>
 #include <GameDefinitions/Level.h>
 
-#include <Lua/LevelIteratorFunctions.inl>
 #include <Lua/Server/FunctorEvents.inl>
 #include <Lua/Server/ServerEntityReplicationEvents.inl>
 
 namespace bg3se::esv::lua
 {
     using namespace bg3se::lua;
-
-    LifetimeHandle GetServerLifetime()
-    {
-        se_assert(gExtender->GetServer().IsInContext());
-        return esv::ExtensionState::Get().GetLua()->GetCurrentLifetime();
-    }
-
-    LifetimePool& GetServerLifetimePool()
-    {
-        se_assert(gExtender->GetServer().IsInContext());
-        return esv::ExtensionState::Get().GetLua()->GetLifetimePool();
-    }
 
     int RegisterOsirisListener(lua_State* L)
     {
@@ -112,6 +99,7 @@ namespace bg3se::esv::lua
     ServerState::ServerState(ExtensionState& state, uint32_t generationId)
         : State(state, generationId, true),
         osiris_(state),
+        functorHooks_(*this),
         replicationHooks_(*this)
     {}
 
@@ -141,9 +129,9 @@ namespace bg3se::esv::lua
 
         library_.Register(L);
 
-        gExtender->GetServer().GetExtensionState().LuaLoadBuiltinFile("ServerStartup.lua");
+        GetExtensionState().LuaLoadBuiltinFile("ServerStartup.lua");
         // Ext is not writeable after loading SandboxStartup!
-        gExtender->GetServer().GetExtensionState().LuaLoadBuiltinFile("SandboxStartup.lua");
+        GetExtensionState().LuaLoadBuiltinFile("SandboxStartup.lua");
 
         auto debugger = gExtender->GetLuaDebugger();
         if (debugger) {
@@ -168,17 +156,6 @@ namespace bg3se::esv::lua
         CallExt("_RestoreModPersistentVars", RestrictionFlag::All, modTable, vars);
     }
 
-
-    ecs::EntityWorld* ServerState::GetEntityWorld()
-    {
-        return gExtender->GetServer().GetEntityHelpers().GetEntityWorld();
-    }
-
-
-    ecs::EntitySystemHelpersBase* ServerState::GetEntitySystemHelpers()
-    {
-        return &gExtender->GetServer().GetEntityHelpers();
-    }
 
     EntityReplicationEventHooks* ServerState::GetReplicationEventHooks()
     {

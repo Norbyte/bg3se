@@ -1,58 +1,41 @@
 #include <GameDefinitions/Resources.h>
 #include <GameDefinitions/GuidResources.h>
+#include <Lua/Libs/StaticData.h>
 
 BEGIN_NS(lua::res)
 
 using namespace bg3se::resource;
 
-class GuidResourceBankHelperBase
+bool NullGuidResourceBankHelper::Push(lua_State* L, Guid resourceGuid)
 {
-public:
-    virtual bool Push(lua_State* L, Guid resourceGuid) = 0;
-    virtual bool Create(lua_State* L, std::optional<Guid> resourceGuid, bool allowUnsafeExpansion) = 0;
-    virtual Array<Guid> GetAll() = 0;
-    virtual HashMap<Guid, Array<Guid>>* GetSources() = 0;
-    virtual Array<Guid>* GetByModId(Guid modGuid) = 0;
-    virtual GuidResourceBankBase* GetBank() const = 0;
-};
-
-class NullGuidResourceBankHelper : public GuidResourceBankHelperBase
+    return false;
+}
+    
+bool NullGuidResourceBankHelper::Create(lua_State* L, std::optional<Guid> resourceGuid, bool allowUnsafeExpansion)
 {
-public:
-    bool Push(lua_State* L, Guid resourceGuid) override
-    {
-        return false;
-    }
+    return false;
+}
+
+Array<Guid> NullGuidResourceBankHelper::GetAll()
+{
+    return {};
+}
+
+HashMap<Guid, Array<Guid>>* NullGuidResourceBankHelper::GetSources()
+{
+    return &dummySources_;
+}
+
+Array<Guid>* NullGuidResourceBankHelper::GetByModId(Guid modGuid)
+{
+    return &dummyResources_;
+}
     
-    bool Create(lua_State* L, std::optional<Guid> resourceGuid, bool allowUnsafeExpansion) override
-    {
-        return false;
-    }
+GuidResourceBankBase* NullGuidResourceBankHelper::GetBank() const
+{
+    return nullptr;
+}
 
-    Array<Guid> GetAll() override
-    {
-        return {};
-    }
-
-    HashMap<Guid, Array<Guid>>* GetSources() override
-    {
-        return &dummySources_;
-    }
-
-    Array<Guid>* GetByModId(Guid modGuid) override
-    {
-        return &dummyResources_;
-    }
-    
-    GuidResourceBankBase* GetBank() const override
-    {
-        return nullptr;
-    }
-
-private:
-    HashMap<Guid, Array<Guid>> dummySources_;
-    Array<Guid> dummyResources_;
-};
 
 template <class T>
 class GuidResourceBankHelper : public GuidResourceBankHelperBase
@@ -157,52 +140,42 @@ private:
 
 #define FOR_RESOURCE_TYPE(ty) case resource::ty::ResourceManagerType: return MakeHelper<resource::ty>(type);
 
-class GuidResourceHelpers
+template <class T>
+GuidResourceBankHelperBase* GuidResourceHelpers::MakeHelper(ExtResourceManagerType type)
 {
-public:
-    template <class T>
-    GuidResourceBankHelperBase* MakeHelper(ExtResourceManagerType type)
-    {
-        auto& helpers = gExtender->GetServer().GetEntityHelpers();
-        auto bank = helpers.GetResourceManager<T>();
-        if (!bank) {
-            LuaError("Guid resource manager not available for resource type: " << type);
-            return  &nullHelper_;
-        }
-
-        helpers_[(unsigned)type] = std::make_unique<GuidResourceBankHelper<T>>(*bank);
-        return helpers_[(unsigned)type].get();
+    auto& ecs = state_.GetEntitySystemHelpers();
+    auto bank = ecs.GetResourceManager<T>();
+    if (!bank) {
+        LuaError("Guid resource manager not available for resource type: " << type);
+        return  &nullHelper_;
     }
 
-    GuidResourceBankHelperBase* Get(ExtResourceManagerType type)
-    {
-        auto helper = helpers_[(unsigned)type].get();
-        if (helper) {
-            return helper;
-        }
+    helpers_[(unsigned)type] = std::make_unique<GuidResourceBankHelper<T>>(*bank);
+    return helpers_[(unsigned)type].get();
+}
 
-        switch (type) {
-            FOR_EACH_GUID_RESOURCE_TYPE()
-
-        default:
-            LuaError("Guid resource type not supported: " << type);
-            return &nullHelper_;
-        }
+GuidResourceBankHelperBase* GuidResourceHelpers::Get(ExtResourceManagerType type)
+{
+    auto helper = helpers_[(unsigned)type].get();
+    if (helper) {
+        return helper;
     }
 
-private:
-    std::array<std::unique_ptr<GuidResourceBankHelperBase>, (unsigned)ExtResourceManagerType::Max + 1> helpers_;
-    NullGuidResourceBankHelper nullHelper_;
-};
+    switch (type) {
+        FOR_EACH_GUID_RESOURCE_TYPE()
+
+    default:
+        LuaError("Guid resource type not supported: " << type);
+        return &nullHelper_;
+    }
+}
 
 #undef FOR_RESOURCE_TYPE
-
-GuidResourceHelpers gGuidResourceHelpers;
 
 
 UserReturn GetGuidResource(lua_State* L, Guid resourceGuid, ExtResourceManagerType type)
 {
-    if (!gGuidResourceHelpers.Get(type)->Push(L, resourceGuid)) {
+    if (!State::FromLua(L)->GetGuidResourceHelpers().Get(type)->Push(L, resourceGuid)) {
         push(L, nullptr);
     }
 
@@ -212,30 +185,30 @@ UserReturn GetGuidResource(lua_State* L, Guid resourceGuid, ExtResourceManagerTy
 Array<Guid> GetAllGuidResources(lua_State* L, ExtResourceManagerType type)
 {
     OPTICK_EVENT();
-    return gGuidResourceHelpers.Get(type)->GetAll();
+    return State::FromLua(L)->GetGuidResourceHelpers().Get(type)->GetAll();
 }
 
 HashMap<Guid, Array<Guid>>* GetGuidResourceSources(lua_State* L, ExtResourceManagerType type)
 {
-    return gGuidResourceHelpers.Get(type)->GetSources();
+    return State::FromLua(L)->GetGuidResourceHelpers().Get(type)->GetSources();
 }
 
 Array<Guid>* GetGuidResourcesByModId(lua_State* L, ExtResourceManagerType type, Guid modGuid)
 {
-    return gGuidResourceHelpers.Get(type)->GetByModId(modGuid);
+    return State::FromLua(L)->GetGuidResourceHelpers().Get(type)->GetByModId(modGuid);
 }
 
-void ClearResourceBank(ExtResourceManagerType type)
+void ClearResourceBank(lua_State* L, ExtResourceManagerType type)
 {
-    auto bank = gGuidResourceHelpers.Get(type)->GetBank();
+    auto bank = State::FromLua(L)->GetGuidResourceHelpers().Get(type)->GetBank();
     if (bank) {
         bank->ClearInternal();
     }
 }
 
-void SyncResourceBank(ExtResourceManagerType type)
+void SyncResourceBank(lua_State* L, ExtResourceManagerType type)
 {
-    auto bank = gGuidResourceHelpers.Get(type)->GetBank();
+    auto bank = State::FromLua(L)->GetGuidResourceHelpers().Get(type)->GetBank();
     if (bank) {
         bank->PostLoad();
     }
@@ -243,7 +216,7 @@ void SyncResourceBank(ExtResourceManagerType type)
 
 UserReturn CreateGuidResource(lua_State* L, ExtResourceManagerType type, std::optional<Guid> resourceGuid)
 {
-    if (!gGuidResourceHelpers.Get(type)->Create(L, resourceGuid, true)) {
+    if (!State::FromLua(L)->GetGuidResourceHelpers().Get(type)->Create(L, resourceGuid, true)) {
         push(L, nullptr);
     }
 

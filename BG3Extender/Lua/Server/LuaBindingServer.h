@@ -28,17 +28,16 @@ BEGIN_NS(esv::lua)
 
 using namespace ::bg3se::lua;
 
-LifetimeHandle GetServerLifetime();
-LifetimePool& GetServerLifetimePool();
 void RegisterServerMetatables(lua_State* L);
 
 class FunctorEventHooks
 {
 public:
-    FunctorEventHooks();
+    FunctorEventHooks(State& state);
     ~FunctorEventHooks();
 
 private:
+    State& state_;
     HitResult* OnDealDamage(bg3se::stats::DealDamageFunctor__ApplyDamageProc* next, HitResult* result, bg3se::stats::DealDamageFunctor* functor, ecs::EntityRef* casterHandle,
         ecs::EntityRef* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId,
         int storyActionId, ActionOriginator* originator, resource::GuidResourceBankBase* classResourceMgr,
@@ -86,8 +85,6 @@ public:
     void OnGameSessionLoaded() override;
     void StoryFunctionMappingsUpdated();
 
-    ecs::EntityWorld* GetEntityWorld() override;
-    ecs::EntitySystemHelpersBase* GetEntitySystemHelpers() override;
     EntityReplicationEventHooks* GetReplicationEventHooks() override;
 
     inline ServerEntityReplicationEventHooks& GetServerReplicationEventHooks()

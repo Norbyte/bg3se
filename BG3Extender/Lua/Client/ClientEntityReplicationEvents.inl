@@ -47,7 +47,7 @@ void DummyFieldTracker::Remove(EntityHandle entity)
     SharedChanges->ChangedEntities.remove(entity);
 }
 
-ClientEntityReplicationEventHooks::ClientEntityReplicationEventHooks(State& state)
+ClientEntityReplicationEventHooks::ClientEntityReplicationEventHooks(ClientState& state)
     : state_(state)
 {}
 
@@ -65,7 +65,7 @@ EntityReplicationEventHooks::ReplicationHooks* ClientEntityReplicationEventHooks
         auto& peer = GetStaticSymbols().GetEoCClient()->GameClient->ReplicationPeer;
         auto deserializer = peer.Deserializers.try_get((uint16_t)type);
         if (!deserializer) {
-            auto name = state_.GetEntitySystemHelpers()->GetComponentName(type);
+            auto name = state_.GetEntitySystemHelpers().GetComponentName(type);
             ERR("Replication component '%s' has no deserializer, cannot hook", name->c_str());
             return nullptr;
         }
@@ -210,7 +210,7 @@ bool ClientEntityReplicationEventHooks::Unsubscribe(SubscriptionIndex index)
 void ClientEntityReplicationEventHooks::PostUpdate()
 {
     if (!pendingEvents_.empty()) {
-        ecl::LuaClientPin lua(gExtender->GetClient().GetExtensionState());
+        LuaVirtualPin lua(state_.GetExtensionState());
         if (lua) {
             for (auto const& e : pendingEvents_) {
                 auto sub = subscriptions_.Find(e.Index);
@@ -266,7 +266,7 @@ void ClientEntityReplicationEventHooks::OnEntityReplication(ecs::ReplicationType
 void ClientEntityReplicationEventHooks::CallHandler(EntityHandle entity, uint64_t fields, ecs::ReplicationTypeIndex type, ReplicationHook const& hook)
 {
     auto L = state_.GetState();
-    auto componentType = state_.GetEntitySystemHelpers()->GetComponentType(type);
+    auto componentType = state_.GetEntitySystemHelpers().GetComponentType(type);
     hook.Hook.Push(L);
     Ref func(L, lua_absindex(L, -1));
 

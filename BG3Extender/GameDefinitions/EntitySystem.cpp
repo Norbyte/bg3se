@@ -842,15 +842,15 @@ EntityStorageData* EntityWorld::GetEntityStorage(EntityHandle entityHandle) cons
 }
 
 
-StringView ECSComponentLog::GetName() const
+StringView ECSComponentLog::GetName(lua_State* L) const
 {
-    auto name = GetCurrentExtensionState()->GetLua()->GetEntitySystemHelpers()->GetComponentName(ComponentType);
+    auto name = lua::State::FromLua(L)->GetEntitySystemHelpers().GetComponentName(ComponentType);
     return name ? *name : StringView{};
 }
 
-std::optional<ExtComponentType> ECSComponentLog::GetType() const
+std::optional<ExtComponentType> ECSComponentLog::GetType(lua_State* L) const
 {
-    return GetCurrentExtensionState()->GetLua()->GetEntitySystemHelpers()->GetComponentType(ComponentType);
+    return lua::State::FromLua(L)->GetEntitySystemHelpers().GetComponentType(ComponentType);
 }
 
 void ECSChangeLog::Clear()

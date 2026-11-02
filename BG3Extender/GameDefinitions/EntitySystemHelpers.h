@@ -65,8 +65,8 @@ struct ECSComponentLog
     ComponentTypeIndex ComponentType{ 0 };
     ComponentChangeFlags Flags{ 0 };
 
-    StringView GetName() const;
-    std::optional<ExtComponentType> GetType() const;
+    StringView GetName(lua_State* L) const;
+    std::optional<ExtComponentType> GetType(lua_State* L) const;
 };
 
 struct ECSEntityLog

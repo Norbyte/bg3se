@@ -33,7 +33,8 @@ namespace bg3se
 
     ExtensionStateBase::ExtensionStateBase(bool isServer)
         : server_(isServer),
-        userVariables_(isServer, isServer ? (ecs::EntitySystemHelpersBase &)gExtender->GetServer().GetEntityHelpers() : gExtender->GetClient().GetEntityHelpers()),
+        entityHelpers_(isServer ? (ecs::EntitySystemHelpersBase&)gExtender->GetServer().GetEntityHelpers() : gExtender->GetClient().GetEntityHelpers()),
+        userVariables_(isServer, entityHelpers_),
         modVariables_(isServer)
     {}
 
@@ -480,10 +481,10 @@ namespace bg3se
         // Make sure that we won't get destroyed during startup/shutdown
         IncLuaRefs();
 
-        if (gExtender->GetClient().IsInContext()) {
-            gExtender->GetClient().UpdateClientProgress("Lua Init");
-        } else {
+        if (IsServer()) {
             gExtender->GetClient().UpdateServerProgress("Lua Init");
+        } else {
+            gExtender->GetClient().UpdateClientProgress("Lua Init");
         }
 
         se_assert(LuaPendingDelete);

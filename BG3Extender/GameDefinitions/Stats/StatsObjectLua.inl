@@ -97,7 +97,7 @@ void Object::TryPushValue(lua_State* L, StatModifierCache const& attribute) cons
     {
         auto functors = GetFunctors(attribute);
         if (functors) {
-            push(L, **functors, lua::GetCurrentLifetime());
+            push(L, **functors, GetCurrentLifetime(L));
         } else {
             push(L, nullptr);
         }

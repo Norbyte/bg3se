@@ -40,22 +40,9 @@ void nse_lua_report_handled_error(lua_State* L)
 
 BEGIN_NS(lua)
 
-LifetimeHandle GetCurrentLifetime()
+LifetimeHandle GetCurrentLifetime(lua_State* L)
 {
-    if (gExtender->GetServer().IsInContext()) {
-        return esv::lua::GetServerLifetime();
-    } else {
-        return ecl::lua::GetClientLifetime();
-    }
-}
-
-LifetimePool& GetLifetimePool()
-{
-    if (gExtender->GetServer().IsInContext()) {
-        return esv::lua::GetServerLifetimePool();
-    } else {
-        return ecl::lua::GetClientLifetimePool();
-    }
+    return State::GetExtra(L)->CurrentLifetime;
 }
 
 void push(lua_State* L, EntityHandle const& h)
@@ -172,11 +159,10 @@ void EnterVMCheck(lua_State* L)
     auto ctx = GetCurrentContextType();
     se_assert(ctx != ContextType::None);
 
+    ExtensionStateBase::FromLua(L).EnteredCheck();
     if (ctx == ContextType::Server) {
-        if (gExtender->GetServer().HasExtensionState()) gExtender->GetServer().GetExtensionState().EnteredCheck();
         se_assert(DebugServerVM != nullptr && DebugServerVM == L->l_G);
     } else {
-        if (gExtender->GetClient().HasExtensionState()) gExtender->GetClient().GetExtensionState().EnteredCheck();
         se_assert(DebugClientVM != nullptr && DebugClientVM == L->l_G);
     }
 }
@@ -399,11 +385,6 @@ void* LuaAlloc(void* ud, void* ptr, size_t osize, size_t nsize)
     }
 }
 
-LifetimeHandle GetCurrentLifetime(lua_State* L)
-{
-    return State::GetExtra(L)->CurrentLifetime;
-}
-
 LuaStateWrapper::LuaStateWrapper(ExtensionStateBase& state)
 {
     L = lua_newstate(LuaAlloc, this);
@@ -522,14 +503,17 @@ State::State(ExtensionStateBase& state, uint32_t generationId, bool isServer)
     : L(state),
     generationId_(generationId),
     state_(state),
+    entityHelpers_(state.GetEntitySystemHelpers()),
     lifetimeStack_(lifetimePool_),
     globals_(L.L),
-    variableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetUserVariables() : gExtender->GetClient().GetExtensionState().GetUserVariables(), isServer),
-    modVariableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetModVariables() : gExtender->GetClient().GetExtensionState().GetModVariables(), isServer),
+    variableManager_(*this, state.GetUserVariables(), isServer),
+    modVariableManager_(*this, state.GetModVariables(), isServer),
     entityHooks_(*this),
     systemHooks_(*this),
     timers_(*this, isServer),
-    pathfinding_(*state_.GetLevelManager())
+    pathfinding_(*this, *state_.GetLevelManager()),
+    networkRequests_(*this),
+    guidResourceHelpers_(*this)
 {
     GetExtra(L.L)->State = this;
     GetExtra(L.L)->CurrentLifetime = LifetimeHandle{};
@@ -545,6 +529,11 @@ lua::EventSubscriberHints& State::GetEventHints()
     return state_.GetEventHints();
 }
 
+ecs::EntityWorld* State::GetEntityWorld() const
+{
+    return entityHelpers_.GetEntityWorld();
+}
+
 void State::Initialize()
 {
     entityHooks_.BindECS();
@@ -556,8 +545,8 @@ void State::Shutdown()
     variableManager_.Invalidate();
     modVariableManager_.Invalidate();
 
-    GetEntitySystemHelpers()->GetTracer().StopTracing();
-    GetEntitySystemHelpers()->GetTracer().GetLog().Clear();
+    GetEntitySystemHelpers().GetTracer().StopTracing();
+    GetEntitySystemHelpers().GetTracer().GetLog().Clear();
 
     state_.GetEventHints().DeactivateAll();
 }

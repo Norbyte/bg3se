@@ -10,17 +10,17 @@ BEGIN_NS(lua)
 HashMap<FixedStringUnhashed, lua_CFunction> EntityProxyMetatable::functions_;
 HashMap<FixedStringUnhashed, EntityProxyMetatable::PropertyMapEntry> EntityProxyMetatable::propertyMap_;
 
-ecs::EntitySystemHelpersBase* GetEntitySystem(lua_State* L)
+ecs::EntitySystemHelpersBase& GetEntitySystem(lua_State* L)
 {
     return State::FromLua(L)->GetEntitySystemHelpers();
 }
 
-void PushComponent(lua_State* L, ecs::EntitySystemHelpersBase* helpers, EntityHandle const& handle, ExtComponentType componentType,
+void PushComponent(lua_State* L, ecs::EntitySystemHelpersBase& helpers, EntityHandle const& handle, ExtComponentType componentType,
     LifetimeHandle lifetime)
 {
-    auto component = helpers->GetRawComponent(handle, componentType);
+    auto component = helpers.GetRawComponent(handle, componentType);
     if (component) {
-        auto meta = helpers->GetComponentMeta(componentType);
+        auto meta = helpers.GetComponentMeta(componentType);
         MakeDirectObjectRef(L, *meta.Properties, component, lifetime);
     } else {
         push(L, nullptr);
@@ -36,7 +36,7 @@ void PushComponent(lua_State* L, void* rawComponent, lua::GenericPropertyMap& pm
 void EntityHelper::PushComponentByType(lua_State* L, ExtComponentType componentType) const
 {
     StackCheck _(L, 1);
-    auto ecs = GetEntitySystem(L);
+    auto& ecs = GetEntitySystem(L);
     PushComponent(L, ecs, handle_, componentType, GetCurrentLifetime(L));
 }
 
@@ -44,11 +44,11 @@ Array<ExtComponentType> EntityHelper::GetAllComponentTypes() const
 {
     Array<ExtComponentType> types;
 
-    auto world = ecs_->GetEntityWorld();
+    auto world = ecs_.GetEntityWorld();
     auto storage = world->GetEntityStorage(handle_);
     if (storage != nullptr) {
         for (auto typeInfo : storage->ComponentTypeToIndex) {
-            auto extType = ecs_->GetComponentType(typeInfo.Key());
+            auto extType = ecs_.GetComponentType(typeInfo.Key());
             if (extType) {
                 types.push_back(*extType);
             }
@@ -56,7 +56,7 @@ Array<ExtComponentType> EntityHelper::GetAllComponentTypes() const
 
         if (storage->HasOneFrameComponents) {
             for (auto pool : storage->OneFrameComponents) {
-                auto extType = ecs_->GetComponentType(pool.Key());
+                auto extType = ecs_.GetComponentType(pool.Key());
                 if (extType && pool->Value().find(handle_) != pool->Value().end()) {
                     types.push_back(*extType);
                 }
@@ -81,11 +81,11 @@ EntityHelper EntityProxyMetatable::GetHelper(lua_State* L, int index)
 
 UserReturn EntityProxyMetatable::CreateComponentImmediate(lua_State* L, EntityHandle entity, ExtComponentType component)
 {
-    auto ecs = GetEntitySystem(L);
-    auto ptr = ecs->CreateComponentImmediateRaw(entity, component);
+    auto& ecs = GetEntitySystem(L);
+    auto ptr = ecs.CreateComponentImmediateRaw(entity, component);
 
     if (ptr != nullptr) {
-        auto pm = ecs->GetComponentMeta(component).Properties;
+        auto pm = ecs.GetComponentMeta(component).Properties;
         PushComponent(L, ptr, *pm, GetCurrentLifetime(L));
         return 1;
     }
@@ -97,11 +97,11 @@ UserReturn EntityProxyMetatable::CreateComponentImmediate(lua_State* L, EntityHa
 
 UserReturn EntityProxyMetatable::CreateComponent(lua_State* L, EntityHandle entity, ExtComponentType component)
 {
-    auto ecs = GetEntitySystem(L);
-    auto ptr = ecs->CreateComponentRaw(entity, component);
+    auto& ecs = GetEntitySystem(L);
+    auto ptr = ecs.CreateComponentRaw(entity, component);
 
     if (ptr != nullptr) {
-        auto pm = ecs->GetComponentMeta(component).Properties;
+        auto pm = ecs.GetComponentMeta(component).Properties;
         PushComponent(L, ptr, *pm, GetCurrentLifetime(L));
         return 1;
     }
@@ -113,45 +113,45 @@ UserReturn EntityProxyMetatable::CreateComponent(lua_State* L, EntityHandle enti
 
 bool EntityProxyMetatable::RemoveComponent(lua_State* L, EntityHandle entity, ExtComponentType component)
 {
-    return GetEntitySystem(L)->RemoveComponent(entity, component);
+    return GetEntitySystem(L).RemoveComponent(entity, component);
 }
 
 bool EntityProxyMetatable::RemoveComponentImmediate(lua_State* L, EntityHandle entity, ExtComponentType component)
 {
-    auto ecs = GetEntitySystem(L);
-    auto typeId = ecs->GetComponentIndex(component);
+    auto& ecs = GetEntitySystem(L);
+    auto typeId = ecs.GetComponentIndex(component);
     return typeId 
-        && ecs->GetEntityWorld()->Cache->RemoveComponent(entity, *typeId);
+        && ecs.GetEntityWorld()->Cache->RemoveComponent(entity, *typeId);
 }
 
 UserReturn EntityProxyMetatable::GetComponent(lua_State* L, EntityHandle entity, ExtComponentType component)
 {
-    auto ecs = GetEntitySystem(L);
+    auto& ecs = GetEntitySystem(L);
     PushComponent(L, ecs, entity, component, GetCurrentLifetime(L));
     return 1;
 }
 
 bool EntityProxyMetatable::HasRawComponent(lua_State* L, EntityHandle entity, STDString componentName)
 {
-    auto ecs = GetEntitySystem(L);
-    auto index = ecs->GetComponentIndex(componentName);
+    auto& ecs = GetEntitySystem(L);
+    auto index = ecs.GetComponentIndex(componentName);
     if (!index) {
         return false;
     } else {
-        auto ptr = ecs->GetEntityWorld()->GetRawComponent(entity, *index, 1);
+        auto ptr = ecs.GetEntityWorld()->GetRawComponent(entity, *index, 1);
         return ptr != nullptr;
     }
 }
 
 template <class F>
-void ForEachCommittedComponent(ecs::EntitySystemHelpersBase* ecs, ecs::EntityWorld* world, EntityHandle entity, F f)
+void ForEachCommittedComponent(ecs::EntitySystemHelpersBase& ecs, ecs::EntityWorld* world, EntityHandle entity, F f)
 {
     auto storage = world->GetEntityStorage(entity);
     if (storage != nullptr) {
         auto storageIndex = storage->InstanceToPageMap.try_get(entity);
         if (storageIndex) {
             for (auto typeInfo : storage->ComponentTypeToIndex) {
-                auto meta = ecs->GetComponentMeta(typeInfo.Key());
+                auto meta = ecs.GetComponentMeta(typeInfo.Key());
                 if (meta) {
                     void* component = storage->GetComponent(*storageIndex, typeInfo.Value(), meta->InlineSize);
                     if (component && meta->IsProxy) {
@@ -164,7 +164,7 @@ void ForEachCommittedComponent(ecs::EntitySystemHelpersBase* ecs, ecs::EntityWor
 
             if (storage->HasOneFrameComponents) {
                 for (auto pool : storage->OneFrameComponents) {
-                    auto meta = ecs->GetComponentMeta(pool.Key());
+                    auto meta = ecs.GetComponentMeta(pool.Key());
                     if (meta) {
                         auto component = pool->Value().get_or_default(entity);
                         f(ecs, *meta, component);
@@ -176,7 +176,7 @@ void ForEachCommittedComponent(ecs::EntitySystemHelpersBase* ecs, ecs::EntityWor
 }
 
 template <class F>
-void ForEachECBComponent(ecs::EntitySystemHelpersBase* ecs, ecs::EntityWorld* world, EntityHandle entity, F f)
+void ForEachECBComponent(ecs::EntitySystemHelpersBase& ecs, ecs::EntityWorld* world, EntityHandle entity, F f)
 {
     auto ecb = world->Deferred();
     auto change = ecb->Data.GetEntityChange(entity);
@@ -184,7 +184,7 @@ void ForEachECBComponent(ecs::EntitySystemHelpersBase* ecs, ecs::EntityWorld* wo
         for (uint32_t i = 0; i < change->Store.size(); i++) {
             auto const& comp = change->Store[i];
             if (comp.Index) {
-                auto meta = ecs->GetComponentMeta(comp.ComponentTypeId);
+                auto meta = ecs.GetComponentMeta(comp.ComponentTypeId);
                 if (meta) {
                     auto component = ecb->GetComponentChange(comp.ComponentTypeId, comp.Index);
                     if (component) {
@@ -204,14 +204,14 @@ UserReturn EntityProxyMetatable::GetAllComponents(lua_State* L, EntityHandle ent
     StackCheck _(L, 1);
     lua_newtable(L);
 
-    auto pushComponent = [L] (ecs::EntitySystemHelpersBase* ecs, ecs::EntitySystemHelpersBase::PerComponentData const& meta, void* component) {
+    auto pushComponent = [L] (ecs::EntitySystemHelpersBase& ecs, ecs::EntitySystemHelpersBase::PerComponentData const& meta, void* component) {
         push(L, meta.Type);
         PushComponent(L, component, *meta.Properties, GetCurrentLifetime(L));
         lua_rawset(L, -3);
     };
 
-    auto ecs = GetEntitySystem(L);
-    auto world = ecs->GetEntityWorld();
+    auto& ecs = GetEntitySystem(L);
+    auto world = ecs.GetEntityWorld();
     ForEachCommittedComponent(ecs, world, entity, pushComponent);
     ForEachECBComponent(ecs, world, entity, pushComponent);
 
@@ -223,8 +223,8 @@ UserReturn EntityProxyMetatable::GetChangedComponents(lua_State* L, EntityHandle
     StackCheck _(L, 1);
     lua_newtable(L);
     
-    auto ecs = GetEntitySystem(L);
-    auto storages = ecs->GetEntityWorld()->Storage;
+    auto& ecs = GetEntitySystem(L);
+    auto storages = ecs.GetEntityWorld()->Storage;
     auto storageIndex = storages->GetEntityStorageIndex(entity);
 
     if (storageIndex && storages->IsEntityStorageDirty(*storageIndex)) {
@@ -235,7 +235,7 @@ UserReturn EntityProxyMetatable::GetChangedComponents(lua_State* L, EntityHandle
             if (storage->ModifiedComponents[type.Value()]
                 && storage->WasComponentChanged(*storageIndex, type.Value())) {
 
-                auto meta = ecs->GetComponentMeta(type.Key());
+                auto meta = ecs.GetComponentMeta(type.Key());
                 if (meta) {
                     void* component = storage->GetComponent(*storageIndex, type.Value(), meta->InlineSize);
                     if (component && meta->IsProxy) {
@@ -258,14 +258,14 @@ UserReturn EntityProxyMetatable::GetAddedComponentsCurrentFrame(lua_State* L, En
     StackCheck _(L, 1);
     lua_newtable(L);
 
-    auto pushComponent = [L] (ecs::EntitySystemHelpersBase* ecs, ecs::EntitySystemHelpersBase::PerComponentData const& meta, void* component) {
+    auto pushComponent = [L] (ecs::EntitySystemHelpersBase& ecs, ecs::EntitySystemHelpersBase::PerComponentData const& meta, void* component) {
         push(L, meta.Type);
         PushComponent(L, component, *meta.Properties, GetCurrentLifetime(L));
         lua_rawset(L, -3);
     };
 
-    auto ecs = GetEntitySystem(L);
-    auto world = ecs->GetEntityWorld();
+    auto& ecs = GetEntitySystem(L);
+    auto world = ecs.GetEntityWorld();
     ForEachECBComponent(ecs, world, entity, pushComponent);
 
     return 1;
@@ -275,14 +275,14 @@ Array<ExtComponentType> EntityProxyMetatable::GetRemovedComponentsCurrentFrame(l
 {
     Array<ExtComponentType> deletions;
 
-    auto ecs = GetEntitySystem(L);
-    auto ecb = ecs->GetEntityWorld()->Deferred();
+    auto& ecs = GetEntitySystem(L);
+    auto ecb = ecs.GetEntityWorld()->Deferred();
     auto change = ecb->Data.GetEntityChange(entity);
     if (change) {
         for (uint32_t i = 0; i < change->Store.size(); i++) {
             auto const& comp = change->Store[i];
             if (!comp.Index) {
-                auto extType = ecs->GetComponentType(comp.ComponentTypeId);
+                auto extType = ecs.GetComponentType(comp.ComponentTypeId);
                 if (extType) {
                     deletions.push_back(*extType);
                 }
@@ -297,14 +297,14 @@ Array<StringView> EntityProxyMetatable::GetAllComponentNames(lua_State* L, Entit
 {
     Array<StringView> names;
 
-    auto ecs = GetEntitySystem(L);
-    auto world = ecs->GetEntityWorld();
+    auto& ecs = GetEntitySystem(L);
+    auto world = ecs.GetEntityWorld();
     auto storage = world->GetEntityStorage(entity);
     if (storage != nullptr) {
         for (auto componentIdx : storage->ComponentTypeToIndex.keys()) {
-            auto name = ecs->GetComponentName(componentIdx);
+            auto name = ecs.GetComponentName(componentIdx);
             if (name) {
-                auto mapped = ecs->GetComponentType(componentIdx).has_value();
+                auto mapped = ecs.GetComponentType(componentIdx).has_value();
                 if (!requireMapped || *requireMapped == mapped) {
                     names.push_back(*name);
                 }
@@ -314,9 +314,9 @@ Array<StringView> EntityProxyMetatable::GetAllComponentNames(lua_State* L, Entit
         if (storage->HasOneFrameComponents) {
             for (auto it : storage->OneFrameComponents) {
                 if (it->Value().find(entity) != it->Value().end()) {
-                    auto name = ecs->GetComponentName(it->Key());
+                    auto name = ecs.GetComponentName(it->Key());
                     if (name) {
-                        auto mapped = ecs->GetComponentType(it->Key()).has_value();
+                        auto mapped = ecs.GetComponentType(it->Key()).has_value();
                         if (!requireMapped || *requireMapped == mapped) {
                             names.push_back(*name);
                         }
@@ -331,21 +331,21 @@ Array<StringView> EntityProxyMetatable::GetAllComponentNames(lua_State* L, Entit
 
 bool EntityProxyMetatable::IsAlive(lua_State* L, EntityHandle entity)
 {
-    auto world = GetEntitySystem(L)->GetEntityWorld();
+    auto world = GetEntitySystem(L).GetEntityWorld();
     auto storage = world->GetEntityStorage(entity);
     return storage != nullptr;
 }
 
 std::optional<NetId> EntityProxyMetatable::GetNetId(lua_State* L, EntityHandle entity)
 {
-    auto ecs = GetEntitySystem(L);
-    return ecs->EntityToNetId(entity);
+    auto& ecs = GetEntitySystem(L);
+    return ecs.EntityToNetId(entity);
 }
 
 uint64_t EntityProxyMetatable::GetReplicationFlags(lua_State* L, EntityHandle entity, ExtComponentType component, std::optional<uint32_t> qword)
 {
-    auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
-    auto flagMask = ecs->GetReplicationFlags(entity, component);
+    auto& ecs = State::FromLua(L)->GetEntitySystemHelpers();
+    auto flagMask = ecs.GetReplicationFlags(entity, component);
     uint64_t flags{ 0 };
     unsigned qw = qword ? *qword : 0;
     if (flagMask && qw < flagMask->NumQwords()) {
@@ -357,19 +357,19 @@ uint64_t EntityProxyMetatable::GetReplicationFlags(lua_State* L, EntityHandle en
 
 void ReplicateComponent(lua_State* L, EntityHandle entity, ExtComponentType component, uint32_t qword, uint64_t flags)
 {
-    auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
-    if (!ecs->GetEntityWorld()->Replication) {
+    auto& ecs = State::FromLua(L)->GetEntitySystemHelpers();
+    if (!ecs.GetEntityWorld()->Replication) {
         OsiError("Changes can only be replicated from server to client");
         return;
     }
 
-    auto replicationFlags = ecs->GetOrCreateReplicationFlags(entity, component);
+    auto replicationFlags = ecs.GetOrCreateReplicationFlags(entity, component);
     if (replicationFlags) {
         replicationFlags->EnsureSize((qword + 1) * 64);
         bool changed = (replicationFlags->GetBuf()[qword] & flags) != flags;
         replicationFlags->GetBuf()[qword] |= flags;
         if (changed) {
-            ecs->NotifyReplicationFlagsDirtied();
+            ecs.NotifyReplicationFlagsDirtied();
         }
     } else {
         OsiError("Unable to replicate; " << component << " type cannot be replicated or the replication ID is not mapped");
@@ -389,21 +389,21 @@ void EntityProxyMetatable::Replicate(lua_State* L, EntityHandle entity, ExtCompo
 
 bool EntityProxyMetatable::MarkChanged(lua_State* L, EntityHandle entity, ExtComponentType component)
 {
-    auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
-    return ecs->MarkComponentAsChanged(entity, component);
+    auto& ecs = State::FromLua(L)->GetEntitySystemHelpers();
+    return ecs.MarkComponentAsChanged(entity, component);
 }
 
 bool EntityProxyMetatable::WasChanged(lua_State* L, EntityHandle entity, ExtComponentType component)
 {
-    auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
-    return ecs->WasComponentChanged(entity, component);
+    auto& ecs = State::FromLua(L)->GetEntitySystemHelpers();
+    return ecs.WasComponentChanged(entity, component);
 }
 
 bool EntityProxyMetatable::WasAdded(lua_State* L, EntityHandle entity, ExtComponentType component)
 {
-    auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
-    auto ecb = ecs->GetEntityWorld()->Deferred();
-    auto componentIndex = ecs->GetComponentIndex(component);
+    auto& ecs = State::FromLua(L)->GetEntitySystemHelpers();
+    auto ecb = ecs.GetEntityWorld()->Deferred();
+    auto componentIndex = ecs.GetComponentIndex(component);
     if (!componentIndex) return false;
 
     auto entityChange = ecb->Data.EntityChanges.find(entity);
@@ -421,9 +421,9 @@ bool EntityProxyMetatable::WasAdded(lua_State* L, EntityHandle entity, ExtCompon
 
 bool EntityProxyMetatable::WasRemoved(lua_State* L, EntityHandle entity, ExtComponentType component)
 {
-    auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
-    auto ecb = ecs->GetEntityWorld()->Deferred();
-    auto componentIndex = ecs->GetComponentIndex(component);
+    auto& ecs = State::FromLua(L)->GetEntitySystemHelpers();
+    auto ecb = ecs.GetEntityWorld()->Deferred();
+    auto componentIndex = ecs.GetComponentIndex(component);
     if (!componentIndex) return false;
 
     auto entityChange = ecb->Data.EntityChanges.find(entity);
@@ -441,8 +441,8 @@ bool EntityProxyMetatable::WasRemoved(lua_State* L, EntityHandle entity, ExtComp
 
 bool EntityProxyMetatable::WasEntityAdded(lua_State* L, EntityHandle entity)
 {
-    auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
-    auto ecb = ecs->GetEntityWorld()->Deferred();
+    auto& ecs = State::FromLua(L)->GetEntitySystemHelpers();
+    auto ecb = ecs.GetEntityWorld()->Deferred();
     auto entityChange = ecb->Data.EntityChanges.find(entity);
     return entityChange
         && (entityChange->Flags & ecs::EntityChangeFlags::Create) == ecs::EntityChangeFlags::Create;
@@ -450,8 +450,8 @@ bool EntityProxyMetatable::WasEntityAdded(lua_State* L, EntityHandle entity)
 
 bool EntityProxyMetatable::WasEntityRemoved(lua_State* L, EntityHandle entity)
 {
-    auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
-    auto ecb = ecs->GetEntityWorld()->Deferred();
+    auto& ecs = State::FromLua(L)->GetEntitySystemHelpers();
+    auto ecb = ecs.GetEntityWorld()->Deferred();
     auto entityChange = ecb->Data.EntityChanges.find(entity);
     return entityChange
         && (entityChange->Flags & ecs::EntityChangeFlags::Destroy) == ecs::EntityChangeFlags::Destroy;
@@ -588,10 +588,10 @@ int EntityProxyMetatable::Index(lua_State* L, CppValueOpaque* self)
             push(L, entry->Function);
             return 1;
         } else {
-            auto ecs = GetEntitySystem(L);
-            auto rawComponent = ecs->GetRawComponent(handle, *entry->Component);
+            auto& ecs = GetEntitySystem(L);
+            auto rawComponent = ecs.GetRawComponent(handle, *entry->Component);
             if (rawComponent != nullptr) {
-                auto meta = ecs->GetComponentMeta(*entry->Component);
+                auto meta = ecs.GetComponentMeta(*entry->Component);
                 PushComponent(L, rawComponent, *meta.Properties, GetCurrentLifetime(L));
             } else {
                 push(L, nullptr);

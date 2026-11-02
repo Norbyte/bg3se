@@ -1,6 +1,6 @@
 BEGIN_NS(lua)
 
-void DeferredLuaDelegateQueue::Flush(lua_State* L)
+void DeferredLuaDelegateQueue::Flush()
 {
     if (queue_.empty()) return;
 
@@ -8,16 +8,8 @@ void DeferredLuaDelegateQueue::Flush(lua_State* L)
     Array<GenericDeferredLuaDelegateCall*> cur;
     std::swap(cur, queue_);
     for (auto const& call : cur) {
-        call->Call(L);
+        call->Call(state_.GetState());
         GameDelete(call);
-    }
-}
-
-void DeferredLuaDelegateQueue::Flush()
-{
-    LuaVirtualPin lua(GetCurrentExtensionState());
-    if (lua) {
-        Flush(lua->GetState());
     }
 }
 
