@@ -141,28 +141,30 @@ public:
 
     void NewFrame() override
     {
-        std::lock_guard _(globalResourceLock_);
         curViewport_ = (curViewport_ + 1) % viewports_.size();
         GImGui->Viewports[0] = &viewports_[curViewport_].Viewport;
 
-        if (requestReloadFonts_) {
-            OPTICK_EVENT("InvalidateDeviceObjects", Optick::Category::Rendering);
-            IMGUI_DEBUG("Rebuilding font atlas");
-            renderObjectsCreated_ = false;
-            ImGui_ImplDX11_InvalidateDeviceObjects();
-            drawViewport_ = -1;
-            requestReloadFonts_ = false;
-            initializationFailed_ = false;
-        }
+        if (requestReloadFonts_ || !renderObjectsCreated_) {
+            std::lock_guard _(globalResourceLock_);
+            if (requestReloadFonts_) {
+                OPTICK_EVENT("InvalidateDeviceObjects", Optick::Category::Rendering);
+                IMGUI_DEBUG("Rebuilding font atlas");
+                renderObjectsCreated_ = false;
+                ImGui_ImplDX11_InvalidateDeviceObjects();
+                drawViewport_ = -1;
+                requestReloadFonts_ = false;
+                initializationFailed_ = false;
+            }
 
-        if (!initializationFailed_ && !renderObjectsCreated_) {
-            OPTICK_EVENT("CreateDeviceObjects", Optick::Category::Rendering);
-            IMGUI_DEBUG("Re-initializing DX11 render objects");
-            initializationFailed_ = !ImGui_ImplDX11_CreateDeviceObjects();
-            if (initializationFailed_) {
-                ERR("Failed to initialize IMGUI DX11 backend!");
-            } else {
-                renderObjectsCreated_ = true;
+            if (!initializationFailed_ && !renderObjectsCreated_) {
+                OPTICK_EVENT("CreateDeviceObjects", Optick::Category::Rendering);
+                IMGUI_DEBUG("Re-initializing DX11 render objects");
+                initializationFailed_ = !ImGui_ImplDX11_CreateDeviceObjects();
+                if (initializationFailed_) {
+                    ERR("Failed to initialize IMGUI DX11 backend!");
+                } else {
+                    renderObjectsCreated_ = true;
+                }
             }
         }
 
