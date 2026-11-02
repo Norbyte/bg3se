@@ -91,6 +91,7 @@ void ClientState::OnUpdate(GameTime const& time)
     State::OnUpdate(time);
     replicationHooks_.PostUpdate();
     deferredUIEvents_.PostUpdate();
+    boxedValues_.clear();
 }
 
 EntityReplicationEventHooks* ClientState::GetReplicationEventHooks()

@@ -52,12 +52,19 @@ public:
         return *imgui_;
     }
 
+    // Values boxed by Ext.UI.Box(), kept alive until the end of the frame
+    inline Array<Noesis::Ptr<Noesis::BaseComponent>>& GetBoxedValues()
+    {
+        return boxedValues_;
+    }
+
 private:
     ExtensionLibraryClient library_;
     ClientEntityReplicationEventHooks replicationHooks_;
     UIEventHooks uiEvents_;
     DeferredUIEvents deferredUIEvents_;
     GameUniquePtr<extui::IMGUIObjectManager> imgui_;
+    Array<Noesis::Ptr<Noesis::BaseComponent>> boxedValues_;
 };
 
 END_NS()
