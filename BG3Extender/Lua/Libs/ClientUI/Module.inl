@@ -2,6 +2,8 @@
 #include <Lua/Libs/ClientUI/NsHelpers.inl>
 #include <Lua/Libs/ClientUI/CustomProperties.inl>
 #include <NsGui/UIElementCollection.h>
+#include <NsCore/Boxing.h>
+#include <NsCore/String.h>
 #include <NsGui/IList.h>
 #include <GameDefinitions/DragDrop.h>
 #include <GameDefinitions/Picking.h>
@@ -139,6 +141,45 @@ Noesis::BaseComponent* Instantiate(lua_State* L, STDString name, std::optional<N
     return inst;
 }
 
+// Puts a Lua string, boolean or number in a Noesis box (BoxedValue), the way XAML passes a
+// CommandParameter, e.g. widget.DataContext.CustomEvent:Execute(Ext.UI.Box("OpenOptions")).
+// The box is kept alive until the end of the frame; the UI keeps its own reference to a box it holds
+// on to (e.g. a property's value).
+Noesis::BaseComponent* Box(lua_State* L, lua::AnyRef value)
+{
+    Noesis::Ptr<Noesis::BoxedValue> boxed;
+    switch (lua_type(L, value.Index)) {
+    case LUA_TSTRING:
+        boxed = Noesis::Boxing::Box(Noesis::String(lua::get<char const*>(L, value.Index)));
+        break;
+
+    case LUA_TBOOLEAN:
+        boxed = Noesis::Boxing::Box(lua_toboolean(L, value.Index) != 0);
+        break;
+
+    case LUA_TNUMBER:
+        if (lua_isinteger(L, value.Index)) {
+            auto n = lua_tointeger(L, value.Index);
+            if (n < INT32_MIN || n > INT32_MAX) {
+                luaL_error(L, "Ext.UI.Box: integer out of the 32-bit range");
+                return nullptr;
+            }
+            boxed = Noesis::Boxing::Box((int32_t)n);
+        } else {
+            boxed = Noesis::Boxing::Box((float)lua_tonumber(L, value.Index));
+        }
+        break;
+
+    default:
+        luaL_error(L, "Ext.UI.Box: expected a string, a boolean or a number");
+        return nullptr;
+    }
+
+    auto ptr = boxed.GetPtr();
+    ecl::lua::ClientState::FromLua(L)->GetBoxedValues().push_back(Noesis::Ptr<Noesis::BaseComponent>(ptr));
+    return ptr;
+}
+
 PlayerPickingHelper* GetPickingHelper(uint16_t playerIndex)
 {
     auto picking = ecl::ExtensionState::Get().GetClientLua()->GetEntitySystemHelpers()->GetSystem<ecl::PickingHelperManager>();
@@ -202,6 +243,7 @@ void RegisterUILib()
     MODULE_FUNCTION(SetState)
     MODULE_FUNCTION(RegisterType)
     MODULE_FUNCTION(Instantiate)
+    MODULE_FUNCTION(Box)
     MODULE_FUNCTION(GetPickingHelper)
     MODULE_FUNCTION(GetCursorControl)
     MODULE_FUNCTION(GetDragDrop)
