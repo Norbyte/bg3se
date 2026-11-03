@@ -11,7 +11,7 @@ using namespace bg3se::lua;
 class UIEventHooks
 {
 public:
-    using SubscriptionIndex = uint32_t;
+    using SubscriptionIndex = uint64_t;
 
     UIEventHooks(ClientState& state);
     ~UIEventHooks();

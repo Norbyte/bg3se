@@ -39,7 +39,6 @@ public:
 protected:
     friend LuaStatePin<ExtensionState, lua::ClientState>;
     std::unique_ptr<lua::ClientState> Lua;
-    uint32_t nextGenerationId_{ 1 };
 
     concurrency::concurrent_queue<SDL_Event> deferredInputEvents_;
 

@@ -67,7 +67,7 @@ void ExtensionState::InitializeLuaState()
     se_assert(context_ != ExtensionStateContext::Uninitialized);
     EnteredCheck();
 
-    Lua = std::make_unique<lua::ClientState>(*this, nextGenerationId_++);
+    Lua = std::make_unique<lua::ClientState>(*this, gExtender->CreateGenerationId());
     Lua->Initialize();
 }
 

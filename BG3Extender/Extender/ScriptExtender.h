@@ -140,6 +140,11 @@ public:
         return updaterApi_;
     }
 
+    inline uint32_t CreateGenerationId()
+    {
+        return nextGenerationId_.fetch_add(1);
+    }
+
     void ClearPathOverrides();
     void AddPathOverride(STDString const & path, STDString const & overriddenPath);
     std::optional<STDString> GetPathOverride(STDString const& path);
@@ -173,6 +178,7 @@ private:
     UseActionHelpers useActions_;
     extui::IMGUIManager imgui_;
     UpdaterAPIHelpers updaterApi_;
+    std::atomic<uint32_t> nextGenerationId_{ 1 };
 
     ExtenderConfig config_;
     bool postStartupDone_{ false };

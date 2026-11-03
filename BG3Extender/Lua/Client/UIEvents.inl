@@ -47,8 +47,9 @@ UIEventHooks::~UIEventHooks()
 
 UIEventHooks::SubscriptionIndex UIEventHooks::Subscribe(UIElement* target, RoutedEvent const* event, bg3se::FixedString const& eventName, RegistryEntry&& hook)
 {
-    SubscriptionIndex index;
-    auto sub = subscriptions_.Add(index);
+    uint32_t poolIndex;
+    auto sub = subscriptions_.Add(poolIndex);
+    auto index = SubscriptionIndex{ poolIndex | ((uint64_t)state_.GetGenerationId() << 32) };
     auto self = (DummyDelegate*)(uintptr_t)(index);
 
     auto handlers = target->mRoutedEventHandlers.Find(event);
@@ -71,19 +72,29 @@ UIEventHooks::SubscriptionIndex UIEventHooks::Subscribe(UIElement* target, Route
 
 bool UIEventHooks::Unsubscribe(SubscriptionIndex index)
 {
-    auto sub = subscriptions_.Find(index);
+    if ((index >> 32) != state_.GetGenerationId()) {
+        return false;
+    }
+
+    uint32_t poolIndex = (index & 0xfffffffful);
+    auto sub = subscriptions_.Find(poolIndex);
     if (sub == nullptr) {
         return false;
     }
 
     sub->Unsubscribe();
-    subscriptions_.Free(index);
+    subscriptions_.Free(poolIndex);
     return true;
 }
 
 void UIEventHooks::EventFired(SubscriptionIndex index, Noesis::BaseComponent* target, const RoutedEventArgs& args)
 {
-    auto sub = subscriptions_.Find(index);
+    if ((index >> 32) != state_.GetGenerationId()) {
+        return;
+    }
+
+    uint32_t poolIndex = (index & 0xfffffffful);
+    auto sub = subscriptions_.Find(poolIndex);
     if (sub == nullptr || !sub->IsActive) {
         return;
     }

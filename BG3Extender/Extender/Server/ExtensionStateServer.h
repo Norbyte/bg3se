@@ -43,7 +43,6 @@ namespace bg3se::esv
         friend LuaStatePin<ExtensionState, lua::ServerState>;
         std::unique_ptr<lua::ServerState> Lua;
         std::unordered_map<FixedString, STDString> cachedPersistentVars_;
-        uint32_t nextGenerationId_{ 1 };
 
         void ShutdownLuaState() override;
         void InitializeLuaState() override;

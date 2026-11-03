@@ -256,7 +256,7 @@ namespace bg3se::esv
         context_ = nextContext_;
         EnteredCheck();
 
-        Lua = std::make_unique<lua::ServerState>(*this, nextGenerationId_++);
+        Lua = std::make_unique<lua::ServerState>(*this, gExtender->CreateGenerationId());
         Lua->Initialize();
         Lua->StoryFunctionMappingsUpdated();
     }
