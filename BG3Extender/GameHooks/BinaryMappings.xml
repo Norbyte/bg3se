@@ -1077,6 +1077,24 @@
       <Target Type="Indirect" Offset="@ref2" Symbol="eoc__AiGrid__FindPathImmediate" />
     </Mapping>
 
+    <!-- Sig from ModManager::SaveSettings itself: the profile's folder, then "modsettings.lsx" -->
+    <Mapping Name="ls::ModManager::SaveSettings" AllowFail="true">
+      48 8b 89 08 02 00 00 // mov     rcx, [rcx+208h]
+      48 8b 01 // mov     rax, [rcx]
+      ff 50 ?? // call    qword ptr [rax+68h] (+60h in other builds)
+      48 8b d0 // mov     rdx, rax
+      4c 8d 05 ?? ?? ?? ?? // lea     r8, "modsettings.lsx"
+      48 8d 4c 24 20 // lea     rcx, [rsp+20h]
+      e8 ?? ?? ?? ?? // call    MakePath
+      90 // nop
+      48 8d 8f c0 01 00 00 // lea     rcx, [rdi+1C0h] (Settings)
+      e8 ?? ?? ?? ?? // call
+      48 8d 54 24 20 // lea     rdx, [rsp+20h]
+      48 8d 8f c0 01 00 00 // lea     rcx, [rdi+1C0h]
+      e8 // call    ModuleSettings::Save
+      <Target Type="Absolute" Offset="-28" Symbol="ls__ModManager__SaveSettings" />
+    </Mapping>
+
     <!-- Sig from ecl::CharacterTask_Dialog::SetCursor -->
     <Mapping Name="ecl::CharacterTask_Dialog::SetCursor">
       @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ecl__gCursorControl
