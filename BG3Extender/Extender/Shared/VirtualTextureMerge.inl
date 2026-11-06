@@ -312,7 +312,6 @@ public:
 
     uint32_t TotalWidth{ 0 };
     uint32_t TotalHeight{ 0 };
-    uint32_t NextPageFileOffset{ 0 };
 
     void ResizePlacementGrid(uint32_t w, uint32_t h)
     {
@@ -320,7 +319,6 @@ public:
         PlacementGridHeight = h;
         PlacementGrid.resize(w * h);
         std::fill(PlacementGrid.begin(), PlacementGrid.end(), nullptr);
-        NextPageFileOffset = 0;
     }
 
     bool GrowPlacementGrid()
@@ -358,9 +356,6 @@ public:
         tileSet->MergedX = tileSetX * PlacementTileWidth;
         tileSet->MergedY = tileSetY * PlacementTileHeight;
 
-        tileSet->PageFileOffset = NextPageFileOffset;
-        NextPageFileOffset += (uint32_t)tileSet->PageFiles.size();
-
         for (auto y = tileSetY; y < tileSetY + height; y++) {
             for (auto x = tileSetX; x < tileSetX + width; x++) {
                 PlacementGrid[x + y * PlacementGridWidth] = tileSet;
@@ -375,8 +370,14 @@ public:
         auto width = tileSet->Levels[0].Width / PlacementTileWidth;
         auto height = tileSet->Levels[0].Height / PlacementTileHeight;
 
-        for (uint32_t y = 0; y < PlacementGridHeight - height + 1; y++) {
-            for (uint32_t x = 0; x < PlacementGridWidth - width + 1; x++) {
+        // Level N of the tile set is stitched at (MergedX >> N, MergedY >> N), so the position
+        // must be a multiple of the size of a tile on its last level
+        auto alignment = 1u << (tileSet->Levels.size() - 1);
+        auto alignX = std::max(1u, alignment / PlacementTileWidth);
+        auto alignY = std::max(1u, alignment / PlacementTileHeight);
+
+        for (uint32_t y = 0; y + height <= PlacementGridHeight; y += alignY) {
+            for (uint32_t x = 0; x + width <= PlacementGridWidth; x += alignX) {
                 if (TryToPlaceTileSet(tileSet, x, y)) {
                     return true;
                 }
@@ -409,8 +410,13 @@ public:
             startingY = std::max(startingY, tileSet->Levels[0].Height);
         }
 
+        // Placing larger tile sets first avoids fragmenting the grid with aligned placement
+        std::stable_sort(TileSets.data(), TileSets.data() + TileSets.size(), [](GTSFile* a, GTSFile* b) {
+            return a->Levels[0].Width * a->Levels[0].Height > b->Levels[0].Width * b->Levels[0].Height;
+        });
+
         ResizePlacementGrid(
-            std::max(1u, startingX / PlacementTileWidth), 
+            std::max(1u, startingX / PlacementTileWidth),
             std::max(1u, startingY / PlacementTileHeight)
         );
 
@@ -599,6 +605,12 @@ struct GTSStitchedFile
         if (sep != StringView::npos) {
             gtsDir = FromUTF8(gtsPath.substr(0, sep + 1));
         }
+
+        // Mip levels of misaligned tile sets would be stitched to the wrong position
+        auto alignment = 1u << (tileSet->Levels.size() - 1);
+        VT_EXPECT((tileSet->MergedX % alignment) == 0 && (tileSet->MergedY % alignment) == 0);
+
+        tileSet->PageFileOffset = PageFiles.size();
 
         for (uint32_t i = 0; i < Layers.size(); i++) {
             Layers[i] = tileSet->Layers[i];
