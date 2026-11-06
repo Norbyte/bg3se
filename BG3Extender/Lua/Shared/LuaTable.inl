@@ -7,20 +7,21 @@ BEGIN_NS(lua)
 UserReturn FindValueTable(lua_State* L, TValue* tabval, TValue* value)
 {
     auto tab = hvalue(tabval);
-    
-    if (tab->sizearray) {
-        auto sz = tab->sizearray;
-        for (unsigned i = 0; i < sz; i++) {
-            if (luaV_rawequalobj(tab->array + i, value)) {
-                push(L, i + 1);
-                return 1;
-            }
+
+    auto sz = tab->sizearray;
+    for (unsigned i = 0; i < sz; i++) {
+        if (luaV_rawequalobj(tab->array + i, value)) {
+            push(L, i + 1);
+            return 1;
         }
-    } else if (tab->lastfree) {
+    }
+
+    if (tab->lastfree) {
         auto nodes = sizenode(tab);
         for (unsigned i = 0; i < nodes; i++) {
             auto node = tab->node + i;
-            if (luaV_rawequalobj(gval(node), value)) {
+            // Nodes with a nil value are free or removed entries; their key may be a dead key
+            if (!ttisnil(gval(node)) && luaV_rawequalobj(gval(node), value)) {
                 setobj2s(L, L->top, gkey(node));
                 api_incr_top(L);
                 return 1;
@@ -106,9 +107,17 @@ UserReturn FindValueSet(lua_State* L, CppObjectMetadata& meta, TValue* value)
     return 1;
 }
 
-UserReturn FindValueUserdata(lua_State* L, TValue* tabval, TValue* value)
+UserReturn FindValueUserdata(lua_State* L, int tableIndex, TValue* value)
 {
-    auto meta = lua_get_cppvalue(L, tabval);
+    CppObjectMetadata meta;
+    if (!lua_try_get_lightcppobject(L, tableIndex, meta)) {
+        return luaL_error(L, "Expected an array, map or set value; got %s", GetDebugName(L, tableIndex));
+    }
+
+    if (!meta.Lifetime.IsAlive(L)) {
+        return luaL_error(L, "Param %d: got %s whose lifetime has expired", tableIndex, GetDebugName(L, tableIndex));
+    }
+
     switch (meta.MetatableTag) {
     case MetatableTag::Array: return FindValueArray(L, meta, value);
     case MetatableTag::Map: return FindValueMap(L, meta, value);
@@ -127,7 +136,7 @@ UserReturn FindValue(lua_State* L, int tableIndex, int valueIndex)
     if (ttistable(tabval)) {
         return FindValueTable(L, tabval, value);
     } else if (ttislightcppobject(tabval)) {
-        return FindValueUserdata(L, tabval, value);
+        return FindValueUserdata(L, tableIndex, value);
     } else if (ttisnil(tabval)) {
         push(L, nullptr);
         return 1;
