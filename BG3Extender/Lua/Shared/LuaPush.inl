@@ -1,32 +1,15 @@
 BEGIN_NS(lua)
 
-void set_raw(Table* tab, glm::vec2 const& v)
+template <glm::length_t N, typename T, glm::qualifier Q>
+void set_raw(Table* tab, glm::vec<N, T, Q> const& v)
 {
-    setfltvalue(tab->array + 0, v.x);
-    setfltvalue(tab->array + 1, v.y);
-}
-
-void set_raw(Table* tab, glm::vec3 const& v)
-{
-    setfltvalue(tab->array + 0, v.x);
-    setfltvalue(tab->array + 1, v.y);
-    setfltvalue(tab->array + 2, v.z);
-}
-
-void set_raw(Table* tab, glm::vec4 const& v)
-{
-    setfltvalue(tab->array + 0, v.x);
-    setfltvalue(tab->array + 1, v.y);
-    setfltvalue(tab->array + 2, v.z);
-    setfltvalue(tab->array + 3, v.w);
-}
-
-void set_raw(Table* tab, glm::aligned_highp_vec4 const& v)
-{
-    setfltvalue(tab->array + 0, v.x);
-    setfltvalue(tab->array + 1, v.y);
-    setfltvalue(tab->array + 2, v.z);
-    setfltvalue(tab->array + 3, v.w);
+    for (unsigned i = 0; i < N; i++) {
+        if constexpr (std::is_floating_point_v<T>) {
+            setfltvalue(tab->array + i, v[i]);
+        } else {
+            setivalue(tab->array + i, v[i]);
+        }
+    }
 }
 
 void set_raw(Table* tab, glm::quat const& v)
@@ -102,30 +85,11 @@ void set_raw(Table* tab, glm::mat4 const& m)
     setfltvalue(tab->array + 15, m[3].w);
 }
 
-void push(lua_State* L, glm::vec2 const& v)
-{
-    lua_createtable(L, 2, 0);
-    auto tab = lua_get_top_table_unsafe(L);
-    set_raw(tab, v);
-}
 
-void push(lua_State* L, glm::vec3 const& v)
+template <glm::length_t N, typename T, glm::qualifier Q>
+void push(lua_State* L, glm::vec<N, T, Q> const& v)
 {
-    lua_createtable(L, 3, 0);
-    auto tab = lua_get_top_table_unsafe(L);
-    set_raw(tab, v);
-}
-
-void push(lua_State* L, glm::vec4 const& v)
-{
-    lua_createtable(L, 4, 0);
-    auto tab = lua_get_top_table_unsafe(L);
-    set_raw(tab, v);
-}
-
-void push(lua_State* L, glm::aligned_highp_vec4 const& v)
-{
-    lua_createtable(L, 4, 0);
+    lua_createtable(L, N, 0);
     auto tab = lua_get_top_table_unsafe(L);
     set_raw(tab, v);
 }
@@ -196,27 +160,10 @@ void push(lua_State* L, Noesis::GridLengthHelper const& v)
     Serialize(L, &v);
 }
 
-void assign(lua_State* L, int idx, glm::vec2 const& v)
+template <glm::length_t N, typename T, glm::qualifier Q>
+void assign(lua_State* L, int idx, glm::vec<N, T, Q> const& v)
 {
-    auto tab = lua_get_array_n(L, idx, 2);
-    set_raw(tab, v);
-}
-
-void assign(lua_State* L, int idx, glm::vec3 const& v)
-{
-    auto tab = lua_get_array_n(L, idx, 3);
-    set_raw(tab, v);
-}
-
-void assign(lua_State* L, int idx, glm::vec4 const& v)
-{
-    auto tab = lua_get_array_n(L, idx, 4);
-    set_raw(tab, v);
-}
-
-void assign(lua_State* L, int idx, glm::aligned_highp_vec4 const& v)
-{
-    auto tab = lua_get_array_n(L, idx, 4);
+    auto tab = lua_get_array_n(L, idx, N);
     set_raw(tab, v);
 }
 

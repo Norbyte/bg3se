@@ -143,51 +143,17 @@ inline bool do_typecheck_array(lua_State* L, int index)
     auto idx = lua_absindex(L, index);
     if (!lua_typecheck_array_n(L, idx, TSize)) return false;
 
-    for (unsigned i = 1; i < TSize; i++) {
+    for (unsigned i = 1; i <= TSize; i++) {
         if (!do_typecheck_table<TElement>(L, i, idx)) return false;
     }
 
     return true;
 }
 
-inline bool do_typecheck(lua_State* L, int index, Overload<glm::ivec2>)
-{    
-    return do_typecheck_array<int32_t, 2>(L, index);
-}
-
-inline bool do_typecheck(lua_State* L, int index, Overload<glm::ivec3>)
-{    
-    return do_typecheck_array<int32_t, 3>(L, index);
-}
-
-inline bool do_typecheck(lua_State* L, int index, Overload<glm::i16vec2>)
+template <glm::length_t N, typename T, glm::qualifier Q>
+inline bool do_typecheck(lua_State* L, int index, Overload<glm::vec<N, T, Q>>)
 {
-    return do_typecheck_array<int32_t, 2>(L, index);
-}
-
-inline bool do_typecheck(lua_State* L, int index, Overload<glm::ivec4>)
-{
-    return do_typecheck_array<int32_t, 4>(L, index);
-}
-
-inline bool do_typecheck(lua_State* L, int index, Overload<glm::vec2>)
-{
-    return do_typecheck_array<float, 2>(L, index);
-}
-
-inline bool do_typecheck(lua_State* L, int index, Overload<glm::vec3>)
-{
-    return do_typecheck_array<float, 3>(L, index);
-}
-
-inline bool do_typecheck(lua_State* L, int index, Overload<glm::vec4>)
-{
-    return do_typecheck_array<float, 4>(L, index);
-}
-
-inline bool do_typecheck(lua_State* L, int index, Overload<glm::aligned_highp_vec4>)
-{
-    return do_typecheck_array<float, 4>(L, index);
+    return do_typecheck_array<T, N>(L, index);
 }
 
 inline bool do_typecheck(lua_State* L, int index, Overload<glm::quat>)

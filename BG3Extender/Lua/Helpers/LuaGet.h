@@ -181,53 +181,9 @@ TValue gettable(lua_State* L, char const* k, int index = -2)
     return val;
 }
 
-inline glm::ivec2 do_get(lua_State* L, int index, Overload<glm::ivec2>)
-{    
-    auto i = lua_absindex(L, index);
-    glm::ivec2 val;    
-    luaL_checktype(L, index, LUA_TTABLE);
-    val.x = gettable<int32_t>(L, 1, i);
-    val.y = gettable<int32_t>(L, 2, i);
-    return val;    
-}
+template <glm::length_t N, typename T, glm::qualifier Q>
+glm::vec<N, T, Q> do_get(lua_State* L, int index, Overload<glm::vec<N, T, Q>>);
 
-inline glm::ivec3 do_get(lua_State* L, int index, Overload<glm::ivec3>)
-{    
-    auto i = lua_absindex(L, index);
-    glm::ivec3 val;
-    luaL_checktype(L, index, LUA_TTABLE);
-    val.x = gettable<int32_t>(L, 1, i);
-    val.y = gettable<int32_t>(L, 2, i);
-    val.z = gettable<int32_t>(L, 3, i);
-    return val;    
-}
-
-inline glm::ivec4 do_get(lua_State* L, int index, Overload<glm::ivec4>)
-{    
-    auto i = lua_absindex(L, index);
-    glm::ivec4 val;    
-    luaL_checktype(L, index, LUA_TTABLE);
-    val.x = gettable<int32_t>(L, 1, i);
-    val.y = gettable<int32_t>(L, 2, i);
-    val.z = gettable<int32_t>(L, 3, i);
-    val.w = gettable<int32_t>(L, 4, i);
-    return val;    
-}
-
-inline glm::i16vec2 do_get(lua_State* L, int index, Overload<glm::i16vec2>)
-{    
-    auto i = lua_absindex(L, index);
-    glm::i16vec2 val;
-    luaL_checktype(L, index, LUA_TTABLE);
-    val.x = gettable<int16_t>(L, 1, i);
-    val.y = gettable<int16_t>(L, 2, i);
-    return val;    
-}
-
-glm::vec2 do_get(lua_State* L, int index, Overload<glm::vec2>);
-glm::vec3 do_get(lua_State* L, int index, Overload<glm::vec3>);
-glm::vec4 do_get(lua_State* L, int index, Overload<glm::vec4>);
-glm::aligned_highp_vec4 do_get(lua_State* L, int index, Overload<glm::aligned_highp_vec4>);
 glm::quat do_get(lua_State* L, int index, Overload<glm::quat>);
 glm::mat3 do_get(lua_State* L, int index, Overload<glm::mat3>);
 glm::mat3x4 do_get(lua_State* L, int index, Overload<glm::mat3x4>);

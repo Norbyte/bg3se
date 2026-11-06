@@ -14,6 +14,7 @@
 #include <lstate.h>
 #include <lstring.h>
 #include <lapi.h>
+#include <lvm.h>
 
 BEGIN_NS(lua)
 
@@ -211,3 +212,24 @@ END_NS()
 #include <Lua/Shared/LuaCustomizations.inl>
 #include <Lua/Shared/LuaTable.inl>
 #include <Lua/Shared/LuaDelegate.inl>
+
+BEGIN_NS(lua)
+
+#define INSTANTIATE_VEC_HELPERS(ty) \
+    template void push(lua_State*, ty const&); \
+    template void assign(lua_State*, int, ty const&); \
+    template ty do_get(lua_State*, int, Overload<ty>);
+
+INSTANTIATE_VEC_HELPERS(glm::ivec2)
+INSTANTIATE_VEC_HELPERS(glm::ivec3)
+INSTANTIATE_VEC_HELPERS(glm::ivec4)
+INSTANTIATE_VEC_HELPERS(glm::i16vec2)
+INSTANTIATE_VEC_HELPERS(glm::vec2)
+INSTANTIATE_VEC_HELPERS(glm::vec3)
+INSTANTIATE_VEC_HELPERS(glm::vec4)
+INSTANTIATE_VEC_HELPERS(glm::aligned_highp_vec4)
+INSTANTIATE_VEC_HELPERS(glm::dvec2)
+INSTANTIATE_VEC_HELPERS(glm::dvec3)
+INSTANTIATE_VEC_HELPERS(glm::dvec4)
+
+END_NS()

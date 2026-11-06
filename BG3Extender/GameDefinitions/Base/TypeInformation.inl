@@ -251,6 +251,14 @@ void TypeInformationRepository::Initialize()
     ivec4.ElementType = GetStaticTypeInfo(Overload<int32_t>{});
     auto& i16vec2 = RegisterStaticType<glm::i16vec2>("i16vec2", LuaTypeId::Array);
     i16vec2.ElementType = GetStaticTypeInfo(Overload<int16_t>{});
+
+    auto& dvec2 = RegisterStaticType<glm::dvec2>("dvec2", LuaTypeId::Array);
+    dvec2.ElementType = GetStaticTypeInfo(Overload<double>{});
+    auto& dvec3 = RegisterStaticType<glm::dvec3>("dvec3", LuaTypeId::Array);
+    dvec3.ElementType = GetStaticTypeInfo(Overload<double>{});
+    auto& dvec4 = RegisterStaticType<glm::dvec4>("dvec4", LuaTypeId::Array);
+    dvec4.ElementType = GetStaticTypeInfo(Overload<double>{});
+
     auto& vec2 = RegisterStaticType<glm::vec2>("vec2", LuaTypeId::Array);
     vec2.ElementType = GetStaticTypeInfo(Overload<float>{});
     auto& vec3 = RegisterStaticType<glm::vec3>("vec3", LuaTypeId::Array);
@@ -259,6 +267,7 @@ void TypeInformationRepository::Initialize()
     vec4.ElementType = GetStaticTypeInfo(Overload<float>{});
     auto& avec4 = RegisterStaticType<glm::aligned_highp_vec4>("avec4", LuaTypeId::Array);
     avec4.ElementType = GetStaticTypeInfo(Overload<float>{});
+
     auto& quat = RegisterStaticType<glm::quat>("quat", LuaTypeId::Array);
     quat.ElementType = GetStaticTypeInfo(Overload<float>{});
     auto& mat3 = RegisterStaticType<glm::mat3>("mat3", LuaTypeId::Array);

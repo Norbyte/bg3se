@@ -142,13 +142,9 @@ inline void push(lua_State* L, UserId const& v)
     push(L, v.Id);
 }
 
-void push(lua_State* L, glm::ivec2 const& v);
-void push(lua_State* L, glm::ivec3 const& v);
-void push(lua_State* L, glm::ivec4 const& v);
-void push(lua_State* L, glm::vec2 const& v);
-void push(lua_State* L, glm::vec3 const& v);
-void push(lua_State* L, glm::vec4 const& v);
-void push(lua_State* L, glm::aligned_highp_vec4 const& v);
+template <glm::length_t N, typename T, glm::qualifier Q>
+void push(lua_State* L, glm::vec<N, T, Q> const& v);
+
 void push(lua_State* L, glm::quat const& v);
 void push(lua_State* L, glm::mat3 const& m);
 void push(lua_State* L, glm::mat3x4 const& m);
@@ -169,10 +165,9 @@ void push(lua_State* L, LuaDelegate<T> const& v)
     }
 }
 
-void assign(lua_State* L, int idx, glm::vec2 const& v);
-void assign(lua_State* L, int idx, glm::vec3 const& v);
-void assign(lua_State* L, int idx, glm::vec4 const& v);
-void assign(lua_State* L, int idx, glm::aligned_highp_vec4 const& v);
+template <glm::length_t N, typename T, glm::qualifier Q>
+void assign(lua_State* L, int idx, glm::vec<N, T, Q> const& v);
+
 void assign(lua_State* L, int idx, glm::quat const& v);
 void assign(lua_State* L, int idx, glm::mat3 const& m);
 void assign(lua_State* L, int idx, glm::mat3x4 const& m);
@@ -269,37 +264,6 @@ inline void settable(lua_State* L, TKey const& k, TValue const& v, int index = -
     push(L, k);
     push(L, v);
     lua_settable(L, index);
-}
-
-inline void push(lua_State* L, glm::ivec2 const& v)
-{
-    lua_createtable(L, 2, 0);
-    settable(L, 1, v.x);
-    settable(L, 2, v.y);
-}
-
-inline void push(lua_State* L, glm::ivec3 const& v)
-{
-    lua_createtable(L, 3, 0);
-    settable(L, 1, v.x);
-    settable(L, 2, v.y);
-    settable(L, 3, v.z);
-}
-
-inline void push(lua_State* L, glm::ivec4 const& v)
-{
-    lua_createtable(L, 4, 0);
-    settable(L, 1, v.x);
-    settable(L, 2, v.y);
-    settable(L, 3, v.z);
-    settable(L, 4, v.w);
-}
-
-inline void push(lua_State* L, glm::i16vec2 const& v)
-{
-    lua_createtable(L, 2, 0);
-    settable(L, 1, v.x);
-    settable(L, 2, v.y);
 }
 
 inline void push(lua_State* L, Version const& v)

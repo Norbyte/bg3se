@@ -69,52 +69,61 @@ bool lua_is_linear_array(lua_State* L, int idx)
     return true;
 }
 
-float lua_val_get_float(lua_State* L, TValue* val)
+template <class T>  requires std::is_integral_v<T>
+T lua_val_get(lua_State* L, TValue* val)
 {
-    if (ttisfloat(val)) {
-        return (float)fltvalue(val);
-    } else if (ttisinteger(val)) {
-        return (float)ivalue(val);
+    if (ttisinteger(val)) {
+        return (T)ivalue(val);
     } else {
-        luaL_error(L, "Expected number value, got %s", lua_typename(L, ttnov(val)));
-        return 0.0f;
+        lua_Integer i{ 0 };
+        auto isnum = luaV_tointeger(val, &i, 0);
+        if (!isnum) {
+            luaL_error(L, "Expected integer value, got %s", lua_typename(L, ttnov(val)));
+        }
+        return (T)i;
     }
 }
 
-glm::vec2 get_raw(lua_State* L, Table* arr, Overload<glm::vec2>)
+template <class T>  requires std::is_floating_point_v<T>
+T lua_val_get(lua_State* L, TValue* val)
 {
-    return glm::vec2{
-        lua_val_get_float(L, arr->array),
-        lua_val_get_float(L, arr->array + 1),
+    if (ttisfloat(val)) {
+        return (T)fltvalue(val);
+    } else if (ttisinteger(val)) {
+        return (T)ivalue(val);
+    } else {
+        luaL_error(L, "Expected float value, got %s", lua_typename(L, ttnov(val)));
+        return T{ 0 };
+    }
+}
+
+template <typename T, glm::qualifier Q>
+glm::vec<2, T, Q> get_raw(lua_State* L, Table* arr, Overload<glm::vec<2, T, Q>>)
+{
+    return glm::vec<2, T, Q>{
+        lua_val_get<T>(L, arr->array),
+        lua_val_get<T>(L, arr->array + 1),
     };
 }
 
-glm::vec3 get_raw(lua_State* L, Table* arr, Overload<glm::vec3>)
+template <typename T, glm::qualifier Q>
+glm::vec<3, T, Q> get_raw(lua_State* L, Table* arr, Overload<glm::vec<3, T, Q>>)
 {
-    return glm::vec3{
-        lua_val_get_float(L, arr->array),
-        lua_val_get_float(L, arr->array + 1),
-        lua_val_get_float(L, arr->array + 2),
+    return glm::vec<3, T, Q>{
+        lua_val_get<T>(L, arr->array),
+        lua_val_get<T>(L, arr->array + 1),
+        lua_val_get<T>(L, arr->array + 2),
     };
 }
 
-glm::vec4 get_raw(lua_State* L, Table* arr, Overload<glm::vec4>)
+template <typename T, glm::qualifier Q>
+glm::vec<4, T, Q> get_raw(lua_State* L, Table* arr, Overload<glm::vec<4, T, Q>>)
 {
-    return glm::vec4{
-        lua_val_get_float(L, arr->array),
-        lua_val_get_float(L, arr->array + 1),
-        lua_val_get_float(L, arr->array + 2),
-        lua_val_get_float(L, arr->array + 3),
-    };
-}
-
-glm::aligned_highp_vec4 get_raw(lua_State* L, Table* arr, Overload<glm::aligned_highp_vec4>)
-{
-    return glm::aligned_highp_vec4{
-        lua_val_get_float(L, arr->array),
-        lua_val_get_float(L, arr->array + 1),
-        lua_val_get_float(L, arr->array + 2),
-        lua_val_get_float(L, arr->array + 3),
+    return glm::vec<4, T, Q>{
+        lua_val_get<T>(L, arr->array),
+        lua_val_get<T>(L, arr->array + 1),
+        lua_val_get<T>(L, arr->array + 2),
+        lua_val_get<T>(L, arr->array + 3),
     };
 }
 
@@ -122,112 +131,92 @@ glm::quat get_raw(lua_State* L, Table* arr, Overload<glm::quat>)
 {
     // quat constructor uses W,X,Y,Z
     return glm::quat{
-        lua_val_get_float(L, arr->array + 3),
-        lua_val_get_float(L, arr->array),
-        lua_val_get_float(L, arr->array + 1),
-        lua_val_get_float(L, arr->array + 2),
+        lua_val_get<float>(L, arr->array + 3),
+        lua_val_get<float>(L, arr->array),
+        lua_val_get<float>(L, arr->array + 1),
+        lua_val_get<float>(L, arr->array + 2),
     };
 }
 
 glm::mat3 get_raw(lua_State* L, Table* arr, Overload<glm::mat3>)
 {
     return glm::mat3{
-        lua_val_get_float(L, arr->array),
-        lua_val_get_float(L, arr->array + 1),
-        lua_val_get_float(L, arr->array + 2),
-        lua_val_get_float(L, arr->array + 3),
-        lua_val_get_float(L, arr->array + 4),
-        lua_val_get_float(L, arr->array + 5),
-        lua_val_get_float(L, arr->array + 6),
-        lua_val_get_float(L, arr->array + 7),
-        lua_val_get_float(L, arr->array + 8),
+        lua_val_get<float>(L, arr->array),
+        lua_val_get<float>(L, arr->array + 1),
+        lua_val_get<float>(L, arr->array + 2),
+        lua_val_get<float>(L, arr->array + 3),
+        lua_val_get<float>(L, arr->array + 4),
+        lua_val_get<float>(L, arr->array + 5),
+        lua_val_get<float>(L, arr->array + 6),
+        lua_val_get<float>(L, arr->array + 7),
+        lua_val_get<float>(L, arr->array + 8),
     };
 }
 
 glm::mat3x4 get_raw(lua_State* L, Table* arr, Overload<glm::mat3x4>)
 {
     return glm::mat3x4{
-        lua_val_get_float(L, arr->array),
-        lua_val_get_float(L, arr->array + 1),
-        lua_val_get_float(L, arr->array + 2),
-        lua_val_get_float(L, arr->array + 3),
-        lua_val_get_float(L, arr->array + 4),
-        lua_val_get_float(L, arr->array + 5),
-        lua_val_get_float(L, arr->array + 6),
-        lua_val_get_float(L, arr->array + 7),
-        lua_val_get_float(L, arr->array + 8),
-        lua_val_get_float(L, arr->array + 9),
-        lua_val_get_float(L, arr->array + 10),
-        lua_val_get_float(L, arr->array + 11),
+        lua_val_get<float>(L, arr->array),
+        lua_val_get<float>(L, arr->array + 1),
+        lua_val_get<float>(L, arr->array + 2),
+        lua_val_get<float>(L, arr->array + 3),
+        lua_val_get<float>(L, arr->array + 4),
+        lua_val_get<float>(L, arr->array + 5),
+        lua_val_get<float>(L, arr->array + 6),
+        lua_val_get<float>(L, arr->array + 7),
+        lua_val_get<float>(L, arr->array + 8),
+        lua_val_get<float>(L, arr->array + 9),
+        lua_val_get<float>(L, arr->array + 10),
+        lua_val_get<float>(L, arr->array + 11),
     };
 }
 
 glm::mat4x3 get_raw(lua_State* L, Table* arr, Overload<glm::mat4x3>)
 {
     return glm::mat4x3{
-        lua_val_get_float(L, arr->array),
-        lua_val_get_float(L, arr->array + 1),
-        lua_val_get_float(L, arr->array + 2),
-        lua_val_get_float(L, arr->array + 3),
-        lua_val_get_float(L, arr->array + 4),
-        lua_val_get_float(L, arr->array + 5),
-        lua_val_get_float(L, arr->array + 6),
-        lua_val_get_float(L, arr->array + 7),
-        lua_val_get_float(L, arr->array + 8),
-        lua_val_get_float(L, arr->array + 9),
-        lua_val_get_float(L, arr->array + 10),
-        lua_val_get_float(L, arr->array + 11),
+        lua_val_get<float>(L, arr->array),
+        lua_val_get<float>(L, arr->array + 1),
+        lua_val_get<float>(L, arr->array + 2),
+        lua_val_get<float>(L, arr->array + 3),
+        lua_val_get<float>(L, arr->array + 4),
+        lua_val_get<float>(L, arr->array + 5),
+        lua_val_get<float>(L, arr->array + 6),
+        lua_val_get<float>(L, arr->array + 7),
+        lua_val_get<float>(L, arr->array + 8),
+        lua_val_get<float>(L, arr->array + 9),
+        lua_val_get<float>(L, arr->array + 10),
+        lua_val_get<float>(L, arr->array + 11),
     };
 }
 
 glm::mat4 get_raw(lua_State* L, Table* arr, Overload<glm::mat4>)
 {
     return glm::mat4{
-        lua_val_get_float(L, arr->array),
-        lua_val_get_float(L, arr->array + 1),
-        lua_val_get_float(L, arr->array + 2),
-        lua_val_get_float(L, arr->array + 3),
-        lua_val_get_float(L, arr->array + 4),
-        lua_val_get_float(L, arr->array + 5),
-        lua_val_get_float(L, arr->array + 6),
-        lua_val_get_float(L, arr->array + 7),
-        lua_val_get_float(L, arr->array + 8),
-        lua_val_get_float(L, arr->array + 9),
-        lua_val_get_float(L, arr->array + 10),
-        lua_val_get_float(L, arr->array + 11),
-        lua_val_get_float(L, arr->array + 12),
-        lua_val_get_float(L, arr->array + 13),
-        lua_val_get_float(L, arr->array + 14),
-        lua_val_get_float(L, arr->array + 15),
+        lua_val_get<float>(L, arr->array),
+        lua_val_get<float>(L, arr->array + 1),
+        lua_val_get<float>(L, arr->array + 2),
+        lua_val_get<float>(L, arr->array + 3),
+        lua_val_get<float>(L, arr->array + 4),
+        lua_val_get<float>(L, arr->array + 5),
+        lua_val_get<float>(L, arr->array + 6),
+        lua_val_get<float>(L, arr->array + 7),
+        lua_val_get<float>(L, arr->array + 8),
+        lua_val_get<float>(L, arr->array + 9),
+        lua_val_get<float>(L, arr->array + 10),
+        lua_val_get<float>(L, arr->array + 11),
+        lua_val_get<float>(L, arr->array + 12),
+        lua_val_get<float>(L, arr->array + 13),
+        lua_val_get<float>(L, arr->array + 14),
+        lua_val_get<float>(L, arr->array + 15),
     };
 }
 
-glm::vec2 do_get(lua_State* L, int index, Overload<glm::vec2>)
+template <glm::length_t N, typename T, glm::qualifier Q>
+glm::vec<N, T, Q> do_get(lua_State* L, int index, Overload<glm::vec<N, T, Q>>)
 {
     auto i = lua_absindex(L, index);
-    auto arr = lua_get_array_n(L, i, 2);
-    return get_raw(L, arr, Overload<glm::vec2>{});
-}
-
-glm::vec3 do_get(lua_State* L, int index, Overload<glm::vec3>)
-{
-    auto i = lua_absindex(L, index);
-    auto arr = lua_get_array_n(L, i, 3);
-    return get_raw(L, arr, Overload<glm::vec3>{});
-}
-
-glm::vec4 do_get(lua_State* L, int index, Overload<glm::vec4>)
-{
-    auto i = lua_absindex(L, index);
-    auto arr = lua_get_array_n(L, i, 4);
-    return get_raw(L, arr, Overload<glm::vec4>{});
-}
-
-glm::aligned_highp_vec4 do_get(lua_State* L, int index, Overload<glm::aligned_highp_vec4>)
-{
-    auto i = lua_absindex(L, index);
-    auto arr = lua_get_array_n(L, i, 4);
-    return get_raw(L, arr, Overload<glm::aligned_highp_vec4>{});
+    auto arr = lua_get_array_n(L, i, N);
+    return get_raw(L, arr, Overload<glm::vec<N, T, Q>>{});
 }
 
 glm::quat do_get(lua_State* L, int index, Overload<glm::quat>)
@@ -271,7 +260,7 @@ MathParam do_get(lua_State* L, int index, Overload<MathParam>)
     auto arg = lua_index2addr(L, i);
     MathParam val;
     if (ttisnumber(arg)) {
-        val.f = lua_val_get_float(L, arg);
+        val.f = lua_val_get<float>(L, arg);
         val.Arity = 1;
     } else if (ttistable(arg)) {
         auto tab = hvalue(arg);

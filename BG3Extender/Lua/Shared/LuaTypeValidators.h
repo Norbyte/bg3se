@@ -73,42 +73,13 @@ inline bool Validate(double const*, Overload<double>)
     return true;
 }
 
-// No validation possible for vector types
-inline bool Validate(glm::ivec2 const* b, Overload<glm::ivec2>) {return true; }
-inline bool Validate(glm::ivec3 const* b, Overload<glm::ivec3>) {return true; }
-inline bool Validate(glm::ivec4 const* b, Overload<glm::ivec4>) { return true; }
-inline bool Validate(glm::i16vec2 const* b, Overload<glm::i16vec2>) { return true; }
-
-inline bool Validate(glm::vec2 const* b, Overload<glm::vec2>)
+template <glm::length_t N, typename T, glm::qualifier Q>
+inline bool Validate(glm::vec<N, T, Q> const* b, Overload<glm::vec<N, T, Q>>)
 {
-    CHECKR(Validate(&b->x, Overload<float>{}));
-    CHECKR(Validate(&b->y, Overload<float>{}));
-    return true;
-}
+    for (unsigned i = 0; i < N; i++) {
+        CHECKR(Validate(&(*b)[i], Overload<T>{}));
+    }
 
-inline bool Validate(glm::vec3 const* b, Overload<glm::vec3>)
-{
-    CHECKR(Validate(&b->x, Overload<float>{}));
-    CHECKR(Validate(&b->y, Overload<float>{}));
-    CHECKR(Validate(&b->z, Overload<float>{}));
-    return true;
-}
-
-inline bool Validate(glm::vec4 const* b, Overload<glm::vec4>)
-{
-    CHECKR(Validate(&b->x, Overload<float>{}));
-    CHECKR(Validate(&b->y, Overload<float>{}));
-    CHECKR(Validate(&b->z, Overload<float>{}));
-    CHECKR(Validate(&b->w, Overload<float>{}));
-    return true;
-}
-
-inline bool Validate(glm::aligned_highp_vec4 const* b, Overload<glm::aligned_highp_vec4>)
-{
-    CHECKR(Validate(&b->x, Overload<float>{}));
-    CHECKR(Validate(&b->y, Overload<float>{}));
-    CHECKR(Validate(&b->z, Overload<float>{}));
-    CHECKR(Validate(&b->w, Overload<float>{}));
     return true;
 }
 
