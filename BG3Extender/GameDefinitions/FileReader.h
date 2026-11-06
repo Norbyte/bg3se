@@ -4,11 +4,24 @@
 
 BEGIN_SE()
 
-enum class FileType
+enum class FileMappingType : uint32_t
 {
-    Unknown,
+    MetadataOnly,
     MemBuffer,
     MemoryMapped
+};
+
+enum class FileOpenFlags : uint32_t
+{
+    Default = 0,
+    SkipPacked = 0x01,
+    Overlapped = 0x02,
+    NoBuffering = 0x04,
+    SequentialScan = 0x08,
+    RandomAccess = 0x10,
+    SharedHandle = 0x20,
+    SkipMerged = 0x40,
+    SkipPacked2 = 0x80,
 };
 
 struct FileReader : public Noncopyable<FileReader>
@@ -20,7 +33,7 @@ struct FileReader : public Noncopyable<FileReader>
     uint64_t FileHandle{ 0 };
     uint64_t FileHandle2{ 0 };
     ScratchBuffer Buffer;
-    FileType Type{ FileType::Unknown };
+    FileMappingType Type{ FileMappingType::MetadataOnly };
     void* FileObject{ nullptr };
 };
 

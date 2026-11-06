@@ -21,7 +21,7 @@ using CoreLibInitProc = void (void*);
 
 using AiPathId = int32_t;
 
-using FileReader__CtorProc = FileReader* (FileReader* self, Path const& path, unsigned int type, unsigned int unknown);
+using FileReader__CtorProc = FileReader* (FileReader* self, Path const& path, unsigned int type, unsigned int openFlags);
 using FileReader__DtorProc = void (FileReader* self);
 
 using FileSystem__CollectFilesWithGlobProc = void (Path const& path, StringView const& glob, bool recursive, Array<Path>& paths, bool checkPackedFiles);

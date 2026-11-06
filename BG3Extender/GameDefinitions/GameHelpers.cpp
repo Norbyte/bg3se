@@ -103,7 +103,7 @@ namespace bg3se
         return absolutePath;
     }
 
-    FileReaderPin StaticSymbols::MakeFileReader(StringView path, PathRootType root, bool canonicalize) const
+    FileReaderPin StaticSymbols::MakeFileReader(StringView path, PathRootType root, bool canonicalize, FileMappingType mapping, FileOpenFlags flags) const
     {
         if (ls__PathRoots == nullptr || ls__FileReader__ctor == nullptr) {
             ERR("StaticSymbols::MakeFileReader(): File reader API not available!");
@@ -111,16 +111,16 @@ namespace bg3se
         }
 
         auto absolutePath = ToPath(path, root, canonicalize);
-        return MakeFileReaderAbsolute(absolutePath);
+        return MakeFileReaderAbsolute(absolutePath, mapping, flags);
     }
 
-    FileReaderPin StaticSymbols::MakeFileReaderAbsolute(StringView path) const
+    FileReaderPin StaticSymbols::MakeFileReaderAbsolute(StringView path, FileMappingType mapping, FileOpenFlags flags) const
     {
         Path lsPath;
         lsPath.Name = path;
 
         auto reader = GameAlloc<FileReader>();
-        ls__FileReader__ctor(reader, lsPath, 2, 0);
+        ls__FileReader__ctor(reader, lsPath, (uint32_t)mapping, (uint32_t)flags);
         return FileReaderPin(reader);
     }
 
