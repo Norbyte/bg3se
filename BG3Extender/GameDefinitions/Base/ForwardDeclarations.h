@@ -287,6 +287,21 @@ namespace lua
 
     template <class T>
     class LuaDelegate;
+
+    namespace dbg
+    {
+        class DebugMessageHandler;
+        class Debugger;
+
+        enum class ResultCode;
+        enum DbgContext : int;
+        enum DbgContinue_Action : int;
+        enum BkBreakpointTriggered_Reason : int;
+        class DebuggerToBackend;
+        class BackendToDebugger;
+        class BkEvaluateResponse;
+        class BkGetVariablesResponse;
+    }
 }
 
 namespace aspk
@@ -331,6 +346,14 @@ namespace extui
 namespace osidbg
 {
     class Debugger;
+    class DebugMessageHandler;
+    class DebuggerToBackend;
+    class BackendToDebugger;
 }
+
+template<class, class> class ProtobufSocketInterface;
+
+using OsirisDebugInterface = ProtobufSocketInterface<osidbg::DebuggerToBackend, osidbg::BackendToDebugger>;
+using LuaDebugInterface = ProtobufSocketInterface<lua::dbg::DebuggerToBackend, lua::dbg::BackendToDebugger>;
 
 END_SE()

@@ -1,12 +1,13 @@
 #pragma once
 
 #include <cstdint>
+#include <GameDefinitions/Module.h>
+#include <Osiris/Debugger/DebugInterface.h>
+
 #pragma warning(push)
 #pragma warning(disable:4267)
 #include <Lua/Debugger/LuaDebug.pb.h>
 #pragma warning(pop)
-#include <GameDefinitions/Module.h>
-#include <Osiris/Debugger/DebugInterface.h>
 
 #if defined(DBG_PROTOCOL_DEBUG)
 #define DBGMSG(...) DEBUG(__VA_ARGS__)

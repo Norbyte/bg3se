@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include <Osiris/OsirisExtender.h>
+#include <Osiris/Debugger/Debugger.h>
 #include <Extender/Shared/ExtensionHelpers.h>
 #include <Extender/ScriptExtender.h>
 #include <Extender/Server/ExtensionStateServer.h>

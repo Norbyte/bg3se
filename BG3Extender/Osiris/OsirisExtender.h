@@ -2,9 +2,6 @@
 
 #include <Extender/Shared/ExtenderConfig.h>
 #include <GameDefinitions/Osiris.h>
-#include <Osiris/Debugger/DebugInterface.h>
-#include <Osiris/Debugger/DebugMessages.h>
-#include <Osiris/Debugger/Debugger.h>
 #include <GameHooks/OsirisWrappers.h>
 #include <Osiris/Shared/CustomFunctions.h>
 #include <Osiris/Shared/NodeHooks.h>

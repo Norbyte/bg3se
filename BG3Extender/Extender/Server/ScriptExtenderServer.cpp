@@ -1,6 +1,7 @@
 #include <stdafx.h>
 #include <Extender/Server/ScriptExtenderServer.h>
 #include <Extender/ScriptExtender.h>
+#include <Lua/Debugger/LuaDebugger.h>
 
 #pragma warning(push)
 #pragma warning(disable:4267)

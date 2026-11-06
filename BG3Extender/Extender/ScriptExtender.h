@@ -11,8 +11,6 @@
 #include <Extender/Shared/UseActions.h>
 #include <Extender/Shared/Hooks.h>
 #include <Extender/Shared/UpdaterAPI.h>
-#include <Lua/Debugger/LuaDebugger.h>
-#include <Lua/Debugger/LuaDebugMessages.h>
 #include <Lua/Shared/LuaBundle.h>
 #include <Lua/Shared/Proxies/LuaCppPropertyMapManager.h>
 #include <GameHooks/OsirisWrappers.h>
@@ -30,6 +28,7 @@ class ScriptExtender
 {
 public:
     ScriptExtender();
+    ~ScriptExtender();
 
     void Initialize();
     void PostStartup();

@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <Osiris/Debugger/Debugger.h>
 #include <Osiris/Debugger/DebugMessages.h>
 #include <Extender/ScriptExtender.h>
 #include <sstream>

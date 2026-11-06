@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <Lua/Debugger/LuaDebugger.h>
 #include <Lua/Debugger/LuaDebugMessages.h>
 #include <Extender/ScriptExtender.h>
 #include <Extender/Server/ExtensionStateServer.h>

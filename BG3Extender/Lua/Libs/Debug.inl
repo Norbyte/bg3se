@@ -1,4 +1,5 @@
 #include <Extender/ScriptExtender.h>
+#include <Lua/Debugger/LuaDebugger.h>
 
 /// <lua_module>Debug</lua_module>
 BEGIN_NS(lua::debug)

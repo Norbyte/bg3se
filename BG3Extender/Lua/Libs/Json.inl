@@ -3,7 +3,6 @@
 #include <CoreLib/JsonLibs.h>
 #include <fstream>
 #include <unordered_set>
-#include <lstate.h>
 
 #include <Lua/Libs/JsonBinary.inl>
 
@@ -138,45 +137,6 @@ UserReturn LuaParse(lua_State* L)
     }
 
     return 1;
-}
-
-TValue* GetStackElem(lua_State* L, int idx)
-{
-    CallInfo* ci = L->ci;
-    if (idx > 0) {
-        return ci->func + idx;
-    } else if (idx > LUA_REGISTRYINDEX) {
-        return L->top + idx;
-    } else {
-        return nullptr;
-    }
-}
-
-void* GetTablePointer(lua_State* L, int index)
-{
-    luaL_checktype(L, index, LUA_TTABLE);
-    auto val = GetStackElem(L, index);
-    if (val) {
-        return hvalue(val);
-    } else {
-        return nullptr;
-    }
-}
-
-void* GetLightCppObjectPointer(lua_State* L, int index)
-{
-    auto meta = lua_get_lightcppany(L, index);
-
-    // Value-type userdata has no pointer (we don't want to mark same enum values/entities as false recursion)
-    if (meta.MetatableTag == MetatableTag::EnumValue
-        || meta.MetatableTag == MetatableTag::BitfieldValue
-        || meta.MetatableTag == MetatableTag::Entity
-        || meta.MetatableTag == MetatableTag::OsiFunctionName
-        || meta.MetatableTag == MetatableTag::SystemMap) {
-        return nullptr;
-    }
-
-    return (void*)((uintptr_t)meta.Ptr | ((uint64_t)meta.PropertyMapTag << 48) | ((uint64_t)meta.MetatableTag << 62));
 }
 
 void* GetPointerValue(lua_State* L, int index)

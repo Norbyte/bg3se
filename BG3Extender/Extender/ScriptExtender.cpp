@@ -2,6 +2,9 @@
 #include <Extender/ScriptExtender.h>
 #include <Extender/Client/ExtensionStateClient.h>
 #include <Extender/Server/ExtensionStateServer.h>
+#include <Osiris/Debugger/DebugInterface.h>
+#include <Lua/Debugger/LuaDebugger.h>
+#include <Lua/Debugger/LuaDebugMessages.h>
 #include <Extender/Shared/Console.h>
 #include <GameDefinitions/Stats/Cache.h>
 #include "Version.h"
@@ -49,6 +52,9 @@ ScriptExtender::ScriptExtender()
 {
     gCoreLibPlatformInterface.GlobalConsole = new DebugConsole();
 }
+
+ScriptExtender::~ScriptExtender()
+{}
 
 void ScriptExtender::WarnIfOffline()
 {

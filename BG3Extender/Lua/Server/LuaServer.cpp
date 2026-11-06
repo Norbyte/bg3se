@@ -7,6 +7,7 @@
 #include <Extender/ScriptExtender.h>
 #include <Extender/Server/ExtensionStateServer.h>
 #include <Extender/Shared/ScriptHelpers.h>
+#include <Lua/Debugger/LuaDebugger.h>
 #include <GameDefinitions/Components/All.h>
 #include <GameDefinitions/GuidResources.h>
 #include <GameDefinitions/Resources.h>

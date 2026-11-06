@@ -3,6 +3,7 @@
 #include <Extender/Shared/Console.h>
 #include <Extender/ScriptExtender.h>
 #include <Extender/Shared/ExtensionState.h>
+#include <Lua/Debugger/LuaDebugger.h>
 
 BEGIN_SE()
 

@@ -2,6 +2,8 @@
 #include <Extender/ScriptExtender.h>
 #include <Extender/Server/ExtensionStateServer.h>
 #include <Extender/Client/ExtensionStateClient.h>
+#include <Lua/Debugger/LuaDebugger.h>
+#include <Lua/Debugger/LuaDebugMessages.h>
 #include <GameDefinitions/RootTemplates.h>
 #include <GameDefinitions/Ai.h>
 #include <Lua/LuaBinding.h>

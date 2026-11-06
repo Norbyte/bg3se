@@ -77,6 +77,9 @@ CMetatable* LuaCppGetMetatable(lua_State* L, void* val, unsigned long long extra
 void LuaCppFinalize(lua_State* L, void* udata);
 void* LuaCppCanonicalize(lua_State* L, void* val);
 
+void* GetLightCppObjectPointer(lua_State* L, int index);
+void* GetTablePointer(lua_State* L, int index);
+
 void LuaCacheString(lua_State* L, TString* s);
 void LuaReleaseString(lua_State* L, TString* s);
 

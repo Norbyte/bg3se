@@ -1,6 +1,7 @@
 #include <stdafx.h>
 #include <Extender/Client/ExtensionStateClient.h>
 #include <Extender/Client/ScriptExtenderClient.h>
+#include <Lua/Debugger/LuaDebugger.h>
 #include <GameDefinitions/Stats/Cache.h>
 #include <Extender/ScriptExtender.h>
 #include <Extender/Shared/ExtensionState.h>

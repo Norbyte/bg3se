@@ -4,6 +4,7 @@
 #include <Lua/Shared/LuaModule.h>
 #include <Extender/ScriptExtender.h>
 #include <Extender/Client/ExtensionStateClient.h>
+#include <Lua/Debugger/LuaDebugger.h>
 #include "resource.h"
 #include <Lua/Client/UIEvents.inl>
 #include <Extender/Client/IMGUI/IMGUI.h>
