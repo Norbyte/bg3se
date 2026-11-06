@@ -1,5 +1,9 @@
 #include <CoreLib/JsonLibs.h>
 #include <Extender/Shared/VirtualTextureMerge.inl>
+// Encoding precedes decoding, as reading uniform tiles requires BC3 encoding
+#include <Extender/Shared/VTTileEncode.inl>
+#include <Extender/Shared/VTTileDecode.inl>
+#include <Extender/Shared/VTMipGenerator.inl>
 
 BEGIN_SE()
 

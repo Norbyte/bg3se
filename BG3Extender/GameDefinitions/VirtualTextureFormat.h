@@ -1,5 +1,15 @@
 BEGIN_NS(vt)
 
+// BG3 tile geometry; GTSFile::ReadHeader() rejects tile sets with a different layout
+constexpr uint32_t PaddedTileSize = 0x90; // Tile width/height including borders
+constexpr uint32_t TileBorderSize = 8;
+constexpr uint32_t RawTileSize = PaddedTileSize - 2 * TileBorderSize;
+constexpr uint32_t TileMipSize = PaddedTileSize / 2; // Size of mip embedded after each tile
+// BC3 uses 1 byte per pixel
+constexpr uint32_t BCTileBytes = PaddedTileSize * PaddedTileSize;
+constexpr uint32_t BCTileMipBytes = TileMipSize * TileMipSize;
+
+
 #pragma pack(push, 1)
 struct GTSHeader
 {
@@ -225,6 +235,23 @@ struct GTSFlatTileInfo
     uint16_t ChunkIndex; // Index of entry within page
     uint16_t D; // Always 1?
     uint32_t PackedTileIndex; // Index of tile in PackedTileIDs
+};
+
+struct GTPHeader
+{
+    static constexpr uint32_t GRAPMagic = 0x50415247; // 'GRAP'
+    static constexpr uint32_t CurrentVersion = 4;
+
+    uint32_t Magic;
+    uint32_t Version;
+    Guid GUID;
+};
+
+struct GTPChunkHeader
+{
+    GTSCodec Codec;
+    uint32_t ParameterBlockID;
+    uint32_t Size;
 };
 #pragma pack(pop)
 

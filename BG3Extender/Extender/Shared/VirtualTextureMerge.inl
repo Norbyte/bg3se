@@ -128,7 +128,7 @@ struct GTSFile
         Header = reinterpret_cast<GTSHeader*>(buf);
         VT_EXPECT(Header->Magic == GTSHeader::GRPGMagic);
         VT_EXPECT(Header->Version == GTSHeader::CurrentVersion);
-        VT_EXPECT(Header->TileWidth == 0x90 && Header->TileHeight == 0x90 && Header->TileBorder == 8);
+        VT_EXPECT(Header->TileWidth == PaddedTileSize && Header->TileHeight == PaddedTileSize && Header->TileBorder == TileBorderSize);
         VT_EXPECT(Header->PageSize == 1024 * 1024);
         VT_EXPECT(Header->NumLayers == 3);
         VT_EXPECT(Header->NumLevels >= 1 && Header->NumLevels < 12);
@@ -510,6 +510,27 @@ struct FourCCWriter
     }
 };
 
+// Opens an output file in the data directory; falls back to a process-specific
+// file name if the file cannot be opened (eg. it is in use by the game)
+bool OpenOutputFile(STDString const& baseName, char const* extension, STDString& outputPath, std::ofstream& f)
+{
+    outputPath = baseName;
+    outputPath += extension;
+    f.open(GetStaticSymbols().ToPath(outputPath, PathRootType::Data, true).c_str(), std::ios::out | std::ios::binary);
+
+    if (!f.good()) {
+        f.close();
+
+        outputPath = baseName;
+        outputPath += "_";
+        outputPath += std::to_string(GetCurrentProcessId());
+        outputPath += extension;
+        f.open(GetStaticSymbols().ToPath(outputPath, PathRootType::Data, true).c_str(), std::ios::out | std::ios::binary);
+    }
+
+    return f.good();
+}
+
 struct GTSStitchedFile
 {
     uint32_t Index{ 0 };
@@ -523,6 +544,8 @@ struct GTSStitchedFile
     Array<GTSParameterBlockHeader> ParameterBlocks;
     Array<GTSParameterBlockDesc> ParameterBlockBlobs;
     Array<GTSPageFileInfo> PageFiles;
+    // Source tile set of each page file; null for generated page files
+    Array<GTSFile*> PageFileOwners;
     Array<GTSPackedTileID> PackedTileIDs;
     Array<GTSFlatTileInfo> FlatTileInfos;
     Array<FourCCTextureMeta> Textures;
@@ -649,6 +672,7 @@ struct GTSStitchedFile
             pfPath = gtsDir + pfPath;
             wcscpy_s(mergedPf.FileNameBuf, pfPath.c_str());
             PageFiles.push_back(mergedPf);
+            PageFileOwners.push_back(tileSet);
         }
 
         for (auto const& tile : tileSet->PackedTileIDs) {
@@ -762,6 +786,10 @@ struct GTSStitchedFile
         FourCC.EndNode(); // META
     }
 
+    // Generates tiles for mip levels that are not available in the source tile sets
+    // and saves them to a page file next to the merged GTS
+    void BuildMips();
+
     bool Build()
     {
         BuildFourCC();
@@ -774,37 +802,26 @@ struct GTSStitchedFile
         Header.TileWidth = TileSets[0]->Header->TileWidth;
         Header.TileHeight = TileSets[0]->Header->TileHeight;
         Header.TileBorder = TileSets[0]->Header->TileBorder;
-        Header.NumFlatTileInfos = FlatTileInfos.size();
-        Header.NumPackedTileIDs = PackedTileIDs.size();
         Header.PageSize = TileSets[0]->Header->PageSize;
-        Header.NumPageFiles = PageFiles.size();
         Header.FourCCListSize = FourCC.Offset;
-        Header.ParameterBlockHeadersCount = ParameterBlocks.size();
         Header.ThumbnailsOffset = 0;
 
-        OutputPath = "SEMergedTileSet_";
-        OutputPath += std::to_string(Index);
-        OutputPath += ".gts";
+        STDString baseName = "SEMergedTileSet_";
+        baseName += std::to_string(Index);
 
-        auto gtsPath = GetStaticSymbols().ToPath(OutputPath, PathRootType::Data, true);
-        std::ofstream f(gtsPath.c_str(), std::ios::out | std::ios::binary);
-
-        if (!f.good()) {
-            f.close();
-
-            OutputPath = "SEMergedTileSet_";
-            OutputPath += std::to_string(Index);
-            OutputPath += "_";
-            OutputPath += std::to_string(GetCurrentProcessId());
-            OutputPath += ".gts";
-            gtsPath = GetStaticSymbols().ToPath(OutputPath, PathRootType::Data, true);
-            f.open(gtsPath.c_str(), std::ios::out | std::ios::binary);
-
-            if (!f.good()) {
-                ERR("Unable to write merged tileset file '%s'!", OutputPath.c_str());
-                return false;
-            }
+        std::ofstream f;
+        if (!OpenOutputFile(baseName, ".gts", OutputPath, f)) {
+            ERR("Unable to write merged tileset file '%s'!", OutputPath.c_str());
+            return false;
         }
+
+        BuildMips();
+
+        // Mip generation may add tiles, page files and parameter blocks
+        Header.NumFlatTileInfos = FlatTileInfos.size();
+        Header.NumPackedTileIDs = PackedTileIDs.size();
+        Header.NumPageFiles = PageFiles.size();
+        Header.ParameterBlockHeadersCount = ParameterBlocks.size();
 
         f.write((char const*)&Header, sizeof(Header));
 

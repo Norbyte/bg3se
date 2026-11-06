@@ -3,6 +3,14 @@ if "%VCToolsInstallDir%"=="" goto end
 pushd .
 cd External
 
+rem ##### BCDEC #####
+rem NOTE: No tagged releases, locked to specific commit
+
+git clone https://github.com/iOrange/bcdec
+cd bcdec
+git reset --hard 80859ed3b7afb1c527a2a99d70c61457bea72d0c
+cd ..
+
 rem ##### CURL #####
 rem TODO - will need to make a proper build instead of fetching a static one
 
@@ -16,6 +24,10 @@ cd Detours
 nmake
 cd ..
 
+rem ##### FASTLZ #####
+
+git clone https://github.com/ariya/FastLZ --branch 0.5.0
+
 rem ##### GLM #####
 
 git clone https://github.com/g-truc/glm --branch 1.0.3
@@ -27,6 +39,10 @@ git clone https://github.com/Norbyte/imgui
 rem ##### LUA #####
 
 git clone https://github.com/Norbyte/lua-dos lua
+
+rem ##### LZ4 #####
+
+git clone https://github.com/lz4/lz4 --branch v1.10.0
 
 rem ##### NOESIS #####
 
@@ -64,6 +80,13 @@ rem NOTE - Use the same version BG3 uses (2.30.6)
 curl -L https://github.com/libsdl-org/SDL/releases/download/release-2.30.6/SDL2-devel-2.30.6-VC.zip -o SDL.zip
 mkdir SDL
 tar -xf SDL.zip -C SDL/ --strip-components 1
+
+rem ##### STB #####
+
+git clone https://github.com/nothings/stb
+cd stb
+git reset --hard 7023e273f1513b68b8d4086077c6faca555d50df
+cd ..
 
 rem ##### TINYCRYPT #####
 rem NOTE: Archived repo, no need to lock to specific commit

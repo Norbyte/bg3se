@@ -136,6 +136,12 @@
     <ClCompile Include="Extender\Shared\Hooks.cpp" />
     <ClCompile Include="Lua\LuaSerializers.cpp" />
     <ClCompile Include="Extender\Shared\ExtenderProtocol.pb.cc" />
+    <ClCompile Include="..\External\FastLZ\fastlz.c">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\lz4\lib\lz4.c">
+      <Filter>External</Filter>
+    </ClCompile>
     <ClCompile Include="Extender\Shared\ExtenderNet.cpp" />
     <ClCompile Include="Extender\Client\IMGUI\IMGUI.cpp" />
     <ClCompile Include="Extender\Client\SDL.cpp" />
@@ -710,6 +716,15 @@
     <None Include="Extender\Shared\VirtualTextureMerge.inl">
       <Filter>Extender\Shared</Filter>
     </None>
+    <None Include="Extender\Shared\VTMipGenerator.inl">
+      <Filter>Extender\Shared</Filter>
+    </None>
+    <None Include="Extender\Shared\VTTileDecode.inl">
+      <Filter>Extender\Shared</Filter>
+    </None>
+    <None Include="Extender\Shared\VTTileEncode.inl">
+      <Filter>Extender\Shared</Filter>
+    </None>
     <None Include="Lua\Libs\ClientTemplate.inl">
       <Filter>Lua\Libs</Filter>
     </None>
@@ -902,6 +917,9 @@
     </Filter>
     <Filter Include="Lua\Libs">
       <UniqueIdentifier>{df29b9d6-11ba-4176-bca4-e4f140b52584}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External">
+      <UniqueIdentifier>{3b7e2f4a-9c1d-4e85-a6f0-2d8b5c7e9a13}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
