@@ -535,7 +535,7 @@ namespace bg3se::osidbg
         case ValueType::String:
         case ValueType::GuidString:
         default:
-            tv.SetValue(type, msg.stringval().c_str());
+            tv.SetValue(type, msg.stringval().data());
             break;
         }
     }

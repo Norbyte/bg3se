@@ -364,8 +364,8 @@ void DebugMessageHandler::HandleSetBreakpoints(uint32_t seq, DbgSetBreakpoints c
 
     debugger_->BeginUpdatingBreakpoints();
     for (auto const& bp : req.breakpoint()) {
-        DBGMSG("AddBreakpoint(%s:%d)", bp.path().c_str(), bp.line());
-        rc = debugger_->AddBreakpoint(bp.path().c_str(), bp.line());
+        DBGMSG("AddBreakpoint(%s:%d)", bp.path().data(), bp.line());
+        rc = debugger_->AddBreakpoint(bp.path().data(), bp.line());
         if (rc != ResultCode::Success) {
             break;
         }
@@ -423,30 +423,30 @@ void DebugMessageHandler::HandleFetchMods(uint32_t seq, DbgFetchMods const& req)
 
 void DebugMessageHandler::HandleRequestSource(uint32_t seq, DbgRequestSource const& req)
 {
-    DBGMSG(" --> DbgRequestSource(%s)", req.name().c_str());
+    DBGMSG(" --> DbgRequestSource(%s)", req.name().data());
 
     // Check for a loaded Lua file from mods
-    auto path = FindLuaSourcePath(req.name().c_str());
+    auto path = FindLuaSourcePath(STDString(req.name()));
     if (path) {
         auto reader = GetStaticSymbols().MakeFileReader(*path, PathRootType::Root);
         if (!reader.IsLoaded()) {
             LuaError("Script file could not be opened: " << *path);
         } else {
-            SendSourceResponse(seq, req.name().c_str(), reader.ToString());
+            SendSourceResponse(seq, STDString(req.name()), reader.ToString());
             return;
         }
     }
 
     // Check for a builtin resource
-    auto builtin = gExtender->GetLuaBuiltinBundle().GetResource(req.name().c_str());
+    auto builtin = gExtender->GetLuaBuiltinBundle().GetResource(STDString(req.name()));
     if (!builtin && req.name().find_first_of("/") == std::string::npos && req.name().find_first_of("\\") == std::string::npos) {
         // Fallback check for builtin libs; some VS code versions strip the path
         // if a protocol is specified in the resource name
-        builtin = gExtender->GetLuaBuiltinBundle().GetResource(STDString("Libs/") + req.name().c_str());
+        builtin = gExtender->GetLuaBuiltinBundle().GetResource(STDString("Libs/") + req.name().data());
     }
 
     if (builtin) {
-        SendSourceResponse(seq, req.name().c_str(), builtin->c_str());
+        SendSourceResponse(seq, STDString(req.name()), builtin->c_str());
         return;
     }
 

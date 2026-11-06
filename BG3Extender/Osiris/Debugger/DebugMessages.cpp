@@ -22,11 +22,11 @@ namespace bg3se::osidbg
 
         switch ((ValueType)tv.TypeId) {
         case ValueType::None: break;
-        case ValueType::Undefined: *msgTv.mutable_stringval() = "(Undefined)"; break;
+        case ValueType::Undefined: msgTv.set_stringval("(Undefined)"); break;
         case ValueType::Integer: msgTv.set_intval(val.Int32); break;
         case ValueType::Integer64: msgTv.set_intval(val.Int64); break;
         case ValueType::Real: msgTv.set_floatval(val.Float); break;
-        default: *msgTv.mutable_stringval() = tv.GetString(); break;
+        default: msgTv.set_stringval(tv.GetString()); break;
         }
     }
 
@@ -36,11 +36,11 @@ namespace bg3se::osidbg
 
         switch (arg.TypeId) {
         case ValueType::None: break;
-        case ValueType::Undefined: *msgTv.mutable_stringval() = "(Undefined)"; break;
+        case ValueType::Undefined: msgTv.set_stringval("(Undefined)"); break;
         case ValueType::Integer: msgTv.set_intval(arg.Int32); break;
         case ValueType::Integer64: msgTv.set_intval(arg.Int64); break;
         case ValueType::Real: msgTv.set_floatval(arg.Float); break;
-        default: *msgTv.mutable_stringval() = arg.String; break;
+        default: msgTv.set_stringval(arg.String); break;
         }
     }
 

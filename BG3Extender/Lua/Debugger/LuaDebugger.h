@@ -135,7 +135,7 @@ namespace bg3se::lua::dbg
         void CleanupLuaBindings(lua_State* L);
         void EnableDebugging(bool enabled);
         void ExecuteQueuedActions();
-        bool IsBreakpoint(lua_State* L, lua_Debug* ar, BkBreakpointTriggered::Reason& reason);
+        bool IsBreakpoint(lua_State* L, lua_Debug* ar, BkBreakpointTriggered_Reason& reason);
         void TriggerBreakpoint(lua_State* L, BkBreakpointTriggered_Reason reason, char const* msg);
 
         ResultCode EvaluateInContext(DebuggerEvaluateRequest const& req);

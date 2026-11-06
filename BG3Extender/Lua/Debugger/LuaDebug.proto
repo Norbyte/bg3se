@@ -1,9 +1,16 @@
-syntax = "proto3";
+edition = "2024";
 
-package bg3se.lua.dbg;
+import option "google/protobuf/cpp_features.proto";
+
+option features.(pb.cpp).string_type = VIEW;
+option features.(pb.cpp).enum_name_uses_string_view = true;
+option features.utf8_validation = NONE;
+option features.enforce_naming_style = STYLE_LEGACY;
 
 option cc_enable_arenas = true;
 option optimize_for = LITE_RUNTIME;
+
+package bg3se.lua.dbg;
 
 enum StatusCode {
   SUCCESS = 0;
