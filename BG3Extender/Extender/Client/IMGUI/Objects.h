@@ -440,8 +440,22 @@ public:
 
     bool BeginRender(DrawingContext& context) override;
     void EndRender(DrawingContext& context) override;
+    void SetOpen(bool open, std::optional<GuiCond> cond);
 
     GuiTreeNodeFlags Flags{ 0 };
+    bool Open{ false };
+
+    lua::LuaDelegate<void(lua::ImguiHandle)> OnExpand;
+    lua::LuaDelegate<void(lua::ImguiHandle)> OnCollapse;
+
+private:
+    struct SetOpenRequest
+    {
+        bool Open;
+        ImGuiCond Cond;
+    };
+
+    std::optional<SetOpenRequest> open_;
 };
 
 

@@ -1037,11 +1037,34 @@ void Group::EndRender(DrawingContext& context)
 
 bool CollapsingHeader::BeginRender(DrawingContext& context)
 {
-    return ImGui::CollapsingHeader(Label.c_str(), (ImGuiTreeNodeFlags)Flags);
+    if (open_) {
+        ImGui::SetNextItemOpen(open_->Open, open_->Cond);
+        open_ = {};
+    }
+
+    Open = ImGui::CollapsingHeader(Label.c_str(), (ImGuiTreeNodeFlags)Flags);
+
+    if (ImGui::IsItemToggledOpen()) {
+        if (Open && OnExpand) {
+            Manager->GetEventQueue().Call(OnExpand, lua::ImguiHandle(Handle));
+        } else if (!Open && OnCollapse) {
+            Manager->GetEventQueue().Call(OnCollapse, lua::ImguiHandle(Handle));
+        }
+    }
+
+    return Open;
 }
 
 void CollapsingHeader::EndRender(DrawingContext& context)
 {}
+
+void CollapsingHeader::SetOpen(bool open, std::optional<GuiCond> cond)
+{
+    open_ = SetOpenRequest{
+        .Open = open,
+        .Cond = cond ? (ImGuiCond)*cond : ImGuiCond_Once
+    };
+}
 
 
 bool TabBar::BeginRender(DrawingContext& context)

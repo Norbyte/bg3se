@@ -140,7 +140,11 @@ END_CLS()
 
 BEGIN_CLS(extui::CollapsingHeader)
 INHERIT(extui::TreeParent)
+P_FUN(SetOpen, extui::CollapsingHeader::SetOpen)
 P_BITMASK(Flags)
+P_RO(Open)
+P(OnExpand)
+P(OnCollapse)
 END_CLS()
 
 
