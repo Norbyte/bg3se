@@ -313,12 +313,16 @@ void StyledRenderable::PopStyleChanges()
 
 void StyledRenderable::PushWindowStyleChanges(DrawingContext& context, ImFont*& font)
 {
+    float fontSize{ 0.0f };
     if (Font) {
         auto info = gExtender->IMGUI().GetFont(Font);
-        if (info) font = info->Font;
+        if (info) {
+            font = info->Font;
+            fontSize = info->SizePixels;
+        }
     }
 
-    if (font && font->IsLoaded()) ImGui::PushFont(font, font->LegacySize);
+    if (font && font->IsLoaded()) ImGui::PushFont(font, fontSize);
 
     if (!IDContext.empty()) {
         ImGui::PushID(IDContext.data(), IDContext.data() + IDContext.size());
@@ -1853,25 +1857,12 @@ void IMGUIManager::InitializeUI()
 
     UpdateStyle();
 
-    auto const& language = GetStaticSymbols().GetGlobalSwitches()->Language;
-    // Disable very small font sizes for fonts with small glyphs
-    reducedFontAtlas_ =
-        language == "Japanese"
-        || language == "Chinese"
-        || language == "ChineseTraditional";
-
-    if (reducedFontAtlas_) {
-        LoadFont(GFS.strMedium, "", 32.0f);
-        LoadFont(GFS.strDefault, "", 36.0f);
-        LoadFont(GFS.strLarge, "", 40.0f);
-    } else {
-        LoadFont(GFS.strTiny, "", 24.0f);
-        LoadFont(GFS.strSmall, "", 28.0f);
-        LoadFont(GFS.strMedium, "", 32.0f);
-        LoadFont(GFS.strDefault, "", 36.0f);
-        LoadFont(GFS.strLarge, "", 40.0f);
-        LoadFont(GFS.strBig, "", 44.0f);
-    }
+    LoadFont(GFS.strTiny, "", 24.0f);
+    LoadFont(GFS.strSmall, "", 28.0f);
+    LoadFont(GFS.strMedium, "", 32.0f);
+    LoadFont(GFS.strDefault, "", 36.0f);
+    LoadFont(GFS.strLarge, "", 40.0f);
+    LoadFont(GFS.strBig, "", 44.0f);
 
     initialized_ = true;
 }
@@ -1930,6 +1921,14 @@ bool IMGUIManager::LoadFont(FixedString const& name, char const* path, float siz
 
 bool IMGUIManager::LoadFont(FontData& request)
 {
+    // Fonts are sized dynamically, so all sizes of the same font file can share one ImFont
+    for (auto const& font : fonts_) {
+        if (font.Value().Path == request.Path && font.Value().Font != nullptr) {
+            request.Font = font.Value().Font;
+            return true;
+        }
+    }
+
     auto path = request.Path;
     if (path.empty()) {
         auto const& language = GetStaticSymbols().GetGlobalSwitches()->Language;
@@ -1950,37 +1949,26 @@ bool IMGUIManager::LoadFont(FontData& request)
         return false;
     }
 
+    // Glyphs are loaded lazily, so the atlas must keep the font data alive for the lifetime of the font.
+    // Ownership is transferred to the atlas, which also frees it if loading fails.
+    auto fontData = IM_ALLOC(blob->size());
+    memcpy(fontData, blob->data(), blob->size());
+
     auto& io = ImGui::GetIO();
     ImFontConfig cfg;
-    cfg.FontDataOwnedByAtlas = false;
-    cfg.RasterizerDensity = requestedScale_ * requestedFontScaleMultiplier_;
     cfg.SizePixels = request.SizePixels;
 
-    request.Font = io.Fonts->AddFontFromMemoryTTF(blob->data(), blob->size(), 0.0f, &cfg);
+    request.Font = io.Fonts->AddFontFromMemoryTTF(fontData, (int)blob->size(), 0.0f, &cfg);
     if (!request.Font) {
         OsiError("Failed to load font file (not a valid TTF font?): " << path);
         return false;
-    } else {
-        // FIXME - address font scaling later
-        // request.Font->Scale = requestedScale_ * requestedFontScaleMultiplier_;
     }
 
-    renderer_->ReloadFonts();
     return true;
 }
 
 IMGUIManager::FontData* IMGUIManager::GetFont(FixedString const& name)
 {
-    if (reducedFontAtlas_) {
-        if (name == GFS.strTiny || name == GFS.strSmall) {
-            return fonts_.try_get(GFS.strMedium);
-        }
-
-        if (name == GFS.strLarge) {
-            return fonts_.try_get(GFS.strBig);
-        }
-    }
-
     return fonts_.try_get(name);
 }
 
@@ -2115,22 +2103,11 @@ void IMGUIManager::UpdateStyle()
     DEFAULT_COLOR(NavWindowingDimBg, ImVec4(0.07f, 0.07f, 0.07f, 0.78f));
     DEFAULT_COLOR(ModalWindowDimBg, ImVec4(0.18f, 0.15f, 0.15f, 0.73f));
 
-    bool fontReloadRequired = scale_ != requestedScale_
-        || fontScaleMultiplier_ != requestedFontScaleMultiplier_;
-
     style.ScaleAllSizes(requestedScale_ * requestedUiScaleMultiplier_);
+    style.FontScaleMain = requestedScale_ * requestedFontScaleMultiplier_;
     scale_ = requestedScale_;
     uiScaleMultiplier_ = requestedUiScaleMultiplier_;
     fontScaleMultiplier_ = requestedFontScaleMultiplier_;
-
-    if (fontReloadRequired) {
-        ImGui::GetIO().Fonts->Clear();
-        for (auto& font : fonts_) {
-            font->Value().Font = nullptr;
-            LoadFont(font->Value());
-        }
-        renderer_->ReloadFonts();
-    }
 }
 
 void IMGUIManager::Update()
@@ -2162,6 +2139,8 @@ void IMGUIManager::Update()
     auto defaultFont = GetFont(GFS.strMedium);
     if (defaultFont != nullptr && defaultFont->Font != nullptr) {
         ImGui::GetIO().FontDefault = defaultFont->Font;
+        // Font may be shared with other sizes, so its LegacySize isn't necessarily the size we want
+        ImGui::GetStyle().FontSizeBase = defaultFont->SizePixels;
     }
 
     if (frameNo_ == 0) {

@@ -105,7 +105,6 @@ private:
 
     IMGUIObjectManager* objects_{ nullptr };
 
-    bool reducedFontAtlas_{ false };
     bool initialized_{ false };
     bool enableUI_{ false };
     unsigned frameNo_{ 0 };
