@@ -2,6 +2,7 @@
 
 #include <GameDefinitions/Base/Base.h>
 #include <Extender/Client/IMGUI/Backends.h>
+#include <Extender/Client/IMGUI/TextureMirror.inl>
 #include <Extender/ScriptExtender.h>
 #include <CoreLib/Wrappers.h>
 #include <vulkan/vulkan.h>
@@ -160,6 +161,7 @@ public:
 
         IMGUI_DEBUG("VK shutdown");
 
+        mirroredTextures_.Destroy(&ImGui_ImplVulkan_UpdateTexture);
         ImGui_ImplVulkan_Shutdown();
         drawViewport_ = -1;
         initialized_ = false;
@@ -211,6 +213,7 @@ public:
             drawLists.push_back(drawList);
         }
 
+        mirroredTextures_.Sync(vp.DrawDataP);
         drawViewport_ = curViewport_;
         IMGUI_FRAME_DEBUG("VK: FinishFrame");
     }
@@ -254,6 +257,8 @@ public:
     {
         if (!initialized_) return;
 
+        // The descriptor pool is shared with font texture uploads on the render thread
+        std::lock_guard _(globalResourceLock_);
         auto imageView = static_cast<VkImageView>(opaqueHandle);
         auto desc = textureDescriptors_.get_or_default(imageView, 0);
         if (desc) {
@@ -266,6 +271,8 @@ public:
 
     std::optional<ImTextureID> BindTexture(TextureOpaqueHandle opaqueHandle) override
     {
+        // The descriptor pool is shared with font texture uploads on the render thread
+        std::lock_guard _(globalResourceLock_);
         auto imageView = static_cast<VkImageView>(opaqueHandle);
         auto desc = textureDescriptors_.get_or_default(imageView, 0);
         if (!desc) {
@@ -723,6 +730,7 @@ private:
             vkCmdBeginRenderPass(image.commandBuffer, &rpbegin, VK_SUBPASS_CONTENTS_INLINE);
         }
 
+        mirroredTextures_.BeginRender();
         ImGui_ImplVulkan_RenderDrawData(&vp.DrawDataP, image.commandBuffer);
 
         vkCmdEndRenderPass(image.commandBuffer);
@@ -810,6 +818,7 @@ private:
     std::array<ViewportInfo, 3> viewports_;
     int32_t drawViewport_{ -1 };
     int32_t curViewport_{ 0 };
+    TextureMirrorSet mirroredTextures_;
     int32_t frameNo_{ 0 };
     bool textureLimitWarningShown_{ false };
 

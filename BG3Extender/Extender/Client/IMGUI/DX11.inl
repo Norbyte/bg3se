@@ -2,6 +2,7 @@
 
 #include <GameDefinitions/Base/Base.h>
 #include <Extender/Client/IMGUI/Backends.h>
+#include <Extender/Client/IMGUI/TextureMirror.inl>
 #include <Extender/ScriptExtender.h>
 #include <CoreLib/Wrappers.h>
 #include <vulkan/vulkan.h>
@@ -134,6 +135,7 @@ public:
         if (!initialized_) return;
 
         IMGUI_DEBUG("DX11Backend::DestroyUI()");
+        mirroredTextures_.Destroy(&ImGui_ImplDX11_UpdateTexture);
         ImGui_ImplDX11_Shutdown();
         initialized_ = false;
         renderObjectsCreated_ = false;
@@ -182,6 +184,7 @@ public:
             drawLists.push_back(drawList);
         }
 
+        mirroredTextures_.Sync(vp.DrawDataP);
         drawViewport_ = curViewport_;
     }
 
@@ -326,6 +329,7 @@ private:
         auto& vp = viewports_[drawViewport_].Viewport;
         if (!vp.DrawDataP.Valid) return;
 
+        mirroredTextures_.BeginRender();
         ImGui_ImplDX11_RenderDrawData(&vp.DrawDataP);
     }
 
@@ -351,6 +355,7 @@ private:
     std::array<ViewportInfo, 3> viewports_;
     int32_t drawViewport_{ -1 };
     int32_t curViewport_{ 0 };
+    TextureMirrorSet mirroredTextures_;
 
     IDXGIAdapter* adapter_{ nullptr };
     ID3D11DeviceContext* context_{ nullptr };
