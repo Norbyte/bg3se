@@ -891,6 +891,7 @@ public:
 
     glm::vec4 Value{ 0.0f };
     int Components{ 1 };
+    std::optional<float> Step;
     GuiInputTextFlags Flags{ 0 };
     lua::LuaDelegate<void (lua::ImguiHandle, glm::vec4)> OnChange;
 };
@@ -905,6 +906,7 @@ public:
 
     glm::ivec4 Value{ 0 };
     int Components{ 1 };
+    std::optional<int32_t> Step;
     GuiInputTextFlags Flags{ 0 };
     lua::LuaDelegate<void (lua::ImguiHandle, glm::ivec4)> OnChange;
 };

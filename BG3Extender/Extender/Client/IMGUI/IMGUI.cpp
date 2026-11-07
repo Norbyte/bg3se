@@ -1636,7 +1636,8 @@ InputScalar::InputScalar()
 
 void InputScalar::StyledRender(DrawingContext& context)
 {
-    if (ImGui::InputScalarN(Label.c_str(), ImGuiDataType_Float, &Value, Components, nullptr, nullptr, nullptr, (ImGuiInputTextFlags)Flags)) {
+    auto step = Step.has_value() ? &*Step : nullptr;
+    if (ImGui::InputScalarN(Label.c_str(), ImGuiDataType_Float, &Value, Components, step, nullptr, nullptr, (ImGuiInputTextFlags)Flags)) {
         if (OnChange) {
             Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Value);
         }
@@ -1646,7 +1647,8 @@ void InputScalar::StyledRender(DrawingContext& context)
 
 void InputInt::StyledRender(DrawingContext& context)
 {
-    if (ImGui::InputScalarN(Label.c_str(), ImGuiDataType_S32, &Value, Components, nullptr, nullptr, nullptr, (ImGuiInputTextFlags)Flags)) {
+    auto step = Step.has_value() ? &*Step : nullptr;
+    if (ImGui::InputScalarN(Label.c_str(), ImGuiDataType_S32, &Value, Components, step, nullptr, nullptr, (ImGuiInputTextFlags)Flags)) {
         if (OnChange) {
             Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Value);
         }
