@@ -531,6 +531,7 @@ public:
     GuiTableFlags Flags{ 0 };
     uint32_t FreezeRows{ 0 };
     uint32_t FreezeCols{ 0 };
+    float InnerWidth{ 0.0f };
     bool ShowHeader{ false };
     bool AngledHeader{ false };
     bool OptimizedDraw{ false };

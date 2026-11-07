@@ -1173,7 +1173,7 @@ bool Table::BeginRender(DrawingContext& context)
     // IMGUI will crash if we try to add more columns than the col count in BeginTable()
     auto cols = std::max(Columns, ColumnDefs.size());
 
-    rendering_ = ImGui::BeginTable(Label.c_str(), (int)cols, (ImGuiTableFlags)Flags, context.Scale(ToImVec(Size)));
+    rendering_ = ImGui::BeginTable(Label.c_str(), (int)cols, (ImGuiTableFlags)Flags, context.Scale(ToImVec(Size)), InnerWidth);
 
     if (rendering_) {
         for (auto const& def : ColumnDefs) {
