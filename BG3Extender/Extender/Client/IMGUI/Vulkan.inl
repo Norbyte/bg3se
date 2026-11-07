@@ -283,11 +283,6 @@ public:
         return initialized_;
     }
 
-    void ReloadFonts() override
-    {
-        requestReloadFonts_ = true;
-    }
-
     glm::ivec2 GetViewportSize() override
     {
         return glm::ivec2(swapchain_.width_, swapchain_.height_);
@@ -820,7 +815,6 @@ private:
 
     bool initialized_{ false };
     bool uiFrameworkStarted_{ false };
-    bool requestReloadFonts_{ false };
     std::mutex globalResourceLock_;
 
     HashMap<VkImageView, VkDescriptorSet> textureDescriptors_;
