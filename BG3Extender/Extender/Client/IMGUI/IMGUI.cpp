@@ -292,14 +292,25 @@ void StyledRenderable::PushStyleChanges(DrawingContext& context)
         ImGui::PushStyleColor((ImGuiCol)var.Key, ToImVec(var.Value));
     }
 
-    if (ItemFlags != (GuiItemFlags)0) ImGui::PushItemFlag((ImGuiItemFlags)ItemFlags, true);
+    if (ItemFlags != (GuiItemFlags)0) {
+        ImGui::PushItemFlag((ImGuiItemFlags)ItemFlags, true);
+        if ((ItemFlags & GuiItemFlags::Disabled) != (GuiItemFlags)0) {
+            ImGui::BeginDisabled();
+        }
+    }
+
     if (ItemWidth) ImGui::SetNextItemWidth(context.Scale(*ItemWidth));
 }
 
 
 void StyledRenderable::PopStyleChanges()
 {
-    if (ItemFlags != (GuiItemFlags)0) ImGui::PopItemFlag();
+    if (ItemFlags != (GuiItemFlags)0) {
+        ImGui::PopItemFlag();
+        if ((ItemFlags & GuiItemFlags::Disabled) != (GuiItemFlags)0) {
+            ImGui::EndDisabled();
+        }
+    }
 
     if (!StyleColors.empty()) {
         ImGui::PopStyleColor(StyleColors.size());
