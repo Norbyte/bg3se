@@ -837,6 +837,15 @@
     <None Include="GameDefinitions\Events.inl">
       <Filter>GameDefinitions</Filter>
     </None>
+    <None Include="GameDefinitions\AllEnumerations.inl">
+      <Filter>GameDefinitions</Filter>
+    </None>
+    <None Include="GameDefinitions\AllEvents.inl">
+      <Filter>GameDefinitions</Filter>
+    </None>
+    <None Include="GameDefinitions\AllExternalEnumerations.inl">
+      <Filter>GameDefinitions</Filter>
+    </None>
     <None Include="make_events.py" />
     <None Include="make_enumerations.py" />
     <None Include="make_property_map.py" />
