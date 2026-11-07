@@ -1595,7 +1595,7 @@ SliderScalar::SliderScalar()
 void SliderScalar::StyledRender(DrawingContext& context)
 {
     if (Vertical) {
-        if (ImGui::VSliderScalar(Label.c_str(), ToImVec(VerticalSize), ImGuiDataType_Float, &Value, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
+        if (ImGui::VSliderScalar(Label.c_str(), context.Scale(ToImVec(VerticalSize)), ImGuiDataType_Float, &Value, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
             if (OnChange) {
                 Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Value);
             }
@@ -1613,7 +1613,7 @@ void SliderScalar::StyledRender(DrawingContext& context)
 void SliderInt::StyledRender(DrawingContext& context)
 {
     if (Vertical) {
-        if (ImGui::VSliderInt(Label.c_str(), ToImVec(VerticalSize), &Value.x, Min.x, Max.x, nullptr, (ImGuiSliderFlags)Flags)) {
+        if (ImGui::VSliderInt(Label.c_str(), context.Scale(ToImVec(VerticalSize)), &Value.x, Min.x, Max.x, nullptr, (ImGuiSliderFlags)Flags)) {
             if (OnChange) {
                 Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Value);
             }
