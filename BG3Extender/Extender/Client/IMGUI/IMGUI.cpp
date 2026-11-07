@@ -1803,8 +1803,31 @@ bool IMGUIObjectManager::DestroyRenderable(HandleType handle)
 void IMGUIObjectManager::Render(DrawingContext& context)
 {
     OPTICK_EVENT(Optick::Category::Rendering);
-    if (renderDemo_) {
+
+#if defined(_DEBUG)
+    GImGui->DebugItemPickerActive = ((debugTools_ & GuiDebugToolFlags::ItemPicker) != (GuiDebugToolFlags)0);
+#endif
+
+    if ((debugTools_ & GuiDebugToolFlags::Demo) != (GuiDebugToolFlags)0) {
         ImGui::ShowDemoWindow();
+    }
+
+    if ((debugTools_ & GuiDebugToolFlags::Metrics) != (GuiDebugToolFlags)0) {
+        ImGui::ShowMetricsWindow();
+    }
+
+    if ((debugTools_ & GuiDebugToolFlags::DebugLog) != (GuiDebugToolFlags)0) {
+        ImGui::ShowDebugLogWindow();
+    }
+
+    if ((debugTools_ & GuiDebugToolFlags::IDStack) != (GuiDebugToolFlags)0) {
+        ImGui::ShowIDStackToolWindow();
+    }
+
+    if ((debugTools_ & GuiDebugToolFlags::StyleEditor) != (GuiDebugToolFlags)0) {
+        ImGui::Begin("Style Editor", nullptr);
+        ImGui::ShowStyleEditor();
+        ImGui::End();
     }
 
     for (auto windowHandle : windows_) {
@@ -1815,9 +1838,9 @@ void IMGUIObjectManager::Render(DrawingContext& context)
     }
 }
 
-void IMGUIObjectManager::EnableDemo(bool enable)
+void IMGUIObjectManager::ToggleDebugTools(GuiDebugToolFlags flags)
 {
-    renderDemo_ = enable;
+    debugTools_ = flags;
 }
 
 void IMGUIObjectManager::ClientUpdate()
@@ -2001,6 +2024,7 @@ bool IMGUIManager::LoadFont(FontData& request)
     auto& io = ImGui::GetIO();
     ImFontConfig cfg;
     cfg.SizePixels = request.SizePixels;
+    strncpy_s(cfg.Name, request.Key.GetString(), request.Key.GetLength()+1);
 
     request.Font = io.Fonts->AddFontFromMemoryTTF(fontData, (int)blob->size(), 0.0f, &cfg);
     if (!request.Font) {

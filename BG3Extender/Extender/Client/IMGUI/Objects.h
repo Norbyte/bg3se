@@ -1050,14 +1050,14 @@ public:
     Renderable* GetRenderable(HandleType handle);
     bool DestroyRenderable(HandleType handle);
     void Render(DrawingContext& context);
-    void EnableDemo(bool enable);
+    void ToggleDebugTools(GuiDebugToolFlags flags);
     void ClientUpdate();
     void Clear();
 
 private:
     std::array<std::unique_ptr<IMGUIObjectPoolInterface>, (unsigned)IMGUIObjectType::Max + 1> pools_;
     Array<HandleType> windows_;
-    bool renderDemo_{ false };
+    GuiDebugToolFlags debugTools_{ 0 };
     lua::DeferredLuaDelegateQueue eventQueue_;
 };
 
