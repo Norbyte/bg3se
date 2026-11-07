@@ -714,6 +714,7 @@ public:
     std::optional<glm::vec2> Size;
     GuiSelectableFlags Flags{ 0 };
     bool Selected{ false };
+    lua::LuaDelegate<void(lua::ImguiHandle)> OnDoubleClick;
 };
 
 

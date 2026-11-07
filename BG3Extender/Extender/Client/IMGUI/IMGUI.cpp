@@ -293,10 +293,11 @@ void StyledRenderable::PushStyleChanges(DrawingContext& context)
     }
 
     if (ItemFlags != (GuiItemFlags)0) {
-        ImGui::PushItemFlag((ImGuiItemFlags)ItemFlags, true);
         if ((ItemFlags & GuiItemFlags::Disabled) != (GuiItemFlags)0) {
             ImGui::BeginDisabled();
         }
+
+        ImGui::PushItemFlag((ImGuiItemFlags)ItemFlags, true);
     }
 
     if (ItemWidth) ImGui::SetNextItemWidth(context.Scale(*ItemWidth));
@@ -1401,8 +1402,15 @@ void Separator::StyledRender(DrawingContext& context)
 void Selectable::StyledRender(DrawingContext& context)
 {
     if (ImGui::Selectable(Label.c_str(), &Selected, (ImGuiSelectableFlags)Flags, context.Scale(ToImVec(Size)))) {
-        if (OnClick) {
-            Manager->GetEventQueue().Call(OnClick, lua::ImguiHandle(Handle));
+        if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+            if (OnDoubleClick) {
+                Manager->GetEventQueue().Call(OnDoubleClick, lua::ImguiHandle(Handle));
+            }
+        } else {
+            Selected = !Selected;
+            if (OnClick) {
+                Manager->GetEventQueue().Call(OnClick, lua::ImguiHandle(Handle));
+            }
         }
     }
 }
