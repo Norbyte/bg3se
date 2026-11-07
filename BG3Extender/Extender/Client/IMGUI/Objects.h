@@ -812,6 +812,7 @@ struct DragScalar : public StyledRenderable
 public:
     DECL_UI_TYPE(DragScalar)
 
+    DragScalar();
     void StyledRender(DrawingContext& context) override;
 
     glm::vec4 Value{ 0.0f };
@@ -844,6 +845,7 @@ struct SliderScalar : public StyledRenderable
 public:
     DECL_UI_TYPE(SliderScalar)
 
+    SliderScalar();
     void StyledRender(DrawingContext& context) override;
 
     glm::vec4 Value{ 0.0f };
@@ -880,6 +882,7 @@ struct InputScalar : public StyledRenderable
 public:
     DECL_UI_TYPE(InputScalar)
 
+    InputScalar();
     void StyledRender(DrawingContext& context) override;
 
     glm::vec4 Value{ 0.0f };

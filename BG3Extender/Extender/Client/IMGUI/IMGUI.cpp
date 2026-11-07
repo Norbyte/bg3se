@@ -318,7 +318,7 @@ void StyledRenderable::PushWindowStyleChanges(DrawingContext& context, ImFont*& 
         if (info) font = info->Font;
     }
 
-    if (font && font->IsLoaded()) ImGui::PushFont(font);
+    if (font && font->IsLoaded()) ImGui::PushFont(font, font->LegacySize);
 
     if (!IDContext.empty()) {
         ImGui::PushID(IDContext.data(), IDContext.data() + IDContext.size());
@@ -1537,6 +1537,12 @@ void Combo::StyledRender(DrawingContext& context)
 }
 
 
+DragScalar::DragScalar()
+{
+    // Compatibility with old IMGUI v1.32 behavior
+    ItemFlags |= GuiItemFlags::LiveEditOnInputScalar;
+}
+
 void DragScalar::StyledRender(DrawingContext& context)
 {
     if (ImGui::DragScalarN(Label.c_str(), ImGuiDataType_Float, &Value, Components, 1.0f, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
@@ -1556,6 +1562,12 @@ void DragInt::StyledRender(DrawingContext& context)
     }
 }
 
+
+SliderScalar::SliderScalar()
+{
+    // Compatibility with old IMGUI v1.32 behavior
+    ItemFlags |= GuiItemFlags::LiveEditOnInputScalar;
+}
 
 void SliderScalar::StyledRender(DrawingContext& context)
 {
@@ -1592,6 +1604,12 @@ void SliderInt::StyledRender(DrawingContext& context)
     }
 }
 
+
+InputScalar::InputScalar()
+{
+    // Compatibility with old IMGUI v1.32 behavior
+    ItemFlags |= GuiItemFlags::LiveEditOnInputScalar;
+}
 
 void InputScalar::StyledRender(DrawingContext& context)
 {
@@ -1910,46 +1928,18 @@ bool IMGUIManager::LoadFont(FixedString const& name, char const* path, float siz
     }
 }
 
-const ImWchar* GetGlyphRangesTurkish()
-{
-    static const ImWchar ranges[] =
-    {
-        0x0020, 0x00FF, // Basic Latin + Latin Supplement
-        0x011E, 0x011F, // Turkish characters
-        0x0130, 0x0131,
-        0x015E, 0x015F,
-        0x2010, 0x2033,
-        0,
-    };
-    return &ranges[0];
-}
-
 bool IMGUIManager::LoadFont(FontData& request)
 {
     auto path = request.Path;
-    auto glyphRanges = ImGui::GetIO().Fonts->GetGlyphRangesDefault();
     if (path.empty()) {
         auto const& language = GetStaticSymbols().GetGlobalSwitches()->Language;
         if (language == "Korean") {
             path = "Public/Game/GUI/Assets/Fonts/NotoSerifKR-Regular.otf";
-            glyphRanges = ImGui::GetIO().Fonts->GetGlyphRangesKorean();
         } else if (language == "Japanese") {
             path = "Public/Game/GUI/Assets/Fonts/NotoSerifSC-Regular.otf";
-            glyphRanges = ImGui::GetIO().Fonts->GetGlyphRangesJapanese();
         } else if (language == "Chinese" || language == "ChineseTraditional") {
             path = "Public/Game/GUI/Assets/Fonts/NotoSerifSC-Regular.otf";
-            glyphRanges = ImGui::GetIO().Fonts->GetGlyphRangesChineseFull();
-            // IMGUI creates a texture with small width so height will be 32768 for CN fonts.
-            // (DX11 can't create textures larger than 16384).
-            // Compensate by using a larger width than default
-            ImGui::GetIO().Fonts->TexDesiredWidth = 16384;
         } else {
-            if (language == "Russian" || language == "Ukrainian") {
-                glyphRanges = ImGui::GetIO().Fonts->GetGlyphRangesCyrillic();
-            } else if (language == "Turkish") {
-                glyphRanges = GetGlyphRangesTurkish();
-            }
-
             path = "Public/Game/GUI/Assets/Fonts/QuadraatOffcPro/QuadraatOffcPro.ttf";
         }
     }
@@ -1965,14 +1955,14 @@ bool IMGUIManager::LoadFont(FontData& request)
     cfg.FontDataOwnedByAtlas = false;
     cfg.RasterizerDensity = requestedScale_ * requestedFontScaleMultiplier_;
     cfg.SizePixels = request.SizePixels;
-    cfg.GlyphRanges = glyphRanges;
 
     request.Font = io.Fonts->AddFontFromMemoryTTF(blob->data(), blob->size(), 0.0f, &cfg);
     if (!request.Font) {
         OsiError("Failed to load font file (not a valid TTF font?): " << path);
         return false;
     } else {
-        request.Font->Scale = requestedScale_ * requestedFontScaleMultiplier_;
+        // FIXME - address font scaling later
+        // request.Font->Scale = requestedScale_ * requestedFontScaleMultiplier_;
     }
 
     renderer_->ReloadFonts();
@@ -2061,6 +2051,7 @@ void IMGUIManager::UpdateStyle()
     auto BoxColor = ImVec4(0.18f, 0.15f, 0.15f, 0.78f);
     auto BoxHoverColor = ImVec4(0.38f, 0.26f, 0.21f, 0.78f);
     auto BoxActiveColor = ImVec4(0.32f, 0.24f, 0.16f, 0.78f);
+    auto AccentColor = ImVec4(0.95f, 0.82f, 0.60f, 0.78f);
 
     DEFAULT_COLOR(Text, ImVec4(0.86f, 0.79f, 0.68f, 0.78f));
     DEFAULT_COLOR(TextDisabled, ImVec4(0.86f, 0.79f, 0.68f, 0.28f));
@@ -2081,6 +2072,7 @@ void IMGUIManager::UpdateStyle()
     DEFAULT_COLOR(ScrollbarGrabHovered, ImVec4(0.47f, 0.35f, 0.28f, 0.86f));
     DEFAULT_COLOR(ScrollbarGrabActive, BoxActiveColor);
     DEFAULT_COLOR(CheckMark, ImVec4(0.86f, 0.79f, 0.68f, 0.78f));
+    DEFAULT_COLOR(CheckboxSelectedBg, ImLerp(BoxColor, BoxHoverColor, 0.65f));
     DEFAULT_COLOR(SliderGrab, ImVec4(0.95f, 0.82f, 0.60f, 0.14f));
     DEFAULT_COLOR(SliderGrabActive, ImVec4(0.52f, 0.52f, 0.25f, 0.3f));
     DEFAULT_COLOR(Button, ImVec4(0.46f, 0.40f, 0.29f, 0.5f));
@@ -2095,11 +2087,14 @@ void IMGUIManager::UpdateStyle()
     DEFAULT_COLOR(ResizeGrip, ImVec4(0.95f, 0.82f, 0.60f, 0.15f));
     DEFAULT_COLOR(ResizeGripHovered, BoxHoverColor);
     DEFAULT_COLOR(ResizeGripActive, BoxActiveColor);
+    DEFAULT_COLOR(InputTextCursor, style.Colors[ImGuiCol_Text]);
     DEFAULT_COLOR(Tab, BoxColor);
     DEFAULT_COLOR(TabHovered, BoxHoverColor);
     DEFAULT_COLOR(TabSelected, BoxActiveColor);
+    DEFAULT_COLOR(TabSelectedOverline, AccentColor);
     DEFAULT_COLOR(TabDimmed, ImVec4(0.05f, 0.05f, 0.05f, 0.78f));
     DEFAULT_COLOR(TabDimmedSelected, ImVec4(0.05f, 0.05f, 0.05f, 0.78f));
+    DEFAULT_COLOR(TabDimmedSelectedOverline, ImVec4(0.00f, 0.00f, 0.00f, 0.00f));
     DEFAULT_COLOR(PlotLines, ImVec4(0.86f, 0.79f, 0.68f, 0.63f));
     DEFAULT_COLOR(PlotLinesHovered, ImVec4(0.41f, 0.28f, 0.22f, 1.00f));
     DEFAULT_COLOR(PlotHistogram, ImVec4(0.86f, 0.79f, 0.68f, 0.63f));
@@ -2109,8 +2104,12 @@ void IMGUIManager::UpdateStyle()
     DEFAULT_COLOR(TableBorderLight, ImVec4(0.56f, 0.46f, 0.26f, 0.78f));
     DEFAULT_COLOR(TableRowBg, ImVec4(0.63f, 0.69f, 0.34f, 0.43f));
     DEFAULT_COLOR(TableRowBgAlt, ImVec4(0.52f, 0.29f, 0.15f, 0.43f));
+    DEFAULT_COLOR(TextLink, AccentColor);
     DEFAULT_COLOR(TextSelectedBg, ImVec4(0.57f, 0.21f, 0.21f, 0.43f));
+    DEFAULT_COLOR(TreeLines, style.Colors[ImGuiCol_Separator]);
     DEFAULT_COLOR(DragDropTarget, ImVec4(0.6f, 0.45f, 0.3f, 1.0f));
+    DEFAULT_COLOR(DragDropTargetBg, ImVec4(0.00f, 0.00f, 0.00f, 0.00f));
+    DEFAULT_COLOR(UnsavedMarker, style.Colors[ImGuiCol_Text]);
     DEFAULT_COLOR(NavCursor, ImVec4(0.55f, 0.00f, 0.00f, 0.78f));
     DEFAULT_COLOR(NavWindowingHighlight, ImVec4(0.55f, 0.00f, 0.00f, 0.78f));
     DEFAULT_COLOR(NavWindowingDimBg, ImVec4(0.07f, 0.07f, 0.07f, 0.78f));

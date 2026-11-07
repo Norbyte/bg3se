@@ -115,20 +115,7 @@ public:
         };
         VK_CHECK(vkCreateDescriptorPool(device_, &createInfo, nullptr, &descriptorPool_));
 
-        VkSamplerCreateInfo samplerInfo
-        {
-            .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
-            .magFilter = VK_FILTER_LINEAR,
-            .minFilter = VK_FILTER_LINEAR,
-            .mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
-            .addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
-            .addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
-            .addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
-            .maxLod = VK_LOD_CLAMP_NONE,
-        };
-        VK_CHECK(vkCreateSampler(device_, &samplerInfo, nullptr, &sampler_));
-
-        IMGUI_DEBUG("VK initialization: desc pool %p, sampler %p", descriptorPool_, sampler_);
+        IMGUI_DEBUG("VK initialization: desc pool %p", descriptorPool_);
 
         ImGui_ImplVulkan_InitInfo init_info = {};
         init_info.Instance = instance_;
@@ -138,10 +125,8 @@ public:
         init_info.Queue = renderQueue_;
         init_info.PipelineCache = pipelineCache_;
         init_info.DescriptorPool = descriptorPool_;
-        init_info.Subpass = 0;
         init_info.MinImageCount = swapchain_.images_.size();
         init_info.ImageCount = swapchain_.images_.size();
-        init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
         init_info.Allocator = nullptr;
         init_info.CheckVkResultFn = [](VkResult err) {
             if (err != VK_SUCCESS) {
@@ -149,17 +134,18 @@ public:
                 TryDebugBreak();
             }
         };
-        // init_info.RenderPass = presentRenderPass_;
-        init_info.RenderPass = swapchain_.renderPass_;
+
+        init_info.PipelineInfoMain.RenderPass = swapchain_.renderPass_;
+        init_info.PipelineInfoMain.Subpass = 0;
+        init_info.PipelineInfoMain.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
         ImGui_ImplVulkan_Init(&init_info);
-        ImGui_ImplVulkan_CreateFontsTexture();
 
         initialized_ = true;
 
         IMGUI_DEBUG("VK POSTINIT - uiFrameworkStarted %d", uiFrameworkStarted_ ? 1 : 0);
         IMGUI_DEBUG("    Instance %p, PhysicalDevice %p, Device %p", instance_, physicalDevice_, device_);
         IMGUI_DEBUG("    QueueFamily %d, RenderQueue %p", queueFamily_, renderQueue_, swapChain_);
-        IMGUI_DEBUG("    PipelineCache %p, DescriptorPool %p, Sampler %p", pipelineCache_, descriptorPool_, sampler_);
+        IMGUI_DEBUG("    PipelineCache %p, DescriptorPool %p", pipelineCache_, descriptorPool_);
         IMGUI_DEBUG("VK SWAPCHAIN");
         IMGUI_DEBUG("    SwapChain %p, RenderPass %p, CommandPool %p", swapChain_, swapchain_.renderPass_, swapchain_.commandPool_);
         IMGUI_DEBUG("VK FRAMEBUFFERS");
@@ -192,16 +178,6 @@ public:
 
         curViewport_ = (curViewport_ + 1) % viewports_.size();
         GImGui->Viewports[0] = &viewports_[curViewport_].Viewport;
-
-        if (requestReloadFonts_) {
-            IMGUI_DEBUG("Rebuilding font atlas");
-            for (auto const& image : swapchain_.images_) {
-                VK_CHECK(vkWaitForFences(device_, 1, &image.fence, VK_TRUE, UINT64_MAX));
-            }
-            ImGui_ImplVulkan_DestroyFontsTexture();
-            drawViewport_ = -1;
-            requestReloadFonts_ = false;
-        }
 
         ImGui_ImplVulkan_NewFrame();
         IMGUI_FRAME_DEBUG("VK: NewFrame");
@@ -293,7 +269,7 @@ public:
         auto imageView = static_cast<VkImageView>(opaqueHandle);
         auto desc = textureDescriptors_.get_or_default(imageView, 0);
         if (!desc) {
-            desc = ImGui_ImplVulkan_AddTexture(sampler_, imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            desc = ImGui_ImplVulkan_AddTexture(imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
             if (desc) {
                 textureDescriptors_.set(imageView, desc);
             }
@@ -465,11 +441,6 @@ private:
             vkDestroyDescriptorPool(device_, descriptorPool_, nullptr);
             descriptorPool_ = VK_NULL_HANDLE;
             textureDescriptors_.clear();
-        }
-
-        if (sampler_ != VK_NULL_HANDLE) {
-            vkDestroySampler(device_, sampler_, nullptr);
-            sampler_ = VK_NULL_HANDLE;
         }
     }
 
@@ -841,7 +812,6 @@ private:
     VkSwapchainKHR swapChain_{ VK_NULL_HANDLE };
     VkPipelineCache pipelineCache_{ VK_NULL_HANDLE };
     VkDescriptorPool descriptorPool_{ VK_NULL_HANDLE };
-    VkSampler sampler_{ VK_NULL_HANDLE };
     std::array<ViewportInfo, 3> viewports_;
     int32_t drawViewport_{ -1 };
     int32_t curViewport_{ 0 };
