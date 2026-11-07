@@ -1568,7 +1568,7 @@ DragScalar::DragScalar()
 
 void DragScalar::StyledRender(DrawingContext& context)
 {
-    if (ImGui::DragScalarN(Label.c_str(), ImGuiDataType_Float, &Value, Components, 1.0f, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
+    if (ImGui::DragScalarN(Label.c_str(), ImGuiDataType_Float, &Value, Components, Speed, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
         if (OnChange) {
             Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Value);
         }
@@ -1578,7 +1578,7 @@ void DragScalar::StyledRender(DrawingContext& context)
 
 void DragInt::StyledRender(DrawingContext& context)
 {
-    if (ImGui::DragScalarN(Label.c_str(), ImGuiDataType_S32, &Value, Components, 1.0f, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
+    if (ImGui::DragScalarN(Label.c_str(), ImGuiDataType_S32, &Value, Components, Speed, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
         if (OnChange) {
             Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Value);
         }

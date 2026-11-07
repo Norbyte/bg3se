@@ -820,6 +820,7 @@ public:
     glm::vec4 Value{ 0.0f };
     glm::vec4 Min{ 0.0f };
     glm::vec4 Max{ 1.0f };
+    float Speed{ 1.0f };
     int Components{ 1 };
     GuiSliderFlags Flags{ 0 };
     lua::LuaDelegate<void (lua::ImguiHandle, glm::vec4)> OnChange;
@@ -836,6 +837,7 @@ public:
     glm::ivec4 Value{ 0 };
     glm::ivec4 Min{ 0 };
     glm::ivec4 Max{ 1 };
+    float Speed{ 1.0f };
     int Components{ 1 };
     GuiSliderFlags Flags{ 0 };
     lua::LuaDelegate<void (lua::ImguiHandle, glm::ivec4)> OnChange;
