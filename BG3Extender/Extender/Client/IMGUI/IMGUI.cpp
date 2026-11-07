@@ -249,7 +249,7 @@ void StyledRenderable::HandleDragDrop(DrawingContext& context)
 
     if (DragDropType && OnDragDrop && ImGui::BeginDragDropTarget())
     {
-        auto payload = ImGui::AcceptDragDropPayload(DragDropType.GetString());
+        auto payload = ImGui::AcceptDragDropPayload(DragDropType.GetString(), (ImGuiDragDropFlags)DropFlags);
         if (payload) {
             auto source = *static_cast<HandleType*>(payload->Data);
             Manager->GetEventQueue().Call(OnDragDrop, lua::ImguiHandle(Handle), lua::ImguiHandle(source));
