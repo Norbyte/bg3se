@@ -55,6 +55,7 @@ ClientState::~ClientState()
 {
     ecl::SetKeyboardMovementOverride(false);
     ecl::ResetKeyboardMovementBindings();
+    gExtender->GetClient().GetSDL().ResetRotationCursor();
     auto & sym = GetStaticSymbols();
 
     ecl::lua::ui::ReleasePropertyChangeHandlers(L);

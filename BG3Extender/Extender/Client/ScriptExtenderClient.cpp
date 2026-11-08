@@ -115,6 +115,7 @@ void ScriptExtender::PostStartup()
     visualHelpers_.Setup();
     InitializeKeyboardMovementOverride();
     InitializeKeyboardMovementBindings();
+    sdl_.InitializeRotationCursor();
     gExtender->GetPropertyMapManager().RegisterComponents(entityHelpers_);
     postStartupDone_ = true;
 }
