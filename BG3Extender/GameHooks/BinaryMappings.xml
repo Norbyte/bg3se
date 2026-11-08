@@ -371,6 +371,37 @@
       <Target Type="Absolute" Offset="@call" Symbol="gui__DCKeybindingOptions__RemapCall" />
     </Mapping>
 
+    <!-- Optional native camera rotation call sites; installed as a group. -->
+    <Mapping Name="CameraRotationToggle" AllowFail="true">
+      41 84 ?? 74 07
+      @start e8 ?? ?? ?? ff
+      eb 05
+      @stop e8 ?? ?? ?? ff
+      4c 8b
+      <Target Type="Absolute" Offset="@start" Symbol="CameraRotationStartCall" />
+      <Target Type="Absolute" Offset="@stop" Symbol="CameraRotationStopCall1" />
+    </Mapping>
+
+    <Mapping Name="CameraRotationStop2" AllowFail="true">
+      66 89 b7 f0 01 00 00
+      48 85 c9 74 ?? 8d 56 2e
+      @stop e8 ?? ?? ?? ??
+      <Target Type="Absolute" Offset="@stop" Symbol="CameraRotationStopCall2" />
+    </Mapping>
+
+    <Mapping Name="CameraRotationStop3" AllowFail="true">
+      48 85 c9 74 0a ba 2e 00 00 00
+      @stop e8 ?? ?? ?? ff
+      ?? 8b
+      <Target Type="Absolute" Offset="@stop" Symbol="CameraRotationStopCall3" />
+    </Mapping>
+
+    <Mapping Name="CameraRotationCursor" AllowFail="true">
+      f3 0f 11 4d ?? 4c ?? ?? ?? 48 ?? ?? ??
+      @cursor ff 90 08 01 00 00
+      <Target Type="Absolute" Offset="@cursor" Symbol="CameraRotationCursorCall" />
+    </Mapping>
+
     <Mapping Name="ls::gInputManager">
       0f 28 44 24 30 // movaps  xmm0, [rsp+88h+var_58]
       @str1 48 8d 05 ?? ?? ?? ?? // lea     rax, aPlayerprofiles_2; "PlayerProfiles/Eoc/keyboard_WhiteBoxing"...

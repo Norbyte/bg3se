@@ -163,6 +163,11 @@ namespace bg3se
         SYM_OFF(App__ReloadInputConfig);
         SYM_OFF(App__InputConfigPathCall);
         SYM_OFF(gui__DCKeybindingOptions__RemapCall);
+        SYM_OFF(CameraRotationStartCall);
+        SYM_OFF(CameraRotationStopCall1);
+        SYM_OFF(CameraRotationStopCall2);
+        SYM_OFF(CameraRotationStopCall3);
+        SYM_OFF(CameraRotationCursorCall);
 
         SYM_OFF(ecs__EntityWorld__Update);
         SYM_OFF(ecs__EntityWorld__FlushECBs);

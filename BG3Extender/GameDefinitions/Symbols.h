@@ -70,6 +70,11 @@ struct StaticSymbols : Noncopyable<StaticSymbols>
     uint8_t const* App__ReloadInputConfig{ nullptr };
     uint8_t const* App__InputConfigPathCall{ nullptr };
     uint8_t const* gui__DCKeybindingOptions__RemapCall{ nullptr };
+    uint8_t const* CameraRotationStartCall{ nullptr };
+    uint8_t const* CameraRotationStopCall1{ nullptr };
+    uint8_t const* CameraRotationStopCall2{ nullptr };
+    uint8_t const* CameraRotationStopCall3{ nullptr };
+    uint8_t const* CameraRotationCursorCall{ nullptr };
 
     ecs::EntityWorld__UpdateProc* ecs__EntityWorld__Update{ nullptr };
     ecs::EntityWorld__FlushECBsProc* ecs__EntityWorld__FlushECBs{ nullptr };

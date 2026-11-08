@@ -2085,4 +2085,16 @@ Read-only property returning the `CameraGlobalSwitches` selected for this camera
 
 `Ext.Input.SyncKeyboardMovementBindings()` (client only) copies the configured player-one camera directions into the corresponding `CharacterMove` bindings and reloads the game input config when it changes. It returns false if native mappings, config parsing or file replacement fail; failure disables the movement override. Call once when gameplay is ready, or explicitly to retry a failed setup. After successful setup, native keybinding-menu commits refresh the mappings automatically until the client Lua VM is reset.
 
-Synchronization follows native WASD policy: camera directions replace independent CharacterMove assignments, including inversion of the controller Y direction. Missing camera entries use the native defaults; explicitly empty arrays remain empty. Other preferences and camera bindings are preserved. Setup discovers the engine-selected profile rather than assuming a profile directory. Unchanged files are neither rewritten nor reloaded. Lua reset stops automatic synchronization and resets the movement override; the new VM must initialize again.
+
+### Rotation cursor
+
+`Ext.Input.SetRotationCursorEnabled(enabled)` (client only) enables invisible, confined relative mouse movement while the game rotates the camera. The hardware and game cursors return to the window-relative position recorded at rotation start when rotation ends. Disabling the policy, losing focus, or resetting client Lua releases an owned capture. The policy defaults to disabled and must be reapplied after a Lua reset.
+
+The boolean return value indicates whether native support is available and the request was accepted. Capture occurs on the SDL thread; a successful return does not guarantee acquisition. The policy is shared by client mods; the latest call wins.
+
+```lua
+-- Apply when the mod's camera/input settings are ready.
+local supported = Ext.Input.SetRotationCursorEnabled(true)
+-- Release when the mod yields control or turns the feature off.
+Ext.Input.SetRotationCursorEnabled(false)
+```

@@ -52,6 +52,11 @@ bool GetKeyboardMovementOverride()
     return ecl::GetKeyboardMovementOverride();
 }
 
+bool SetRotationCursorEnabled(bool enabled)
+{
+    return gExtender->GetClient().GetSDL().SetRotationCursorEnabled(enabled);
+}
+
 bool SyncKeyboardMovementBindings()
 {
     return ecl::SyncKeyboardMovementBindings();
@@ -67,6 +72,7 @@ void RegisterInputLib()
     MODULE_FUNCTION(GetInputManager)
     MODULE_FUNCTION(SetKeyboardMovementOverride)
     MODULE_FUNCTION(GetKeyboardMovementOverride)
+    MODULE_FUNCTION(SetRotationCursorEnabled)
     MODULE_FUNCTION(SyncKeyboardMovementBindings)
     END_MODULE()
 }
