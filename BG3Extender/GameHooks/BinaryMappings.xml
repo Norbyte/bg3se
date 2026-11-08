@@ -179,6 +179,65 @@
       <Target Type="Indirect" Offset="@ref4" Symbol="ecs__EntityWorld__Update" />
     </Mapping>
 
+    <Mapping Name="ecl::CameraSystem::UpdateCamera">
+      @ref1 e8 ?? ?? ?? ?? // call    ecl__CameraSystem__UpdateCamera
+      48 8d 8d f8 04 00 00 // lea     rcx, [rbp+4F8h]
+      e8 ?? ?? ?? ?? // call    cleanup
+      e9 af fd ff ff // jmp     camera loop
+      <Target Type="Indirect" Offset="@ref1" Symbol="ecl__CameraSystem__UpdateCamera" />
+    </Mapping>
+
+    <Mapping Name="ecl::CameraSystem::UpdateCameraPitch">
+      f3 0f 11 6d f0 // movss   [rbp-10h], xmm5
+      e8 ?? ?? ?? ?? // call    Normalize
+      f2 0f 10 45 e8 // movsd   xmm0, [rbp-18h]
+      8b 45 f0 // mov     eax, [rbp-10h]
+      f2 0f 11 47 70 // movsd   [rdi+70h], xmm0
+      89 47 78 // mov     [rdi+78h], eax
+      4c 8b cb // mov     r9, rbx
+      4c 8b c7 // mov     r8, rdi
+      49 8b d6 // mov     rdx, r14
+      49 8b cf // mov     rcx, r15
+      @ref1 e8 ?? ?? ?? ?? // call    ecl__CameraSystem__UpdateCameraPitch
+      48 8b 46 70 // mov     rax, [rsi+70h]
+      <Target Type="Indirect" Offset="@ref1" Symbol="ecl__CameraSystem__UpdateCameraPitch" />
+    </Mapping>
+
+    <Mapping Name="ecl::CameraSystem::UpdateCameraZoom">
+      @ref1 e8 ?? ?? ?? ?? // call    ecl__CameraSystem__UpdateCameraZoom
+      80 bf 54 02 00 00 00 // cmp     byte ptr [rdi+254h], 0
+      <Target Type="Indirect" Offset="@ref1" Symbol="ecl__CameraSystem__UpdateCameraZoom" />
+    </Mapping>
+
+    <Mapping Name="ecl::GameCameraBehavior::GetCameraDefinition">
+      48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ls_GlobalSwitches
+      80 b8 32 13 00 00 00 // cmp     byte ptr [rax+1332h], 0
+      74 07 // jz      normal camera definition
+      <Target Type="Absolute" Offset="0" Symbol="ecl__GameCameraBehavior__GetCameraDefinition" />
+    </Mapping>
+
+    <Mapping Name="ecl::GameCameraBehavior::CalculatePitch">
+      @ref1 e8 ?? ?? ?? ?? // call    ecl__GameCameraBehavior__CalculatePitch
+      80 bf 4c 01 00 00 00 // cmp     byte ptr [rdi+14Ch], 0
+      <Target Type="Indirect" Offset="@ref1" Symbol="ecl__GameCameraBehavior__CalculatePitch" />
+    </Mapping>
+
+    <Mapping Name="ecl::CameraSystem::HandleInput">
+      @ref1 e8 ?? ?? ?? ?? // call    ecl__CameraSystem__HandleInput
+      0f b7 08 // movzx   ecx, word ptr [rax]
+      66 89 0b // mov     [rbx], cx
+      80 3b 00 // cmp     byte ptr [rbx], 0
+      <Target Type="Indirect" Offset="@ref1" Symbol="ecl__CameraSystem__HandleInput" />
+    </Mapping>
+
+    <Mapping Name="ecl::CameraSystem::SetDefaultZoom">
+      @ref1 e8 ?? ?? ?? ?? // call    ecl__CameraSystem__SetDefaultZoom
+      48 8b cf // mov     rcx, rdi
+      e8 ?? ?? ?? ?? // call    camera mode update
+      e9 81 02 00 00 // jmp     input handling continuation
+      <Target Type="Indirect" Offset="@ref1" Symbol="ecl__CameraSystem__SetDefaultZoom" />
+    </Mapping>
+
     <Mapping Name="ecs__EntityWorld__FlushECBs">
       48 83 be 00 03 00 00 00 // cmp     qword ptr [rsi+300h], 0
       74 08 // jz      short loc_143693C93
