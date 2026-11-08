@@ -30,6 +30,7 @@ EVENT_NS(BeforeDealDamage, BeforeDealDamage, esv::lua, BeforeDealDamageEventPara
 EVENT_NS(DealDamage, DealDamage, esv::lua, DealDamageEventParams, Server, false, lua::RestrictionFlag::None)
 EVENT_NS(DealtDamage, DealtDamage, esv::lua, DealtDamageEventParams, Server, false, lua::RestrictionFlag::None)
 
+EVENT_NS(CameraCommitting, CameraCommitting, ecl::lua, CameraCommittingEventParams, Client, false, lua::RestrictionFlag::None)
 EVENT_NS(CameraUpdating, CameraUpdating, ecl::lua, CameraUpdatingEventParams, Client, false, lua::RestrictionFlag::None)
 EVENT_NS(CameraUpdated, CameraUpdated, ecl::lua, CameraUpdatedEventParams, Client, false, lua::RestrictionFlag::None)
 EVENT_NS(CameraPitchUpdating, CameraPitchUpdating, ecl::lua, CameraPitchUpdatingEventParams, Client, false, lua::RestrictionFlag::None)

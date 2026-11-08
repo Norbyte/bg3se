@@ -63,6 +63,13 @@ struct ViewportResizedEventParams : public lua::EventBase
     int Height;
 };
 
+struct CameraCommittingEventParams : public lua::EventBase
+{
+    [[bg3::readonly]] EntityHandle Entity;
+    glm::vec3 Eye;
+    glm::vec3 Target;
+};
+
 struct CameraUpdatingEventParams : public lua::EventBase
 {
     [[bg3::readonly]] EntityHandle Entity;

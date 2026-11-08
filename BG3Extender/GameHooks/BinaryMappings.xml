@@ -179,6 +179,22 @@
       <Target Type="Indirect" Offset="@ref4" Symbol="ecs__EntityWorld__Update" />
     </Mapping>
 
+    <Mapping Name="ls::CameraSystem::CommitCamera">
+      @ref1 48 89 5c 24 18
+      48 89 6c 24 20
+      57 41 56 41 57
+      48 81 ec b0 00 00 00
+      48 8b 3a
+      49 8b e9
+      48 8b c7
+      4d 8b f8
+      48 c1 e8 36
+      48 8b da
+      4c 8b f1
+      83 f8 40
+      <Target Type="Absolute" Offset="@ref1" Symbol="ls__CameraSystem__CommitCamera" />
+    </Mapping>
+
     <Mapping Name="ecl::CameraSystem::UpdateCamera">
       @ref1 e8 ?? ?? ?? ?? // call    ecl__CameraSystem__UpdateCamera
       48 8d 8d f8 04 00 00 // lea     rcx, [rbp+4F8h]

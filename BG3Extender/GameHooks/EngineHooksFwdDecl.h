@@ -19,6 +19,7 @@ struct Visual;
 struct CameraGlobalSwitches;
 
 using CoreLibInitProc = void (void*);
+using CameraSystem__CommitCameraProc = void (void* self, ecs::EntityRef const& entity, glm::vec3 const& eye, glm::vec3 const& target);
 
 using AiPathId = int32_t;
 
