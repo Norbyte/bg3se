@@ -1,4 +1,5 @@
 #include <stdafx.h>
+#include <Extender/Client/KeyboardMovement.h>
 #include <Extender/Client/ExtensionStateClient.h>
 #include <Extender/Client/ScriptExtenderClient.h>
 #include <Lua/Debugger/LuaDebugger.h>
@@ -112,6 +113,8 @@ void ScriptExtender::PostStartup()
     OPTICK_EVENT();
     entityHelpers_.Setup();
     visualHelpers_.Setup();
+    InitializeKeyboardMovementOverride();
+    InitializeKeyboardMovementBindings();
     gExtender->GetPropertyMapManager().RegisterComponents(entityHelpers_);
     postStartupDone_ = true;
 }
