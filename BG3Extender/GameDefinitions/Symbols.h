@@ -66,6 +66,10 @@ struct StaticSymbols : Noncopyable<StaticSymbols>
     ecl::CameraSystem__SetDefaultZoomProc* ecl__CameraSystem__SetDefaultZoom{ nullptr };
     App__LoadGraphicSettingsProc* App__LoadGraphicSettings{ nullptr };
     input::InputManager** ls__gInputManager{ nullptr };
+    uint8_t const* ecl__MoveController__KeyboardModeGate{ nullptr };
+    uint8_t const* App__ReloadInputConfig{ nullptr };
+    uint8_t const* App__InputConfigPathCall{ nullptr };
+    uint8_t const* gui__DCKeybindingOptions__RemapCall{ nullptr };
 
     ecs::EntityWorld__UpdateProc* ecs__EntityWorld__Update{ nullptr };
     ecs::EntityWorld__FlushECBsProc* ecs__EntityWorld__FlushECBs{ nullptr };

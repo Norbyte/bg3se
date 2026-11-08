@@ -343,6 +343,34 @@
       <Target Type="Absolute" Offset="0" Symbol="App__LoadGraphicSettings" />
     </Mapping>
 
+    <!-- Optional keyboard movement gate; the fall-through path overwrites EAX. -->
+    <Mapping Name="ecl::CharacterTask_MoveController::KeyboardModeGate" AllowFail="true">
+      80 3d ?? ?? ?? ?? 00 // cmp byte ptr [controllerMode], 0
+      0f 84 26 02 00 00 // je original rejection path
+      49 8b 4f 68 // mov rcx, [r15+Character]
+      8b 05 ?? ?? ?? ?? // mov eax, [user sentinel]
+      39 81 28 01 00 00 // cmp [rcx+user identity], eax
+      <Target Type="Absolute" Offset="0" Symbol="ecl__MoveController__KeyboardModeGate" />
+    </Mapping>
+
+    <Mapping Name="App::InputConfigPath" Scope="Custom" AllowFail="true">
+      e8 ?? ?? ?? ?? 90 45 ?? ?? 45 ?? ?? 48 ?? ?? 49
+      <Target Type="Absolute" Offset="0" Symbol="App__InputConfigPathCall" />
+    </Mapping>
+
+    <Mapping Name="App::ReloadInputConfig" AllowFail="true">
+      44 0f b6 fa 88 55 c0 48 8b f1
+      4c 8b 35 ?? ?? ?? ?? 48 8b 0d ?? ?? ?? ?? 48 8b 01 ff 50 20
+      <Target Type="Absolute" Offset="-45" Symbol="App__ReloadInputConfig" />
+      <Target Type="Absolute" Offset="-45" NextSymbol="App::InputConfigPath" NextSymbolSeekSize="2048" />
+    </Mapping>
+
+    <Mapping Name="gui::DCKeybindingOptions::Remap" AllowFail="true">
+      48 83 bb ?? ?? 00 00 00 74 08 48 8b cb
+      @call e8 ?? ?? ea ff
+      <Target Type="Absolute" Offset="@call" Symbol="gui__DCKeybindingOptions__RemapCall" />
+    </Mapping>
+
     <Mapping Name="ls::gInputManager">
       0f 28 44 24 30 // movaps  xmm0, [rsp+88h+var_58]
       @str1 48 8d 05 ?? ?? ?? ?? // lea     rax, aPlayerprofiles_2; "PlayerProfiles/Eoc/keyboard_WhiteBoxing"...

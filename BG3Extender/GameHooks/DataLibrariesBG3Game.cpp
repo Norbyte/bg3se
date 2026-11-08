@@ -159,6 +159,10 @@ namespace bg3se
         SYM_OFF(ecl__CameraSystem__SetDefaultZoom);
         SYM_OFF(App__LoadGraphicSettings);
         SYM_OFF(ls__gInputManager);
+        SYM_OFF(ecl__MoveController__KeyboardModeGate);
+        SYM_OFF(App__ReloadInputConfig);
+        SYM_OFF(App__InputConfigPathCall);
+        SYM_OFF(gui__DCKeybindingOptions__RemapCall);
 
         SYM_OFF(ecs__EntityWorld__Update);
         SYM_OFF(ecs__EntityWorld__FlushECBs);

@@ -42,6 +42,7 @@
 - [Stats](#stats)
   - [Stats Objects](#stats-objects)
   - [Reading/Writing Stat Attributes](#reading-writing-stats)
+- [Input](#input)
 - [Input/Output (IO)](#io)
 - [Timers](#timers)
 - [JSON Support](#json-support)
@@ -2076,3 +2077,12 @@ All camera events expose `Camera` (`ecl.GameCameraBehavior`). Its fields can be 
 ### GameCameraBehavior.CameraDefinition
 
 Read-only property returning the `CameraGlobalSwitches` selected for this camera on each access. The returned object's fields are writable. Available through `entity.GameCameraBehavior.CameraDefinition` independently of subscriptions, and through `e.Camera.CameraDefinition` in a callback. Returns `nil` if the native getter is unavailable.
+
+
+## Input <a id="input"></a>
+
+### Keyboard movement bindings
+
+`Ext.Input.SyncKeyboardMovementBindings()` (client only) copies the configured player-one camera directions into the corresponding `CharacterMove` bindings and reloads the game input config when it changes. It returns false if native mappings, config parsing or file replacement fail; failure disables the movement override. Call once when gameplay is ready, or explicitly to retry a failed setup. After successful setup, native keybinding-menu commits refresh the mappings automatically until the client Lua VM is reset.
+
+Synchronization follows native WASD policy: camera directions replace independent CharacterMove assignments, including inversion of the controller Y direction. Missing camera entries use the native defaults; explicitly empty arrays remain empty. Other preferences and camera bindings are preserved. Setup discovers the engine-selected profile rather than assuming a profile directory. Unchanged files are neither rewritten nor reloaded. Lua reset stops automatic synchronization and resets the movement override; the new VM must initialize again.
