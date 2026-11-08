@@ -57,6 +57,7 @@ struct StaticSymbols : Noncopyable<StaticSymbols>
     esv::GameStateThreaded__GameStateWorker__DoWorkProc* esv__GameStateThreaded__GameStateWorker__DoWork{ nullptr };
     ecl::GameStateMachine__UpdateProc* ecl__GameStateMachine__Update{ nullptr };
     esv::GameStateMachine__UpdateProc* esv__GameStateMachine__Update{ nullptr };
+    CameraSystem__CommitCameraProc* ls__CameraSystem__CommitCamera{ nullptr };
     ecl::CameraSystem__UpdateCameraProc* ecl__CameraSystem__UpdateCamera{ nullptr };
     ecl::CameraSystem__UpdateCameraPitchProc* ecl__CameraSystem__UpdateCameraPitch{ nullptr };
     ecl::CameraSystem__UpdateCameraZoomProc* ecl__CameraSystem__UpdateCameraZoom{ nullptr };

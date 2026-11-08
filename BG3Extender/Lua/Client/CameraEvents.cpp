@@ -11,6 +11,7 @@ BEGIN_NS(ecl::lua)
 CameraEventHooks::CameraEventHooks()
 {
     auto& hooks = gExtender->GetEngineHooks();
+    hooks.ls__CameraSystem__CommitCamera.SetWrapper(&CameraEventHooks::OnCameraCommitting, this);
     hooks.ecl__CameraSystem__UpdateCamera.SetPrePostHook(&CameraEventHooks::OnCameraUpdating, &CameraEventHooks::OnCameraUpdated, this);
     hooks.ecl__CameraSystem__UpdateCameraPitch.SetPrePostHook(&CameraEventHooks::OnCameraPitchUpdating, &CameraEventHooks::OnCameraPitchUpdated, this);
     hooks.ecl__CameraSystem__UpdateCameraZoom.SetPostHook(&CameraEventHooks::OnCameraZoomUpdated, this);
@@ -22,12 +23,37 @@ CameraEventHooks::CameraEventHooks()
 CameraEventHooks::~CameraEventHooks()
 {
     auto& hooks = gExtender->GetEngineHooks();
+    hooks.ls__CameraSystem__CommitCamera.ClearHook();
     hooks.ecl__CameraSystem__UpdateCamera.ClearHook();
     hooks.ecl__CameraSystem__UpdateCameraPitch.ClearHook();
     hooks.ecl__CameraSystem__UpdateCameraZoom.ClearHook();
     hooks.ecl__GameCameraBehavior__CalculatePitch.ClearHook();
     hooks.ecl__CameraSystem__HandleInput.ClearHook();
     hooks.ecl__CameraSystem__SetDefaultZoom.ClearHook();
+}
+
+void CameraEventHooks::OnCameraCommitting(CameraSystem__CommitCameraProc* next, void* self, ecs::EntityRef const& entity, glm::vec3 const& eye, glm::vec3 const& target)
+{
+    CameraCommittingEventParams evt{
+        .Entity = entity.Handle,
+        .Eye = eye,
+        .Target = target
+    };
+    bool accepted{ false };
+    {
+        ContextGuardAnyThread context(ContextType::Client);
+        auto& extension = gExtender->GetClient().GetExtensionState();
+        if (extension.ThrowEvent<bg3se::CameraCommittingEvent>(evt) == EventResult::Successful) {
+            auto finite = [](float value) { return (std::bit_cast<uint32_t>(value) & 0x7f800000u) != 0x7f800000u; };
+            auto direction = evt.Target - evt.Eye;
+            auto lengthSq = glm::dot(direction, direction);
+            accepted = finite(evt.Eye.x) && finite(evt.Eye.y) && finite(evt.Eye.z)
+                && finite(evt.Target.x) && finite(evt.Target.y) && finite(evt.Target.z)
+                && finite(lengthSq) && lengthSq > 0.0f;
+        }
+    }
+
+    next(self, entity, accepted ? evt.Eye : eye, accepted ? evt.Target : target);
 }
 
 void CameraEventHooks::OnCameraUpdating(void* self, void* systemContext, ecl::CameraUpdateTime const* time, ecl::CameraUpdateComponentView* view)

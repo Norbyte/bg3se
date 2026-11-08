@@ -150,6 +150,7 @@ namespace bg3se
         SYM_OFF(esv__GameStateThreaded__GameStateWorker__DoWork);
         SYM_OFF(ecl__GameStateMachine__Update);
         SYM_OFF(esv__GameStateMachine__Update);
+        SYM_OFF(ls__CameraSystem__CommitCamera);
         SYM_OFF(ecl__CameraSystem__UpdateCamera);
         SYM_OFF(ecl__CameraSystem__UpdateCameraPitch);
         SYM_OFF(ecl__CameraSystem__UpdateCameraZoom);

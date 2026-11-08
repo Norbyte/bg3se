@@ -11,6 +11,7 @@ public:
     ~CameraEventHooks();
 
 private:
+    void OnCameraCommitting(CameraSystem__CommitCameraProc* next, void* self, ecs::EntityRef const& entity, glm::vec3 const& eye, glm::vec3 const& target);
     void OnCameraUpdating(void* self, void* systemContext, ecl::CameraUpdateTime const* time, ecl::CameraUpdateComponentView* view);
     void OnCameraUpdated(void* self, void* systemContext, ecl::CameraUpdateTime const* time, ecl::CameraUpdateComponentView* view);
     void OnCameraPitchUpdating(void* self, void* entity, ecl::GameCameraBehavior* camera, ecl::CameraUpdateTime const* time);

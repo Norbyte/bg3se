@@ -2054,13 +2054,14 @@ The update events are listed in gameplay update order. Input handling and zoom r
 | `CameraPitchCalculated` | Client-only. Allows overriding a calculated camera pitch. |
 | `CameraPitchUpdated` | Client-only. Thrown after the camera pitch update. |
 | `CameraZoomUpdated` | Client-only. Thrown after zoom and collision-distance updates, before final placement. |
+| `CameraCommitting` | Client-only. Allows editing eye and target immediately before native camera submission. |
 | `CameraUpdated` | Client-only. Thrown after a gameplay camera is updated. |
 | `CameraInput` | Client-only. Allows modifying or preventing camera input handling. |
 | `CameraInputHandled` | Client-only. Thrown after camera input handling. |
 | `CameraZoomResetting` | Client-only. Thrown before the default zoom is applied. |
 | `CameraZoomReset` | Client-only. Thrown after the default zoom is applied. |
 
-All camera events expose `Camera` (`ecl.GameCameraBehavior`). Its fields can be modified, but the reference cannot be replaced. Event objects and their references are only valid during the callback.
+All camera events except `CameraCommitting` expose `Camera` (`ecl.GameCameraBehavior`). Its fields can be modified, but the reference cannot be replaced. Event objects and their references are only valid during the callback.
 
 `CameraUpdating` and `CameraUpdated` also expose read-only `Entity`, the entity that owns the camera component.
 
@@ -2073,6 +2074,12 @@ All camera events expose `Camera` (`ecl.GameCameraBehavior`). Its fields can be 
 `CameraInputHandled` exposes the same `Camera` and `Input`, plus read-only `Result` returned by the handler. It is not thrown when `CameraInput` prevents handling.
 
 `CameraZoomResetting` and `CameraZoomReset` cannot be prevented. They run before and after the default-zoom routine, respectively.
+
+`CameraCommitting` runs immediately before the native camera transform is submitted. For gameplay cameras this is after obstruction/avoidance placement, inside `CameraUpdating`/`CameraUpdated`. It also applies to other cameras using this commit routine; it is not a once-per-frame notification.
+
+The payload has read-only `Entity` and writable `Eye` and `Target` world-space `vec3` values. Assign `{x, y, z}` tables to these fields to replace the submitted position and look-at target. Changes affect this submission only; they do not overwrite the gameplay camera's target or smoothing state. No `Camera` field is supplied because this routine also accepts cameras without `GameCameraBehavior`. Filter by `Entity` when an override should affect a particular camera.
+
+The event cannot prevent the native commit. Failed dispatch, nonfinite coordinates, and zero-length or nonfinite eye-to-target squared distance retain both original vectors. Event objects expire after the callback; copy values that must be retained.
 
 ### GameCameraBehavior.CameraDefinition
 
