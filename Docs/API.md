@@ -1575,6 +1575,10 @@ Server and client filesystem helpers.
   Reads file contents. Returns `nil` if the file cannot be read.
 - `Ext.IO.SaveFile(path, content): boolean`
   Writes content to a file. Creates missing parent directories.
+- `Ext.IO.AppendFile(path, content): boolean`
+  Appends content to a file, creating it (and its missing parent directories) when needed.
+- `Ext.IO.FindFiles(path, glob, [context], [recursive], [checkPackedFiles]): string[]`
+  Lists the files in the folder `path` whose names match `glob` (e.g. `*.json`), as paths relative to that folder. `recursive` (default `false`) also searches its subfolders; `checkPackedFiles` (default `true`) also lists the files packed in `.pak` files. `context` is `user` (the default) or `data`. With `user`, `path` starts in the profile's folder (where `Mods` and `Script Extender` are) and may be empty, while `LoadFile` and `SaveFile` start in its `Script Extender` folder: a file found with `FindFiles("Script Extender/MyMod", "*.json")` is read with `LoadFile("MyMod/" .. name)`.
 - `Ext.IO.AddPathOverride(originalPath, newPath)`
   Redirects game file access from `originalPath` to `newPath`.
 - `Ext.IO.GetPathOverride(path): string?`
