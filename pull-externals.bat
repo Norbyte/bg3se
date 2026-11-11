@@ -36,7 +36,7 @@ rem ##### IMGUI #####
 
 git clone https://github.com/Norbyte/imgui
 cd imgui
-git reset --hard 8b24a636ac82421d24c12cc4376683df264253c8
+git reset --hard 0c44880d5f783e83d0e086a9dfc5d8caf055051a
 cd ..
 
 rem ##### LUA #####
