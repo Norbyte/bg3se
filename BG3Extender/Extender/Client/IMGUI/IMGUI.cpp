@@ -2171,7 +2171,20 @@ void IMGUIManager::UpdateStyle()
     DEFAULT_COLOR(NavWindowingDimBg, ImVec4(0.07f, 0.07f, 0.07f, 0.78f));
     DEFAULT_COLOR(ModalWindowDimBg, ImVec4(0.18f, 0.15f, 0.15f, 0.73f));
 
+    auto unscaledStyle = style;
     style.ScaleAllSizes(requestedScale_ * requestedUiScaleMultiplier_);
+
+    // IMGUI VANILLA BUG WORKAROUND - REMOVE WHEN ITS FIXED!
+    // ScaleAllSizes() truncates every value (including borders), so 1px borders disappear when scaling below 1.0
+    for (auto size : { &ImGuiStyle::WindowBorderSize, &ImGuiStyle::ChildBorderSize, &ImGuiStyle::PopupBorderSize,
+        &ImGuiStyle::FrameBorderSize, &ImGuiStyle::ImageBorderSize, &ImGuiStyle::TabBorderSize, &ImGuiStyle::TabBarBorderSize,
+        &ImGuiStyle::TabBarOverlineSize, &ImGuiStyle::TreeLinesSize, &ImGuiStyle::DragDropTargetBorderSize,
+        &ImGuiStyle::InputTextCursorSize, &ImGuiStyle::SeparatorSize, &ImGuiStyle::SeparatorTextBorderSize }) {
+        if (unscaledStyle.*size > 0.0f) {
+            style.*size = std::max(style.*size, 1.0f);
+        }
+    }
+
     style.FontScaleMain = requestedScale_ * requestedFontScaleMultiplier_;
     scale_ = requestedScale_;
     uiScaleMultiplier_ = requestedUiScaleMultiplier_;
