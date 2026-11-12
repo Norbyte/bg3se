@@ -143,9 +143,12 @@ END_NS()
 BEGIN_NS(dlg)
 
 struct Dialog;
+struct DialogNode;
 struct DialogManager;
 
+using CustomNodeVisitorProc = bool (ObjectVisitor&, DialogNode&, void*);
+
 // Loads a dialogue into the manager's cache, or takes another reference on the cached copy
-using DialogManager__LoadDialogProc = Dialog* (DialogManager* self, resource::DialogResource* resource, void* a3, void* a4);
+using DialogManager__PerformDialogLoad = Dialog* (DialogManager* self, resource::DialogResource const* Resource, CustomNodeVisitorProc* CustomNodeVisitor, void* CustomNodeVisitData);
 
 END_NS()

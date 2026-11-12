@@ -651,7 +651,7 @@ struct TimelineSystem : public BaseSystem
     [[bg3::hidden]] void* TimelineInstanceManager;
     [[bg3::hidden]] void* NetworkManager;
     [[bg3::hidden]] void* PlayerManager;
-    dlg::DialogManager* DialogManager;
+    [[bg3::hidden]] dlg::DialogManager* DialogManager;
     [[bg3::hidden]] void* CameraManager;
     [[bg3::hidden]] void* AspkComponentFactoryCustom;
     [[bg3::hidden]] UnknownFunction SignalConnectionCollection;
