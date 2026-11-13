@@ -28,19 +28,21 @@ struct EnumRegistrationEntry
 
 static constexpr EnumRegistrationEntry gEnumRegistrationTable[] = {
 
-#define BEGIN_BITMASK_NS(NS, T, luaName, type, id) { .Name = #NS "::" #T, .LuaName = #luaName, .TypeId = id, .Type = EnumRegistrationType::BitfieldType },
-#define BEGIN_ENUM_NS(NS, T, luaName, type, id) { .Name = #NS "::" #T, .LuaName = #luaName, .TypeId = id, .Type = EnumRegistrationType::EnumType },
-#define BEGIN_BITMASK(T, type, id) { .Name = #T, .LuaName = #T, .TypeId = id, .Type = EnumRegistrationType::BitfieldType },
-#define BEGIN_ENUM(T, type, id) { .Name = #T, .LuaName = #T, .TypeId = id, .Type = EnumRegistrationType::EnumType },
+#define BEGIN_BITMASK_NS(NS, T, luaName, type, ...) { .Name = #NS "::" #T, .LuaName = #luaName, .TypeId = ENUM_TYPE_ID(__VA_ARGS__), .Type = EnumRegistrationType::BitfieldType },
+#define BEGIN_ENUM_NS(NS, T, luaName, type, ...) { .Name = #NS "::" #T, .LuaName = #luaName, .TypeId = ENUM_TYPE_ID(__VA_ARGS__), .Type = EnumRegistrationType::EnumType },
+#define BEGIN_BITMASK(T, type, ...) { .Name = #T, .LuaName = #T, .TypeId = ENUM_TYPE_ID(__VA_ARGS__), .Type = EnumRegistrationType::BitfieldType },
+#define BEGIN_ENUM(T, type, ...) { .Name = #T, .LuaName = #T, .TypeId = ENUM_TYPE_ID(__VA_ARGS__), .Type = EnumRegistrationType::EnumType },
+#define E(label) EV(label, 0)
 #define EV(label, value) { .Name = #label, .Value = (EnumUnderlyingType)value, .Type = EnumRegistrationType::Value },
 #define END_ENUM_NS()
 #define END_ENUM()
-#include <GameDefinitions/Generated/Enumerations.inl>
-#include <GameDefinitions/Generated/ExternalEnumerations.inl>
+#include <GameDefinitions/AllEnumerations.inl>
+#include <GameDefinitions/AllExternalEnumerations.inl>
 #undef BEGIN_BITMASK_NS
 #undef BEGIN_ENUM_NS
 #undef BEGIN_BITMASK
 #undef BEGIN_ENUM
+#undef E
 #undef EV
 #undef END_ENUM_NS
 #undef END_ENUM
@@ -105,21 +107,23 @@ void RegisterEnumerationTypeInformation()
         }
     }
 
-#define BEGIN_BITMASK_NS(NS, T, luaName, type, id) GetStaticTypeInfo(Overload<NS::T>{}).Type = bitmaskInfos[id];
-#define BEGIN_ENUM_NS(NS, T, luaName, type, id) GetStaticTypeInfo(Overload<NS::T>{}).Type = enumInfos[id];
-#define BEGIN_BITMASK(T, type, id) GetStaticTypeInfo(Overload<T>{}).Type = bitmaskInfos[id];
-#define BEGIN_ENUM(T, type, id) GetStaticTypeInfo(Overload<T>{}).Type = enumInfos[id];
+#define BEGIN_BITMASK_NS(NS, T, luaName, type, ...) GetStaticTypeInfo(Overload<NS::T>{}).Type = bitmaskInfos[ENUM_TYPE_ID(__VA_ARGS__)];
+#define BEGIN_ENUM_NS(NS, T, luaName, type, ...) GetStaticTypeInfo(Overload<NS::T>{}).Type = enumInfos[ENUM_TYPE_ID(__VA_ARGS__)];
+#define BEGIN_BITMASK(T, type, ...) GetStaticTypeInfo(Overload<T>{}).Type = bitmaskInfos[ENUM_TYPE_ID(__VA_ARGS__)];
+#define BEGIN_ENUM(T, type, ...) GetStaticTypeInfo(Overload<T>{}).Type = enumInfos[ENUM_TYPE_ID(__VA_ARGS__)];
+#define E(label)
 #define EV(label, value)
 #define END_ENUM_NS()
 #define END_ENUM()
 
-#include <GameDefinitions/Generated/Enumerations.inl>
-#include <GameDefinitions/Generated/ExternalEnumerations.inl>
+#include <GameDefinitions/AllEnumerations.inl>
+#include <GameDefinitions/AllExternalEnumerations.inl>
 
 #undef BEGIN_BITMASK_NS
 #undef BEGIN_ENUM_NS
 #undef BEGIN_BITMASK
 #undef BEGIN_ENUM
+#undef E
 #undef EV
 #undef END_ENUM_NS
 #undef END_ENUM

@@ -80,6 +80,8 @@ void ClientState::Initialize()
     if (debugger) {
         debugger->ClientStateCreated(this);
     }
+
+    gExtender->IMGUI().SetObjects(&*imgui_);
 }
 
 bool ClientState::IsClient()

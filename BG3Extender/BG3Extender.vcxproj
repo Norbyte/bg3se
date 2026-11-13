@@ -487,6 +487,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="cpp.hint" />
     <None Include="Exports.def" />
     <None Include="Extender\Client\IMGUI\DX11.inl" />
+    <None Include="Extender\Client\IMGUI\TextureMirror.inl" />
     <ClCompile Include="Extender\Client\SDL.cpp" />
     <None Include="Extender\Client\IMGUI\Vulkan.inl" />
     <ClCompile Include="Extender\Client\VisualHelpers.cpp" />
@@ -504,6 +505,9 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="Extender\Shared\VTTileDecode.inl" />
     <None Include="Extender\Shared\VTTileEncode.inl" />
     <None Include="GameDefinitions\Ai.inl" />
+    <None Include="GameDefinitions\AllEnumerations.inl" />
+    <None Include="GameDefinitions\AllEvents.inl" />
+    <None Include="GameDefinitions\AllExternalEnumerations.inl" />
     <None Include="GameDefinitions\AllSpark.inl" />
     <None Include="GameDefinitions\Animation.inl" />
     <None Include="GameDefinitions\Base\Lock.inl" />

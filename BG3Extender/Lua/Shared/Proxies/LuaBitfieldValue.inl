@@ -219,12 +219,18 @@ EnumUnderlyingType get_bitfield_value(lua_State* L, int index, BitfieldTypeId ty
     case LUA_TSTRING:
     {
         auto val = do_get(L, index, Overload<FixedString>{});
-        auto valueIndex = store.Find(val);
-        if (valueIndex) {
-            return *valueIndex;
+        // Empty string = no flags are set (0)
+        if (!val) {
+            return 0;
         } else {
-            luaL_error(L, "Param %d: not a valid '%s' bitfield value: %s", index, store.EnumName.GetString(), val.GetString());
+            auto valueIndex = store.Find(val);
+            if (valueIndex) {
+                return *valueIndex;
+            } else {
+                luaL_error(L, "Param %d: not a valid '%s' bitfield value: %s", index, store.EnumName.GetString(), val.GetString());
+            }
         }
+
         break;
     }
 

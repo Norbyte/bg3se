@@ -2,6 +2,7 @@
 
 #include <GameDefinitions/Base/Base.h>
 #include <Extender/Client/IMGUI/Backends.h>
+#include <Extender/Client/IMGUI/TextureMirror.inl>
 #include <Extender/ScriptExtender.h>
 #include <CoreLib/Wrappers.h>
 #include <vulkan/vulkan.h>
@@ -134,6 +135,7 @@ public:
         if (!initialized_) return;
 
         IMGUI_DEBUG("DX11Backend::DestroyUI()");
+        mirroredTextures_.Destroy(&ImGui_ImplDX11_UpdateTexture);
         ImGui_ImplDX11_Shutdown();
         initialized_ = false;
         renderObjectsCreated_ = false;
@@ -144,27 +146,15 @@ public:
         curViewport_ = (curViewport_ + 1) % viewports_.size();
         GImGui->Viewports[0] = &viewports_[curViewport_].Viewport;
 
-        if (requestReloadFonts_ || !renderObjectsCreated_) {
+        if (!renderObjectsCreated_ && !initializationFailed_) {
             std::lock_guard _(globalResourceLock_);
-            if (requestReloadFonts_) {
-                OPTICK_EVENT("InvalidateDeviceObjects", Optick::Category::Rendering);
-                IMGUI_DEBUG("Rebuilding font atlas");
-                renderObjectsCreated_ = false;
-                ImGui_ImplDX11_InvalidateDeviceObjects();
-                drawViewport_ = -1;
-                requestReloadFonts_ = false;
-                initializationFailed_ = false;
-            }
-
-            if (!initializationFailed_ && !renderObjectsCreated_) {
-                OPTICK_EVENT("CreateDeviceObjects", Optick::Category::Rendering);
-                IMGUI_DEBUG("Re-initializing DX11 render objects");
-                initializationFailed_ = !ImGui_ImplDX11_CreateDeviceObjects();
-                if (initializationFailed_) {
-                    ERR("Failed to initialize IMGUI DX11 backend!");
-                } else {
-                    renderObjectsCreated_ = true;
-                }
+            OPTICK_EVENT("CreateDeviceObjects", Optick::Category::Rendering);
+            IMGUI_DEBUG("Re-initializing DX11 render objects");
+            initializationFailed_ = !ImGui_ImplDX11_CreateDeviceObjects();
+            if (initializationFailed_) {
+                ERR("Failed to initialize IMGUI DX11 backend!");
+            } else {
+                renderObjectsCreated_ = true;
             }
         }
 
@@ -194,6 +184,7 @@ public:
             drawLists.push_back(drawList);
         }
 
+        mirroredTextures_.Sync(vp.DrawDataP);
         drawViewport_ = curViewport_;
     }
 
@@ -205,11 +196,6 @@ public:
     bool IsInitialized() override
     {
         return initialized_;
-    }
-
-    void ReloadFonts() override
-    {
-        requestReloadFonts_ = true;
     }
 
     glm::ivec2 GetViewportSize() override
@@ -343,6 +329,7 @@ private:
         auto& vp = viewports_[drawViewport_].Viewport;
         if (!vp.DrawDataP.Valid) return;
 
+        mirroredTextures_.BeginRender();
         ImGui_ImplDX11_RenderDrawData(&vp.DrawDataP);
     }
 
@@ -368,6 +355,7 @@ private:
     std::array<ViewportInfo, 3> viewports_;
     int32_t drawViewport_{ -1 };
     int32_t curViewport_{ 0 };
+    TextureMirrorSet mirroredTextures_;
 
     IDXGIAdapter* adapter_{ nullptr };
     ID3D11DeviceContext* context_{ nullptr };
@@ -378,7 +366,6 @@ private:
     bool initialized_{ false };
     bool renderObjectsCreated_{ false };
     bool initializationFailed_{ false };
-    bool requestReloadFonts_{ false };
     std::mutex globalResourceLock_;
     uint32_t width_{ 0 };
     uint32_t height_{ 0 };

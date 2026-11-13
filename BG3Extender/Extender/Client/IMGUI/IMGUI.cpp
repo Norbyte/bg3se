@@ -249,7 +249,7 @@ void StyledRenderable::HandleDragDrop(DrawingContext& context)
 
     if (DragDropType && OnDragDrop && ImGui::BeginDragDropTarget())
     {
-        auto payload = ImGui::AcceptDragDropPayload(DragDropType.GetString());
+        auto payload = ImGui::AcceptDragDropPayload(DragDropType.GetString(), (ImGuiDragDropFlags)DropFlags);
         if (payload) {
             auto source = *static_cast<HandleType*>(payload->Data);
             Manager->GetEventQueue().Call(OnDragDrop, lua::ImguiHandle(Handle), lua::ImguiHandle(source));
@@ -292,14 +292,26 @@ void StyledRenderable::PushStyleChanges(DrawingContext& context)
         ImGui::PushStyleColor((ImGuiCol)var.Key, ToImVec(var.Value));
     }
 
-    if (ItemFlags != (GuiItemFlags)0) ImGui::PushItemFlag((ImGuiItemFlags)ItemFlags, true);
+    if (ItemFlags != (GuiItemFlags)0) {
+        if ((ItemFlags & GuiItemFlags::Disabled) != (GuiItemFlags)0) {
+            ImGui::BeginDisabled();
+        }
+
+        ImGui::PushItemFlag((ImGuiItemFlags)ItemFlags, true);
+    }
+
     if (ItemWidth) ImGui::SetNextItemWidth(context.Scale(*ItemWidth));
 }
 
 
 void StyledRenderable::PopStyleChanges()
 {
-    if (ItemFlags != (GuiItemFlags)0) ImGui::PopItemFlag();
+    if (ItemFlags != (GuiItemFlags)0) {
+        ImGui::PopItemFlag();
+        if ((ItemFlags & GuiItemFlags::Disabled) != (GuiItemFlags)0) {
+            ImGui::EndDisabled();
+        }
+    }
 
     if (!StyleColors.empty()) {
         ImGui::PopStyleColor(StyleColors.size());
@@ -313,12 +325,16 @@ void StyledRenderable::PopStyleChanges()
 
 void StyledRenderable::PushWindowStyleChanges(DrawingContext& context, ImFont*& font)
 {
+    float fontSize{ 0.0f };
     if (Font) {
         auto info = gExtender->IMGUI().GetFont(Font);
-        if (info) font = info->Font;
+        if (info) {
+            font = info->Font;
+            fontSize = info->SizePixels;
+        }
     }
 
-    if (font && font->IsLoaded()) ImGui::PushFont(font);
+    if (font && font->IsLoaded()) ImGui::PushFont(font, fontSize);
 
     if (!IDContext.empty()) {
         ImGui::PushID(IDContext.data(), IDContext.data() + IDContext.size());
@@ -1021,11 +1037,34 @@ void Group::EndRender(DrawingContext& context)
 
 bool CollapsingHeader::BeginRender(DrawingContext& context)
 {
-    return ImGui::CollapsingHeader(Label.c_str(), (ImGuiTreeNodeFlags)Flags);
+    if (open_) {
+        ImGui::SetNextItemOpen(open_->Open, open_->Cond);
+        open_ = {};
+    }
+
+    Open = ImGui::CollapsingHeader(Label.c_str(), (ImGuiTreeNodeFlags)Flags);
+
+    if (ImGui::IsItemToggledOpen()) {
+        if (Open && OnExpand) {
+            Manager->GetEventQueue().Call(OnExpand, lua::ImguiHandle(Handle));
+        } else if (!Open && OnCollapse) {
+            Manager->GetEventQueue().Call(OnCollapse, lua::ImguiHandle(Handle));
+        }
+    }
+
+    return Open;
 }
 
 void CollapsingHeader::EndRender(DrawingContext& context)
 {}
+
+void CollapsingHeader::SetOpen(bool open, std::optional<GuiCond> cond)
+{
+    open_ = SetOpenRequest{
+        .Open = open,
+        .Cond = cond ? (ImGuiCond)*cond : ImGuiCond_Once
+    };
+}
 
 
 bool TabBar::BeginRender(DrawingContext& context)
@@ -1157,7 +1196,7 @@ bool Table::BeginRender(DrawingContext& context)
     // IMGUI will crash if we try to add more columns than the col count in BeginTable()
     auto cols = std::max(Columns, ColumnDefs.size());
 
-    rendering_ = ImGui::BeginTable(Label.c_str(), (int)cols, (ImGuiTableFlags)Flags, context.Scale(ToImVec(Size)));
+    rendering_ = ImGui::BeginTable(Label.c_str(), (int)cols, (ImGuiTableFlags)Flags, context.Scale(ToImVec(Size)), InnerWidth);
 
     if (rendering_) {
         for (auto const& def : ColumnDefs) {
@@ -1386,8 +1425,15 @@ void Separator::StyledRender(DrawingContext& context)
 void Selectable::StyledRender(DrawingContext& context)
 {
     if (ImGui::Selectable(Label.c_str(), &Selected, (ImGuiSelectableFlags)Flags, context.Scale(ToImVec(Size)))) {
-        if (OnClick) {
-            Manager->GetEventQueue().Call(OnClick, lua::ImguiHandle(Handle));
+        if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+            if (OnDoubleClick) {
+                Manager->GetEventQueue().Call(OnDoubleClick, lua::ImguiHandle(Handle));
+            }
+        } else {
+            Selected = !Selected;
+            if (OnClick) {
+                Manager->GetEventQueue().Call(OnClick, lua::ImguiHandle(Handle));
+            }
         }
     }
 }
@@ -1537,9 +1583,15 @@ void Combo::StyledRender(DrawingContext& context)
 }
 
 
+DragScalar::DragScalar()
+{
+    // Compatibility with old IMGUI v1.32 behavior
+    ItemFlags |= GuiItemFlags::LiveEditOnInputScalar;
+}
+
 void DragScalar::StyledRender(DrawingContext& context)
 {
-    if (ImGui::DragScalarN(Label.c_str(), ImGuiDataType_Float, &Value, Components, 1.0f, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
+    if (ImGui::DragScalarN(Label.c_str(), ImGuiDataType_Float, &Value, Components, Speed, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
         if (OnChange) {
             Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Value);
         }
@@ -1549,7 +1601,7 @@ void DragScalar::StyledRender(DrawingContext& context)
 
 void DragInt::StyledRender(DrawingContext& context)
 {
-    if (ImGui::DragScalarN(Label.c_str(), ImGuiDataType_S32, &Value, Components, 1.0f, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
+    if (ImGui::DragScalarN(Label.c_str(), ImGuiDataType_S32, &Value, Components, Speed, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
         if (OnChange) {
             Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Value);
         }
@@ -1557,10 +1609,16 @@ void DragInt::StyledRender(DrawingContext& context)
 }
 
 
+SliderScalar::SliderScalar()
+{
+    // Compatibility with old IMGUI v1.32 behavior
+    ItemFlags |= GuiItemFlags::LiveEditOnInputScalar;
+}
+
 void SliderScalar::StyledRender(DrawingContext& context)
 {
     if (Vertical) {
-        if (ImGui::VSliderScalar(Label.c_str(), ToImVec(VerticalSize), ImGuiDataType_Float, &Value, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
+        if (ImGui::VSliderScalar(Label.c_str(), context.Scale(ToImVec(VerticalSize)), ImGuiDataType_Float, &Value, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
             if (OnChange) {
                 Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Value);
             }
@@ -1578,7 +1636,7 @@ void SliderScalar::StyledRender(DrawingContext& context)
 void SliderInt::StyledRender(DrawingContext& context)
 {
     if (Vertical) {
-        if (ImGui::VSliderInt(Label.c_str(), ToImVec(VerticalSize), &Value.x, Min.x, Max.x, nullptr, (ImGuiSliderFlags)Flags)) {
+        if (ImGui::VSliderInt(Label.c_str(), context.Scale(ToImVec(VerticalSize)), &Value.x, Min.x, Max.x, nullptr, (ImGuiSliderFlags)Flags)) {
             if (OnChange) {
                 Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Value);
             }
@@ -1593,9 +1651,16 @@ void SliderInt::StyledRender(DrawingContext& context)
 }
 
 
+InputScalar::InputScalar()
+{
+    // Compatibility with old IMGUI v1.32 behavior
+    ItemFlags |= GuiItemFlags::LiveEditOnInputScalar;
+}
+
 void InputScalar::StyledRender(DrawingContext& context)
 {
-    if (ImGui::InputScalarN(Label.c_str(), ImGuiDataType_Float, &Value, Components, nullptr, nullptr, nullptr, (ImGuiInputTextFlags)Flags)) {
+    auto step = Step.has_value() ? &*Step : nullptr;
+    if (ImGui::InputScalarN(Label.c_str(), ImGuiDataType_Float, &Value, Components, step, nullptr, nullptr, (ImGuiInputTextFlags)Flags)) {
         if (OnChange) {
             Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Value);
         }
@@ -1605,7 +1670,8 @@ void InputScalar::StyledRender(DrawingContext& context)
 
 void InputInt::StyledRender(DrawingContext& context)
 {
-    if (ImGui::InputScalarN(Label.c_str(), ImGuiDataType_S32, &Value, Components, nullptr, nullptr, nullptr, (ImGuiInputTextFlags)Flags)) {
+    auto step = Step.has_value() ? &*Step : nullptr;
+    if (ImGui::InputScalarN(Label.c_str(), ImGuiDataType_S32, &Value, Components, step, nullptr, nullptr, (ImGuiInputTextFlags)Flags)) {
         if (OnChange) {
             Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Value);
         }
@@ -1737,8 +1803,31 @@ bool IMGUIObjectManager::DestroyRenderable(HandleType handle)
 void IMGUIObjectManager::Render(DrawingContext& context)
 {
     OPTICK_EVENT(Optick::Category::Rendering);
-    if (renderDemo_) {
+
+#if defined(_DEBUG)
+    GImGui->DebugItemPickerActive = ((debugTools_ & GuiDebugToolFlags::ItemPicker) != (GuiDebugToolFlags)0);
+#endif
+
+    if ((debugTools_ & GuiDebugToolFlags::Demo) != (GuiDebugToolFlags)0) {
         ImGui::ShowDemoWindow();
+    }
+
+    if ((debugTools_ & GuiDebugToolFlags::Metrics) != (GuiDebugToolFlags)0) {
+        ImGui::ShowMetricsWindow();
+    }
+
+    if ((debugTools_ & GuiDebugToolFlags::DebugLog) != (GuiDebugToolFlags)0) {
+        ImGui::ShowDebugLogWindow();
+    }
+
+    if ((debugTools_ & GuiDebugToolFlags::IDStack) != (GuiDebugToolFlags)0) {
+        ImGui::ShowIDStackToolWindow();
+    }
+
+    if ((debugTools_ & GuiDebugToolFlags::StyleEditor) != (GuiDebugToolFlags)0) {
+        ImGui::Begin("Style Editor", nullptr);
+        ImGui::ShowStyleEditor();
+        ImGui::End();
     }
 
     for (auto windowHandle : windows_) {
@@ -1749,9 +1838,9 @@ void IMGUIObjectManager::Render(DrawingContext& context)
     }
 }
 
-void IMGUIObjectManager::EnableDemo(bool enable)
+void IMGUIObjectManager::ToggleDebugTools(GuiDebugToolFlags flags)
 {
-    renderDemo_ = enable;
+    debugTools_ = flags;
 }
 
 void IMGUIObjectManager::ClientUpdate()
@@ -1835,25 +1924,12 @@ void IMGUIManager::InitializeUI()
 
     UpdateStyle();
 
-    auto const& language = GetStaticSymbols().GetGlobalSwitches()->Language;
-    // Disable very small font sizes for fonts with small glyphs
-    reducedFontAtlas_ =
-        language == "Japanese"
-        || language == "Chinese"
-        || language == "ChineseTraditional";
-
-    if (reducedFontAtlas_) {
-        LoadFont(GFS.strMedium, "", 32.0f);
-        LoadFont(GFS.strDefault, "", 36.0f);
-        LoadFont(GFS.strLarge, "", 40.0f);
-    } else {
-        LoadFont(GFS.strTiny, "", 24.0f);
-        LoadFont(GFS.strSmall, "", 28.0f);
-        LoadFont(GFS.strMedium, "", 32.0f);
-        LoadFont(GFS.strDefault, "", 36.0f);
-        LoadFont(GFS.strLarge, "", 40.0f);
-        LoadFont(GFS.strBig, "", 44.0f);
-    }
+    LoadFont(GFS.strTiny, "", 24.0f);
+    LoadFont(GFS.strSmall, "", 28.0f);
+    LoadFont(GFS.strMedium, "", 32.0f);
+    LoadFont(GFS.strDefault, "", 36.0f);
+    LoadFont(GFS.strLarge, "", 40.0f);
+    LoadFont(GFS.strBig, "", 44.0f);
 
     initialized_ = true;
 }
@@ -1910,46 +1986,26 @@ bool IMGUIManager::LoadFont(FixedString const& name, char const* path, float siz
     }
 }
 
-const ImWchar* GetGlyphRangesTurkish()
-{
-    static const ImWchar ranges[] =
-    {
-        0x0020, 0x00FF, // Basic Latin + Latin Supplement
-        0x011E, 0x011F, // Turkish characters
-        0x0130, 0x0131,
-        0x015E, 0x015F,
-        0x2010, 0x2033,
-        0,
-    };
-    return &ranges[0];
-}
-
 bool IMGUIManager::LoadFont(FontData& request)
 {
+    // Fonts are sized dynamically, so all sizes of the same font file can share one ImFont
+    for (auto const& font : fonts_) {
+        if (font.Value().Path == request.Path && font.Value().Font != nullptr) {
+            request.Font = font.Value().Font;
+            return true;
+        }
+    }
+
     auto path = request.Path;
-    auto glyphRanges = ImGui::GetIO().Fonts->GetGlyphRangesDefault();
     if (path.empty()) {
         auto const& language = GetStaticSymbols().GetGlobalSwitches()->Language;
         if (language == "Korean") {
             path = "Public/Game/GUI/Assets/Fonts/NotoSerifKR-Regular.otf";
-            glyphRanges = ImGui::GetIO().Fonts->GetGlyphRangesKorean();
         } else if (language == "Japanese") {
             path = "Public/Game/GUI/Assets/Fonts/NotoSerifSC-Regular.otf";
-            glyphRanges = ImGui::GetIO().Fonts->GetGlyphRangesJapanese();
         } else if (language == "Chinese" || language == "ChineseTraditional") {
             path = "Public/Game/GUI/Assets/Fonts/NotoSerifSC-Regular.otf";
-            glyphRanges = ImGui::GetIO().Fonts->GetGlyphRangesChineseFull();
-            // IMGUI creates a texture with small width so height will be 32768 for CN fonts.
-            // (DX11 can't create textures larger than 16384).
-            // Compensate by using a larger width than default
-            ImGui::GetIO().Fonts->TexDesiredWidth = 16384;
         } else {
-            if (language == "Russian" || language == "Ukrainian") {
-                glyphRanges = ImGui::GetIO().Fonts->GetGlyphRangesCyrillic();
-            } else if (language == "Turkish") {
-                glyphRanges = GetGlyphRangesTurkish();
-            }
-
             path = "Public/Game/GUI/Assets/Fonts/QuadraatOffcPro/QuadraatOffcPro.ttf";
         }
     }
@@ -1960,37 +2016,27 @@ bool IMGUIManager::LoadFont(FontData& request)
         return false;
     }
 
+    // Glyphs are loaded lazily, so the atlas must keep the font data alive for the lifetime of the font.
+    // Ownership is transferred to the atlas, which also frees it if loading fails.
+    auto fontData = IM_ALLOC(blob->size());
+    memcpy(fontData, blob->data(), blob->size());
+
     auto& io = ImGui::GetIO();
     ImFontConfig cfg;
-    cfg.FontDataOwnedByAtlas = false;
-    cfg.RasterizerDensity = requestedScale_ * requestedFontScaleMultiplier_;
     cfg.SizePixels = request.SizePixels;
-    cfg.GlyphRanges = glyphRanges;
+    strncpy_s(cfg.Name, request.Key.GetString(), request.Key.GetLength()+1);
 
-    request.Font = io.Fonts->AddFontFromMemoryTTF(blob->data(), blob->size(), 0.0f, &cfg);
+    request.Font = io.Fonts->AddFontFromMemoryTTF(fontData, (int)blob->size(), 0.0f, &cfg);
     if (!request.Font) {
         OsiError("Failed to load font file (not a valid TTF font?): " << path);
         return false;
-    } else {
-        request.Font->Scale = requestedScale_ * requestedFontScaleMultiplier_;
     }
 
-    renderer_->ReloadFonts();
     return true;
 }
 
 IMGUIManager::FontData* IMGUIManager::GetFont(FixedString const& name)
 {
-    if (reducedFontAtlas_) {
-        if (name == GFS.strTiny || name == GFS.strSmall) {
-            return fonts_.try_get(GFS.strMedium);
-        }
-
-        if (name == GFS.strLarge) {
-            return fonts_.try_get(GFS.strBig);
-        }
-    }
-
     return fonts_.try_get(name);
 }
 
@@ -2061,6 +2107,7 @@ void IMGUIManager::UpdateStyle()
     auto BoxColor = ImVec4(0.18f, 0.15f, 0.15f, 0.78f);
     auto BoxHoverColor = ImVec4(0.38f, 0.26f, 0.21f, 0.78f);
     auto BoxActiveColor = ImVec4(0.32f, 0.24f, 0.16f, 0.78f);
+    auto AccentColor = ImVec4(0.95f, 0.82f, 0.60f, 0.78f);
 
     DEFAULT_COLOR(Text, ImVec4(0.86f, 0.79f, 0.68f, 0.78f));
     DEFAULT_COLOR(TextDisabled, ImVec4(0.86f, 0.79f, 0.68f, 0.28f));
@@ -2081,6 +2128,7 @@ void IMGUIManager::UpdateStyle()
     DEFAULT_COLOR(ScrollbarGrabHovered, ImVec4(0.47f, 0.35f, 0.28f, 0.86f));
     DEFAULT_COLOR(ScrollbarGrabActive, BoxActiveColor);
     DEFAULT_COLOR(CheckMark, ImVec4(0.86f, 0.79f, 0.68f, 0.78f));
+    DEFAULT_COLOR(CheckboxSelectedBg, ImLerp(BoxColor, BoxHoverColor, 0.65f));
     DEFAULT_COLOR(SliderGrab, ImVec4(0.95f, 0.82f, 0.60f, 0.14f));
     DEFAULT_COLOR(SliderGrabActive, ImVec4(0.52f, 0.52f, 0.25f, 0.3f));
     DEFAULT_COLOR(Button, ImVec4(0.46f, 0.40f, 0.29f, 0.5f));
@@ -2095,11 +2143,14 @@ void IMGUIManager::UpdateStyle()
     DEFAULT_COLOR(ResizeGrip, ImVec4(0.95f, 0.82f, 0.60f, 0.15f));
     DEFAULT_COLOR(ResizeGripHovered, BoxHoverColor);
     DEFAULT_COLOR(ResizeGripActive, BoxActiveColor);
+    DEFAULT_COLOR(InputTextCursor, style.Colors[ImGuiCol_Text]);
     DEFAULT_COLOR(Tab, BoxColor);
     DEFAULT_COLOR(TabHovered, BoxHoverColor);
     DEFAULT_COLOR(TabSelected, BoxActiveColor);
+    DEFAULT_COLOR(TabSelectedOverline, AccentColor);
     DEFAULT_COLOR(TabDimmed, ImVec4(0.05f, 0.05f, 0.05f, 0.78f));
     DEFAULT_COLOR(TabDimmedSelected, ImVec4(0.05f, 0.05f, 0.05f, 0.78f));
+    DEFAULT_COLOR(TabDimmedSelectedOverline, ImVec4(0.00f, 0.00f, 0.00f, 0.00f));
     DEFAULT_COLOR(PlotLines, ImVec4(0.86f, 0.79f, 0.68f, 0.63f));
     DEFAULT_COLOR(PlotLinesHovered, ImVec4(0.41f, 0.28f, 0.22f, 1.00f));
     DEFAULT_COLOR(PlotHistogram, ImVec4(0.86f, 0.79f, 0.68f, 0.63f));
@@ -2109,29 +2160,35 @@ void IMGUIManager::UpdateStyle()
     DEFAULT_COLOR(TableBorderLight, ImVec4(0.56f, 0.46f, 0.26f, 0.78f));
     DEFAULT_COLOR(TableRowBg, ImVec4(0.63f, 0.69f, 0.34f, 0.43f));
     DEFAULT_COLOR(TableRowBgAlt, ImVec4(0.52f, 0.29f, 0.15f, 0.43f));
+    DEFAULT_COLOR(TextLink, AccentColor);
     DEFAULT_COLOR(TextSelectedBg, ImVec4(0.57f, 0.21f, 0.21f, 0.43f));
+    DEFAULT_COLOR(TreeLines, style.Colors[ImGuiCol_Separator]);
     DEFAULT_COLOR(DragDropTarget, ImVec4(0.6f, 0.45f, 0.3f, 1.0f));
+    DEFAULT_COLOR(DragDropTargetBg, ImVec4(0.00f, 0.00f, 0.00f, 0.00f));
+    DEFAULT_COLOR(UnsavedMarker, style.Colors[ImGuiCol_Text]);
     DEFAULT_COLOR(NavCursor, ImVec4(0.55f, 0.00f, 0.00f, 0.78f));
     DEFAULT_COLOR(NavWindowingHighlight, ImVec4(0.55f, 0.00f, 0.00f, 0.78f));
     DEFAULT_COLOR(NavWindowingDimBg, ImVec4(0.07f, 0.07f, 0.07f, 0.78f));
     DEFAULT_COLOR(ModalWindowDimBg, ImVec4(0.18f, 0.15f, 0.15f, 0.73f));
 
-    bool fontReloadRequired = scale_ != requestedScale_
-        || fontScaleMultiplier_ != requestedFontScaleMultiplier_;
-
+    auto unscaledStyle = style;
     style.ScaleAllSizes(requestedScale_ * requestedUiScaleMultiplier_);
+
+    // IMGUI VANILLA BUG WORKAROUND - REMOVE WHEN ITS FIXED!
+    // ScaleAllSizes() truncates every value (including borders), so 1px borders disappear when scaling below 1.0
+    for (auto size : { &ImGuiStyle::WindowBorderSize, &ImGuiStyle::ChildBorderSize, &ImGuiStyle::PopupBorderSize,
+        &ImGuiStyle::FrameBorderSize, &ImGuiStyle::ImageBorderSize, &ImGuiStyle::TabBorderSize, &ImGuiStyle::TabBarBorderSize,
+        &ImGuiStyle::TabBarOverlineSize, &ImGuiStyle::TreeLinesSize, &ImGuiStyle::DragDropTargetBorderSize,
+        &ImGuiStyle::InputTextCursorSize, &ImGuiStyle::SeparatorSize, &ImGuiStyle::SeparatorTextBorderSize }) {
+        if (unscaledStyle.*size > 0.0f) {
+            style.*size = std::max(style.*size, 1.0f);
+        }
+    }
+
+    style.FontScaleMain = requestedScale_ * requestedFontScaleMultiplier_;
     scale_ = requestedScale_;
     uiScaleMultiplier_ = requestedUiScaleMultiplier_;
     fontScaleMultiplier_ = requestedFontScaleMultiplier_;
-
-    if (fontReloadRequired) {
-        ImGui::GetIO().Fonts->Clear();
-        for (auto& font : fonts_) {
-            font->Value().Font = nullptr;
-            LoadFont(font->Value());
-        }
-        renderer_->ReloadFonts();
-    }
 }
 
 void IMGUIManager::Update()
@@ -2163,6 +2220,8 @@ void IMGUIManager::Update()
     auto defaultFont = GetFont(GFS.strMedium);
     if (defaultFont != nullptr && defaultFont->Font != nullptr) {
         ImGui::GetIO().FontDefault = defaultFont->Font;
+        // Font may be shared with other sizes, so its LegacySize isn't necessarily the size we want
+        ImGui::GetStyle().FontSizeBase = defaultFont->SizePixels;
     }
 
     if (frameNo_ == 0) {

@@ -19,7 +19,12 @@ ImguiHandle NewWindow(lua_State* L, char const* name)
 
 void EnableDemo(lua_State* L, bool enabled)
 {
-    ClientState::FromLua(L)->IMGUI().EnableDemo(enabled);
+    WARN("EnableDemo() is deprecated, use ToggleDebugTools() instead");
+}
+
+void ToggleDebugTools(lua_State* L, GuiDebugToolFlags flags)
+{
+    ClientState::FromLua(L)->IMGUI().ToggleDebugTools(flags);
 }
 
 bool LoadFont(FixedString const& name, char const* path, float size)
@@ -59,6 +64,7 @@ void RegisterIMGUILib()
     BEGIN_MODULE()
     MODULE_FUNCTION(NewWindow)
     MODULE_FUNCTION(EnableDemo)
+    MODULE_FUNCTION(ToggleDebugTools)
     MODULE_FUNCTION(LoadFont)
     MODULE_FUNCTION(SetScale)
     MODULE_FUNCTION(SetUIScaleMultiplier)

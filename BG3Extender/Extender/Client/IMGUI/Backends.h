@@ -28,7 +28,6 @@ public:
     virtual void UnregisterTexture(TextureOpaqueHandle opaqueHandle) = 0;
     virtual std::optional<ImTextureID> BindTexture(TextureOpaqueHandle opaqueHandle) = 0;
     virtual bool IsInitialized() = 0;
-    virtual void ReloadFonts() = 0;
     virtual glm::ivec2 GetViewportSize() = 0;
 };
 

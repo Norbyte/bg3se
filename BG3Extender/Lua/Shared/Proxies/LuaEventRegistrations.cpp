@@ -38,7 +38,7 @@ struct EventRegistrationEntry
         },
 
 static constexpr EventRegistrationEntry const AllEventDefns[] = {
-#include <GameDefinitions/Generated/Events.inl>
+#include <GameDefinitions/AllEvents.inl>
 };
 
 #undef DECLARE_EVENT

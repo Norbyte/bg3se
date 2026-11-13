@@ -440,8 +440,22 @@ public:
 
     bool BeginRender(DrawingContext& context) override;
     void EndRender(DrawingContext& context) override;
+    void SetOpen(bool open, std::optional<GuiCond> cond);
 
     GuiTreeNodeFlags Flags{ 0 };
+    bool Open{ false };
+
+    lua::LuaDelegate<void(lua::ImguiHandle)> OnExpand;
+    lua::LuaDelegate<void(lua::ImguiHandle)> OnCollapse;
+
+private:
+    struct SetOpenRequest
+    {
+        bool Open;
+        ImGuiCond Cond;
+    };
+
+    std::optional<SetOpenRequest> open_;
 };
 
 
@@ -531,6 +545,7 @@ public:
     GuiTableFlags Flags{ 0 };
     uint32_t FreezeRows{ 0 };
     uint32_t FreezeCols{ 0 };
+    float InnerWidth{ 0.0f };
     bool ShowHeader{ false };
     bool AngledHeader{ false };
     bool OptimizedDraw{ false };
@@ -714,6 +729,7 @@ public:
     std::optional<glm::vec2> Size;
     GuiSelectableFlags Flags{ 0 };
     bool Selected{ false };
+    lua::LuaDelegate<void(lua::ImguiHandle)> OnDoubleClick;
 };
 
 
@@ -812,11 +828,13 @@ struct DragScalar : public StyledRenderable
 public:
     DECL_UI_TYPE(DragScalar)
 
+    DragScalar();
     void StyledRender(DrawingContext& context) override;
 
     glm::vec4 Value{ 0.0f };
     glm::vec4 Min{ 0.0f };
     glm::vec4 Max{ 1.0f };
+    float Speed{ 1.0f };
     int Components{ 1 };
     GuiSliderFlags Flags{ 0 };
     lua::LuaDelegate<void (lua::ImguiHandle, glm::vec4)> OnChange;
@@ -833,6 +851,7 @@ public:
     glm::ivec4 Value{ 0 };
     glm::ivec4 Min{ 0 };
     glm::ivec4 Max{ 1 };
+    float Speed{ 1.0f };
     int Components{ 1 };
     GuiSliderFlags Flags{ 0 };
     lua::LuaDelegate<void (lua::ImguiHandle, glm::ivec4)> OnChange;
@@ -844,6 +863,7 @@ struct SliderScalar : public StyledRenderable
 public:
     DECL_UI_TYPE(SliderScalar)
 
+    SliderScalar();
     void StyledRender(DrawingContext& context) override;
 
     glm::vec4 Value{ 0.0f };
@@ -880,10 +900,12 @@ struct InputScalar : public StyledRenderable
 public:
     DECL_UI_TYPE(InputScalar)
 
+    InputScalar();
     void StyledRender(DrawingContext& context) override;
 
     glm::vec4 Value{ 0.0f };
     int Components{ 1 };
+    std::optional<float> Step;
     GuiInputTextFlags Flags{ 0 };
     lua::LuaDelegate<void (lua::ImguiHandle, glm::vec4)> OnChange;
 };
@@ -898,6 +920,7 @@ public:
 
     glm::ivec4 Value{ 0 };
     int Components{ 1 };
+    std::optional<int32_t> Step;
     GuiInputTextFlags Flags{ 0 };
     lua::LuaDelegate<void (lua::ImguiHandle, glm::ivec4)> OnChange;
 };
@@ -1027,14 +1050,14 @@ public:
     Renderable* GetRenderable(HandleType handle);
     bool DestroyRenderable(HandleType handle);
     void Render(DrawingContext& context);
-    void EnableDemo(bool enable);
+    void ToggleDebugTools(GuiDebugToolFlags flags);
     void ClientUpdate();
     void Clear();
 
 private:
     std::array<std::unique_ptr<IMGUIObjectPoolInterface>, (unsigned)IMGUIObjectType::Max + 1> pools_;
     Array<HandleType> windows_;
-    bool renderDemo_{ false };
+    GuiDebugToolFlags debugTools_{ 0 };
     lua::DeferredLuaDelegateQueue eventQueue_;
 };
 

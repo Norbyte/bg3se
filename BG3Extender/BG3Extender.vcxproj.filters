@@ -756,6 +756,7 @@
     <None Include="GameDefinitions\PropertyMaps\IMGUI.inl" />
     <None Include="Lua\Shared\Proxies\LuaImguiProxy.inl" />
     <None Include="Extender\Client\IMGUI\DX11.inl" />
+    <None Include="Extender\Client\IMGUI\TextureMirror.inl" />
     <None Include="Lua\Libs\ClientInput.inl" />
     <None Include="Lua\Libs\Timer.inl" />
     <None Include="GameDefinitions\Enumerations\IMGUI.inl" />
@@ -834,6 +835,15 @@
       <Filter>GameDefinitions\Stats</Filter>
     </None>
     <None Include="GameDefinitions\Events.inl">
+      <Filter>GameDefinitions</Filter>
+    </None>
+    <None Include="GameDefinitions\AllEnumerations.inl">
+      <Filter>GameDefinitions</Filter>
+    </None>
+    <None Include="GameDefinitions\AllEvents.inl">
+      <Filter>GameDefinitions</Filter>
+    </None>
+    <None Include="GameDefinitions\AllExternalEnumerations.inl">
       <Filter>GameDefinitions</Filter>
     </None>
     <None Include="make_events.py" />

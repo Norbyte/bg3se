@@ -35,6 +35,9 @@ git clone https://github.com/g-truc/glm --branch 1.0.3
 rem ##### IMGUI #####
 
 git clone https://github.com/Norbyte/imgui
+cd imgui
+git reset --hard 0c44880d5f783e83d0e086a9dfc5d8caf055051a
+cd ..
 
 rem ##### LUA #####
 
