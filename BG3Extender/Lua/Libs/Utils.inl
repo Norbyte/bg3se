@@ -179,7 +179,9 @@ dlg::DialogManager* GetDialogManager(lua_State* L)
         auto ds = State::FromLua(L)->GetEntitySystemHelpers().GetSystem<esv::DialogSystem>();
         return ds ? ds->GameInterface.DialogManager : nullptr;
     } else {
-        return nullptr;
+        // The client has its own manager, with its own copies of the dialogues
+        auto ts = State::FromLua(L)->GetEntitySystemHelpers().GetSystem<ecl::TimelineSystem>();
+        return ts ? ts->DialogManager : nullptr;
     }
 }
 

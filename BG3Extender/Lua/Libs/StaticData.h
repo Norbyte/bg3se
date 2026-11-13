@@ -49,4 +49,7 @@ private:
     NullGuidResourceBankHelper nullHelper_;
 };
 
+// Releases the dialogues the state still holds (Ext.StaticData.LoadResource)
+void ReleaseHeldDialogs(lua_State* L);
+
 END_NS()

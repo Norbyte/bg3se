@@ -1077,6 +1077,17 @@
       <Target Type="Indirect" Offset="@ref2" Symbol="eoc__AiGrid__FindPathImmediate" />
     </Mapping>
 
+    <!-- Sig from the dialogue resource loader, after the bank lookup of the Dialog resource -->
+    <Mapping Name="dlg::DialogManager::PerformDialogLoad" AllowFail="true">
+      4c 8b 8e f8 00 00 00 // mov     r9, [rsi+0F8h]
+      4c 8b 86 f0 00 00 00 // mov     r8, [rsi+0F0h]
+      48 8b d0 // mov     rdx, rax
+      49 8b 8e c8 01 00 00 // mov     rcx, [r14+1C8h]
+      @ref1 e8 ?? ?? ?? ?? // call    dlg__DialogManager__PerformDialogLoad
+      48 8b f8 // mov     rdi, rax
+      <Target Type="Indirect" Offset="@ref1" Symbol="dlg__DialogManager__PerformDialogLoad" />
+    </Mapping>
+
     <!-- Sig from ecl::CharacterTask_Dialog::SetCursor -->
     <Mapping Name="ecl::CharacterTask_Dialog::SetCursor">
       @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ecl__gCursorControl

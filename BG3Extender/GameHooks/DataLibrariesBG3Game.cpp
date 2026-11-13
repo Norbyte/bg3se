@@ -141,6 +141,7 @@ namespace bg3se
         SYM_OFF(ecl__EoCClient__HandleError);
         SYM_OFF(ecl__gCursorControl);
         SYM_OFF(ls__gDragDropManager);
+        SYM_OFF(dlg__DialogManager__PerformDialogLoad);
         SYM_OFF(ls__gTranslatedStringRepository);
         SYM_OFF(ls__gTranslatedStringKeyManager);
 

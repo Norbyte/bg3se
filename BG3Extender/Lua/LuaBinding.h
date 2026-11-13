@@ -243,6 +243,13 @@ namespace bg3se::lua
             return guidResourceHelpers_;
         }
 
+        // Dialogues held by Ext.StaticData.LoadResource (resource GUID -> UUID of the cached
+        // dialogue), released when the state shuts down
+        inline HashMap<FixedString, FixedString>& GetHeldDialogs()
+        {
+            return heldDialogs_;
+        }
+
         inline ecs::EntitySystemHelpersBase& GetEntitySystemHelpers() const
         {
             return entityHelpers_;
@@ -351,6 +358,7 @@ namespace bg3se::lua
         level::PathfindingSystem pathfinding_;
         net::NetworkRequestSystem networkRequests_;
         res::GuidResourceHelpers guidResourceHelpers_;
+        HashMap<FixedString, FixedString> heldDialogs_;
 
         void OpenLibs();
         EventResult DispatchEvent(EventBase& evt, FixedString const& eventName, bool canPreventAction, RestrictionFlag restrictions);
