@@ -49,6 +49,7 @@ struct StaticSymbols : Noncopyable<StaticSymbols>
     ecl::DragDropManager** ls__gDragDropManager{ nullptr };
 
     dlg::DialogManager__PerformDialogLoad* dlg__DialogManager__PerformDialogLoad{ nullptr };
+    ModManager__SaveSettingsProc* ls__ModManager__SaveSettings{ nullptr };
 
     TranslatedStringRepository** ls__gTranslatedStringRepository{ nullptr };
     TranslatedStringKeyManager** ls__gTranslatedStringKeyManager{ nullptr };
