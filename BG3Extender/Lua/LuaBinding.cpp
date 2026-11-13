@@ -544,6 +544,8 @@ void State::Initialize()
 
 void State::Shutdown()
 {
+    res::ReleaseHeldDialogs(L);
+
     variableManager_.Invalidate();
     modVariableManager_.Invalidate();
 

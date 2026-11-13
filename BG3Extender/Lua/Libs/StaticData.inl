@@ -1,6 +1,11 @@
 #include <GameDefinitions/Resources.h>
 #include <GameDefinitions/GuidResources.h>
 #include <Lua/Libs/StaticData.h>
+#include <GameDefinitions/Dialog.h>
+
+BEGIN_NS(lua::utils)
+dlg::DialogManager* GetDialogManager(lua_State* L);
+END_NS()
 
 BEGIN_NS(lua::res)
 
@@ -347,6 +352,109 @@ UVValues* GetIconUVs(FixedString icon)
     return nullptr;
 }
 
+// Dialogues loaded with LoadResource: the state holds one reference on each until ReleaseResource,
+// or until it shuts down. They are kept by the UUID of the cached dialogue rather than by pointer,
+// as the game may free its cache (e.g. on a level change).
+dlg::Dialog* FindCachedDialog(dlg::DialogManager* manager, FixedString const& uuid)
+{
+    for (auto dialog : manager->CachedDialogs) {
+        if (dialog->UUID == uuid) return dialog;
+    }
+
+    return nullptr;
+}
+
+// Releases a reference the way the game does: once the dialogue is no longer used, the time it was
+// released at starts the delay after which the dialogue manager unloads it.
+bool ReleaseDialog(lua_State* L, dlg::DialogManager* manager, FixedString const& uuid)
+{
+    auto dialog = manager ? FindCachedDialog(manager, uuid) : nullptr;
+    if (dialog == nullptr || dialog->RefCount <= 0) return false;
+
+    if (--dialog->RefCount == 0) {
+        dialog->UnloadedTimeStamp = State::FromLua(L)->GetExtensionState().Time().Time;
+    }
+
+    return true;
+}
+
+void ReleaseHeldDialogs(lua_State* L)
+{
+    auto& held = State::FromLua(L)->GetHeldDialogs();
+    if (held.empty()) return;
+
+    auto manager = utils::GetDialogManager(L);
+    for (auto const& dialog : held) {
+        ReleaseDialog(L, manager, dialog.Value());
+    }
+
+    held.clear();
+}
+
+/// <summary>
+/// Loads a resource the game only loads when it needs it, and holds a reference on it until
+/// `ReleaseResource`, or until the Lua state is reset. Only dialogues (`Dialog`) are supported:
+/// they are loaded into the dialogue manager of the current context (see
+/// `Ext.Utils.GetDialogManager`) the way the game does before playing them; the client only loads
+/// the ones it plays.
+/// </summary>
+dlg::Dialog* LoadResource(lua_State* L, FixedString const& resourceGuid, ResourceBankType type)
+{
+    if (type != ResourceBankType::Dialog) {
+        luaL_error(L, "LoadResource only supports Dialog resources");
+    }
+
+    auto load = GetStaticSymbols().dlg__DialogManager__PerformDialogLoad;
+    if (load == nullptr) {
+        LuaError("dlg::DialogManager::PerformDialogLoad not mapped");
+        return nullptr;
+    }
+
+    auto manager = utils::GetDialogManager(L);
+    auto bank = GetStaticSymbols().GetCurrentResourceBank();
+    if (manager == nullptr || bank == nullptr) {
+        LuaError("Dialogue manager or resource bank not available");
+        return nullptr;
+    }
+
+    auto& held = State::FromLua(L)->GetHeldDialogs();
+    auto uuid = held.try_get(resourceGuid);
+    if (uuid != nullptr) {
+        auto dialog = FindCachedDialog(manager, *uuid);
+        if (dialog != nullptr) return dialog;
+        held.remove(resourceGuid);
+    }
+
+    auto resource = static_cast<resource::DialogResource const*>(bank->GetResource(ResourceBankType::Dialog, resourceGuid));
+    if (resource == nullptr) return nullptr;
+
+    auto dialog = load(manager, resource, nullptr, nullptr);
+    if (dialog != nullptr) {
+        held.set(resourceGuid, dialog->UUID);
+    }
+
+    return dialog;
+}
+
+/// <summary>
+/// Releases the reference `LoadResource` holds on a resource, if it still holds it.
+/// Returns whether it did.
+/// </summary>
+bool ReleaseResource(lua_State* L, FixedString const& resourceGuid, ResourceBankType type)
+{
+    if (type != ResourceBankType::Dialog) {
+        luaL_error(L, "ReleaseResource only supports Dialog resources");
+    }
+
+    auto& held = State::FromLua(L)->GetHeldDialogs();
+    auto uuid = held.try_get(resourceGuid);
+    if (uuid == nullptr) return false;
+
+    auto dialogUuid = *uuid;
+    held.remove(resourceGuid);
+    return ReleaseDialog(L, utils::GetDialogManager(L), dialogUuid);
+}
+
 void RegisterStaticDataLib()
 {
     DECLARE_MODULE(StaticData, Both)
@@ -361,6 +469,8 @@ void RegisterStaticDataLib()
     MODULE_NAMED_FUNCTION("GetIconUVs", GetIconUVs)
     MODULE_NAMED_FUNCTION("ClearResourceBank", ClearResourceBank)
     MODULE_NAMED_FUNCTION("SyncResourceBank", SyncResourceBank)
+    MODULE_NAMED_FUNCTION("LoadResource", LoadResource)
+    MODULE_NAMED_FUNCTION("ReleaseResource", ReleaseResource)
     END_MODULE()
 
     DECLARE_MODULE(Resource, Both)
