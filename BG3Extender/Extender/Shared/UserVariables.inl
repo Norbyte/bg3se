@@ -200,16 +200,16 @@ size_t UserVariable::Budget() const
 }
 
 
-bool UserVariablePrototype::NeedsRebroadcast(bool server) const
+bool UserVariablePrototype::NeedsRebroadcast(ContextType context) const
 {
     if (
         // There is no server->client->server broadcast functionality, 
         // only client->server->client messages can be resynced
-        server
+        context == ContextType::Server
         // Ensure that clients actually need to see this variable
-        && IsAvailableFor(false)
+        && IsAvailableFor(ContextType::Client)
         // Ensure that we can sync to clients
-        && NeedsSyncFor(true)
+        && NeedsSyncFor(ContextType::Server)
     ) {
         // If we only have a local client, no need to resync user vars
         auto server = gExtender->GetServer().GetNetworkManager().GetServer();
@@ -253,7 +253,7 @@ void UserVariablePrototype::SanityCheckFlags(FixedString const& name)
 
 void UserVariableSyncWriter::Flush(bool force)
 {
-    if (isServer_) {
+    if (contextType_ == ContextType::Server) {
         auto state = GetStaticSymbols().GetServerState();
         if (!state 
             || *state == esv::GameState::LoadSession
@@ -296,7 +296,7 @@ void UserVariableSyncWriter::Clear()
 
 void UserVariableSyncWriter::Sync(Guid const& entity, FixedString const& key, UserVariablePrototype const& proto, UserVariable const* value)
 {
-    if (proto.NeedsSyncFor(isServer_)) {
+    if (proto.NeedsSyncFor(contextType_)) {
         if (value && proto.Has(UserVariableFlags::SyncOnWrite)) {
             USER_VAR_DBG("Immediate sync var %s/%s", entity.ToString().c_str(), key.GetString());
             if (MakeSyncMessage()) {
@@ -366,7 +366,7 @@ void UserVariableSyncWriter::FlushSyncQueue(Array<SyncRequest>& queue)
 bool UserVariableSyncWriter::MakeSyncMessage()
 {
     if (syncMsg_ == nullptr) {
-        if (isServer_) {
+        if (contextType_ == ContextType::Server) {
             syncMsg_ = gExtender->GetServer().GetNetworkManager().GetFreeMessage();
         } else {
             syncMsg_ = gExtender->GetClient().GetNetworkManager().GetFreeMessage();
@@ -383,7 +383,7 @@ bool UserVariableSyncWriter::MakeSyncMessage()
 void UserVariableSyncWriter::SendSyncs()
 {
     if (syncMsg_ && syncMsg_->GetMessage().user_vars().vars_size() > 0) {
-        if (isServer_) {
+        if (contextType_ == ContextType::Server) {
             USER_VAR_DBG("Syncing user vars to client(s)");
             gExtender->GetServer().GetNetworkManager().BroadcastToConnectedPeers(syncMsg_, ReservedUserId, false);
         } else {
@@ -512,7 +512,7 @@ void UserVariableManager::SavegameVisit(ObjectVisitor* visitor)
                             visitor->ExitNode(GFS.strVariable);
 
                             auto proto = GetPrototype(name);
-                            if (proto && proto->NeedsSyncFor(isServer_)) {
+                            if (proto && proto->NeedsSyncFor(contextType_)) {
                                 USER_VAR_DBG("Request deferred sync for var %s/%s", entity.ToString().c_str(), name.GetString());
                                 var->Dirty = true;
                                 sync_.DeferredSync(entity, name);
@@ -570,14 +570,14 @@ void UserVariableManager::NetworkSync(net::UserVar const& var)
         return;
     }
     
-    if (!proto->NeedsSyncFor(!isServer_)) {
+    if (!proto->NeedsSyncFor((contextType_ == ContextType::Server) ? ContextType::Client : ContextType::Server)) {
         ERR("Tried to sync variable '%s' in illegal direction!", var.key().data());
         return;
     }
 
     UserVariable value;
     value.FromNetMessage(var);
-    value.Dirty = proto->NeedsRebroadcast(isServer_);
+    value.Dirty = proto->NeedsRebroadcast(contextType_);
 
     Set(entityGuid, key, *proto, std::move(value));
 
@@ -666,7 +666,7 @@ void ModVariableMap::SavegameVisit(ObjectVisitor* visitor)
                 visitor->ExitNode(GFS.strVariable);
 
                 auto proto = GetPrototype(name);
-                if (proto && proto->NeedsSyncFor(isServer_)) {
+                if (proto && proto->NeedsSyncFor(contextType_)) {
                     USER_VAR_DBG("Request deferred sync for var %s/%s", moduleUuid_.ToString().c_str(), name.GetString());
                     var->Dirty = true;
                 }
@@ -738,7 +738,7 @@ ModVariableMap* ModVariableManager::GetOrCreateMod(Guid const& modUuid)
     if (it) {
         return it;
     } else {
-        return vars_.set(modUuid, ModVariableMap{ modUuid, isServer_ });
+        return vars_.set(modUuid, ModVariableMap{ modUuid, contextType_ });
     }
 }
 
@@ -797,7 +797,7 @@ void ModVariableManager::OnSessionLoading()
 {
     modIndices_.clear();
 
-    auto modManager = isServer_ ? GetStaticSymbols().GetModManagerServer() : GetStaticSymbols().GetModManagerClient();
+    auto modManager = (contextType_ == ContextType::Server) ? GetStaticSymbols().GetModManagerServer() : GetStaticSymbols().GetModManagerClient();
     if (modManager != nullptr) {
         uint32_t nextIndex{ 0 };
         for (auto const& mod : modManager->LoadOrderedModules) {
@@ -881,14 +881,14 @@ void ModVariableManager::NetworkSync(net::UserVar const& var)
         return;
     }
 
-    if (!proto->NeedsSyncFor(!isServer_)) {
+    if (!proto->NeedsSyncFor((contextType_ == ContextType::Server) ? ContextType::Client : ContextType::Server)) {
         ERR("Tried to sync variable %s/%s in illegal direction!", modUuid.ToString().c_str(), var.key().data());
         return;
     }
 
     UserVariable value;
     value.FromNetMessage(var);
-    value.Dirty = proto->NeedsRebroadcast(isServer_);
+    value.Dirty = proto->NeedsRebroadcast(contextType_);
 
     Set(*map, key, *proto, std::move(value));
 
@@ -1120,8 +1120,8 @@ STDString CachedUserVariable::StringifyReference(lua_State* L, bool binary) cons
 }
 
 
-CachedUserVariableManager::CachedUserVariableManager(lua::State& state, UserVariableManager& global, bool isServer)
-    : state_(state), global_(global), isServer_(isServer)
+CachedUserVariableManager::CachedUserVariableManager(lua::State& state, UserVariableManager& global, ContextType context)
+    : state_(state), global_(global), contextType_(context)
 {
     global_.BindCache(this);
 }
@@ -1280,7 +1280,7 @@ void CachedUserVariableManager::Set(lua_State* L, EntityHandle entity, FixedStri
         USER_VAR_DBG("Set cached var %016llx/%s", entity.Handle, key.GetString());
         auto cachedVar = PutCache(entity, key, Guid{}, proto, std::move(var), true);
 
-        if (cachedVar->Dirty && proto.NeedsSyncFor(isServer_) && proto.Has(UserVariableFlags::SyncOnWrite)) {
+        if (cachedVar->Dirty && proto.NeedsSyncFor(contextType_) && proto.Has(UserVariableFlags::SyncOnWrite)) {
             USER_VAR_DBG("Set global var %016llx/%s", entity.Handle, key.GetString());
             cachedVar->Dirty = false;
             MoveToGlobal(L, entity, key, proto, *cachedVar);
@@ -1330,8 +1330,8 @@ void CachedUserVariableManager::Flush()
 
 
 
-CachedModVariableManager::CachedModVariableManager(lua::State& state, ModVariableManager& global, bool isServer)
-    : state_(state), global_(global), isServer_(isServer)
+CachedModVariableManager::CachedModVariableManager(lua::State& state, ModVariableManager& global, ContextType context)
+    : state_(state), global_(global), contextType_(context)
 {
     global_.BindCache(this);
 }
@@ -1343,7 +1343,7 @@ CachedModVariableManager::~CachedModVariableManager()
 
 Guid CachedModVariableManager::ModIndexToGuid(uint32_t modIndex)
 {
-    if (isServer_) {
+    if (contextType_ == ContextType::Server) {
         return GetStaticSymbols().GetModManagerServer()->LoadOrderedModules[modIndex].Info.ModuleUUID;
     } else {
         return GetStaticSymbols().GetModManagerClient()->LoadOrderedModules[modIndex].Info.ModuleUUID;
@@ -1485,7 +1485,7 @@ void CachedModVariableManager::Set(lua_State* L, uint32_t modIndex, FixedString 
         USER_VAR_DBG("Set cached mod var %d/%s", modIndex, key.GetString());
         auto cachedVar = PutCache(modIndex, key, Guid{}, proto, std::move(var), true);
 
-        if (cachedVar->Dirty && proto.NeedsSyncFor(isServer_) && proto.Has(UserVariableFlags::SyncOnWrite)) {
+        if (cachedVar->Dirty && proto.NeedsSyncFor(contextType_) && proto.Has(UserVariableFlags::SyncOnWrite)) {
             USER_VAR_DBG("Set global mod var %d/%s", modIndex, key.GetString());
             auto userVar = cachedVar->ToUserVariable(L);
             cachedVar->Dirty = false;

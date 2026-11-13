@@ -115,6 +115,8 @@ struct App;
 
 class SDLManager;
 
+class APIHelpers;
+
 class ExtensionStateBase;
 enum class ExtensionStateContext;
 

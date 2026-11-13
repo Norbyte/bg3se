@@ -42,6 +42,14 @@ public:
     void Print(DebugMessageType type, char const* msg) override;
 };
 
+using LoadCompletionCallbackProc = void (HMODULE, void*);
+
+struct LoadCompletionCallbackData
+{
+    LoadCompletionCallbackProc* Callback;
+    void* UserData;
+};
+
 class ScriptExtenderUpdater
 {
 public:
@@ -94,6 +102,11 @@ public:
         return cancellingUpdate_;
     }
 
+    HMODULE GetLoadedExtenderModule() const
+    {
+        return extenderModule_;
+    }
+
     void RequestClientSuspend(bool suspend)
     {
         needsClientSuspend_ = suspend;
@@ -102,6 +115,18 @@ public:
     void SetAPICapabilities(uint32_t capabilities)
     {
         apiCapabilities_ = capabilities;
+    }
+
+    void AddCompletionCallback(LoadCompletionCallbackProc* callback, void* userData)
+    {
+        if (extenderModule_ == NULL) {
+            completionCallbacks_.push_back(LoadCompletionCallbackData{
+                .Callback = callback,
+                .UserData = userData
+            });
+        } else {
+            callback(extenderModule_, userData);
+        }
     }
 
     void Initialize(std::string_view exeDirOverride);
@@ -121,6 +146,8 @@ private:
     std::unique_ptr<ResourceCacheRepository> cache_;
     std::unique_ptr<UpdaterUI> ui_;
     uint32_t apiCapabilities_{ 0 };
+    HMODULE extenderModule_{ NULL };
+    std::vector<LoadCompletionCallbackData> completionCallbacks_;
 
     std::optional<std::wstring> launchDllPath_;
     std::optional<Manifest::ResourceVersion> launchVersion_;

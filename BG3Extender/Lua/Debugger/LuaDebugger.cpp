@@ -1266,7 +1266,7 @@ namespace bg3se::lua::dbg
     {
         if (!IsDebuggerReady()) return;
 
-        if (State::FromLua(L)->IsClient()) {
+        if (State::FromLua(L)->GetContextType() == ContextType::Client) {
             client_.OnLuaHook(L, ar);
         } else {
             server_.OnLuaHook(L, ar);
@@ -1277,7 +1277,7 @@ namespace bg3se::lua::dbg
     {
         if (!IsDebuggerReady()) return;
 
-        if (State::FromLua(L)->IsClient()) {
+        if (State::FromLua(L)->GetContextType() == ContextType::Client) {
             client_.OnLuaError(L, msg);
         } else {
             server_.OnLuaError(L, msg);
@@ -1288,10 +1288,10 @@ namespace bg3se::lua::dbg
     {
         if (!IsDebuggerReady()) return;
 
-        if (GetCurrentExtensionState()->IsServer()) {
-            server_.OnGenericError(msg);
-        } else {
+        if (GetCurrentExtensionState()->GetContextType() == ContextType::Client) {
             client_.OnGenericError(msg);
+        } else {
+            server_.OnGenericError(msg);
         }
     }
 
@@ -1299,7 +1299,7 @@ namespace bg3se::lua::dbg
     {
         if (!IsDebuggerReady()) return;
 
-        if (State::FromLua(L)->IsClient()) {
+        if (State::FromLua(L)->GetContextType() == ContextType::Client) {
             client_.DebugBreak(L);
         } else {
             server_.DebugBreak(L);

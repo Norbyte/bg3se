@@ -75,7 +75,6 @@ public:
     ~ServerState();
 
     void Initialize() override;
-    bool IsClient() override;
 
     inline OsirisBinding& Osiris()
     {

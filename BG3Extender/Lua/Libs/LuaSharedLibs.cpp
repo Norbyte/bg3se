@@ -86,7 +86,7 @@ void RegisterConfig(lua_State* L)
     setfield(L, "PerfMessagesEnabled", gExtender->GetConfig().EnablePerfMessages);
     setfield(L, "ProfilerLoadCallbackErrorThreshold", gExtender->GetConfig().ProfilerLoadCallbackThreshold.Error);
 
-    if (State::FromLua(L)->IsClient()) {
+    if (State::FromLua(L)->GetContextType() == ContextType::Client) {
         setfield(L, "ProfilerCallbackErrorThreshold", gExtender->GetConfig().ProfilerClientCallbackThreshold.Error);
     } else {
         setfield(L, "ProfilerCallbackErrorThreshold", gExtender->GetConfig().ProfilerCallbackThreshold.Error);

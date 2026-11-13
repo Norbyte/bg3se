@@ -317,6 +317,12 @@ bool ScriptExtenderUpdater::LoadExtender()
 
         return false;
     } else {
+        extenderModule_ = handle;
+
+        for (auto const& callback : completionCallbacks_) {
+            callback.Callback(extenderModule_, callback.UserData);
+        }
+
         return true;
     }
 }

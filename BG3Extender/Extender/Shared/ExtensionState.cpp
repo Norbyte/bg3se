@@ -1,6 +1,7 @@
 #include <stdafx.h>
 #include <Extender/ScriptExtender.h>
 #include <Extender/Shared/ExtensionState.h>
+#include <Extender/Shared/API.h>
 #include <Extender/Version.h>
 #include <fstream>
 #include <CoreLib/JsonLibs.h>
@@ -31,11 +32,11 @@ namespace bg3se
         return lua::State::FromLua(L)->GetExtensionState();
     }
 
-    ExtensionStateBase::ExtensionStateBase(bool isServer)
-        : server_(isServer),
-        entityHelpers_(isServer ? (ecs::EntitySystemHelpersBase&)gExtender->GetServer().GetEntityHelpers() : gExtender->GetClient().GetEntityHelpers()),
-        userVariables_(isServer, entityHelpers_),
-        modVariables_(isServer)
+    ExtensionStateBase::ExtensionStateBase(ContextType context)
+        : contextType_(context),
+        entityHelpers_(context == ContextType::Server ? (ecs::EntitySystemHelpersBase&)gExtender->GetServer().GetEntityHelpers() : gExtender->GetClient().GetEntityHelpers()),
+        userVariables_(context, entityHelpers_),
+        modVariables_(context)
     {}
 
     ExtensionStateBase::~ExtensionStateBase()
@@ -481,7 +482,7 @@ namespace bg3se
         // Make sure that we won't get destroyed during startup/shutdown
         IncLuaRefs();
 
-        if (IsServer()) {
+        if (GetContextType() == ContextType::Server) {
             gExtender->GetClient().UpdateServerProgress("Lua Init");
         } else {
             gExtender->GetClient().UpdateClientProgress("Lua Init");
@@ -496,11 +497,14 @@ namespace bg3se
         // references are made to the old state while constructing the new
         ShutdownLuaState();
         OsiMsg("LUA VM reset");
+
         InitializeLuaState();
+        gExtender->GetExternalAPI().OnLuaStateEvent(GetContextType(), bg3api::APILuaStateEvent::Loading, GetLua()->GetState());
 
         if (LuaPendingStartup) {
             LuaPendingStartup = false;
             BootstrapLua();
+            gExtender->GetExternalAPI().OnLuaStateEvent(GetContextType(), bg3api::APILuaStateEvent::Loaded, GetLua()->GetState());
         }
 
         for (auto const& cb : luaPostResetCallbacks_) {

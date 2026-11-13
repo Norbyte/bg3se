@@ -126,7 +126,7 @@ namespace bg3se::lua
         RestrictionFlag RestrictionFlags{ 0 };
         std::unordered_set<int32_t> OverriddenLevelMaps;
 
-        State(ExtensionStateBase& state, uint32_t generationId, bool isServer);
+        State(ExtensionStateBase& state, uint32_t generationId, ContextType context);
         ~State();
 
         State(State const &) = delete;
@@ -154,12 +154,17 @@ namespace bg3se::lua
             return L;
         }
 
+        inline ContextType GetContextType() const
+        {
+            return contextType_;
+        }
+
         inline LuaStateWrapper& GetStateWrapper()
         {
             return L;
         }
 
-        inline uint32_t GetGenerationId()
+        inline uint32_t GetGenerationId() const
         {
             return generationId_;
         }
@@ -259,7 +264,6 @@ namespace bg3se::lua
 
         virtual void Initialize();
         virtual void Shutdown();
-        virtual bool IsClient() = 0;
 
         virtual EntityReplicationEventHooks* GetReplicationEventHooks() = 0;
 
@@ -335,6 +339,7 @@ namespace bg3se::lua
 
     protected:
         LuaStateWrapper L;
+        ContextType contextType_;
         bool startupDone_{ false };
         uint32_t generationId_;
         ExtensionStateBase& state_;

@@ -59,22 +59,22 @@ struct UserVariablePrototype
         return (Flags & flag) == flag;
     }
 
-    inline bool NeedsSyncFor(bool server) const
+    inline bool NeedsSyncFor(ContextType context) const
     {
-        return Has(server ? UserVariableFlags::SyncServerToClient : UserVariableFlags::SyncClientToServer);
+        return Has((context == ContextType::Server) ? UserVariableFlags::SyncServerToClient : UserVariableFlags::SyncClientToServer);
     }
 
-    inline bool IsAvailableFor(bool server) const
+    inline bool IsAvailableFor(ContextType context) const
     {
-        return Has(server ? UserVariableFlags::IsOnServer : UserVariableFlags::IsOnClient);
+        return Has((context == ContextType::Server) ? UserVariableFlags::IsOnServer : UserVariableFlags::IsOnClient);
     }
 
-    inline bool IsWriteableFor(bool server) const
+    inline bool IsWriteableFor(ContextType context) const
     {
-        return Has(server ? UserVariableFlags::WriteableOnServer : UserVariableFlags::WriteableOnClient);
+        return Has((context == ContextType::Server) ? UserVariableFlags::WriteableOnServer : UserVariableFlags::WriteableOnClient);
     }
 
-    bool NeedsRebroadcast(bool server) const;
+    bool NeedsRebroadcast(ContextType context) const;
 
     void SanityCheckFlags(FixedString const& name);
 };
@@ -94,8 +94,8 @@ enum class UserVarClass
 class UserVariableSyncWriter
 {
 public:
-    inline UserVariableSyncWriter(UserVariableInterface* vars, bool isServer, UserVarClass varClass)
-        : vars_(vars), isServer_(isServer), varClass_(varClass)
+    inline UserVariableSyncWriter(UserVariableInterface* vars, ContextType context, UserVarClass varClass)
+        : vars_(vars), contextType_(context), varClass_(varClass)
     {}
 
     void Flush(bool force);
@@ -118,7 +118,7 @@ private:
     Array<SyncRequest> nextTickSyncs_;
     net::ExtenderMessage* syncMsg_{ nullptr };
     size_t syncMsgBudget_{ 0 };
-    bool isServer_;
+    ContextType contextType_;
     UserVarClass varClass_;
 
     void AppendToSyncMessage(Guid const& entity, FixedString const& key, UserVariable const& value);
@@ -135,9 +135,9 @@ public:
         HashMap<FixedString, UserVariable> Vars;
     };
 
-    inline UserVariableManager(bool isServer, ecs::EntitySystemHelpersBase& entityHelpers)
-        : sync_(this, isServer, UserVarClass::EntityVar),
-        isServer_(isServer),
+    inline UserVariableManager(ContextType context, ecs::EntitySystemHelpersBase& entityHelpers)
+        : sync_(this, context, UserVarClass::EntityVar),
+        contextType_(context),
         entityHelpers_(entityHelpers)
     {}
 
@@ -172,7 +172,7 @@ private:
     HashMap<Guid, EntityVariables> vars_;
     HashMap<FixedString, UserVariablePrototype> prototypes_;
     UserVariableSyncWriter sync_;
-    bool isServer_;
+    ContextType contextType_;
     lua::CachedUserVariableManager* cache_{ nullptr };
     ecs::EntitySystemHelpersBase& entityHelpers_;
 };
@@ -185,9 +185,9 @@ public:
     inline ModVariableMap()
     {}
 
-    inline ModVariableMap(Guid moduleUuid, bool isServer)
+    inline ModVariableMap(Guid moduleUuid, ContextType context)
         : moduleUuid_(moduleUuid),
-        isServer_(isServer)
+        contextType_(context)
     {}
 
     inline Guid const& ModuleUuid() const
@@ -207,15 +207,15 @@ private:
     Guid moduleUuid_;
     VariableMap vars_;
     HashMap<FixedString, UserVariablePrototype> prototypes_;
-    bool isServer_{ false };
+    ContextType contextType_{ ContextType::None };
 };
 
 class ModVariableManager : public UserVariableInterface
 {
 public:
-    inline ModVariableManager(bool isServer)
-        : sync_(this, isServer, UserVarClass::ModuleVar),
-        isServer_(isServer)
+    inline ModVariableManager(ContextType context)
+        : sync_(this, context, UserVarClass::ModuleVar),
+        contextType_(context)
     {}
 
     std::optional<int32_t> GuidToModId(Guid const& uuid) const;
@@ -242,7 +242,7 @@ private:
     HashMap<Guid, uint32_t> modIndices_;
     HashMap<Guid, ModVariableMap> vars_;
     UserVariableSyncWriter sync_;
-    bool isServer_;
+    ContextType contextType_;
     lua::CachedModVariableManager* cache_{ nullptr };
 };
 
@@ -287,7 +287,7 @@ struct CachedUserVariable
 class CachedUserVariableManager
 {
 public:
-    CachedUserVariableManager(lua::State& state, UserVariableManager& global, bool isServer);
+    CachedUserVariableManager(lua::State& state, UserVariableManager& global, ContextType context);
     ~CachedUserVariableManager();
 
     inline UserVariableManager& GetGlobal() const
@@ -295,9 +295,9 @@ public:
         return global_;
     }
 
-    inline bool IsServer() const
+    inline ContextType GetContextType() const
     {
-        return isServer_;
+        return contextType_;
     }
 
     void Push(lua_State* L, EntityHandle entity, FixedString const& key);
@@ -324,7 +324,7 @@ private:
 
     lua::State& state_;
     UserVariableManager& global_;
-    bool isServer_;
+    ContextType contextType_;
     HashMap<EntityHandle, EntityVariables> vars_;
     Array<FlushRequest> flushQueue_;
 
@@ -338,7 +338,7 @@ private:
 class CachedModVariableManager
 {
 public:
-    CachedModVariableManager(lua::State& state, ModVariableManager& global, bool isServer);
+    CachedModVariableManager(lua::State& state, ModVariableManager& global, ContextType context);
     ~CachedModVariableManager();
 
     inline ModVariableManager& GetGlobal() const
@@ -346,9 +346,9 @@ public:
         return global_;
     }
 
-    inline bool IsServer() const
+    inline ContextType GetContextType() const
     {
-        return isServer_;
+        return contextType_;
     }
 
     Guid ModIndexToGuid(uint32_t modIndex);
@@ -376,7 +376,7 @@ private:
 
     lua::State& state_;
     ModVariableManager& global_;
-    bool isServer_;
+    ContextType contextType_;
     HashMap<uint32_t, ModVariables> vars_;
     Array<FlushRequest> flushQueue_;
 

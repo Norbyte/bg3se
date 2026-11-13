@@ -7,6 +7,7 @@
 #include <Extender/ScriptExtender.h>
 #include <Extender/Server/ExtensionStateServer.h>
 #include <Extender/Shared/ScriptHelpers.h>
+#include <Extender/Shared/API.h>
 #include <Lua/Debugger/LuaDebugger.h>
 #include <GameDefinitions/Components/All.h>
 #include <GameDefinitions/GuidResources.h>
@@ -98,7 +99,7 @@ namespace bg3se::esv::lua
     }
 
     ServerState::ServerState(ExtensionState& state, uint32_t generationId)
-        : State(state, generationId, true),
+        : State(state, generationId, ContextType::Server),
         osiris_(state),
         functorHooks_(*this),
         replicationHooks_(*this)
@@ -115,11 +116,6 @@ namespace bg3se::esv::lua
             // FIXME - HANDLE IN SERVER LOGIC!
             gExtender->GetServer().Osiris().GetCustomFunctionManager().ClearDynamicEntries();
         }
-    }
-
-    bool ServerState::IsClient()
-    {
-        return false;
     }
 
     void ServerState::Initialize()
@@ -188,7 +184,7 @@ namespace bg3se::esv
     }
 
     ExtensionState::ExtensionState()
-        : ExtensionStateBase(true)
+        : ExtensionStateBase(ContextType::Server)
     {}
 
     ExtensionState::~ExtensionState()
@@ -200,7 +196,7 @@ namespace bg3se::esv
         }
     }
 
-    lua::State * ExtensionState::GetLua()
+    lua::State * ExtensionState::GetLua() const
     {
         if (Lua) {
             return Lua.get();
@@ -209,7 +205,7 @@ namespace bg3se::esv
         }
     }
 
-    ModManager * ExtensionState::GetModManager()
+    ModManager * ExtensionState::GetModManager() const
     {
         auto server = GetEoCServer();
         if (server) {
@@ -219,7 +215,7 @@ namespace bg3se::esv
         }
     }
 
-    bg3se::LevelManager* ExtensionState::GetLevelManager()
+    bg3se::LevelManager* ExtensionState::GetLevelManager() const
     {
         return GetStaticSymbols().GetServerLevelManager();
     }
@@ -245,10 +241,12 @@ namespace bg3se::esv
     {
         EnteredCheck();
         if (Lua) {
+            gExtender->GetExternalAPI().OnLuaStateEvent(ContextType::Server, bg3api::APILuaStateEvent::Unloading, Lua->GetState());
             Lua->OnShutdown();
             Lua->Shutdown();
+            Lua.reset();
+            gExtender->GetExternalAPI().OnLuaStateEvent(ContextType::Server, bg3api::APILuaStateEvent::Unloaded, nullptr);
         }
-        Lua.reset();
     }
 
     void ExtensionState::InitializeLuaState()

@@ -21,7 +21,7 @@ void SystemEventHooks::BindECS()
     ecs_ = &state_.GetEntitySystemHelpers();
     hookedSystems_.clear();
     hookedSystems_.resize(ecs_->GetEntityWorld()->Systems.Systems.size());
-    context_ = state_.IsClient() ? ContextType::Client : ContextType::Server;
+    context_ = state_.GetContextType();
 }
 
 void SystemEventHooks::FireDeferredEvents()

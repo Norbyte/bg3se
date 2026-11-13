@@ -97,7 +97,7 @@ private:
 class TimerSystem
 {
 public:
-    TimerSystem(State& state, bool isServer);
+    TimerSystem(State& state, ContextType context);
 
     inline TimerManager& RealtimeTimer()
     {
@@ -111,7 +111,7 @@ public:
 
     inline bool SupportsPersistence() const
     {
-        return isServer_;
+        return contextType_ == ContextType::Server;
     }
 
     void Update(double time);
@@ -125,7 +125,7 @@ private:
     TimerManager realtime_;
     TimerManager game_;
     DeferredLuaDelegateQueue eventQueue_;
-    bool isServer_;
+    ContextType contextType_;
 };
 
 END_NS()

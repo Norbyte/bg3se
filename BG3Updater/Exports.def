@@ -16,3 +16,5 @@ EXPORTS
     SEUpdaterGetVersion=SEUpdaterGetVersion @111
     SEUpdaterGetErrorFlags=SEUpdaterGetErrorFlags @112
     SEUpdaterSetCapabilities=SEUpdaterSetCapabilities @113
+    SEUpdaterGetModule=SEUpdaterGetModule @114
+    SEUpdaterNotifyWhenLoaded=SEUpdaterNotifyWhenLoaded @115

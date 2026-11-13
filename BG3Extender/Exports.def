@@ -2,3 +2,10 @@ LIBRARY BG3ScriptExtender
 
 EXPORTS
     DWriteCreateFactory=WrappedDWriteCreateFactory @1
+    SEUpdaterGetModule=SEUpdaterGetModule @100
+    SEUpdaterNotifyWhenLoaded=SEUpdaterNotifyWhenLoaded @101
+    SEGetAPIVersion=SEGetAPIVersion @102
+    SERegisterLuaStateChangeCallback=SERegisterLuaStateChangeCallback @103
+    SEScheduleCallbackOnThread=SEScheduleCallbackOnThread @104
+    SEEnterLuaVM=SEEnterLuaVM @105
+    SEExitLuaVM=SEExitLuaVM @106

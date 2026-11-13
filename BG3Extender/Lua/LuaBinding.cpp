@@ -501,18 +501,19 @@ VMCallEntry::VMCallEntry(State* state, int stackDelta)
 VMCallEntry::~VMCallEntry()
 {}
 
-State::State(ExtensionStateBase& state, uint32_t generationId, bool isServer)
+State::State(ExtensionStateBase& state, uint32_t generationId, ContextType context)
     : L(state),
+    contextType_(context),
     generationId_(generationId),
     state_(state),
     entityHelpers_(state.GetEntitySystemHelpers()),
     lifetimeStack_(lifetimePool_),
     globals_(L.L),
-    variableManager_(*this, state.GetUserVariables(), isServer),
-    modVariableManager_(*this, state.GetModVariables(), isServer),
+    variableManager_(*this, state.GetUserVariables(), context),
+    modVariableManager_(*this, state.GetModVariables(), context),
     entityHooks_(*this),
     systemHooks_(*this),
-    timers_(*this, isServer),
+    timers_(*this, context),
     pathfinding_(*this, *state_.GetLevelManager()),
     networkRequests_(*this),
     guidResourceHelpers_(*this)

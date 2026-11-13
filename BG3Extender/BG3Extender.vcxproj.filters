@@ -549,6 +549,8 @@
     <ClInclude Include="Extender\Client\IMGUI\IMGUIShared.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaCppPropertyMapManager.h" />
     <ClInclude Include="Lua\Libs\StaticData.h" />
+    <ClInclude Include="Extender\Shared\APIExports.h" />
+    <ClInclude Include="Extender\Shared\API.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -856,6 +858,9 @@
     <None Include="Extender\Client\ClientNetworking.inl" />
     <None Include="GameDefinitions\Stats\StatsLua.inl">
       <Filter>GameDefinitions\Stats</Filter>
+    </None>
+    <None Include="Extender\Shared\API.inl">
+      <Filter>Extender\Shared</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

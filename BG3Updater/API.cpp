@@ -137,6 +137,22 @@ void SEUpdaterTest()
     SEUpdaterShutdown();
 }
 
+HMODULE SEUpdaterGetModule()
+{
+    if (gUpdater) {
+        return gUpdater->GetLoadedExtenderModule();
+    } else {
+        return NULL;
+    }
+}
+
+void SEUpdaterNotifyWhenLoaded(LoadCompletionCallbackProc* callback, void* userData)
+{
+    if (gUpdater) {
+        gUpdater->AddCompletionCallback(callback, userData);
+    }
+}
+
 END_SE()
 
 extern "C"
@@ -210,6 +226,16 @@ void SEUpdaterTest()
 void SEUpdaterShutdown()
 {
     bg3se::SEUpdaterShutdown();
+}
+
+HMODULE SEUpdaterGetModule()
+{
+    return bg3se::SEUpdaterGetModule();
+}
+
+void SEUpdaterNotifyWhenLoaded(bg3se::LoadCompletionCallbackProc* callback, void* userData)
+{
+    return bg3se::SEUpdaterNotifyWhenLoaded(callback, userData);
 }
 
 }

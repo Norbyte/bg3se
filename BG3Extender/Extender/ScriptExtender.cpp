@@ -17,6 +17,7 @@
 #include <Extender/Shared/ExtenderProtocol.pb.h>
 #pragma warning(pop)
 
+#include <Extender/Shared/API.inl>
 #include <Extender/Shared/UpdaterAPI.inl>
 #include <Extender/Shared/StatLoadOrderHelper.inl>
 #include <Extender/Shared/UserVariables.inl>
@@ -48,7 +49,8 @@ void LuaDebugThreadRunner(LuaDebugInterface& intf)
 ScriptExtender::ScriptExtender()
     : server_(config_),
     client_(config_),
-    imgui_(client_.GetSDL())
+    imgui_(client_.GetSDL()),
+    api_(new APIHelpers())
 {
     gCoreLibPlatformInterface.GlobalConsole = new DebugConsole();
 }

@@ -461,7 +461,7 @@ Object* Create(lua_State * L, FixedString const& statName, FixedString const& mo
         return nullptr;
     }
 
-    if (!lua->IsRestricted(RestrictionFlag::ScopeModuleLoad) && !State::FromLua(L)->IsClient()) {
+    if (!lua->IsRestricted(RestrictionFlag::ScopeModuleLoad)) {
         WARN_ONCE("Stats entres created after ModuleLoad must be synced manually; make sure that you call SyncStat() on it when you're finished!");
     }
 

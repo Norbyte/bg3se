@@ -139,6 +139,11 @@ public:
         return updaterApi_;
     }
 
+    inline APIHelpers& GetExternalAPI()
+    {
+        return *api_;
+    }
+
     inline uint32_t CreateGenerationId()
     {
         return nextGenerationId_.fetch_add(1);
@@ -177,6 +182,7 @@ private:
     UseActionHelpers useActions_;
     extui::IMGUIManager imgui_;
     UpdaterAPIHelpers updaterApi_;
+    std::unique_ptr<APIHelpers> api_;
     std::atomic<uint32_t> nextGenerationId_{ 1 };
 
     ExtenderConfig config_;

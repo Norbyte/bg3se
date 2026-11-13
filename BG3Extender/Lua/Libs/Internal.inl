@@ -3,11 +3,11 @@ BEGIN_NS(lua::internal)
 HashMap<FixedString, uint32_t> GetPublishedEvents(lua_State* L)
 {
     HashMap<FixedString, uint32_t> names;
-    bool isClient = State::FromLua(L)->IsClient();
+    auto context = State::FromLua(L)->GetContextType();
     for (auto const& evt : gEventRegistry.EventsById) {
         if (evt.Context == EventContext::Both
-            || (!isClient && evt.Context == EventContext::Server)
-            || (isClient && evt.Context == EventContext::Client)) {
+            || (context == ContextType::Server && evt.Context == EventContext::Server)
+            || (context == ContextType::Client && evt.Context == EventContext::Client)) {
             names.set(evt.LuaEventName, (uint32_t)evt.RegistryIndex);
         }
     }

@@ -147,6 +147,8 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="Extender\Server\ExtensionStateServer.h" />
     <ClInclude Include="Extender\Server\ScriptExtenderServer.h" />
     <ClInclude Include="Extender\Server\ServerNetworking.h" />
+    <ClInclude Include="Extender\Shared\API.h" />
+    <ClInclude Include="Extender\Shared\APIExports.h" />
     <ClInclude Include="Extender\Shared\Console.h" />
     <ClInclude Include="Extender\Shared\DWriteWrapper.h" />
     <ClInclude Include="Extender\Shared\ExtenderConfig.h" />
@@ -424,6 +426,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClCompile Include="GameDefinitions\GameHelpers.cpp" />
     <ClCompile Include="GameDefinitions\GlobalFixedStrings.cpp" />
     <ClCompile Include="GameDefinitions\Stats\Stats.cpp" />
+    <None Include="Extender\Shared\API.inl" />
     <None Include="GameDefinitions\Events.inl" />
     <None Include="GameDefinitions\Stats\StatsLua.inl" />
     <None Include="GameDefinitions\Stats\StatsObject.inl">

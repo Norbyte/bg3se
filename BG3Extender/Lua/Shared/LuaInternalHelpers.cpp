@@ -100,7 +100,7 @@ void ReportSlowFunction(lua_State* L, char const* func, uint64_t time, Ref const
     // Fast-path check for production configs
     if (!gExtender->GetConfig().EnablePerfMessages) return;
 
-    auto client = State::FromLua(L)->IsClient();
+    auto client = State::FromLua(L)->GetContextType() == ContextType::Client;
     bool loading;
     if (client) {
         auto state = GetStaticSymbols().GetClientState();

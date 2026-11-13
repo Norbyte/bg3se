@@ -6,6 +6,7 @@
 #include <Extender/Client/ExtensionStateClient.h>
 #include <Extender/Server/ExtensionStateServer.h>
 #include <Extender/Shared/ExtensionState.h>
+#include <Extender/Shared/API.h>
 #include <Extender/Version.h>
 #include <Osiris/Shared/NodeHooks.h>
 #include <resource.h>
@@ -859,9 +860,14 @@ public:
         SuspendThread(GetCurrentThread());
     }
 
+    static bool ShouldReportCrashes()
+    {
+        return !gExtender->GetExternalAPI().WasActivated();
+    }
+
     static LONG OnUnhandledException(_EXCEPTION_POINTERS * exceptionInfo)
     {
-        if (IsExtensionRelatedCrash(exceptionInfo)) {
+        if (ShouldReportCrashes() && IsExtensionRelatedCrash(exceptionInfo)) {
             LaunchCrashReporterThread(exceptionInfo);
             return EXCEPTION_EXECUTE_HANDLER;
         } else if (PrevExceptionFilter != nullptr) {

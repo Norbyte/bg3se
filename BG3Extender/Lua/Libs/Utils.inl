@@ -175,7 +175,7 @@ Array<STDString> GetCommandLineParams()
 
 dlg::DialogManager* GetDialogManager(lua_State* L)
 {
-    if (!State::FromLua(L)->IsClient()) {
+    if (State::FromLua(L)->GetContextType() == ContextType::Server) {
         auto ds = State::FromLua(L)->GetEntitySystemHelpers().GetSystem<esv::DialogSystem>();
         return ds ? ds->GameInterface.DialogManager : nullptr;
     } else {
@@ -187,7 +187,7 @@ dlg::DialogManager* GetDialogManager(lua_State* L)
 
 UserReturn GetGameState(lua_State* L)
 {
-    if (State::FromLua(L)->IsClient()) {
+    if (State::FromLua(L)->GetContextType() == ContextType::Client) {
         push(L, GetStaticSymbols().GetClientState());
     } else {
         push(L, GetStaticSymbols().GetServerState());

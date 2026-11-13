@@ -27,7 +27,6 @@ public:
     ~ClientState();
 
     void Initialize() override;
-    bool IsClient() override;
     void OnUpdate(GameTime const& time) override;
 
     EntityReplicationEventHooks* GetReplicationEventHooks() override;

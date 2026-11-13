@@ -41,14 +41,14 @@ namespace bg3se
 
         static ExtensionStateBase& FromLua(lua_State* L);
 
-        ExtensionStateBase(bool isServer);
+        ExtensionStateBase(ContextType context);
         virtual ~ExtensionStateBase();
 
         virtual void Reset();
-        virtual lua::State * GetLua() = 0;
-        virtual ModManager * GetModManager() = 0;
-        virtual LevelManager* GetLevelManager() = 0;
-        virtual char const * GetBootstrapFileName() = 0;
+        virtual lua::State * GetLua() const = 0;
+        virtual ModManager * GetModManager() const  = 0;
+        virtual LevelManager* GetLevelManager() const  = 0;
+        virtual char const * GetBootstrapFileName() const  = 0;
 
         void LoadConfigs();
         bool LoadConfig(Module const & mod, STDString const & configText, ExtensionModConfig & config);
@@ -72,6 +72,15 @@ namespace bg3se
         inline GameTime const& Time() const
         {
             return time_;
+        }
+
+        inline lua::State* GetLuaIfReachable() const
+        {
+            if (!LuaPendingDelete) {
+                return GetLua();
+            } else {
+                return nullptr;
+            }
         }
 
         virtual void OnGameSessionLoading();
@@ -147,9 +156,9 @@ namespace bg3se
             return luaRefs_;
         }
 
-        inline bool IsServer() const
+        inline ContextType GetContextType() const
         {
-            return server_;
+            return contextType_;
         }
 
         template <class TEvent>
@@ -182,7 +191,7 @@ namespace bg3se
         bool LuaPendingDelete{ false };
         bool LuaPendingStartup{ false };
         bool StatLoadTriggered{ false };
-        bool server_{ false };
+        ContextType contextType_;
         ExtensionStateContext context_{ ExtensionStateContext::Uninitialized };
         ExtensionStateContext nextContext_{ ExtensionStateContext::Uninitialized };
 
@@ -271,14 +280,14 @@ namespace bg3se
         inline LuaStatePin(T & state)
             : state_(state)
         {
-            se_assert((state_.IsServer() ? ContextType::Server : ContextType::Client) == GetCurrentContextType());
+            se_assert(state_.GetContextType() == GetCurrentContextType());
             state_.IncLuaRefs();
         }
 
         inline ~LuaStatePin()
         {
             state_.DecLuaRefs(true);
-            se_assert((state_.IsServer() ? ContextType::Server : ContextType::Client) == GetCurrentContextType());
+            se_assert(state_.GetContextType() == GetCurrentContextType());
         }
 
         LuaStatePin(LuaStatePin const& state) = delete;

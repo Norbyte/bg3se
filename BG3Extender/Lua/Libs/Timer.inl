@@ -280,10 +280,10 @@ void TimerManager::SavegameVisit(ObjectVisitor* visitor)
 }
 
 
-TimerSystem::TimerSystem(State& state, bool isServer)
+TimerSystem::TimerSystem(State& state, ContextType context)
     : realtime_(state, eventQueue_, TimerManager::RealtimeFlag),
     game_(state, eventQueue_, 0),
-    isServer_(isServer),
+    contextType_(context),
     eventQueue_(state, "Timer event")
 {}
 

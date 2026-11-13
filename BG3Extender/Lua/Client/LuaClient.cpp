@@ -43,7 +43,7 @@ ClientState* ClientState::FromLua(lua_State* L)
 }
 
 ClientState::ClientState(ExtensionState& state, uint32_t generationId)
-    : State(state, generationId, false),
+    : State(state, generationId, ContextType::Client),
     replicationHooks_(*this),
     uiEvents_(*this),
     deferredUIEvents_(*this),
@@ -82,11 +82,6 @@ void ClientState::Initialize()
     }
 
     gExtender->IMGUI().SetObjects(&*imgui_);
-}
-
-bool ClientState::IsClient()
-{
-    return true;
 }
 
 void ClientState::OnUpdate(GameTime const& time)

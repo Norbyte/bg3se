@@ -3,6 +3,7 @@
 #include <GameDefinitions/Level.h>
 #include <GameDefinitions/Symbols.h>
 #include <Extender/ScriptExtender.h>
+#include <Extender/Shared/API.h>
 #include <Lua/Client/ClientEvents.h>
 
 BEGIN_NS(ecl)
@@ -13,7 +14,7 @@ ExtensionState & ExtensionState::Get()
 }
 
 ExtensionState::ExtensionState()
-    : ExtensionStateBase(false)
+    : ExtensionStateBase(ContextType::Client)
 {}
 
 ExtensionState::~ExtensionState()
@@ -25,7 +26,7 @@ ExtensionState::~ExtensionState()
     }
 }
 
-lua::State * ExtensionState::GetLua()
+lua::State * ExtensionState::GetLua() const
 {
     if (Lua) {
         return Lua.get();
@@ -34,12 +35,12 @@ lua::State * ExtensionState::GetLua()
     }
 }
 
-ModManager* ExtensionState::GetModManager()
+ModManager* ExtensionState::GetModManager() const
 {
     return GetStaticSymbols().GetModManagerClient();
 }
 
-bg3se::LevelManager* ExtensionState::GetLevelManager()
+bg3se::LevelManager* ExtensionState::GetLevelManager() const
 {
     return GetStaticSymbols().GetClientLevelManager();
 }
@@ -55,10 +56,12 @@ void ExtensionState::ShutdownLuaState()
 {
     EnteredCheck();
     if (Lua) {
+        gExtender->GetExternalAPI().OnLuaStateEvent(ContextType::Client, bg3api::APILuaStateEvent::Unloading, Lua->GetState());
         Lua->OnShutdown();
         Lua->Shutdown();
+        Lua.reset();
+        gExtender->GetExternalAPI().OnLuaStateEvent(ContextType::Client, bg3api::APILuaStateEvent::Unloaded, nullptr);
     }
-    Lua.reset();
 }
 
 void ExtensionState::InitializeLuaState()

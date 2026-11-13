@@ -17,13 +17,13 @@ namespace bg3se::esv
         ~ExtensionState() override;
 
         void Reset() override;
-        lua::State * GetLua() override;
-        ModManager * GetModManager() override;
-        bg3se::LevelManager* GetLevelManager() override;
+        lua::State * GetLua() const override;
+        ModManager * GetModManager() const override;
+        bg3se::LevelManager* GetLevelManager() const override;
         void OnUpdate(GameTime const& time) override;
         void OnGameSessionLoading() override;
 
-        inline char const * GetBootstrapFileName() override
+        inline char const * GetBootstrapFileName() const override
         {
             return "BootstrapServer.lua";
         }

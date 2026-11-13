@@ -14,8 +14,8 @@ int UserVariableHolderMetatable::Index(lua_State* L, CppObjectMetadata& self)
         return 1;
     }
     
-    if (!proto->IsAvailableFor(vars.IsServer())) {
-        OsiError("Variable class '" << key << "' not available on " << (vars.IsServer() ? "server" : "client"));
+    if (!proto->IsAvailableFor(vars.GetContextType())) {
+        OsiError("Variable class '" << key << "' not available on " << ((vars.GetContextType() == ContextType::Server) ? "server" : "client"));
         push(L, nullptr);
         return 1;
     }
@@ -35,8 +35,8 @@ int UserVariableHolderMetatable::NewIndex(lua_State* L, CppObjectMetadata& self)
         return 0;
     }
 
-    if (!proto->IsWriteableFor(vars.IsServer())) {
-        OsiError("Variable class '" << key << "' not writeable on " << (vars.IsServer() ? "server" : "client"));
+    if (!proto->IsWriteableFor(vars.GetContextType())) {
+        OsiError("Variable class '" << key << "' not writeable on " << ((vars.GetContextType() == ContextType::Server) ? "server" : "client"));
         return 0;
     }
 
@@ -115,8 +115,8 @@ int ModVariableHolderMetatable::Index(lua_State* L, CppObjectMetadata& self)
         return 1;
     }
     
-    if (!proto->IsAvailableFor(vars.IsServer())) {
-        OsiError("Mod variable class '" << key << "' not available on " << (vars.IsServer() ? "server" : "client"));
+    if (!proto->IsAvailableFor(vars.GetContextType())) {
+        OsiError("Mod variable class '" << key << "' not available on " << ((vars.GetContextType() == ContextType::Server) ? "server" : "client"));
         push(L, nullptr);
         return 1;
     }
@@ -137,8 +137,8 @@ int ModVariableHolderMetatable::NewIndex(lua_State* L, CppObjectMetadata& self)
         return 0;
     }
 
-    if (!proto->IsWriteableFor(vars.IsServer())) {
-        OsiError("Mod variable class '" << key << "' not writeable on " << (vars.IsServer() ? "server" : "client"));
+    if (!proto->IsWriteableFor(vars.GetContextType())) {
+        OsiError("Mod variable class '" << key << "' not writeable on " << ((vars.GetContextType() == ContextType::Server) ? "server" : "client"));
         return 0;
     }
 
