@@ -1760,6 +1760,21 @@ Provides access to the engine's internal ModManager. Useful to get information a
 - `BaseModule: Module`
 - `Settings: ModuleSettings`
 
+### SaveSettings()
+
+Client only. Writes the active mod list (`GetModManager().Settings.Mods`) to the profile's `modsettings.lsx`, as the game's mod manager does when a mod is turned on or off. The game puts each mod's dependencies before it while saving, and loads the list on its next start.
+
+Example:
+```lua
+local mods = Ext.Mod.GetModManager().Settings.Mods
+-- Swap the last two mods. An entry read from the list is a reference, not a copy:
+-- copy it first, or both places end up with the same mod
+local last = Ext.Types.Serialize(mods[#mods])
+mods[#mods] = mods[#mods - 1]
+mods[#mods - 1] = last
+Ext.Mod.SaveSettings()
+```
+
 <a id="utils"></a>
 ## Utils - `Ext.Utils`
 

@@ -152,3 +152,12 @@ using CustomNodeVisitorProc = bool (ObjectVisitor&, DialogNode&, void*);
 using DialogManager__PerformDialogLoad = Dialog* (DialogManager* self, resource::DialogResource const* Resource, CustomNodeVisitorProc* CustomNodeVisitor, void* CustomNodeVisitData);
 
 END_NS()
+
+BEGIN_SE()
+
+struct ModManager;
+
+// Writes the active mod list (ModManager::Settings) to the profile's modsettings.lsx
+using ModManager__SaveSettingsProc = void (ModManager* self);
+
+END_SE()
