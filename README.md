@@ -1,4 +1,5 @@
 # Norbyte's Baldur's Gate 3 Script Extender
+**Latest Verified Game Version Supported: `v4.47.63.283`**
 
 [Downloads available here](https://github.com/Norbyte/bg3se/releases)
 
