@@ -82,6 +82,9 @@ Osi = {}
 --- @alias NoesisBaseCollection NoesisBaseObject[]
 --- @alias Version int32[]
 --- @alias avec4 number[]
+--- @alias dvec2 number[]
+--- @alias dvec3 number[]
+--- @alias dvec4 number[]
 --- @alias i16vec2 int16[]
 --- @alias ivec2 int32[]
 --- @alias ivec3 int32[]
@@ -100,7 +103,15 @@ Osi = {}
 
 --- @class EntityHandle
 --- @field CreateComponent fun(self:EntityHandle, type:ExtComponentType):BaseComponent
---- @field RemoveComponent fun(self:EntityHandle, type:ExtComponentType)
+--- @field CreateComponentImmediate fun(self:EntityHandle, type:ExtComponentType):BaseComponent
+--- @field RemoveComponent fun(self:EntityHandle, type:ExtComponentType):boolean
+--- @field RemoveComponentImmediate fun(self:EntityHandle, type:ExtComponentType):boolean
+--- @field MarkChanged fun(self:EntityHandle, type:ExtComponentType)
+--- @field WasChanged fun(self:EntityHandle, type:ExtComponentType)
+--- @field WasAdded fun(self:EntityHandle, type:ExtComponentType)
+--- @field WasRemoved fun(self:EntityHandle, type:ExtComponentType)
+--- @field WasEntityAdded fun(self:EntityHandle)
+--- @field WasEntityRemoved fun(self:EntityHandle)
 --- @field GetComponent fun(self:EntityHandle, type:ExtComponentType):BaseComponent
 --- @field HasRawComponent fun(self:EntityHandle, type:string):boolean
 --- @field GetAllComponents fun(self:EntityHandle, warnOnMissing:boolean?):table<ExtComponentType,BaseComponent>
@@ -205,6 +216,19 @@ Osi = {}
 --- @field ClassTag ClassTagComponent?
 --- @field Classes ClassesComponent?
 --- @field ClientControl ClientControlComponent?
+--- @field ClusterAttachRequest ClusterAttachRequestComponent?
+--- @field ClusterBound ClusterBoundComponent?
+--- @field ClusterBoundMax ClusterBoundMaxComponent?
+--- @field ClusterChild ClusterChildComponent?
+--- @field ClusterChildIndexed ClusterChildIndexedComponent?
+--- @field Cluster ClusterComponent?
+--- @field ClusterContainer ClusterContainerComponent?
+--- @field ClusterDistMax ClusterDistMaxComponent?
+--- @field ClusterDistMin ClusterDistMinComponent?
+--- @field ClusterPositionX ClusterPositionXComponent?
+--- @field ClusterPositionY ClusterPositionYComponent?
+--- @field ClusterPositionZ ClusterPositionZComponent?
+--- @field ClusterRadius ClusterRadiusComponent?
 --- @field CombinedLight CombinedLightComponent?
 --- @field Concentration ConcentrationComponent?
 --- @field ConcentrationIgnoreDamageBoost ConcentrationIgnoreDamageBoostComponent?
@@ -278,6 +302,8 @@ Osi = {}
 --- @field GravityDisabled GravityDisabledComponent?
 --- @field GravityDisabledUntilMoved GravityDisabledUntilMovedComponent?
 --- @field GuaranteedChanceRollOutcomeBoost GuaranteedChanceRollOutcomeBoostComponent?
+--- @field HLODChild HLODChildComponent?
+--- @field HLOD HLODComponent?
 --- @field HalveWeaponDamageBoost HalveWeaponDamageBoostComponent?
 --- @field HasExclamationDialog HasExclamationDialogComponent?
 --- @field Health HealthComponent?
@@ -303,7 +329,6 @@ Osi = {}
 --- @field ItemBoosts ItemBoostsComponent?
 --- @field JumpMaxDistanceBonusBoost JumpMaxDistanceBonusBoostComponent?
 --- @field JumpMaxDistanceMultiplierBoost JumpMaxDistanceMultiplierBoostComponent?
---- @field Key KeyComponent?
 --- @field Level LevelComponent?
 --- @field LevelInstance LevelInstanceComponent?
 --- @field LevelInstanceLoad LevelInstanceLoadComponent?
@@ -323,8 +348,8 @@ Osi = {}
 --- @field LoadAnimationSetGameplayRequest LoadAnimationSetGameplayRequestOneFrameComponent?
 --- @field LoadAnimationSetRequest LoadAnimationSetRequestOneFrameComponent?
 --- @field SavegameLoaded LoadedComponent?
+--- @field LocalBound LocalBoundComponent?
 --- @field LockBoost LockBoostComponent?
---- @field Lock LockComponent?
 --- @field Loot LootComponent?
 --- @field LootingState LootingStateComponent?
 --- @field MaterialParameterOverride MaterialParameterOverrideComponent?
@@ -339,6 +364,7 @@ Osi = {}
 --- @field ObjectSizeBoost ObjectSizeBoostComponent?
 --- @field ObjectSize ObjectSizeComponent?
 --- @field ObjectSizeOverrideBoost ObjectSizeOverrideBoostComponent?
+--- @field Occlusion OcclusionComponent?
 --- @field OffStage OffStageComponent?
 --- @field OriginAppearanceTag OriginAppearanceTagComponent?
 --- @field Origin OriginComponent?
@@ -418,11 +444,14 @@ Osi = {}
 --- @field SummonContainer SummonContainerComponent?
 --- @field SummonLifetime SummonLifetimeComponent?
 --- @field SurfacePathInfluences SurfacePathInfluencesComponent?
+--- @field SyncedTimelineActorControl SyncedTimelineActorControlComponent?
+--- @field SyncedTimelineControl SyncedTimelineControlComponent?
 --- @field Tag TagComponent?
 --- @field TemplateAnimationSetOverride TemplateAnimationSetOverrideComponent?
 --- @field TemporaryHPBoost TemporaryHPBoostComponent?
 --- @field TimeFactor TimeFactorComponent?
 --- @field TimelineActorData TimelineActorDataComponent?
+--- @field TimelineData TimelineDataComponent?
 --- @field Trader TraderComponent?
 --- @field Transform TransformComponent?
 --- @field UnlockInterruptBoost UnlockInterruptBoostComponent?
@@ -500,21 +529,31 @@ Osi = {}
 --- @field Constellation ConstellationComponent?
 --- @field DeadByDefault DeathDeadByDefaultComponent?
 --- @field DeadReckoning DeathDeadReckoningComponent?
+--- @field DeadReckoningSync DeathDeadReckoningSyncComponent?
 --- @field Death DeathDeathComponent?
 --- @field DeathState DeathDeathStateComponent?
 --- @field DeathType DeathDeathTypeComponent?
 --- @field Downed DeathDownedComponent?
+--- @field ClientAtmosphereTrigger EclAtmosphereTrigger?
 --- @field ClientCharacter EclCharacter?
 --- @field ClientCharacterIconRequest EclCharacterIconRequestComponent?
 --- @field ClientCharacterIconResult EclCharacterIconResultComponent?
 --- @field CharacterLight EclCharacterLightComponent?
 --- @field CharacterLightSingleton EclCharacterLightSingletonComponent?
 --- @field ClientTimelineActorControl EclClientTimelineActorControlComponent?
+--- @field ClientTimelineControl EclClientTimelineControlComponent?
 --- @field ClientEquipmentVisuals EclEquipmentVisualsComponent?
+--- @field ClientFloorTrigger EclFloorTrigger?
 --- @field GameCameraBehavior EclGameCameraBehavior?
+--- @field ClientLightingTrigger EclLightingTrigger?
 --- @field ClientPaperdoll EclPaperdollComponent?
+--- @field ClientPortalTrigger EclPortalTrigger?
+--- @field ClientRegionTrigger EclRegionTrigger?
+--- @field ClientRoomTrigger EclRoomTrigger?
 --- @field Scenery EclScenery?
+--- @field ClientSoundVolumeTrigger EclSoundVolumeTrigger?
 --- @field TLPreviewDummy EclTLPreviewDummy?
+--- @field ClientTimelineSceneTrigger EclTimelineSceneTrigger?
 --- @field CameraArriveWatcher EclCameraArriveWatcherComponent?
 --- @field CameraModeTracker EclCameraCameraModeTrackerSingletonComponent?
 --- @field CameraClearScreenFadeRequestManual EclCameraClearScreenFadeRequestManualOneFrameComponent?
@@ -604,11 +643,13 @@ Osi = {}
 --- @field FTBParticipant EocFtbParticipantComponent?
 --- @field FTBRespect EocFtbRespectComponent?
 --- @field FTBZoneBlockReason EocFtbZoneBlockReasonComponent?
---- @field HotbarContainer EocHotbarContainerComponent?
---- @field HotbarDecks EocHotbarHotbarCurrentDecksComponent?
 --- @field CanBeWielded EocImprovisedWeaponCanBeWieldedComponent?
 --- @field ImprovisedWeaponWielded EocImprovisedWeaponWieldedComponent?
 --- @field ImprovisedWeaponWielding EocImprovisedWeaponWieldingComponent?
+--- @field LockAnimationState EocLockAnimationStateComponent?
+--- @field Key EocLockKeyComponent?
+--- @field LockLifetime EocLockLifetimeComponent?
+--- @field Lock EocLockLockComponent?
 --- @field PickUpExecuting EocPickupPickUpExecutingComponent?
 --- @field PickUpRequest EocPickupPickUpRequestComponent?
 --- @field LongRestInScriptPhase EocRestLongRestInScriptPhase?
@@ -671,7 +712,6 @@ Osi = {}
 --- @field ServerMusicVolumeTrigger EsvMusicVolumeTrigger?
 --- @field ServerMusicVolumeTriggerState EsvMusicVolumeTriggerStateComponent?
 --- @field Net EsvNetComponent?
---- @field ServerHotbarOrder EsvOrderComponent?
 --- @field ServerOsirisPingRequestSingleton EsvOsirisPingRequestSingletonComponent?
 --- @field ServerPeersInRange EsvPeersInRangeComponent?
 --- @field PerItemSpellSource EsvPerItemSpellSourceComponent?
@@ -693,7 +733,6 @@ Osi = {}
 --- @field ServerSoundVolumeTrigger EsvSoundVolumeTrigger?
 --- @field ServerStartTrigger EsvStartTrigger?
 --- @field ServerStatsAreaTrigger EsvStatsAreaTrigger?
---- @field ServerSurface EsvSurfaceComponent?
 --- @field HistoryTargetUUID EsvTargetUUIDComponent?
 --- @field ServerTeleportTrigger EsvTeleportTrigger?
 --- @field ServerTemplateTag EsvTemplateTagComponent?
@@ -800,6 +839,9 @@ Osi = {}
 --- @field HitResultEvent EsvHitHitResultEventOneFrameComponent?
 --- @field HitJoinCombatRequest EsvHitOnHitJoinCombatRequestOneFrameComponent?
 --- @field UnresolvedHitNotification EsvHitUnresolvedHitNotificationComponent?
+--- @field ServerHotbarOrder EsvHotbarOrderComponent?
+--- @field ServerHotbarSlotsAdded EsvHotbarSlotsAddedOneFrameComponent?
+--- @field ServerHotbarSlotsRemoved EsvHotbarSlotsRemovedOneFrameComponent?
 --- @field ServerInterruptActionRequests EsvInterruptActionRequestsComponent?
 --- @field ServerInterruptAddRemoveRequests EsvInterruptAddRemoveRequestsComponent?
 --- @field ServerInterruptDataSingleton EsvInterruptDataSingletonComponent?
@@ -816,6 +858,7 @@ Osi = {}
 --- @field ReadyToBeAddedToInventory EsvInventoryReadyToBeAddedToInventoryComponent?
 --- @field ServerShapeshiftEquipmentHistory EsvInventoryShapeshiftEquipmentHistoryComponent?
 --- @field ServerDynamicLayerOwner EsvItemDynamicLayerOwnerComponent?
+--- @field ServerLockpickingState EsvLockLockpickingStateComponent?
 --- @field ServerIsCurrentOwner EsvOwnershipIsCurrentOwnerComponent?
 --- @field ServerIsLatestOwner EsvOwnershipIsLatestOwnerComponent?
 --- @field ServerIsOriginalOwner EsvOwnershipIsOriginalOwnerComponent?
@@ -932,6 +975,12 @@ Osi = {}
 --- @field SummonPlaceInInventoryRequest EsvSummonPlaceInInventoryRequestOneFrameComponent?
 --- @field SummonSetLifetimeRequest EsvSummonSetLifetimeRequestOneFrameComponent?
 --- @field SummonCreatedEvent EsvSummonSpawnCreatedEventOneFrameComponent?
+--- @field ServerSurfaceCreatedEvent EsvSurfaceCreatedEventOneFrameComponent?
+--- @field ServerSurfaceLevelLoaded EsvSurfaceLevelLoadedComponent?
+--- @field ServerSurfaceRemovedEvent EsvSurfaceRemovedEventOneFrameComponent?
+--- @field ServerSurface EsvSurfaceSurfaceComponent?
+--- @field ServerSurfaceActionFinishedEvent EsvSurfaceActionFinishedEventOneFrameComponent?
+--- @field ServerSurfaceActionGrownEvent EsvSurfaceActionGrownEventOneFrameComponent?
 --- @field TagsChangedEvent EsvTagsTagsChangedEventOneFrameComponent?
 --- @field ServerTemplateChangedEvent EsvTemplatesTemplateChangedOneFrameComponent?
 --- @field ServerTemplateTransformedEvent EsvTemplatesTemplateTransformedOneFrameComponent?
@@ -966,6 +1015,9 @@ Osi = {}
 --- @field HitTarget HitTargetComponent?
 --- @field HitThrownObject HitThrownObjectComponent?
 --- @field HitWeapon HitWeaponComponent?
+--- @field HotbarContainer HotbarContainerComponent?
+--- @field HotbarContainerKeyCreated HotbarContainerKeyCreatedOneFrameComponent?
+--- @field HotbarDecks HotbarCurrentDecksComponent?
 --- @field InstancingBatch InstancingInstancingBatchComponent?
 --- @field InstancingBatchInitialized InstancingInstancingBatchInitializedComponent?
 --- @field InstancingBatchModifyOneFrame InstancingInstancingBatchModifyOneFrameComponent?
@@ -1176,14 +1228,16 @@ Osi = {}
 --- @alias AttackRoll string|"Charisma"|"Constitution"|"Dexterity"|"Intelligence"|"None"|"SpellCastingAbility"|"Strength"|"UnarmedAttackAbility"|"WeaponAttackAbility"|"Wisdom"
 --- @alias AttributeFlags string|"Arrow"|"Backstab"|"BackstabImmunity"|"EnableObscurityEvents"|"Floating"|"FloatingWhileMoving"|"ForceMainhandAlternativeEquipBones"|"Grounded"|"IgnoreClouds"|"InventoryBound"|"InvisibilityImmunity"|"InvulnerableAndInteractive"|"LootableWhenEquipped"|"LoseDurabilityOnCharacterHit"|"ObscurityWithoutSneaking"|"PickpocketableWhenEquipped"|"SlippingImmunity"|"ThrownImmunity"|"Torch"|"Unbreakable"|"Unrepairable"|"Unstorable"|"UseMusicalInstrumentForCasting"
 --- @alias AudioCodec string|"ADPCM"|"Bank"|"External"|"Opus"|"OpusNX"|"OpusWEM"|"PCM"|"PCMEX"|"Vorbis"|"XMA"
+--- @alias AwarenessCapabilityFlags string|"ActivateTriggers"|"AvoidTraps"|"CanSee"|"DetectCrimes"|"DetectVictimOnlyCrimes"|"SpotSneakers"
 --- @alias BodyType string|"Female"|"Male"
 --- @alias BoostSourceType string|"Action"|"Base"|"CharacterCreation"|"Console"|"Item"|"Passive"|"Progression"|"Shapeshift"|"Status"|"Story"|"Undefined"
 --- @alias BoostType string|"AC"|"ACOverrideFormula"|"Ability"|"AbilityFailedSavingThrow"|"AbilityOverrideMinimum"|"ActionResource"|"ActionResourceBlock"|"ActionResourceConsumeMultiplier"|"ActionResourceMultiplier"|"ActionResourceOverride"|"ActionResourcePreventReduction"|"ActionResourceReplenishTypeOverride"|"ActiveCharacterLight"|"AddProficiencyToAC"|"AddProficiencyToDamage"|"AdvanceSpells"|"Advantage"|"AiArchetypeOverride"|"AreaDamageEvade"|"ArmorAbilityModifierCapOverride"|"AttackSpellOverride"|"Attribute"|"BlockAbilityModifierDamageBonus"|"BlockAbilityModifierFromAC"|"BlockGatherAtCamp"|"BlockRegainHP"|"BlockSomaticComponent"|"BlockSpellCast"|"BlockTravel"|"BlockVerbalComponent"|"CanSeeThrough"|"CanShootThrough"|"CanWalkThrough"|"CannotBeDisarmed"|"CannotHarmCauseEntity"|"CarryCapacityMultiplier"|"CharacterUnarmedDamage"|"CharacterWeaponDamage"|"ConcentrationIgnoreDamage"|"ConsumeItemBlock"|"CriticalDamageOnHit"|"CriticalHit"|"CriticalHitExtraDice"|"DamageBonus"|"DamageReduction"|"DamageTakenBonus"|"DarkvisionRange"|"DarkvisionRangeMin"|"DarkvisionRangeOverride"|"Detach"|"DetectDisturbancesBlock"|"DialogueBlock"|"DodgeAttackRoll"|"DownedStatus"|"DualWielding"|"EnableBasicItemInteractions"|"EntityThrowDamage"|"ExpertiseBonus"|"FactionOverride"|"FallDamageMultiplier"|"GameplayLight"|"GameplayObscurity"|"GuaranteedChanceRollOutcome"|"HalveWeaponDamage"|"HiddenDuringCinematic"|"HorizontalFOVOverride"|"IgnoreDamageThreshold"|"IgnoreEnterAttackRange"|"IgnoreFallDamage"|"IgnoreLeaveAttackRange"|"IgnoreLowGroundPenalty"|"IgnorePointBlankDisadvantage"|"IgnoreResistance"|"IgnoreSurfaceCover"|"IncreaseMaxHP"|"Initiative"|"IntrinsicSourceProficiency"|"IntrinsicSummonerProficiency"|"Invisibility"|"Invulnerable"|"ItemReturnToOwner"|"JumpMaxDistanceBonus"|"JumpMaxDistanceMultiplier"|"LeaveTriggers"|"Lock"|"Lootable"|"MaximizeHealing"|"MaximumRollResult"|"MinimumRollResult"|"MonkWeaponAttackOverride"|"MonkWeaponDamageDiceOverride"|"MovementSpeedLimit"|"NoAOEDamageOnLand"|"NoDamageOnThrown"|"NonLethal"|"NullifyAbilityScore"|"ObjectSize"|"ObjectSizeOverride"|"PhysicalForceRangeBonus"|"Proficiency"|"ProficiencyBonus"|"ProficiencyBonusIncrease"|"ProficiencyBonusOverride"|"ProjectileDeflect"|"ReceivingCriticalDamageOnHit"|"RedirectDamage"|"ReduceCriticalAttackThreshold"|"Reroll"|"Resistance"|"RollBonus"|"Savant"|"ScaleMultiplier"|"Sentinel"|"SightRangeAdditive"|"SightRangeMaximum"|"SightRangeMinimum"|"SightRangeOverride"|"Skill"|"SoundsBlocked"|"SourceAdvantageOnAttack"|"SourceAllyAdvantageOnAttack"|"SpellResistance"|"SpellSaveDC"|"StatusImmunity"|"Tag"|"TemporaryHP"|"TwoWeaponFighting"|"UnarmedMagicalProperty"|"UnlockInterrupt"|"UnlockSpell"|"UnlockSpellVariant"|"UseBoosts"|"VoicebarkBlock"|"WeaponAttackRollAbilityOverride"|"WeaponAttackRollBonus"|"WeaponAttackTypeOverride"|"WeaponDamage"|"WeaponDamageDieOverride"|"WeaponDamageResistance"|"WeaponDamageTypeOverride"|"WeaponEnchantment"|"WeaponProperty"|"Weight"|"WeightCategory"
 --- @alias BoundBaseFlags string|"UseOnDistance"|"UseTranslateOverride"
 --- @alias BoundFlags string|"CanClimbOn"|"CharacterSeeThroughBlock"|"CharacterShootThroughBlock"|"CharacterWalkThroughBlock"|"Indestructible"|"Interactable"|"InvisibleTrap"|"IsPlatformOwner"|"ItemSeeThroughBlock"|"ItemShootThroughBlock"|"ItemWalkThroughBlock"|"SurfaceBlocker"|"SurfaceCloudBlocker"|"WalkOn"
 --- @alias CameraTargetRequestType string|"CharacterAssign"|"ClearTargets"|"CombatStarted"|"DeathAnimation"|"DebugPos"|"Follow"|"PlayerTurn"|"Projectile"|"Restore"|"SetPlayerTargets"|"Spell"|"Status"|"Swarm"
---- @alias CanDoActionsFlags string|"CanAttack"|"CanCastRituals"|"CanCastSpells"|"CanDisarmTrap"|"CanDoFlag4"|"CanLockpick"|"CanPickpocket"
---- @alias CanInteractFlags string|"CanInteract"|"CanUseFlag8"|"CanUseLadder"|"CanUsePortals"
+--- @alias CanDoActionsFlags string|"CanAttack"|"CanCastRituals"|"CanCastSpells"|"CanDisarmTrap"|"CanDoFlag4"|"CanDoWorldActions"|"CanLockpick"|"CanPickpocket"
+--- @alias CanInteractFlags string|"CanBasicItemInteractions"|"CanConsumeItems"|"CanInteract"|"CanMoveObjects"|"CanPickup"|"CanUseContainers"|"CanUseDoors"|"CanUseFlag8"|"CanUseLadder"|"CanUsePortals"
+--- @alias CanInteractStateFlags string|"Encumbered"|"Shapeshifted"
 --- @alias CanMoveFlags string|"CanBeTeleported"|"CanFollow"|"CanMove"|"CanWorldClimb"|"CanWorldDrop"
 --- @alias CastRequirementFlags string|"ActionResources"|"Cooldowns"|"EquipmentProficiency"|"ItemCharges"|"Range"|"Shield"|"Somatic"|"Speech"|"SpellCast"|"SpellPrepared"|"StatsConditions"|"WeaponRequirements"
 --- @alias CauseType string|"AURA"|"Attack"|"InventoryItem"|"None"|"Offhand"|"StatusEnter"|"StatusTick"|"SurfaceCreate"|"SurfaceMove"|"SurfaceStatus"|"Unknown11"|"WorldItemThrow"
@@ -1201,6 +1255,7 @@ Osi = {}
 --- @alias CombatParticipantFlags string|"CanFight"|"CanJoinCombat"|"IsBoss"|"IsInspector"|"StayInAiHints"
 --- @alias CombatPauseSourceType string|"Script"|"Unknown"
 --- @alias ConditionRollType string|"AbilityCheckRoll"|"AttackRoll"|"DifficultyRoll"|"SavingThrowRoll"|"SkillCheckRoll"
+--- @alias ConstructionTileFlags string|"CanSeeThrough"|"ClickThrough"|"Climbable"|"SeeThrough"|"ShootThrough"|"WalkOn"|"WalkThrough"
 --- @alias ContainerInteractionType string|"Scatter"|"Sort"
 --- @alias CriticalHitAttackFlags string|"AttackRoll"|"AttackTarget"
 --- @alias CriticalHitSuccessFlags string|"Failure"|"FailureNever"|"Success"|"SuccessNever"
@@ -1209,22 +1264,26 @@ Osi = {}
 --- @alias DamageType string|"Acid"|"Bludgeoning"|"Cold"|"Fire"|"Force"|"Lightning"|"Necrotic"|"None"|"Piercing"|"Poison"|"Psychic"|"Radiant"|"Sentinel"|"Slashing"|"Thunder"
 --- @alias DealDamageWeaponDamageType string|"MainMeleeWeaponDamageType"|"MainRangedWeaponDamageType"|"MainWeaponDamageType"|"None"|"OffhandMeleeWeaponDamageType"|"OffhandRangedWeaponDamageType"|"OffhandWeaponDamageType"|"SourceWeaponDamageType"|"ThrownWeaponDamageType"
 --- @alias DealDamageWeaponType string|"ImprovisedWeapon"|"MainMeleeWeapon"|"MainRangedWeapon"|"MainWeapon"|"None"|"OffhandMeleeWeapon"|"OffhandRangedWeapon"|"OffhandWeapon"|"SourceWeapon"|"ThrownWeapon"|"UnarmedDamage"
+--- @alias DialogFlagType string|"Dialog"|"DialogInstance"|"Global"|"Local"|"Object"|"Party"|"Quest"|"Script"|"Tag"|"User"|"UserShape"
 --- @alias DialogNodeFlags string|"AllowGrouping"|"IsEndAllDialogs"|"IsEndNode"|"IsExclusive"|"IsGameplayNode"|"IsGreetingNode"|"IsOptional"|"IsRootNode"|"ShowOnlyOnce"|"SuppressSubtitle"
+--- @alias DialogResourceFlags string|"AllowDeadSpeakers"|"Automated"|"BlockFTB"|"EnableTimeline"|"IsBehaviour"|"IsPrivateDialog"|"IsSubbedDialog"|"IsWorld"
+--- @alias DialogResourceFlags2 string|"IsAllowingJoinCombat"
 --- @alias DiceSizeId string|"D10"|"D100"|"D12"|"D20"|"D4"|"D6"|"D8"|"Default"
 --- @alias DisplayNameType string|"CharacterCreation"|"None"|"Stats"|"Story"|"Template"|"Transform"|"Unknown"
 --- @alias DisplayTitleType string|"Story"|"Template"|"Transform"
 --- @alias DualWieldingRequestType string|"ActionResourceChanged"|"BoostChanged"|"OnItemEquipped"|"OnItemEquipped2"|"ToggleDualWielding"|"ToggleOnCharacterControlChanged"
 --- @alias DynamicModifierType string|"Consumable"|"ItemSpell"|"None"|"Spell"|"ToggledPassive"
---- @alias ECSComponentChangeFlags string|"Create"|"Destroy"|"OneFrame"|"Replicate"|"ReplicatedComponent"
+--- @alias ECSComponentChangeFlags string|"Create"|"Destroy"|"Modify"|"OneFrame"|"Replicate"|"ReplicatedComponent"
 --- @alias ECSEntityChangeFlags string|"Create"|"Dead"|"Destroy"|"Ignore"|"Immediate"
 --- @alias EEquipmentType string|"Armor"|"Sentinel"|"Shield"|"Unknown1"|"Weapon"
 --- @alias EffectFlags string|"Active"|"Forget"|"FullyInitialized"|"FullyInitialized2"|"Interrupted"|"Playing"|"Pooled"|"Stopped"
 --- @alias EffectPropertyType string|"Base"|"Boolean"|"ColorARGBKeyFrame"|"FixedFunction"|"FixedString"|"Float"|"FloatKeyFrame"|"FloatRange"|"Integer"|"IntegerRange"|"String"|"Vector3"
 --- @alias EquipmentStatsType string|"Armor"|"Shield"|"Weapon"
 --- @alias ExecuteWeaponFunctorsType string|"BothHands"|"MainHand"|"OffHand"|"Undefined"
---- @alias ExtComponentType string|"ACOverrideFormulaBoost"|"AbilityBoost"|"AbilityCheckEvent"|"AbilityFailedSavingThrowBoost"|"AbilityOverrideMinimumBoost"|"ActionResourceBlockBoost"|"ActionResourceChangeResults"|"ActionResourceConsumeMultiplierBoost"|"ActionResourceEvents"|"ActionResourceMultiplierBoost"|"ActionResourcePreventReductionBoost"|"ActionResourceReplenishTypeOverrideBoost"|"ActionResourceSpendEvent"|"ActionResourceValueBoost"|"ActionResources"|"ActionType"|"ActionUseConditions"|"Active"|"ActiveCharacterLight"|"ActiveCharacterLightBoost"|"ActiveSkeletonSlots"|"AddTagBoost"|"AddedSpells"|"AdvanceSpellsBoost"|"AdvantageBoost"|"AiArchetypeOverrideBoost"|"AlwaysUpdateEffect"|"Ambushing"|"AnimationBlueprint"|"AnimationGameplayEvents"|"AnimationGameplayEventsSingleton"|"AnimationSet"|"AnimationSetUpdateRequest"|"AnimationTextKeyEvents"|"AnimationTextKeyEventsSingleton"|"AnimationTriggeredEvents"|"AnimationUpdate"|"AnimationWaterfall"|"AnubisConfig"|"AnubisEnabled"|"AnubisRuntime"|"AnubisTree"|"AnubisTree2"|"AppearanceOverride"|"ApprovalRatings"|"AreaLevel"|"Armor"|"ArmorAbilityModifierCapOverrideBoost"|"ArmorClassBoost"|"ArmorSetState"|"AttackSpellOverride"|"AttackSpellOverrideBoost"|"AttitudesToPlayers"|"AttributeBoost"|"AttributeFlags"|"AttributeFlagsChangedEvent"|"AvailableLevel"|"Avatar"|"Background"|"BackgroundGoals"|"BackgroundPassives"|"BackgroundTag"|"BaseHp"|"BaseStats"|"BlockAbilityModifierFromACBoost"|"BlockFollow"|"BlockRegainHPBoost"|"BodyType"|"BoostBaseUpdated"|"BoostChangedEvent"|"BoostChangedEventsSingleton"|"BoostCondition"|"BoostConditionalState"|"BoostInfo"|"BoostProvider"|"BoostsContainer"|"Bound"|"CCChangeAppearanceDefinition"|"CCCharacterDefinition"|"CCCompanionDefinition"|"CCCreation"|"CCDefinitionCommon"|"CCDefinitionLevelUp"|"CCFullRespec"|"CCFullRespecDefinition"|"CCLevelUp"|"CCLevelUpDefinition"|"CCPrepareSpell"|"CCRespec"|"CCRespecDefinition"|"CCSessionCommon"|"CCState"|"CalendarDaysPassed"|"CalendarStartingDate"|"Camera"|"CameraArriveWatcher"|"CameraClearScreenFadeRequestManual"|"CameraCombatTarget"|"CameraCombatTargetRequests"|"CameraInSelectorMode"|"CameraInSelectorWhileInactive"|"CameraModeTracker"|"CameraPlatformTarget"|"CameraScreenFadeToRequestManual"|"CameraSelectorMode"|"CameraSpellTracking"|"CameraTarget"|"CampChest"|"CampEndTheDayState"|"CampPresence"|"CampQuality"|"CampSettings"|"CampSupply"|"CampTotalSupplies"|"CanBeDisarmed"|"CanBeInInventory"|"CanBeLooted"|"CanBeWielded"|"CanDeflectProjectiles"|"CanDoActions"|"CanDoRest"|"CanEnterChasm"|"CanInteract"|"CanLevelUp"|"CanModifyHealth"|"CanMove"|"CanSeeThrough"|"CanSeeThroughBoost"|"CanSense"|"CanShootThrough"|"CanShootThroughBoost"|"CanSpeak"|"CanTrade"|"CanTravel"|"CanTriggerRandomCasts"|"CanWalkThrough"|"CanWalkThroughBoost"|"CannotBePickpocketed"|"CannotBeTakenOut"|"CannotHarmCauseEntityBoost"|"CarryCapacityMultiplierBoost"|"CharacterCreationAppearance"|"CharacterCreationStats"|"CharacterCreationTemplateOverride"|"CharacterHasGeneratedTradeTreasure"|"CharacterLight"|"CharacterLightSingleton"|"CharacterUnarmedDamageBoost"|"CharacterWeaponDamageBoost"|"ClassTag"|"Classes"|"ClassesChangedEvent"|"ClientCCBaseDefinitionState"|"ClientCCChangeAppearanceDefinition"|"ClientCCCompanionDefinition"|"ClientCCDefinitionState"|"ClientCCDefinitionStateEx"|"ClientCCDummyDefinition"|"ClientCCFullRespecDefinition"|"ClientCCLevelUpDefinition"|"ClientCharacter"|"ClientCharacterIconRequest"|"ClientCharacterIconResult"|"ClientControl"|"ClientEffectHandler"|"ClientEquipmentVisibilityState"|"ClientEquipmentVisuals"|"ClientInterruptPlayerDecision"|"ClientPaperdoll"|"ClientSpellCastCache"|"ClientSpellCastCachedAnimationRequests"|"ClientSpellCastEffectTimeFactorRequests"|"ClientSpellCastEffects"|"ClientSpellCastInterruptPauseRequests"|"ClientSpellCastMoveDuringCastUpdate"|"ClientSpellCastMovement"|"ClientSpellCastPlaySoundRequest"|"ClientSpellCastRolls"|"ClientSpellCastRollsChanged"|"ClientSpellCastSetSoundSwitchesRequest"|"ClientSpellCastSharedToClientEntity"|"ClientSpellCastSoundImpactEvent"|"ClientSpellCastSounds"|"ClientSpellCastState"|"ClientSpellCastTargeting"|"ClientSpellCastTempSoundEventRequests"|"ClientSpellCastZoneRange"|"ClientTimelineActorControl"|"ClientVisualsDesiredState"|"ClimbOn"|"CombatDelayedFanfare"|"CombatFleeRequest"|"CombatFleeSuccess"|"CombatIsThreatened"|"CombatJoinInCurrentRound"|"CombatJoinInCurrentRoundFailedEvent"|"CombatJoining"|"CombatLateJoinPenalty"|"CombatLeftEvent"|"CombatMerge"|"CombatParticipant"|"CombatRequestCompletedEvent"|"CombatScheduledForDelete"|"CombatStartedEvent"|"CombatState"|"CombatSurfaceTeamSingleton"|"CombatSurprisedJoinRequest"|"CombatSurprisedStealthRequest"|"CombatSwitched"|"CombatThreatRangeChangedEvent"|"CombatantJoinEvent"|"CombatantKilledEvent"|"CombinedLight"|"Concentration"|"ConcentrationChanged"|"ConcentrationClearedEvent"|"ConcentrationDamageCheck"|"ConcentrationIgnoreDamageBoost"|"Constellation"|"Construction"|"ConstructionFilling"|"ConstructionTile"|"CriticalHitBoost"|"CriticalHitExtraDiceBoost"|"Cull"|"CurrentlyFollowingParty"|"CustomIcon"|"CustomIconsStorage"|"CustomName"|"CustomStats"|"DamageBonusBoost"|"DamageReductionBoost"|"DamageTakenBonusBoost"|"Darkness"|"DarkvisionRangeBoost"|"DarkvisionRangeMinBoost"|"DarkvisionRangeOverrideBoost"|"Data"|"DeadByDefault"|"DeadReckoning"|"Death"|"DeathApplyKnockedOut"|"DeathAssignEntityToUserRequest"|"DeathDeadByDefaultRequest"|"DeathState"|"DeathType"|"Decal"|"DefaultCameraBehavior"|"DelayedFanfareRemovedDuringCombatEvent"|"Detached"|"DetectCrimesBlockBoost"|"DialogState"|"DiedEvent"|"DifficultyCheck"|"DisabledEquipment"|"Disarmable"|"DisplayName"|"DodgeAttackRollBoost"|"Downed"|"DownedEvent"|"DownedStatusBoost"|"DropOnDeathBlocked"|"DualWielding"|"DualWieldingBoost"|"DummiesCreatedSingleton"|"Dummy"|"DummyAnimationState"|"DummyAvailableAnimations"|"DummyCharacterVFXInitialization"|"DummyEquipmentVisualsState"|"DummyFootIKState"|"DummyIsCopyingFullPose"|"DummyLoaded"|"DummyMultiEffectCreateRequest"|"DummyOriginalTransform"|"DummySpellVFXInitialization"|"DummySplatter"|"DummyStatusVFXInitialization"|"DummyStoredCloth"|"DummyTransformRequestsSingleton"|"DummyUnsheath"|"DummyVFXEntities"|"DynamicAnimationTags"|"Effect"|"EffectCameraBehavior"|"EffectCreate"|"EncumbranceState"|"EncumbranceStats"|"EntityThrowDamageBoost"|"EocLevel"|"Equipable"|"EquipmentSlotChangedEvent"|"EquipmentVisual"|"EscortFollower"|"EscortHasStragglers"|"EscortLeader"|"EscortLeaderPriority"|"EscortMember"|"EscortStragglersTracker"|"ExamineDisabled"|"Experience"|"Expertise"|"ExpertiseBonusBoost"|"FTBModeChangedEvent"|"FTBParticipant"|"FTBPaused"|"FTBPlayersTurnEndedEvent"|"FTBPlayersTurnStartedEvent"|"FTBRespect"|"FTBRoundEndedEvent"|"FTBSurfaceTeamSingleton"|"FTBTimeFactorRequests"|"FTBTimeFactorResetRequests"|"FTBTurnBased"|"FTBTurnBasedChangesRequest"|"FTBZone"|"FTBZoneBlockReason"|"FTBZoneInstigator"|"Faction"|"FactionOverrideBoost"|"FadeChildrenAdded"|"FadeChildrenRemoved"|"FadeGroup"|"FadeGroupMapping"|"FadeableObstruction"|"FadeableObstructionHierarchy"|"FadeableObstructionMapping"|"FallDamageMultiplierBoost"|"FallToProne"|"FleeCapability"|"Floating"|"FloorInfo"|"FogVolumeRequest"|"FullIllithid"|"GameCameraBehavior"|"GameObjectVisual"|"GameplayEffectSetTimeFactorRequests"|"GameplayLight"|"GameplayLightBoost"|"GameplayObscurityBoost"|"GameplaySetTransform"|"GameplayVFX"|"GameplayVFXSetPlayTimeRequests"|"GlobalCombatRequests"|"GlobalLongRestDisabled"|"GlobalShortRestDisabled"|"God"|"GodTag"|"GravityDisabled"|"GravityDisabledUntilMoved"|"GuaranteedChanceRollOutcomeBoost"|"HalfIllithid"|"HalveWeaponDamageBoost"|"HasDummy"|"HasExclamationDialog"|"HasGeneratedTreasure"|"HasOpened"|"HealBlock"|"HealMaxIncoming"|"HealMaxOutgoing"|"Health"|"Hearing"|"HistoryTargetUUID"|"HitAnimationRequest"|"HitAttacker"|"HitJoinCombatRequest"|"HitLifetime"|"HitMeta"|"HitNotification"|"HitNotificationRequest"|"HitProxy"|"HitProxyOwner"|"HitReaction"|"HitResultEvent"|"HitTarget"|"HitThrownObject"|"HitWeapon"|"HorizontalFOVOverrideBoost"|"HotbarContainer"|"HotbarDecks"|"Icon"|"Identity"|"IdentityState"|"IgnoreDamageThresholdMinBoost"|"IgnoreLowGroundPenaltyBoost"|"IgnorePointBlankDisadvantageBoost"|"IgnoreResistanceBoost"|"IgnoreSurfaceCoverBoost"|"IgnoreSurfaces"|"ImprovisedWeaponWielded"|"ImprovisedWeaponWielding"|"IncreaseMaxHPBoost"|"InitiativeBoost"|"InstancingBatch"|"InstancingBatchInitialized"|"InstancingBatchModifyOneFrame"|"InstancingBatchVisualReloadedOneFrame"|"InstancingGroup"|"InstancingGroupVisual"|"InteractionDisabled"|"InteractionFilter"|"InterruptActionState"|"InterruptConditionallyDisabled"|"InterruptContainer"|"InterruptData"|"InterruptDecision"|"InterruptPreferences"|"InterruptPrepared"|"InterruptZone"|"InterruptZoneParticipant"|"InterruptZoneSource"|"InventoryContainer"|"InventoryData"|"InventoryIsOwned"|"InventoryLocked"|"InventoryMember"|"InventoryMemberSetTransform"|"InventoryMemberSetTranslate"|"InventoryMemberTransform"|"InventoryOwner"|"InventoryPropertyCanBePickpocketed"|"InventoryPropertyIsDroppedOnDeath"|"InventoryPropertyIsTradable"|"InventoryStack"|"InventoryStackMember"|"InventoryTopOwner"|"InventoryWeight"|"Invisibility"|"IsCharacter"|"IsCombatPaused"|"IsDoor"|"IsFalling"|"IsGlobal"|"IsGold"|"IsInCombat"|"IsInFTB"|"IsInTurnBasedMode"|"IsItem"|"IsMarkedForDeletion"|"IsSeeThrough"|"IsStoryItem"|"IsSummon"|"ItemBoosts"|"ItemCanMove"|"ItemDestroyed"|"ItemDestroying"|"ItemDye"|"ItemHasMoved"|"ItemInUse"|"ItemIsPoisoned"|"ItemPortal"|"ItemTemplateDestroyed"|"JumpFollow"|"JumpMaxDistanceBonusBoost"|"JumpMaxDistanceMultiplierBoost"|"Key"|"Ladder"|"LearnedSpells"|"Level"|"LevelChanged"|"LevelInstance"|"LevelInstanceLoad"|"LevelInstanceLoaded"|"LevelInstanceState"|"LevelInstanceTempDestroyed"|"LevelInstanceUnloaded"|"LevelInstanceUnloading"|"LevelIsOwner"|"LevelPrepareUnloadBusy"|"LevelPrepareUnloadEvent"|"LevelRoot"|"LevelUnloadBusy"|"LevelUnloadEvent"|"LevelUnloaded"|"LevelUp"|"Light"|"LoadAnimationSetGameplayRequest"|"LoadAnimationSetRequest"|"Lock"|"LockBoost"|"LongRestInScriptPhase"|"LongRestState"|"LongRestTimeline"|"LongRestTimers"|"LongRestUsers"|"Loot"|"LootingState"|"MapMarkerStyle"|"MaterialParameterOverride"|"Max"|"MaximizeHealingBoost"|"MaximumRollResultBoost"|"MinimumRollResultBoost"|"MonkWeaponDamageDiceOverrideBoost"|"Movement"|"MovementSpeedLimitBoost"|"MultiplayerHost"|"MultiplayerUser"|"NavcloudInRange"|"NavcloudObstacle"|"NavcloudObstacleMetaData"|"Net"|"NewInInventory"|"NewItemsInside"|"NewSpellsAddedEvent"|"NonTradable"|"NullifyAbilityBoost"|"ObjectInteraction"|"ObjectSize"|"ObjectSizeBoost"|"ObjectSizeOverrideBoost"|"OffStage"|"OnDamageSpells"|"Origin"|"OriginAppearanceTag"|"OriginPassives"|"OriginTag"|"OriginalIdentity"|"OriginalTemplate"|"OwnedAsLoot"|"OwneeCurrent"|"PartyComposition"|"PartyFollower"|"PartyMember"|"PartyPortals"|"PartyRecipes"|"PartyView"|"PartyWaypoints"|"Passive"|"PassiveConditionalRollInterruptEvent"|"PassiveContainer"|"PassiveRequestTargetTracking"|"PassiveUpdateTargetTracking"|"PassiveUsageCount"|"PassivesUpdatedEvent"|"PasssiveUsageCountIncrementedEvent"|"Pathing"|"PathingDistanceChanged"|"Pause"|"PauseExcluded"|"PerItemSpellSource"|"PhotoModeCameraBehavior"|"PhotoModeCameraDestructionRequests"|"PhotoModeCameraEnterRequests"|"PhotoModeCameraInput"|"PhotoModeCameraOffset"|"PhotoModeCameraOriginalTransform"|"PhotoModeCameraSavedTransform"|"PhotoModeCameraTilt"|"PhotoModeCameraTracking"|"PhotoModeCameraTransform"|"PhotoModeCameraTransformRequests"|"PhotoModeCapability"|"PhotoModeDummy"|"PhotoModeDummyAnimationState"|"PhotoModeDummyAnimationUpdateSingleton"|"PhotoModeDummyEquipmentSetupOneFrame"|"PhotoModeDummyEquipmentVisual"|"PhotoModeDummyEquipmentVisualUpdateSingleton"|"PhotoModeDummyShowSplatter"|"PhotoModeDummySplatterUpdateSingleton"|"PhotoModeDummyTransform"|"PhotoModeDummyTransformUpdateSingleton"|"PhotoModeExitScreenFadeClearRequests"|"PhotoModeExitScreenFadeCreateRequests"|"PhotoModeInvisibilityRequestSingleton"|"PhotoModeRequestedSingleton"|"PhotoModeSession"|"PhysicalForceRangeBonusBoost"|"Physics"|"PhysicsLoad"|"PhysicsLoaded"|"PhysicsLoaderRegistered"|"PhysicsPathLoadDesciption"|"PhysicsReloadOneFrame"|"PhysicsResourceLoadDesciption"|"PhysicsStreamLoad"|"PickUpExecuting"|"PickUpRequest"|"PickingState"|"Player"|"PlayerPrepareSpell"|"Proficiency"|"ProficiencyBonusBoost"|"ProficiencyBonusIncreaseBoost"|"ProficiencyBonusOverrideBoost"|"ProficiencyBoost"|"ProficiencyGroup"|"ProgressionAbilityImprovements"|"ProgressionChangedContainers"|"ProgressionContainer"|"ProgressionFeat"|"ProgressionLevelUpChanged"|"ProgressionMeta"|"ProgressionPassives"|"ProgressionReplicatedFeat"|"ProgressionSkills"|"ProgressionSpells"|"ProjectileDeflectBoost"|"ProjectileImpactEvent"|"ProjectileRequestTargetTracking"|"ProjectileSource"|"ProjectileSplitThrowableObjectRequest"|"ProjectileUpdateTargetTracking"|"Race"|"ReadyToBeAddedToInventory"|"ReceivingCriticalDamageOnHitBoost"|"Recruiter"|"RedirectDamageBoost"|"ReduceCriticalAttackThresholdBoost"|"Relation"|"RemoveAnimationSetsGameplayRequest"|"RemoveAnimationSetsRequest"|"Repose"|"RequestedRoll"|"RerollBoost"|"ResistanceBoost"|"Resistances"|"RestingEntities"|"RollBonusBoost"|"RollInProgress"|"RollModifiers"|"Ruleset"|"RulesetModifiers"|"SavantBoost"|"Savegame"|"SavegameLoaded"|"SavingThrowRolledEvent"|"ScaleMultiplierBoost"|"Scene"|"SceneAttach"|"SceneRoot"|"Scenery"|"ScriptPropertyCanBePickpocketed"|"ScriptPropertyIsDroppedOnDeath"|"ScriptPropertyIsTradable"|"ScriptedExplosion"|"ServerAIHintAreaTrigger"|"ServerActivationGroupContainer"|"ServerAddedStatusAuraEffectEvent"|"ServerAggregatedGameplayLightData"|"ServerAiArchetype"|"ServerAiGridAreaTrigger"|"ServerAiGridViewshed"|"ServerAiInterestedInItems"|"ServerAiInterestingItem"|"ServerAiModifiers"|"ServerAnubisExecutor"|"ServerAnubisTag"|"ServerAtmosphereTrigger"|"ServerAvatarContainerTrigger"|"ServerBaseData"|"ServerBaseProficiency"|"ServerBaseSize"|"ServerBaseStats"|"ServerBaseWeapon"|"ServerBlockBronzeTimelinePlacementTrigger"|"ServerBoostBase"|"ServerBoostTag"|"ServerBreadcrumb"|"ServerCCAppearanceVisualTag"|"ServerCCCustomIcon"|"ServerCCEquipmentSetRequest"|"ServerCCGod"|"ServerCCIsCustom"|"ServerCCUpdates"|"ServerCampChestTrigger"|"ServerCampRegionTrigger"|"ServerCanStartCombat"|"ServerCharacter"|"ServerChasmRegionTrigger"|"ServerChasmSeederTrigger"|"ServerCombatGroupMapping"|"ServerCombatLeaveRequest"|"ServerCrimeAreaTrigger"|"ServerCrimeRegionTrigger"|"ServerCrowdCharacterTrigger"|"ServerDarknessActive"|"ServerDarkvisionRangeChanged"|"ServerDeathContinue"|"ServerDeathRequest"|"ServerDeathState"|"ServerDelayDeath"|"ServerDelayDeathCause"|"ServerDialogTag"|"ServerDisarmAttempt"|"ServerDisplayNameList"|"ServerDynamicLayerOwner"|"ServerEnterRequest"|"ServerEocAreaTrigger"|"ServerEocPointTrigger"|"ServerEventTrigger"|"ServerExperienceGaveOut"|"ServerExplorationTrigger"|"ServerFleeBlocked"|"ServerFloorTrigger"|"ServerGameTimer"|"ServerGameplayLightChanges"|"ServerGameplayLightEquipment"|"ServerHotbarOrder"|"ServerIconList"|"ServerImmediateJoin"|"ServerInterruptActionRequests"|"ServerInterruptAddRemoveRequests"|"ServerInterruptDataSingleton"|"ServerInterruptInitialParticipants"|"ServerInterruptTurnOrderInZone"|"ServerInterruptUsed"|"ServerInterruptZoneRequests"|"ServerInventoryContainerData"|"ServerInventoryGroupCheck"|"ServerInventoryIsReplicatedWith"|"ServerInventoryItemDataPopulated"|"ServerIsCurrentOwner"|"ServerIsLatestOwner"|"ServerIsLightBlocker"|"ServerIsOriginalOwner"|"ServerIsPreviousOwner"|"ServerIsUnsummoning"|"ServerIsVisionBlocker"|"ServerItem"|"ServerKiller"|"ServerLeader"|"ServerLightLosCheckQueue"|"ServerLightingTrigger"|"ServerModifyDelayDeathRequest"|"ServerMusicVolumeTrigger"|"ServerMusicVolumeTriggerState"|"ServerOsirisPingRequestSingleton"|"ServerOsirisTag"|"ServerOwneeHistory"|"ServerOwneeRequest"|"ServerPassiveBase"|"ServerPassiveBoosts"|"ServerPassivePersistentData"|"ServerPeersInRange"|"ServerPickpocket"|"ServerPingCooldownSingleton"|"ServerPingRequestSingleton"|"ServerPortalTrigger"|"ServerProficiencyGroupStats"|"ServerProjectile"|"ServerProjectileAttachment"|"ServerProjectileCache"|"ServerProjectileInitialization"|"ServerProjectileSpell"|"ServerRaceTag"|"ServerRatingsChanged"|"ServerRecruitedBy"|"ServerRegionTrigger"|"ServerRegistrationSettings"|"ServerRemovedStatusAuraEffectEvent"|"ServerReplicationDependency"|"ServerReplicationDependencyOwner"|"ServerRestPendingType"|"ServerRestTypeChosenEvent"|"ServerResurrectedEvent"|"ServerRollFinishedEvent"|"ServerRollInProgress"|"ServerRollStartRequest"|"ServerRollStartSpellRequest"|"ServerRollStreams"|"ServerRoomTrigger"|"ServerSafePosition"|"ServerScriptPassives"|"ServerShapeshiftEquipmentHistory"|"ServerShapeshiftStates"|"ServerShortRestResultEvent"|"ServerSightAggregatedData"|"ServerSightEntityLosCheckQueue"|"ServerSightEntityViewshedContentsChanged"|"ServerSightEventsEnabled"|"ServerSightIgnoreSurfacesChanged"|"ServerSightRangeChanged"|"ServerSoundVolumeTrigger"|"ServerSpellCastCache"|"ServerSpellCastHitDelay"|"ServerSpellCastInterrupt"|"ServerSpellCastMovement"|"ServerSpellCastMovementInfo"|"ServerSpellCastPendingRequests"|"ServerSpellCastProjectilePathfindCache"|"ServerSpellCastRequests"|"ServerSpellCastResponsible"|"ServerSpellCastState"|"ServerSpellCastUnsheathFallbackTimer"|"ServerSpellCastZoneRange"|"ServerSpellClientInitiated"|"ServerSpellExternals"|"ServerSpellHitRegister"|"ServerSpellInterruptRequests"|"ServerSpellInterruptResults"|"ServerStartTrigger"|"ServerStatsAreaTrigger"|"ServerStatus"|"ServerStatusActive"|"ServerStatusAddEvent"|"ServerStatusAddedFromSaveLoad"|"ServerStatusApplyEvent"|"ServerStatusAttemptEvent"|"ServerStatusAttemptFailedEvent"|"ServerStatusAura"|"ServerStatusAuraContainer"|"ServerStatusBoostsProcessed"|"ServerStatusCause"|"ServerStatusDifficultyModifiers"|"ServerStatusDispelRollCheck"|"ServerStatusDownedChangedEvent"|"ServerStatusEvent"|"ServerStatusOwnership"|"ServerStatusPerforming"|"ServerStatusRecoverable"|"ServerStatusRefreshed"|"ServerStatusRemoveEvent"|"ServerStatusRequests"|"ServerStatusScheduledForDeletion"|"ServerStatusTurnStartEvent"|"ServerStatusUnique"|"ServerStatusUpdateTargetTracking"|"ServerStealthRollCancel"|"ServerStealthRollRequest"|"ServerSurface"|"ServerTeleportTrigger"|"ServerTemplateChangedEvent"|"ServerTemplateTag"|"ServerTemplateTransformedEvent"|"ServerTimelineSceneTrigger"|"ServerToggledPassives"|"ServerTriggerCachedLeaveEvents"|"ServerTriggerEventConfig"|"ServerTriggerLoadedHandled"|"ServerTriggerRegisteredFor"|"ServerTriggerWorldAutoTriggered"|"ServerUnsheath"|"ServerUnsheathScriptOverride"|"ServerUnsheathSpellAnimationLifetime"|"ServerUpdatedRegisteredFor"|"ServerUpdatedRegisteredForItems"|"ServerUserSnapshot"|"ServerUuidHistoryMapping"|"ServerVariableManager"|"ServerViewshedParticipant"|"ShapeshiftAnimation"|"ShapeshiftHealthReservation"|"ShapeshiftRecoveryAnimation"|"ShapeshiftReplicatedChanges"|"ShapeshiftSourceCache"|"ShapeshiftState"|"ShootThroughType"|"ShortRest"|"ShortRestConsumeResources"|"ShouldDestroyOnSpellCast"|"Sight"|"SightData"|"SightEntityViewshed"|"SightRangeAdditiveBoost"|"SightRangeMaximumBoost"|"SightRangeMinimumBoost"|"SightRangeOverrideBoost"|"SimpleCharacter"|"SkeletonSoundObjects"|"SkillBoost"|"SkillCheckEvent"|"Sound"|"SoundActivated"|"SoundMaterial"|"SoundOcclusionData"|"SoundRoomCurrentState"|"SoundUsesTransform"|"SourceAdvantageBoost"|"SpatialGrid"|"SpatialGridCharacter"|"SpatialGridItem"|"Speaker"|"SpellAiConditions"|"SpellBook"|"SpellBookChanged"|"SpellBookCooldowns"|"SpellBookPrepares"|"SpellCastAnimationInfo"|"SpellCastAnimationRequest"|"SpellCastCache"|"SpellCastCanBeTargeted"|"SpellCastCounteredEvent"|"SpellCastDataCache"|"SpellCastDestroyEvent"|"SpellCastEvent"|"SpellCastExecutionTime"|"SpellCastFinishedEvent"|"SpellCastHitEvent"|"SpellCastInterruptResults"|"SpellCastInterruptsUsed"|"SpellCastIsCasting"|"SpellCastJumpStartEvent"|"SpellCastLogicExecutionEndEvent"|"SpellCastLogicExecutionStartEvent"|"SpellCastMoveDuringCastUpdateEvent"|"SpellCastMovement"|"SpellCastMovementAndPrecalculationEndEvent"|"SpellCastOutcome"|"SpellCastPrepareEndEvent"|"SpellCastPrepareStartEvent"|"SpellCastPreviewEndEvent"|"SpellCastRequestTargetTracking"|"SpellCastRolls"|"SpellCastSpellRollAbortEvent"|"SpellCastState"|"SpellCastTargetHitEvent"|"SpellCastTargetHitInterruptEvent"|"SpellCastTargetReactionEvent"|"SpellCastTargetsChangedEvent"|"SpellCastTextKeyEvent"|"SpellCastThrowPickupPositionChangedEvent"|"SpellCastUpdateTargetTracking"|"SpellCastWeaponSetChangeRequest"|"SpellContainer"|"SpellModificationContainer"|"SpellResistanceBoost"|"SpellSaveDCBoost"|"SpellSyncTargeting"|"SpellsLearnedEvent"|"SplatterBaseState"|"SplatterState"|"SplatterSweatChange"|"StaticPhysics"|"Stats"|"StatsAppliedEvent"|"StatusBoostsRefreshed"|"StatusCause"|"StatusContainer"|"StatusID"|"StatusImmunities"|"StatusImmunityBoost"|"StatusIncapacitated"|"StatusIndicateDarkness"|"StatusLifetime"|"StatusLoseControl"|"StatusVisualDisabled"|"Stealth"|"Steering"|"StoryShortRestDisabled"|"SummonAddConcentrationRequest"|"SummonAddToExistingConcentrationRequest"|"SummonAttachToProjectileRequest"|"SummonContainer"|"SummonCreatedEvent"|"SummonDespawnRequest"|"SummonExpiredRequest"|"SummonLateJoinPenalty"|"SummonLifetime"|"SummonOwnerSetEvent"|"SummonPlaceInInventoryRequest"|"SummonSetLifetimeRequest"|"SurfacePathInfluences"|"TLPreviewDummy"|"TadpolePowers"|"TadpoleTreeState"|"Tadpoled"|"Tag"|"TagsChangedEvent"|"TemplateAnimationSetOverride"|"TemporaryHPBoost"|"ThreatRange"|"TimeFactor"|"TimelineActorData"|"TradeBuybackData"|"Trader"|"Transform"|"TranslateChanged"|"TranslateChangedEvent"|"TriggerArea"|"TriggerContainer"|"TriggerIsInsideOf"|"TriggerType"|"TriggerUpdatedContainer"|"TriggerUpdatedPhysics"|"TurnBased"|"TurnEndedEvent"|"TurnOrder"|"TurnOrderAssignEntityToUserRequest"|"TurnOrderSkipped"|"TurnOrderTimedOut"|"TurnRoundEndedEvent"|"TurnStartedEvent"|"TurnSurfaceTeamSingleton"|"TurnSurfaceTracking"|"UnlockInterruptBoost"|"UnlockSpellBoost"|"UnlockSpellVariantBoost"|"UnresolvedHitNotification"|"Unsheath"|"Use"|"UseAction"|"UseBoosts"|"UseSocket"|"UserAvatar"|"UserReservedFor"|"Uuid"|"UuidHistoryTracked"|"UuidToHandleMapping"|"Value"|"Visual"|"VisualAttachRequest"|"VisualChangeRequest"|"VisualChangedEvent"|"VisualLoad"|"VisualLoadDescription"|"VisualLoadRequests"|"VisualLoaded"|"VisualStream"|"VisualStreamLoad"|"Voice"|"VoiceTag"|"WalkOn"|"Weapon"|"WeaponAttackRollAbilityOverrideBoost"|"WeaponAttackRollBonusBoost"|"WeaponAttackTypeOverrideBoost"|"WeaponDamageBoost"|"WeaponDamageDieOverrideBoost"|"WeaponDamageResistanceBoost"|"WeaponDamageTypeOverrideBoost"|"WeaponEnchantmentBoost"|"WeaponPropertiesChangedEvent"|"WeaponPropertyBoost"|"WeaponSet"|"WeightBoost"|"WeightCategoryBoost"|"Wielded"|"Wielding"|"WieldingHistory"
+--- @alias ExtComponentType string|"ACOverrideFormulaBoost"|"AbilityBoost"|"AbilityCheckEvent"|"AbilityFailedSavingThrowBoost"|"AbilityOverrideMinimumBoost"|"ActionResourceBlockBoost"|"ActionResourceChangeResults"|"ActionResourceConsumeMultiplierBoost"|"ActionResourceEvents"|"ActionResourceMultiplierBoost"|"ActionResourcePreventReductionBoost"|"ActionResourceReplenishTypeOverrideBoost"|"ActionResourceSpendEvent"|"ActionResourceValueBoost"|"ActionResources"|"ActionType"|"ActionUseConditions"|"Active"|"ActiveCharacterLight"|"ActiveCharacterLightBoost"|"ActiveSkeletonSlots"|"AddTagBoost"|"AddedSpells"|"AdvanceSpellsBoost"|"AdvantageBoost"|"AiArchetypeOverrideBoost"|"AlwaysUpdateEffect"|"Ambushing"|"AnimationBlueprint"|"AnimationGameplayEvents"|"AnimationGameplayEventsSingleton"|"AnimationSet"|"AnimationSetUpdateRequest"|"AnimationTextKeyEvents"|"AnimationTextKeyEventsSingleton"|"AnimationTriggeredEvents"|"AnimationUpdate"|"AnimationWaterfall"|"AnubisConfig"|"AnubisEnabled"|"AnubisRuntime"|"AnubisTree"|"AnubisTree2"|"AppearanceOverride"|"ApprovalRatings"|"AreaLevel"|"Armor"|"ArmorAbilityModifierCapOverrideBoost"|"ArmorClassBoost"|"ArmorSetState"|"AttackSpellOverride"|"AttackSpellOverrideBoost"|"AttitudesToPlayers"|"AttributeBoost"|"AttributeFlags"|"AttributeFlagsChangedEvent"|"AvailableLevel"|"Avatar"|"Background"|"BackgroundGoals"|"BackgroundPassives"|"BackgroundTag"|"BaseHp"|"BaseStats"|"BlockAbilityModifierFromACBoost"|"BlockFollow"|"BlockRegainHPBoost"|"BodyType"|"BoostBaseUpdated"|"BoostChangedEvent"|"BoostChangedEventsSingleton"|"BoostCondition"|"BoostConditionalState"|"BoostInfo"|"BoostProvider"|"BoostsContainer"|"Bound"|"CCChangeAppearanceDefinition"|"CCCharacterDefinition"|"CCCompanionDefinition"|"CCCreation"|"CCDefinitionCommon"|"CCDefinitionLevelUp"|"CCFullRespec"|"CCFullRespecDefinition"|"CCLevelUp"|"CCLevelUpDefinition"|"CCPrepareSpell"|"CCRespec"|"CCRespecDefinition"|"CCSessionCommon"|"CCState"|"CalendarDaysPassed"|"CalendarStartingDate"|"Camera"|"CameraArriveWatcher"|"CameraClearScreenFadeRequestManual"|"CameraCombatTarget"|"CameraCombatTargetRequests"|"CameraInSelectorMode"|"CameraInSelectorWhileInactive"|"CameraModeTracker"|"CameraPlatformTarget"|"CameraScreenFadeToRequestManual"|"CameraSelectorMode"|"CameraSpellTracking"|"CameraTarget"|"CampChest"|"CampEndTheDayState"|"CampPresence"|"CampQuality"|"CampSettings"|"CampSupply"|"CampTotalSupplies"|"CanBeDisarmed"|"CanBeInInventory"|"CanBeLooted"|"CanBeWielded"|"CanDeflectProjectiles"|"CanDoActions"|"CanDoRest"|"CanEnterChasm"|"CanInteract"|"CanLevelUp"|"CanModifyHealth"|"CanMove"|"CanSeeThrough"|"CanSeeThroughBoost"|"CanSense"|"CanShootThrough"|"CanShootThroughBoost"|"CanSpeak"|"CanTrade"|"CanTravel"|"CanTriggerRandomCasts"|"CanWalkThrough"|"CanWalkThroughBoost"|"CannotBePickpocketed"|"CannotBeTakenOut"|"CannotHarmCauseEntityBoost"|"CarryCapacityMultiplierBoost"|"CharacterCreationAppearance"|"CharacterCreationStats"|"CharacterCreationTemplateOverride"|"CharacterHasGeneratedTradeTreasure"|"CharacterLight"|"CharacterLightSingleton"|"CharacterUnarmedDamageBoost"|"CharacterWeaponDamageBoost"|"ClassTag"|"Classes"|"ClassesChangedEvent"|"ClientAtmosphereTrigger"|"ClientCCBaseDefinitionState"|"ClientCCChangeAppearanceDefinition"|"ClientCCCompanionDefinition"|"ClientCCDefinitionState"|"ClientCCDefinitionStateEx"|"ClientCCDummyDefinition"|"ClientCCFullRespecDefinition"|"ClientCCLevelUpDefinition"|"ClientCharacter"|"ClientCharacterIconRequest"|"ClientCharacterIconResult"|"ClientControl"|"ClientEffectHandler"|"ClientEquipmentVisibilityState"|"ClientEquipmentVisuals"|"ClientFloorTrigger"|"ClientInterruptPlayerDecision"|"ClientLightingTrigger"|"ClientPaperdoll"|"ClientPortalTrigger"|"ClientRegionTrigger"|"ClientRoomTrigger"|"ClientSoundVolumeTrigger"|"ClientSpellCastCache"|"ClientSpellCastCachedAnimationRequests"|"ClientSpellCastEffectTimeFactorRequests"|"ClientSpellCastEffects"|"ClientSpellCastInterruptPauseRequests"|"ClientSpellCastMoveDuringCastUpdate"|"ClientSpellCastMovement"|"ClientSpellCastPlaySoundRequest"|"ClientSpellCastRolls"|"ClientSpellCastRollsChanged"|"ClientSpellCastSetSoundSwitchesRequest"|"ClientSpellCastSharedToClientEntity"|"ClientSpellCastSoundImpactEvent"|"ClientSpellCastSounds"|"ClientSpellCastState"|"ClientSpellCastTargeting"|"ClientSpellCastTempSoundEventRequests"|"ClientSpellCastZoneRange"|"ClientTimelineActorControl"|"ClientTimelineControl"|"ClientTimelineSceneTrigger"|"ClientVisualsDesiredState"|"ClimbOn"|"Cluster"|"ClusterAttachRequest"|"ClusterBound"|"ClusterBoundMax"|"ClusterChild"|"ClusterChildIndexed"|"ClusterContainer"|"ClusterDistMax"|"ClusterDistMin"|"ClusterPositionX"|"ClusterPositionY"|"ClusterPositionZ"|"ClusterRadius"|"CombatDelayedFanfare"|"CombatFleeRequest"|"CombatFleeSuccess"|"CombatIsThreatened"|"CombatJoinInCurrentRound"|"CombatJoinInCurrentRoundFailedEvent"|"CombatJoining"|"CombatLateJoinPenalty"|"CombatLeftEvent"|"CombatMerge"|"CombatParticipant"|"CombatRequestCompletedEvent"|"CombatScheduledForDelete"|"CombatStartedEvent"|"CombatState"|"CombatSurfaceTeamSingleton"|"CombatSurprisedJoinRequest"|"CombatSurprisedStealthRequest"|"CombatSwitched"|"CombatThreatRangeChangedEvent"|"CombatantJoinEvent"|"CombatantKilledEvent"|"CombinedLight"|"Concentration"|"ConcentrationChanged"|"ConcentrationClearedEvent"|"ConcentrationDamageCheck"|"ConcentrationIgnoreDamageBoost"|"Constellation"|"Construction"|"ConstructionFilling"|"ConstructionTile"|"CriticalHitBoost"|"CriticalHitExtraDiceBoost"|"Cull"|"CurrentlyFollowingParty"|"CustomIcon"|"CustomIconsStorage"|"CustomName"|"CustomStats"|"DamageBonusBoost"|"DamageReductionBoost"|"DamageTakenBonusBoost"|"Darkness"|"DarkvisionRangeBoost"|"DarkvisionRangeMinBoost"|"DarkvisionRangeOverrideBoost"|"Data"|"DeadByDefault"|"DeadReckoning"|"DeadReckoningSync"|"Death"|"DeathApplyKnockedOut"|"DeathAssignEntityToUserRequest"|"DeathDeadByDefaultRequest"|"DeathState"|"DeathType"|"Decal"|"DefaultCameraBehavior"|"DelayedFanfareRemovedDuringCombatEvent"|"Detached"|"DetectCrimesBlockBoost"|"DialogState"|"DiedEvent"|"DifficultyCheck"|"DisabledEquipment"|"Disarmable"|"DisplayName"|"DodgeAttackRollBoost"|"Downed"|"DownedEvent"|"DownedStatusBoost"|"DropOnDeathBlocked"|"DualWielding"|"DualWieldingBoost"|"DummiesCreatedSingleton"|"Dummy"|"DummyAnimationState"|"DummyAvailableAnimations"|"DummyCharacterVFXInitialization"|"DummyEquipmentVisualsState"|"DummyFootIKState"|"DummyIsCopyingFullPose"|"DummyLoaded"|"DummyMultiEffectCreateRequest"|"DummyOriginalTransform"|"DummySpellVFXInitialization"|"DummySplatter"|"DummyStatusVFXInitialization"|"DummyStoredCloth"|"DummyTransformRequestsSingleton"|"DummyUnsheath"|"DummyVFXEntities"|"DynamicAnimationTags"|"Effect"|"EffectCameraBehavior"|"EffectCreate"|"EncumbranceState"|"EncumbranceStats"|"EntityThrowDamageBoost"|"EocLevel"|"Equipable"|"EquipmentSlotChangedEvent"|"EquipmentVisual"|"EscortFollower"|"EscortHasStragglers"|"EscortLeader"|"EscortLeaderPriority"|"EscortMember"|"EscortStragglersTracker"|"ExamineDisabled"|"Experience"|"Expertise"|"ExpertiseBonusBoost"|"FTBModeChangedEvent"|"FTBParticipant"|"FTBPaused"|"FTBPlayersTurnEndedEvent"|"FTBPlayersTurnStartedEvent"|"FTBRespect"|"FTBRoundEndedEvent"|"FTBSurfaceTeamSingleton"|"FTBTimeFactorRequests"|"FTBTimeFactorResetRequests"|"FTBTurnBased"|"FTBTurnBasedChangesRequest"|"FTBZone"|"FTBZoneBlockReason"|"FTBZoneInstigator"|"Faction"|"FactionOverrideBoost"|"FadeChildrenAdded"|"FadeChildrenRemoved"|"FadeGroup"|"FadeGroupMapping"|"FadeableObstruction"|"FadeableObstructionHierarchy"|"FadeableObstructionMapping"|"FallDamageMultiplierBoost"|"FallToProne"|"FleeCapability"|"Floating"|"FloorInfo"|"FogVolumeRequest"|"FullIllithid"|"GameCameraBehavior"|"GameObjectVisual"|"GameplayEffectSetTimeFactorRequests"|"GameplayLight"|"GameplayLightBoost"|"GameplayObscurityBoost"|"GameplaySetTransform"|"GameplayVFX"|"GameplayVFXSetPlayTimeRequests"|"GlobalCombatRequests"|"GlobalLongRestDisabled"|"GlobalShortRestDisabled"|"God"|"GodTag"|"GravityDisabled"|"GravityDisabledUntilMoved"|"GuaranteedChanceRollOutcomeBoost"|"HLOD"|"HLODChild"|"HalfIllithid"|"HalveWeaponDamageBoost"|"HasDummy"|"HasExclamationDialog"|"HasGeneratedTreasure"|"HasOpened"|"HealBlock"|"HealMaxIncoming"|"HealMaxOutgoing"|"Health"|"Hearing"|"HistoryTargetUUID"|"HitAnimationRequest"|"HitAttacker"|"HitJoinCombatRequest"|"HitLifetime"|"HitMeta"|"HitNotification"|"HitNotificationRequest"|"HitProxy"|"HitProxyOwner"|"HitReaction"|"HitResultEvent"|"HitTarget"|"HitThrownObject"|"HitWeapon"|"HorizontalFOVOverrideBoost"|"HotbarContainer"|"HotbarContainerKeyCreated"|"HotbarDecks"|"Icon"|"Identity"|"IdentityState"|"IgnoreDamageThresholdMinBoost"|"IgnoreLowGroundPenaltyBoost"|"IgnorePointBlankDisadvantageBoost"|"IgnoreResistanceBoost"|"IgnoreSurfaceCoverBoost"|"IgnoreSurfaces"|"ImprovisedWeaponWielded"|"ImprovisedWeaponWielding"|"IncreaseMaxHPBoost"|"InitiativeBoost"|"InstancingBatch"|"InstancingBatchInitialized"|"InstancingBatchModifyOneFrame"|"InstancingBatchVisualReloadedOneFrame"|"InstancingGroup"|"InstancingGroupVisual"|"InteractionDisabled"|"InteractionFilter"|"InterruptActionState"|"InterruptConditionallyDisabled"|"InterruptContainer"|"InterruptData"|"InterruptDecision"|"InterruptPreferences"|"InterruptPrepared"|"InterruptZone"|"InterruptZoneParticipant"|"InterruptZoneSource"|"InventoryContainer"|"InventoryData"|"InventoryIsOwned"|"InventoryLocked"|"InventoryMember"|"InventoryMemberSetTransform"|"InventoryMemberSetTranslate"|"InventoryMemberTransform"|"InventoryOwner"|"InventoryPropertyCanBePickpocketed"|"InventoryPropertyIsDroppedOnDeath"|"InventoryPropertyIsTradable"|"InventoryStack"|"InventoryStackMember"|"InventoryTopOwner"|"InventoryWeight"|"Invisibility"|"IsCharacter"|"IsCombatPaused"|"IsDoor"|"IsFalling"|"IsGlobal"|"IsGold"|"IsInCombat"|"IsInFTB"|"IsInTurnBasedMode"|"IsItem"|"IsMarkedForDeletion"|"IsSeeThrough"|"IsStoryItem"|"IsSummon"|"ItemBoosts"|"ItemCanMove"|"ItemDestroyed"|"ItemDestroying"|"ItemDye"|"ItemHasMoved"|"ItemInUse"|"ItemIsPoisoned"|"ItemPortal"|"ItemTemplateDestroyed"|"JumpFollow"|"JumpMaxDistanceBonusBoost"|"JumpMaxDistanceMultiplierBoost"|"Key"|"Ladder"|"LearnedSpells"|"Level"|"LevelChanged"|"LevelInstance"|"LevelInstanceLoad"|"LevelInstanceLoaded"|"LevelInstanceState"|"LevelInstanceTempDestroyed"|"LevelInstanceUnloaded"|"LevelInstanceUnloading"|"LevelIsOwner"|"LevelPrepareUnloadBusy"|"LevelPrepareUnloadEvent"|"LevelRoot"|"LevelUnloadBusy"|"LevelUnloadEvent"|"LevelUnloaded"|"LevelUp"|"Light"|"LoadAnimationSetGameplayRequest"|"LoadAnimationSetRequest"|"LocalBound"|"Lock"|"LockAnimationState"|"LockBoost"|"LockLifetime"|"LongRestInScriptPhase"|"LongRestState"|"LongRestTimeline"|"LongRestTimers"|"LongRestUsers"|"Loot"|"LootingState"|"MapMarkerStyle"|"MaterialParameterOverride"|"Max"|"MaximizeHealingBoost"|"MaximumRollResultBoost"|"MinimumRollResultBoost"|"MonkWeaponDamageDiceOverrideBoost"|"Movement"|"MovementSpeedLimitBoost"|"MultiplayerHost"|"MultiplayerUser"|"NavcloudInRange"|"NavcloudObstacle"|"NavcloudObstacleMetaData"|"Net"|"NewInInventory"|"NewItemsInside"|"NewSpellsAddedEvent"|"NonTradable"|"NullifyAbilityBoost"|"ObjectInteraction"|"ObjectSize"|"ObjectSizeBoost"|"ObjectSizeOverrideBoost"|"Occlusion"|"OffStage"|"OnDamageSpells"|"Origin"|"OriginAppearanceTag"|"OriginPassives"|"OriginTag"|"OriginalIdentity"|"OriginalTemplate"|"OwnedAsLoot"|"OwneeCurrent"|"PartyComposition"|"PartyFollower"|"PartyMember"|"PartyPortals"|"PartyRecipes"|"PartyView"|"PartyWaypoints"|"Passive"|"PassiveConditionalRollInterruptEvent"|"PassiveContainer"|"PassiveRequestTargetTracking"|"PassiveUpdateTargetTracking"|"PassiveUsageCount"|"PassivesUpdatedEvent"|"PasssiveUsageCountIncrementedEvent"|"Pathing"|"PathingDistanceChanged"|"Pause"|"PauseExcluded"|"PerItemSpellSource"|"PhotoModeCameraBehavior"|"PhotoModeCameraDestructionRequests"|"PhotoModeCameraEnterRequests"|"PhotoModeCameraInput"|"PhotoModeCameraOffset"|"PhotoModeCameraOriginalTransform"|"PhotoModeCameraSavedTransform"|"PhotoModeCameraTilt"|"PhotoModeCameraTracking"|"PhotoModeCameraTransform"|"PhotoModeCameraTransformRequests"|"PhotoModeCapability"|"PhotoModeDummy"|"PhotoModeDummyAnimationState"|"PhotoModeDummyAnimationUpdateSingleton"|"PhotoModeDummyEquipmentSetupOneFrame"|"PhotoModeDummyEquipmentVisual"|"PhotoModeDummyEquipmentVisualUpdateSingleton"|"PhotoModeDummyShowSplatter"|"PhotoModeDummySplatterUpdateSingleton"|"PhotoModeDummyTransform"|"PhotoModeDummyTransformUpdateSingleton"|"PhotoModeExitScreenFadeClearRequests"|"PhotoModeExitScreenFadeCreateRequests"|"PhotoModeInvisibilityRequestSingleton"|"PhotoModeRequestedSingleton"|"PhotoModeSession"|"PhysicalForceRangeBonusBoost"|"Physics"|"PhysicsLoad"|"PhysicsLoaded"|"PhysicsLoaderRegistered"|"PhysicsPathLoadDesciption"|"PhysicsReloadOneFrame"|"PhysicsResourceLoadDesciption"|"PhysicsStreamLoad"|"PickUpExecuting"|"PickUpRequest"|"PickingState"|"Player"|"PlayerPrepareSpell"|"Proficiency"|"ProficiencyBonusBoost"|"ProficiencyBonusIncreaseBoost"|"ProficiencyBonusOverrideBoost"|"ProficiencyBoost"|"ProficiencyGroup"|"ProgressionAbilityImprovements"|"ProgressionChangedContainers"|"ProgressionContainer"|"ProgressionFeat"|"ProgressionLevelUpChanged"|"ProgressionMeta"|"ProgressionPassives"|"ProgressionReplicatedFeat"|"ProgressionSkills"|"ProgressionSpells"|"ProjectileDeflectBoost"|"ProjectileImpactEvent"|"ProjectileRequestTargetTracking"|"ProjectileSource"|"ProjectileSplitThrowableObjectRequest"|"ProjectileUpdateTargetTracking"|"Race"|"ReadyToBeAddedToInventory"|"ReceivingCriticalDamageOnHitBoost"|"Recruiter"|"RedirectDamageBoost"|"ReduceCriticalAttackThresholdBoost"|"Relation"|"RemoveAnimationSetsGameplayRequest"|"RemoveAnimationSetsRequest"|"Repose"|"RequestedRoll"|"RerollBoost"|"ResistanceBoost"|"Resistances"|"RestingEntities"|"RollBonusBoost"|"RollInProgress"|"RollModifiers"|"Ruleset"|"RulesetModifiers"|"SavantBoost"|"Savegame"|"SavegameLoaded"|"SavingThrowRolledEvent"|"ScaleMultiplierBoost"|"Scene"|"SceneAttach"|"SceneRoot"|"Scenery"|"ScriptPropertyCanBePickpocketed"|"ScriptPropertyIsDroppedOnDeath"|"ScriptPropertyIsTradable"|"ScriptedExplosion"|"ServerAIHintAreaTrigger"|"ServerActivationGroupContainer"|"ServerAddedStatusAuraEffectEvent"|"ServerAggregatedGameplayLightData"|"ServerAiArchetype"|"ServerAiGridAreaTrigger"|"ServerAiGridViewshed"|"ServerAiInterestedInItems"|"ServerAiInterestingItem"|"ServerAiModifiers"|"ServerAnubisExecutor"|"ServerAnubisTag"|"ServerAtmosphereTrigger"|"ServerAvatarContainerTrigger"|"ServerBaseData"|"ServerBaseProficiency"|"ServerBaseSize"|"ServerBaseStats"|"ServerBaseWeapon"|"ServerBlockBronzeTimelinePlacementTrigger"|"ServerBoostBase"|"ServerBoostTag"|"ServerBreadcrumb"|"ServerCCAppearanceVisualTag"|"ServerCCCustomIcon"|"ServerCCEquipmentSetRequest"|"ServerCCGod"|"ServerCCIsCustom"|"ServerCCUpdates"|"ServerCampChestTrigger"|"ServerCampRegionTrigger"|"ServerCanStartCombat"|"ServerCharacter"|"ServerChasmRegionTrigger"|"ServerChasmSeederTrigger"|"ServerCombatGroupMapping"|"ServerCombatLeaveRequest"|"ServerCrimeAreaTrigger"|"ServerCrimeRegionTrigger"|"ServerCrowdCharacterTrigger"|"ServerDarknessActive"|"ServerDarkvisionRangeChanged"|"ServerDeathContinue"|"ServerDeathRequest"|"ServerDeathState"|"ServerDelayDeath"|"ServerDelayDeathCause"|"ServerDialogTag"|"ServerDisarmAttempt"|"ServerDisplayNameList"|"ServerDynamicLayerOwner"|"ServerEnterRequest"|"ServerEocAreaTrigger"|"ServerEocPointTrigger"|"ServerEventTrigger"|"ServerExperienceGaveOut"|"ServerExplorationTrigger"|"ServerFleeBlocked"|"ServerFloorTrigger"|"ServerGameTimer"|"ServerGameplayLightChanges"|"ServerGameplayLightEquipment"|"ServerHotbarOrder"|"ServerHotbarSlotsAdded"|"ServerHotbarSlotsRemoved"|"ServerIconList"|"ServerImmediateJoin"|"ServerInterruptActionRequests"|"ServerInterruptAddRemoveRequests"|"ServerInterruptDataSingleton"|"ServerInterruptInitialParticipants"|"ServerInterruptTurnOrderInZone"|"ServerInterruptUsed"|"ServerInterruptZoneRequests"|"ServerInventoryContainerData"|"ServerInventoryGroupCheck"|"ServerInventoryIsReplicatedWith"|"ServerInventoryItemDataPopulated"|"ServerIsCurrentOwner"|"ServerIsLatestOwner"|"ServerIsLightBlocker"|"ServerIsOriginalOwner"|"ServerIsPreviousOwner"|"ServerIsUnsummoning"|"ServerIsVisionBlocker"|"ServerItem"|"ServerKiller"|"ServerLeader"|"ServerLightLosCheckQueue"|"ServerLightingTrigger"|"ServerLockpickingState"|"ServerModifyDelayDeathRequest"|"ServerMusicVolumeTrigger"|"ServerMusicVolumeTriggerState"|"ServerOsirisPingRequestSingleton"|"ServerOsirisTag"|"ServerOwneeHistory"|"ServerOwneeRequest"|"ServerPassiveBase"|"ServerPassiveBoosts"|"ServerPassivePersistentData"|"ServerPeersInRange"|"ServerPickpocket"|"ServerPingCooldownSingleton"|"ServerPingRequestSingleton"|"ServerPortalTrigger"|"ServerProficiencyGroupStats"|"ServerProjectile"|"ServerProjectileAttachment"|"ServerProjectileCache"|"ServerProjectileInitialization"|"ServerProjectileSpell"|"ServerRaceTag"|"ServerRatingsChanged"|"ServerRecruitedBy"|"ServerRegionTrigger"|"ServerRegistrationSettings"|"ServerRemovedStatusAuraEffectEvent"|"ServerReplicationDependency"|"ServerReplicationDependencyOwner"|"ServerRestPendingType"|"ServerRestTypeChosenEvent"|"ServerResurrectedEvent"|"ServerRollFinishedEvent"|"ServerRollInProgress"|"ServerRollStartRequest"|"ServerRollStartSpellRequest"|"ServerRollStreams"|"ServerRoomTrigger"|"ServerSafePosition"|"ServerScriptPassives"|"ServerShapeshiftEquipmentHistory"|"ServerShapeshiftStates"|"ServerShortRestResultEvent"|"ServerSightAggregatedData"|"ServerSightEntityLosCheckQueue"|"ServerSightEntityViewshedContentsChanged"|"ServerSightEventsEnabled"|"ServerSightIgnoreSurfacesChanged"|"ServerSightRangeChanged"|"ServerSoundVolumeTrigger"|"ServerSpellCastCache"|"ServerSpellCastHitDelay"|"ServerSpellCastInterrupt"|"ServerSpellCastMovement"|"ServerSpellCastMovementInfo"|"ServerSpellCastPendingRequests"|"ServerSpellCastProjectilePathfindCache"|"ServerSpellCastRequests"|"ServerSpellCastResponsible"|"ServerSpellCastState"|"ServerSpellCastUnsheathFallbackTimer"|"ServerSpellCastZoneRange"|"ServerSpellClientInitiated"|"ServerSpellExternals"|"ServerSpellHitRegister"|"ServerSpellInterruptRequests"|"ServerSpellInterruptResults"|"ServerStartTrigger"|"ServerStatsAreaTrigger"|"ServerStatus"|"ServerStatusActive"|"ServerStatusAddEvent"|"ServerStatusAddedFromSaveLoad"|"ServerStatusApplyEvent"|"ServerStatusAttemptEvent"|"ServerStatusAttemptFailedEvent"|"ServerStatusAura"|"ServerStatusAuraContainer"|"ServerStatusBoostsProcessed"|"ServerStatusCause"|"ServerStatusDifficultyModifiers"|"ServerStatusDispelRollCheck"|"ServerStatusDownedChangedEvent"|"ServerStatusEvent"|"ServerStatusOwnership"|"ServerStatusPerforming"|"ServerStatusRecoverable"|"ServerStatusRefreshed"|"ServerStatusRemoveEvent"|"ServerStatusRequests"|"ServerStatusScheduledForDeletion"|"ServerStatusTurnStartEvent"|"ServerStatusUnique"|"ServerStatusUpdateTargetTracking"|"ServerStealthRollCancel"|"ServerStealthRollRequest"|"ServerSurface"|"ServerSurfaceActionFinishedEvent"|"ServerSurfaceActionGrownEvent"|"ServerSurfaceCreatedEvent"|"ServerSurfaceLevelLoaded"|"ServerSurfaceRemovedEvent"|"ServerTeleportTrigger"|"ServerTemplateChangedEvent"|"ServerTemplateTag"|"ServerTemplateTransformedEvent"|"ServerTimelineSceneTrigger"|"ServerToggledPassives"|"ServerTriggerCachedLeaveEvents"|"ServerTriggerEventConfig"|"ServerTriggerLoadedHandled"|"ServerTriggerRegisteredFor"|"ServerTriggerWorldAutoTriggered"|"ServerUnsheath"|"ServerUnsheathScriptOverride"|"ServerUnsheathSpellAnimationLifetime"|"ServerUpdatedRegisteredFor"|"ServerUpdatedRegisteredForItems"|"ServerUserSnapshot"|"ServerUuidHistoryMapping"|"ServerVariableManager"|"ServerViewshedParticipant"|"ShapeshiftAnimation"|"ShapeshiftHealthReservation"|"ShapeshiftRecoveryAnimation"|"ShapeshiftReplicatedChanges"|"ShapeshiftSourceCache"|"ShapeshiftState"|"ShootThroughType"|"ShortRest"|"ShortRestConsumeResources"|"ShouldDestroyOnSpellCast"|"Sight"|"SightData"|"SightEntityViewshed"|"SightRangeAdditiveBoost"|"SightRangeMaximumBoost"|"SightRangeMinimumBoost"|"SightRangeOverrideBoost"|"SimpleCharacter"|"SkeletonSoundObjects"|"SkillBoost"|"SkillCheckEvent"|"Sound"|"SoundActivated"|"SoundMaterial"|"SoundOcclusionData"|"SoundRoomCurrentState"|"SoundUsesTransform"|"SourceAdvantageBoost"|"SpatialGrid"|"SpatialGridCharacter"|"SpatialGridItem"|"Speaker"|"SpellAiConditions"|"SpellBook"|"SpellBookChanged"|"SpellBookCooldowns"|"SpellBookPrepares"|"SpellCastAnimationInfo"|"SpellCastAnimationRequest"|"SpellCastCache"|"SpellCastCanBeTargeted"|"SpellCastCounteredEvent"|"SpellCastDataCache"|"SpellCastDestroyEvent"|"SpellCastEvent"|"SpellCastExecutionTime"|"SpellCastFinishedEvent"|"SpellCastHitEvent"|"SpellCastInterruptResults"|"SpellCastInterruptsUsed"|"SpellCastIsCasting"|"SpellCastJumpStartEvent"|"SpellCastLogicExecutionEndEvent"|"SpellCastLogicExecutionStartEvent"|"SpellCastMoveDuringCastUpdateEvent"|"SpellCastMovement"|"SpellCastMovementAndPrecalculationEndEvent"|"SpellCastOutcome"|"SpellCastPrepareEndEvent"|"SpellCastPrepareStartEvent"|"SpellCastPreviewEndEvent"|"SpellCastRequestTargetTracking"|"SpellCastRolls"|"SpellCastSpellRollAbortEvent"|"SpellCastState"|"SpellCastTargetHitEvent"|"SpellCastTargetHitInterruptEvent"|"SpellCastTargetReactionEvent"|"SpellCastTargetsChangedEvent"|"SpellCastTextKeyEvent"|"SpellCastThrowPickupPositionChangedEvent"|"SpellCastUpdateTargetTracking"|"SpellCastWeaponSetChangeRequest"|"SpellContainer"|"SpellModificationContainer"|"SpellResistanceBoost"|"SpellSaveDCBoost"|"SpellSyncTargeting"|"SpellsLearnedEvent"|"SplatterBaseState"|"SplatterState"|"SplatterSweatChange"|"StaticPhysics"|"Stats"|"StatsAppliedEvent"|"StatusBoostsRefreshed"|"StatusCause"|"StatusContainer"|"StatusID"|"StatusImmunities"|"StatusImmunityBoost"|"StatusIncapacitated"|"StatusIndicateDarkness"|"StatusLifetime"|"StatusLoseControl"|"StatusVisualDisabled"|"Stealth"|"Steering"|"StoryShortRestDisabled"|"SummonAddConcentrationRequest"|"SummonAddToExistingConcentrationRequest"|"SummonAttachToProjectileRequest"|"SummonContainer"|"SummonCreatedEvent"|"SummonDespawnRequest"|"SummonExpiredRequest"|"SummonLateJoinPenalty"|"SummonLifetime"|"SummonOwnerSetEvent"|"SummonPlaceInInventoryRequest"|"SummonSetLifetimeRequest"|"SurfacePathInfluences"|"SyncedTimelineActorControl"|"SyncedTimelineControl"|"TLPreviewDummy"|"TadpolePowers"|"TadpoleTreeState"|"Tadpoled"|"Tag"|"TagsChangedEvent"|"TemplateAnimationSetOverride"|"TemporaryHPBoost"|"ThreatRange"|"TimeFactor"|"TimelineActorData"|"TimelineData"|"TradeBuybackData"|"Trader"|"Transform"|"TranslateChanged"|"TranslateChangedEvent"|"TriggerArea"|"TriggerContainer"|"TriggerIsInsideOf"|"TriggerType"|"TriggerUpdatedContainer"|"TriggerUpdatedPhysics"|"TurnBased"|"TurnEndedEvent"|"TurnOrder"|"TurnOrderAssignEntityToUserRequest"|"TurnOrderSkipped"|"TurnOrderTimedOut"|"TurnRoundEndedEvent"|"TurnStartedEvent"|"TurnSurfaceTeamSingleton"|"TurnSurfaceTracking"|"UnlockInterruptBoost"|"UnlockSpellBoost"|"UnlockSpellVariantBoost"|"UnresolvedHitNotification"|"Unsheath"|"Use"|"UseAction"|"UseBoosts"|"UseSocket"|"UserAvatar"|"UserReservedFor"|"Uuid"|"UuidHistoryTracked"|"UuidToHandleMapping"|"Value"|"Visual"|"VisualAttachRequest"|"VisualChangeRequest"|"VisualChangedEvent"|"VisualLoad"|"VisualLoadDescription"|"VisualLoadRequests"|"VisualLoaded"|"VisualStream"|"VisualStreamLoad"|"Voice"|"VoiceTag"|"WalkOn"|"Weapon"|"WeaponAttackRollAbilityOverrideBoost"|"WeaponAttackRollBonusBoost"|"WeaponAttackTypeOverrideBoost"|"WeaponDamageBoost"|"WeaponDamageDieOverrideBoost"|"WeaponDamageResistanceBoost"|"WeaponDamageTypeOverrideBoost"|"WeaponEnchantmentBoost"|"WeaponPropertiesChangedEvent"|"WeaponPropertyBoost"|"WeaponSet"|"WeightBoost"|"WeightCategoryBoost"|"Wielded"|"Wielding"|"WieldingHistory"
 --- @alias ExtResourceManagerType string|"AbilityDefaultValues"|"AbilityDistributionPreset"|"AbilityList"|"ActionResource"|"ActionResourceGroup"|"AnimationSetPriority"|"AnimationShortName"|"AnimationShortNameCategory"|"ApprovalRating"|"AreaLevelOverride"|"AvatarContainerTemplate"|"Background"|"BackgroundGoal"|"CalendarDayRange"|"CampChestTemplate"|"CharacterCreationAccessorySet"|"CharacterCreationAppearanceMaterial"|"CharacterCreationAppearanceVisual"|"CharacterCreationEquipmentIcons"|"CharacterCreationEyeColor"|"CharacterCreationHairColor"|"CharacterCreationIconSettings"|"CharacterCreationMaterialOverride"|"CharacterCreationPassiveAppearance"|"CharacterCreationPreset"|"CharacterCreationSharedVisual"|"CharacterCreationSkinColor"|"CharacterCreationVOLine"|"CinematicArenaFrequencyGroup"|"ClassDescription"|"ColorDefinition"|"CompanionPreset"|"ConditionError"|"CustomDice"|"DLC"|"DeathTypeEffect"|"DifficultyClass"|"DisturbanceProperty"|"EncumbranceType"|"EquipmentDefaultValues"|"EquipmentList"|"EquipmentType"|"ExperienceReward"|"Faction"|"Feat"|"FeatDefaultValues"|"FeatDescription"|"FeatSoundState"|"FixedHotBarSlot"|"Flag"|"FlagSoundState"|"God"|"GoldReward"|"Gossip"|"ItemThrowParams"|"ItemWallTemplate"|"LevelMap"|"LimbsMapping"|"LongRestCost"|"ManagedStatusVFX"|"Max"|"MultiEffectInfo"|"OneTimeReward"|"Origin"|"OriginIntroEntity"|"PassiveDefaultValues"|"PassiveList"|"PassiveVFX"|"PhotoModeBlueprintOverride"|"PhotoModeColourGrading"|"PhotoModeDecorFrame"|"PhotoModeEmoteAnimation"|"PhotoModeEmoteCollection"|"PhotoModeEmotePose"|"PhotoModeFaceExpression"|"PhotoModeFaceExpressionCollection"|"PhotoModeSticker"|"PhotoModeVignette"|"PreparedSpellDefaultValues"|"Progression"|"ProgressionDescription"|"ProjectileDefault"|"Race"|"RandomCastOutcome"|"Ruleset"|"RulesetModifier"|"RulesetModifierOption"|"RulesetSelectionPreset"|"RulesetValue"|"ScriptMaterialParameterOverride"|"ScriptMaterialPresetOverride"|"ShapeshiftRule"|"SkillDefaultValues"|"SkillList"|"SpellDefaultValues"|"SpellList"|"SpellMetaCondition"|"SpellSoundTrajectory"|"StatusSoundState"|"SurfaceCursorMessage"|"TadpolePower"|"Tag"|"TagSoundState"|"TooltipExtraText"|"TooltipUpcastDescription"|"TrajectoryRules"|"TutorialEntries"|"TutorialEvent"|"TutorialModalEntries"|"TutorialUnifiedEntry"|"VFX"|"VisualLocatorAttachment"|"Voice"|"WeaponAnimationSet"|"WeightCategory"
---- @alias ExtSystemType string|"AnimationBlueprint"|"AnimationSet"|"ClientCharacterIconRender"|"ClientCharacterManager"|"ClientEffectHandler"|"ClientEquipmentVisuals"|"ClientVisual"|"ClientVisualsVisibilityState"|"Construction"|"Effect"|"FadeableObstructionMapping"|"InstancingRequest"|"LevelInstanceAttach"|"LevelInstanceAttachRequest"|"LevelInstanceLoad"|"LevelInstanceLoadRequest"|"LevelInstanceMove"|"Light"|"Max"|"PickingHelper"|"ServerActionResource"|"ServerAi"|"ServerAttitude"|"ServerBodyType"|"ServerBoost"|"ServerCapabilities"|"ServerCastRequest"|"ServerCombat"|"ServerCombatLog"|"ServerConcentration"|"ServerDialog"|"ServerDisplayName"|"ServerDualWielding"|"ServerExperience"|"ServerFTBZone"|"ServerFalling"|"ServerGod"|"ServerGravity"|"ServerHit"|"ServerInterruptDecision"|"ServerInterruptManagement"|"ServerInterruptRequests"|"ServerInventoryCanPlace"|"ServerInventoryEquipment"|"ServerInventoryInteraction"|"ServerInventoryInteractionRequest"|"ServerInventoryLocking"|"ServerInventoryManagement"|"ServerInventoryReceivalNotification"|"ServerInventoryStack"|"ServerLeader"|"ServerLongRest"|"ServerMagicPocketsTracking"|"ServerNewInventoryMember"|"ServerParty"|"ServerPartyTeleport"|"ServerPassive"|"ServerPingRequest"|"ServerPlatform"|"ServerProgression"|"ServerRating"|"ServerRestore"|"ServerRoll"|"ServerRollSave"|"ServerShapeshift"|"ServerShortRest"|"ServerSightViewshed"|"ServerSpell"|"ServerSpellCooldown"|"ServerSpellLearning"|"ServerStats"|"ServerStatusRequest"|"ServerSummonDespawn"|"ServerSummonSpawn"|"ServerTemplateChange"|"ServerTradeBuyback"|"ServerTreasureGeneration"|"ServerTurnOrder"|"ServerVisual"|"SoundRouting"|"Visual"|"VisualChange"|"VisualChanged"
+--- @alias ExtSystemType string|"AnimationBlueprint"|"AnimationSet"|"ClientCharacterIconRender"|"ClientCharacterManager"|"ClientConstruction"|"ClientEffectHandler"|"ClientEquipmentVisuals"|"ClientTimeline"|"ClientVisual"|"ClientVisualsVisibilityState"|"Effect"|"FadeableObstructionMapping"|"InstancingRequest"|"LevelInstanceAttach"|"LevelInstanceAttachRequest"|"LevelInstanceLoad"|"LevelInstanceLoadRequest"|"LevelInstanceMove"|"Light"|"Max"|"PickingHelper"|"ServerActionResource"|"ServerAi"|"ServerAttitude"|"ServerBodyType"|"ServerBoost"|"ServerCapabilities"|"ServerCastRequest"|"ServerCombat"|"ServerCombatLog"|"ServerConcentration"|"ServerDialog"|"ServerDisplayName"|"ServerDualWielding"|"ServerExperience"|"ServerFTBZone"|"ServerFalling"|"ServerGod"|"ServerGravity"|"ServerHit"|"ServerHotbar"|"ServerInterruptDecision"|"ServerInterruptManagement"|"ServerInterruptRequests"|"ServerInventoryCanPlace"|"ServerInventoryEquipment"|"ServerInventoryInteraction"|"ServerInventoryInteractionRequest"|"ServerInventoryLocking"|"ServerInventoryManagement"|"ServerInventoryReceivalNotification"|"ServerInventoryStack"|"ServerLeader"|"ServerLockpicking"|"ServerLongRest"|"ServerMagicPocketsTracking"|"ServerNewInventoryMember"|"ServerParty"|"ServerPartyTeleport"|"ServerPassive"|"ServerPingRequest"|"ServerPlatform"|"ServerProgression"|"ServerRating"|"ServerRestore"|"ServerRoll"|"ServerRollSave"|"ServerShapeshift"|"ServerShortRest"|"ServerSightViewshed"|"ServerSpell"|"ServerSpellCooldown"|"ServerSpellLearning"|"ServerStats"|"ServerStatusRequest"|"ServerSummonDespawn"|"ServerSummonSpawn"|"ServerTemplateChange"|"ServerTradeBuyback"|"ServerTreasureGeneration"|"ServerTurnOrder"|"ServerVisual"|"SoundRouting"|"Visual"|"VisualChange"|"VisualChanged"
+--- @alias FlagType string|"Character"|"Dialog"|"DialogInstance"|"Global"|"Local"|"Party"|"Quest"|"Script"|"Tag"|"User"|"UserShape"
 --- @alias FleeErrorFlags string|"CantMove"|"Condition"|"Downed"|"EnemyTooClose"|"Incapacitated"|"PartyFollower"|"Region"|"Summon"
 --- @alias ForceFunctorAggression string|"Aggressive"|"Friendly"|"Neutral"|"Undefined"
 --- @alias ForceFunctorOrigin string|"OriginToEntity"|"OriginToTarget"|"TargetToEntity"|"Undefined"
@@ -1233,29 +1292,30 @@ Osi = {}
 --- @alias Gender string|"Female"|"Male"
 --- @alias GenomeVariableType string|"Const"|"Extern"|"Function"|"Private"|"Public"|"Socket"|"Unknown1"
 --- @alias GravityType string|"Disabled"|"DisabledUntilMove"|"Enabled"
---- @alias GuiButtonFlags string|"MouseButtonLeft"|"MouseButtonMiddle"|"MouseButtonRight"
+--- @alias GuiButtonFlags string|"AllowOverlap"|"EnableNav"|"MouseButtonLeft"|"MouseButtonMiddle"|"MouseButtonRight"
 --- @alias GuiChildFlags string|"AlwaysUseWindowPadding"|"AutoResizeX"|"AutoResizeY"|"Border"|"ChildAlwaysAutoResize"|"FrameStyle"|"NavFlattened"|"ResizeX"|"ResizeY"
---- @alias GuiColor string|"Border"|"BorderShadow"|"Button"|"ButtonActive"|"ButtonHovered"|"CheckMark"|"ChildBg"|"DragDropTarget"|"FrameBg"|"FrameBgActive"|"FrameBgHovered"|"Header"|"HeaderActive"|"HeaderHovered"|"MenuBarBg"|"ModalWindowDimBg"|"NavHighlight"|"NavWindowingDimBg"|"NavWindowingHighlight"|"PlotHistogram"|"PlotHistogramHovered"|"PlotLines"|"PlotLinesHovered"|"PopupBg"|"ResizeGrip"|"ResizeGripActive"|"ResizeGripHovered"|"ScrollbarBg"|"ScrollbarGrab"|"ScrollbarGrabActive"|"ScrollbarGrabHovered"|"Separator"|"SeparatorActive"|"SeparatorHovered"|"SliderGrab"|"SliderGrabActive"|"Tab"|"TabActive"|"TabDimmedSelectedOverline"|"TabHovered"|"TabUnfocused"|"TabUnfocusedActive"|"TableBorderLight"|"TableBorderStrong"|"TableHeaderBg"|"TableRowBg"|"TableRowBgAlt"|"Text"|"TextDisabled"|"TextLink"|"TextSelectedBg"|"TitleBg"|"TitleBgActive"|"TitleBgCollapsed"|"WindowBg"
---- @alias GuiColorEditFlags string|"AlphaBar"|"AlphaNoBg"|"AlphaOpaque"|"AlphaPreview"|"AlphaPreviewHalf"|"DisplayHSV"|"DisplayHex"|"DisplayRGB"|"Float"|"HDR"|"InputHSV"|"InputRGB"|"NoAlpha"|"NoBorder"|"NoDragDrop"|"NoInputs"|"NoLabel"|"NoOptions"|"NoPicker"|"NoSidePreview"|"NoSmallPreview"|"NoTooltip"|"PickerHueBar"|"PickerHueWheel"|"Uint8"
+--- @alias GuiColor string|"Border"|"BorderShadow"|"Button"|"ButtonActive"|"ButtonHovered"|"CheckMark"|"CheckboxSelectedBg"|"ChildBg"|"DragDropTarget"|"DragDropTargetBg"|"FrameBg"|"FrameBgActive"|"FrameBgHovered"|"Header"|"HeaderActive"|"HeaderHovered"|"MenuBarBg"|"ModalWindowDimBg"|"NavCursor"|"NavHighlight"|"NavWindowingDimBg"|"NavWindowingHighlight"|"PlotHistogram"|"PlotHistogramHovered"|"PlotLines"|"PlotLinesHovered"|"PopupBg"|"ResizeGrip"|"ResizeGripActive"|"ResizeGripHovered"|"ScrollbarBg"|"ScrollbarGrab"|"ScrollbarGrabActive"|"ScrollbarGrabHovered"|"Separator"|"SeparatorActive"|"SeparatorHovered"|"SliderGrab"|"SliderGrabActive"|"Tab"|"TabActive"|"TabDimmed"|"TabDimmedSelected"|"TabDimmedSelectedOverline"|"TabHovered"|"TabSelected"|"TabSelectedOverline"|"TabUnfocused"|"TabUnfocusedActive"|"TableBorderLight"|"TableBorderStrong"|"TableHeaderBg"|"TableRowBg"|"TableRowBgAlt"|"Text"|"TextDisabled"|"TextLink"|"TextSelectedBg"|"TitleBg"|"TitleBgActive"|"TitleBgCollapsed"|"TreeLines"|"UnsavedMarker"|"WindowBg"
+--- @alias GuiColorEditFlags string|"AlphaBar"|"AlphaNoBg"|"AlphaOpaque"|"AlphaPreview"|"AlphaPreviewHalf"|"DisplayHSV"|"DisplayHex"|"DisplayRGB"|"Float"|"HDR"|"InputHSV"|"InputRGB"|"NoAlpha"|"NoBorder"|"NoColorMarkers"|"NoDragDrop"|"NoInputs"|"NoLabel"|"NoOptions"|"NoPicker"|"NoSidePreview"|"NoSmallPreview"|"NoTooltip"|"PickerHueBar"|"PickerHueWheel"|"PickerNoRotate"|"Uint8"
 --- @alias GuiComboFlags string|"HeightLarge"|"HeightLargest"|"HeightRegular"|"HeightSmall"|"NoArrowButton"|"NoPreview"|"PopupAlignLeft"|"WidthFitPreview"
 --- @alias GuiCond string|"Always"|"Appearing"|"FirstUseEver"|"Once"
+--- @alias GuiDebugToolFlags string|"DebugLog"|"Demo"|"IDStack"|"ItemPicker"|"Metrics"|"StyleEditor"
 --- @alias GuiDragFlags string|"AllowNullID"|"NoDisableHover"|"NoHoldToOpenOthers"|"NoPreviewTooltip"
 --- @alias GuiDropFlags string|"NoDrawDefaultRect"|"NoPreviewTooltip"
---- @alias GuiInputTextFlags string|"AllowTabInput"|"AlwaysOverwrite"|"AutoSelectAll"|"CharsDecimal"|"CharsHexadecimal"|"CharsNoBlank"|"CharsScientific"|"CharsUppercase"|"CtrlEnterForNewLine"|"DisplayEmptyRefVal"|"ElideLeft"|"EnterReturnsTrue"|"EscapeClearsAll"|"Multiline"|"NoHorizontalScroll"|"NoUndoRedo"|"ParseEmptyRefVal"|"Password"|"ReadOnly"
---- @alias GuiItemFlags string|"AllowDuplicateId"|"AllowItemOverlap"|"AutoClosePopups"|"ButtonRepeat"|"Disabled"|"ItemReadOnly"|"NoItemNav"|"NoMarkEdited"|"NoNavDefaultFocus"|"NoNavDisableMouseHover"|"NoTabStop"|"NoWindowHoverableCheck"
+--- @alias GuiInputTextFlags string|"AllowTabInput"|"AlwaysOverwrite"|"AutoSelectAll"|"CharsDecimal"|"CharsHexadecimal"|"CharsNoBlank"|"CharsScientific"|"CharsUppercase"|"CtrlEnterForNewLine"|"DisplayEmptyRefVal"|"ElideLeft"|"EnterReturnsTrue"|"EscapeClearsAll"|"Multiline"|"NoHorizontalScroll"|"NoUndoRedo"|"ParseEmptyRefVal"|"Password"|"ReadOnly"|"WordWrap"
+--- @alias GuiItemFlags string|"AllowDuplicateId"|"AllowItemOverlap"|"AutoClosePopups"|"ButtonRepeat"|"Disabled"|"ItemReadOnly"|"LiveEditOnInputScalar"|"LiveEditOnInputText"|"Multiline"|"NoFocus"|"NoItemNav"|"NoMarkEdited"|"NoNavDefaultFocus"|"NoNavDisableMouseHover"|"NoTabStop"|"NoWindowHoverableCheck"
 --- @alias GuiItemStatusFlags string|"Active"|"Deactivated"|"Edited"|"Focused"|"HasClipRect"|"HasDeactivated"|"HasDisplayRect"|"HasShortcut"|"HoveredRect"|"HoveredWindow"|"ToggledOpen"|"ToggledSelection"|"Visible"
 --- @alias GuiMeasureScaling string|"Absolute"|"Scaled"
---- @alias GuiPopupFlags string|"AnyPopupId"|"AnyPopupLevel"|"MouseButtonMiddle"|"MouseButtonRight"|"NoOpenOverExistingPopup"|"NoOpenOverItems"|"NoReopen"
+--- @alias GuiPopupFlags string|"AnyPopupId"|"AnyPopupLevel"|"MouseButtonLeft"|"MouseButtonMiddle"|"MouseButtonRight"|"NoOpenOverExistingPopup"|"NoOpenOverItems"|"NoReopen"
 --- @alias GuiSelectableFlags string|"AllowDoubleClick"|"AllowOverlap"|"DontClosePopups"|"Highlight"|"SelectableDisabled"|"SpanAllColumns"
---- @alias GuiSliderFlags string|"AlwaysClamp"|"ClampOnInput"|"ClampZeroRange"|"Logarithmic"|"NoInput"|"NoRoundToFormat"|"NoSpeedTweaks"|"WrapAround"
+--- @alias GuiSliderFlags string|"AlwaysClamp"|"ClampOnInput"|"ClampZeroRange"|"ColorMarkers"|"Logarithmic"|"NoInput"|"NoRoundToFormat"|"NoSpeedTweaks"|"WrapAround"
 --- @alias GuiSortDirection string|"Ascending"|"Descending"|"None"
---- @alias GuiStyleVar string|"Alpha"|"ButtonTextAlign"|"CellPadding"|"ChildBorderSize"|"ChildRounding"|"DisabledAlpha"|"FrameBorderSize"|"FramePadding"|"FrameRounding"|"GrabMinSize"|"GrabRounding"|"ImageBorderSize"|"IndentSpacing"|"ItemInnerSpacing"|"ItemSpacing"|"PopupBorderSize"|"PopupRounding"|"ScrollbarRounding"|"ScrollbarSize"|"SelectableTextAlign"|"SeparatorTextAlign"|"SeparatorTextBorderSize"|"SeparatorTextPadding"|"TabBarBorderSize"|"TabBarOverlineSize"|"TabBorderSize"|"TabRounding"|"TableAngledHeadersAngle"|"TableAngledHeadersTextAlign"|"WindowBorderSize"|"WindowMinSize"|"WindowPadding"|"WindowRounding"|"WindowTitleAlign"
---- @alias GuiTabBarFlags string|"AutoSelectNewTabs"|"DrawSelectedOverline"|"FittingPolicyResizeDown"|"FittingPolicyScroll"|"NoCloseWithMiddleMouseButton"|"NoTabListScrollingButtons"|"NoTooltip"|"Reorderable"|"TabListPopupButton"
+--- @alias GuiStyleVar string|"Alpha"|"ButtonTextAlign"|"CellPadding"|"ChildBorderSize"|"ChildRounding"|"DisabledAlpha"|"DragDropTargetRounding"|"FrameBorderSize"|"FramePadding"|"FrameRounding"|"GrabMinSize"|"GrabRounding"|"ImageBorderSize"|"ImageRounding"|"IndentSpacing"|"ItemInnerSpacing"|"ItemSpacing"|"MenuItemRounding"|"PopupBorderSize"|"PopupRounding"|"ScrollbarPadding"|"ScrollbarRounding"|"ScrollbarSize"|"SelectableRounding"|"SelectableTextAlign"|"SeparatorTextAlign"|"SeparatorTextBorderSize"|"SeparatorTextPadding"|"TabBarBorderSize"|"TabBarOverlineSize"|"TabBorderSize"|"TabMinWidthBase"|"TabMinWidthShrink"|"TabRounding"|"TableAngledHeadersAngle"|"TableAngledHeadersTextAlign"|"TreeLinesRounding"|"TreeLinesSize"|"WindowBorderSize"|"WindowMinSize"|"WindowPadding"|"WindowRounding"|"WindowTitleAlign"
+--- @alias GuiTabBarFlags string|"AutoSelectNewTabs"|"DrawSelectedOverline"|"FittingPolicyMixed"|"FittingPolicyResizeDown"|"FittingPolicyScroll"|"FittingPolicyShrink"|"NoCloseWithMiddleMouseButton"|"NoTabListScrollingButtons"|"NoTooltip"|"Reorderable"|"TabListPopupButton"
 --- @alias GuiTabItemFlags string|"Leading"|"NoAssumedClosure"|"NoCloseWithMiddleMouseButton"|"NoPushId"|"NoReorder"|"NoTooltip"|"SetSelected"|"Trailing"|"UnsavedDocument"
 --- @alias GuiTableColumnFlags string|"AngledHeader"|"DefaultHide"|"DefaultSort"|"Disabled"|"IndentDisable"|"IndentEnable"|"NoClip"|"NoHeaderLabel"|"NoHeaderWidth"|"NoHide"|"NoReorder"|"NoResize"|"NoSort"|"NoSortAscending"|"NoSortDescending"|"PreferSortAscending"|"PreferSortDescending"|"WidthFixed"|"WidthStretch"
 --- @alias GuiTableFlags string|"Borders"|"BordersH"|"BordersInner"|"BordersInnerH"|"BordersInnerV"|"BordersOuter"|"BordersOuterH"|"BordersOuterV"|"BordersV"|"ContextMenuInBody"|"Hideable"|"HighlightHoveredColumn"|"NoBordersInBody"|"NoBordersInBodyUntilResize"|"NoClip"|"NoHostExtendX"|"NoHostExtendY"|"NoKeepColumnsVisible"|"NoPadInnerX"|"NoPadOuterX"|"NoSavedSettings"|"PadOuterX"|"PreciseWidths"|"Reorderable"|"Resizable"|"RowBg"|"ScrollX"|"ScrollY"|"SizingFixedFit"|"SizingFixedSame"|"SizingStretchProp"|"SizingStretchSame"|"SortMulti"|"SortTristate"|"Sortable"
 --- @alias GuiTableRowFlags string|"Headers"
---- @alias GuiTreeNodeFlags string|"AllowOverlap"|"Bullet"|"CollapsingHeader"|"DefaultOpen"|"FramePadding"|"Framed"|"Leaf"|"NavLeftJumpsBackHere"|"NoAutoOpenOnLog"|"NoTreePushOnOpen"|"OpenOnArrow"|"OpenOnDoubleClick"|"Selected"|"SpanAllColumns"|"SpanAvailWidth"|"SpanFullWidth"|"SpanTextWidth"
+--- @alias GuiTreeNodeFlags string|"AllowOverlap"|"Bullet"|"CollapsingHeader"|"DefaultOpen"|"DrawLinesFull"|"DrawLinesNone"|"DrawLinesToNodes"|"FramePadding"|"Framed"|"LabelSpanAllColumns"|"Leaf"|"NavLeftJumpsBackHere"|"NavLeftJumpsToParent"|"NoAutoOpenOnLog"|"NoTreePushOnOpen"|"OpenOnArrow"|"OpenOnDoubleClick"|"Selected"|"SpanAllColumns"|"SpanAvailWidth"|"SpanFullWidth"|"SpanLabelWidth"|"SpanTextWidth"
 --- @alias GuiWindowFlags string|"AlwaysAutoResize"|"AlwaysHorizontalScrollbar"|"AlwaysVerticalScrollbar"|"HorizontalScrollbar"|"MenuBar"|"NoBackground"|"NoBringToFrontOnFocus"|"NoCollapse"|"NoDecoration"|"NoFocusOnAppearing"|"NoInputs"|"NoMouseInputs"|"NoMove"|"NoNav"|"NoNavFocus"|"NoNavInputs"|"NoResize"|"NoSavedSettings"|"NoScrollWithMouse"|"NoScrollbar"|"NoTitleBar"|"UnsavedDocument"
 --- @alias HandednessType string|"Any"|"One"|"Two"
 --- @alias HealDirection string|"Incoming"|"Outgoing"
@@ -1272,6 +1332,8 @@ Osi = {}
 --- @alias InputType string|"AcceleratedRepeat"|"ClearOnRelease"|"Hold"|"Press"|"Release"|"Repeat"|"ValueChange"
 --- @alias InteractionFilterRequirement string|"MatchAll"|"MatchAny"
 --- @alias InteractionFilterType string|"Allow"|"Block"|"None"
+--- @alias InterruptDecision string|"Ask"|"Ignore"|"Use"
+--- @alias InterruptInteractionTypes string|"Ask"|"Enabled"
 --- @alias InterruptRequestSource string|"Boost"|"Debug"|"LearnedSpell"
 --- @alias InventoryAppearanceType string|"Backpack"|"Barrel"|"Basket"|"Beehive"|"Bloodstone"|"Bones"|"Book"|"BookRow"|"BottleRack"|"Bush"|"CartilaginousChest"|"Chest"|"Coffin"|"Crate"|"CreatureCorpse"|"CrudeChest"|"Cupboard"|"CupboardRich"|"DisplayCase"|"Dung"|"FishPile"|"FishRack"|"GildedChest"|"HeavyChestBig"|"HeavyChestSmall"|"Hole"|"HumanoidCorpse"|"MetalCrate"|"MetalJunk"|"Mushroom"|"Nest"|"None"|"Orange"|"RockPile"|"RottingBasket"|"RoundBasket"|"RusticChest"|"Sack"|"Sarcophagus"|"Sheep"|"SoundTest"|"SpiderCocoon"|"SpiderCorpse"|"Stone"|"TravelersChestBig"|"TravelersChestSmall"|"Treetrunk"|"Vase"|"WebCorpse"|"WickerChestBig"|"WickerChestSmall"|"Wood"
 --- @alias InventoryLockChange string|"Lock"|"Toggle"|"Unlock"
@@ -1280,13 +1342,14 @@ Osi = {}
 --- @alias ItemDataRarity string|"Common"|"Divine"|"Epic"|"Legendary"|"Rare"|"Sentinel"|"Uncommon"|"Unique"
 --- @alias ItemSlot string|"Amulet"|"Boots"|"Breast"|"Cloak"|"Gloves"|"Helmet"|"Horns"|"MainHand"|"MeleeMainHand"|"MeleeOffHand"|"MusicalInstrument"|"OffHand"|"Overhead"|"RangedMainHand"|"RangedOffHand"|"Ring"|"Ring2"|"Underwear"|"VanityBody"|"VanityBoots"|"Wings"
 --- @alias ItemUseType string|"Arrow"|"Consumable"|"Grenade"|"None"|"Potion"|"Scroll"|"Throwable"|"Unknown1"
+--- @alias LevelInstanceState string|"Instantiate"|"Instantiated"|"Load"|"LoadDependencies"|"Uninitialized"
 --- @alias LightChannelValue string|"CharacterOnly"|"Cine1"|"Cine2"|"Cine3"|"Cine4"|"Custom"|"StealthOnly"|"World"
 --- @alias LightFlags string|"CastShadow"|"CastVolumetricShadow"|"Enabled"|"FillLight"|"IsFlickering"|"IsMoving"|"PreExpose"|"UseTemperature"
 --- @alias LightType string|"Direction"|"Point"|"Spot"
 --- @alias LongRestState string|"Cancelled"|"Created"|"Finished"|"ReadyForDelete"|"RestTypeRequest"|"ScriptPhaseDenied"|"ScriptPhasePending"|"ScriptPhaseRequested"|"ScriptPhaseStart"|"ScriptPhaseTimeout"|"Validation"
 --- @alias LongRestType string|"CanceledByObserver"|"CanceledByOwner"|"CantRest"|"Exhausted"|"Full"|"None"
 --- @alias LongRestUserState string|"Finished"|"Finishing"|"Initial"|"RequestingData"|"Resting"|"StartingRest"|"WaitingConfirmation"|"WaitingOthers"
---- @alias LuaTypeId string|"Any"|"Array"|"Boolean"|"Enumeration"|"Float"|"Function"|"Integer"|"Map"|"Module"|"Nullable"|"Object"|"Set"|"String"|"Tuple"|"Unknown"|"Variant"|"Void"
+--- @alias LuaTypeId string|"Any"|"Array"|"Boolean"|"Enumeration"|"Event"|"Float"|"Function"|"Integer"|"Map"|"Module"|"Nullable"|"Object"|"Set"|"String"|"Tuple"|"Unknown"|"Variant"|"Void"
 --- @alias MaterialFlags string|"CanReceiveDeferredDecals"|"DiscardingPixels"|"DynamicParameterEnabled"|"EarlyRefraction"|"EmissiveMaterial"|"InstanceColorEnabled"|"LateAlpha"|"Loaded"|"LuminanceEmissive"|"OpaqueCustom"|"OutputDepth"|"OutputVelocity"|"QTangentEnabled"|"Refracting"|"SceneColorEnabled"|"UsingWorldPositionOffset"|"VertexColorsEnabled"
 --- @alias MaterialInfoFlags string|"Apply"|"Dynamic"|"Force"|"IsBoneTransform"|"Shared"
 --- @alias MaterialShaderDescFlags string|"AO"|"DecalReceivedNormal"|"DiffusionProfileBuffer"|"Exposure"|"IBLDiffuseRGB"|"IBLSpecularRGB"|"LUT"|"LightDataBuffer"|"LinearDepth"|"Scene"|"Shadow"|"ShadowMask"|"TargSkydome"|"TerrainHeightmap"|"VolumetricFog"
@@ -1295,7 +1358,7 @@ Osi = {}
 --- @alias MovementSpeedType string|"None"|"Run"|"Sprint"|"Stroll"|"Walk"
 --- @alias MultiEffectFlags string|"DetachSource"|"DetachTarget"|"Enabled"|"KeepRotation"|"KeepScale"|"MainHand"|"OffHand"|"UseDistance"|"UseOrientDirection"|"UseScaleOverride"
 --- @alias NarrativeCombatRequestType string|"ClearInNarrativeCombat"|"Create"|"Destroy"|"SetInNarrativeCombat"
---- @alias NetMessage string|"NETMSG_ACHIEVEMENT_PROGRESS_MESSAGE"|"NETMSG_ACHIEVEMENT_UNLOCKED_MESSAGE"|"NETMSG_ACTIVE_ROLL_MODIFIERS"|"NETMSG_ACT_OVER"|"NETMSG_ATMOSPHERE_OVERRIDE"|"NETMSG_CACHETEMPLATE"|"NETMSG_CAMERA_ACTIVATE"|"NETMSG_CAMERA_ARRIVED"|"NETMSG_CAMERA_ROTATE"|"NETMSG_CAMERA_SPLINE"|"NETMSG_CAMERA_TARGET"|"NETMSG_CAST_ALL"|"NETMSG_CHANGE_RULESETS"|"NETMSG_CHARACTER_ACTION"|"NETMSG_CHARACTER_ACTION_DATA"|"NETMSG_CHARACTER_ACTION_REQUEST_RESULT"|"NETMSG_CHARACTER_ACTIVATE"|"NETMSG_CHARACTER_AOO"|"NETMSG_CHARACTER_ASSIGN"|"NETMSG_CHARACTER_BEHAVIOR"|"NETMSG_CHARACTER_CANCEL_DROP_ENTITY"|"NETMSG_CHARACTER_CHANGE_OWNERSHIP"|"NETMSG_CHARACTER_CONFIRMATION"|"NETMSG_CHARACTER_CONTROL"|"NETMSG_CHARACTER_CREATE"|"NETMSG_CHARACTER_CREATION_ABORT"|"NETMSG_CHARACTER_CREATION_LEVELUP"|"NETMSG_CHARACTER_CREATION_PLAYORIGINTIMELINE"|"NETMSG_CHARACTER_CREATION_READY"|"NETMSG_CHARACTER_CREATION_RESPEC"|"NETMSG_CHARACTER_CREATION_UPDATE"|"NETMSG_CHARACTER_DEACTIVATE"|"NETMSG_CHARACTER_DESTROY"|"NETMSG_CHARACTER_DIALOG"|"NETMSG_CHARACTER_DROP_ENTITY"|"NETMSG_CHARACTER_END_REPOSE"|"NETMSG_CHARACTER_ERROR"|"NETMSG_CHARACTER_IMPROV_WEAPON"|"NETMSG_CHARACTER_IN_DIALOG"|"NETMSG_CHARACTER_ITEM_USED"|"NETMSG_CHARACTER_LOCKPICK"|"NETMSG_CHARACTER_LOOT"|"NETMSG_CHARACTER_MOVEMENT_FALLING"|"NETMSG_CHARACTER_MOVE_FAILED"|"NETMSG_CHARACTER_OFFSTAGE"|"NETMSG_CHARACTER_ORIGINAL_TEMPLATE_UPDATE"|"NETMSG_CHARACTER_PATHING"|"NETMSG_CHARACTER_PICKPOCKET"|"NETMSG_CHARACTER_REQUEST_ARMOR_SET_SWITCH"|"NETMSG_CHARACTER_REQUEST_WEAPON_SET_SWITCH"|"NETMSG_CHARACTER_SELECTED_CLIMB_ON"|"NETMSG_CHARACTER_STATUS"|"NETMSG_CHARACTER_STATUS_LIFETIME"|"NETMSG_CHARACTER_STEERING"|"NETMSG_CHARACTER_STOWED_VISIBILITY"|"NETMSG_CHARACTER_TELEPORT"|"NETMSG_CHARACTER_TRANSFORM"|"NETMSG_CHARACTER_TRAPDISARM"|"NETMSG_CHARACTER_UNSHEATHING"|"NETMSG_CHARACTER_UPDATE"|"NETMSG_CHARACTER_USE_MOVEMENT"|"NETMSG_CHAT"|"NETMSG_CLEAR_RECIPE_NEW_FLAG"|"NETMSG_CLIENT_ACCEPT"|"NETMSG_CLIENT_CONNECT"|"NETMSG_CLIENT_DIALOG_JOIN_PRIVACY_FAILED"|"NETMSG_CLIENT_DIALOG_PRIVACY_CHANGED"|"NETMSG_CLIENT_GAME_SETTINGS"|"NETMSG_CLIENT_JOINED"|"NETMSG_CLIENT_LEFT"|"NETMSG_CLOSED_MESSAGE_BOX_MESSAGE"|"NETMSG_CLOSE_CUSTOM_BOOK_UI_MESSAGE"|"NETMSG_CLOSE_UI_MESSAGE"|"NETMSG_COMBATLOG"|"NETMSG_COMBATLOGENTRIES"|"NETMSG_COMBATLOGITEMINTERACTION"|"NETMSG_COMBINE_ITEMS"|"NETMSG_COMBINE_RESULT"|"NETMSG_CUSTOM_STATS_CREATE"|"NETMSG_CUSTOM_STATS_DEFINITION_CREATE"|"NETMSG_CUSTOM_STATS_DEFINITION_REMOVE"|"NETMSG_CUSTOM_STATS_DEFINITION_UPDATE"|"NETMSG_CUSTOM_STATS_UPDATE"|"NETMSG_DARKNESSTILE_UPDATE"|"NETMSG_DECLUTTERED_ITEMS"|"NETMSG_DIALOG_ACTORJOINS_MESSAGE"|"NETMSG_DIALOG_ACTORLEAVES_MESSAGE"|"NETMSG_DIALOG_ANSWER_HIGHLIGHT_MESSAGE"|"NETMSG_DIALOG_ANSWER_MESSAGE"|"NETMSG_DIALOG_HISTORY_MESSAGE"|"NETMSG_DIALOG_INSTANCEDIALOGCHANGED"|"NETMSG_DIALOG_INVALID_ANSWER"|"NETMSG_DIALOG_LISTEN"|"NETMSG_DIALOG_NODE_MESSAGE"|"NETMSG_DIALOG_REPLACESPEAKER_MESSAGE"|"NETMSG_DIALOG_REQUEST_IN_DIALOGUE_ATTACK_MESSAGE"|"NETMSG_DIALOG_STATE_MESSAGE"|"NETMSG_DIALOG_SUGGESTANSWER_MESSAGE"|"NETMSG_DIALOG_TIMELINE_UNLOADED_MESSAGE"|"NETMSG_DIPLOMACY"|"NETMSG_DLC_UPDATE"|"NETMSG_DUALWIELDING_TOGGLE"|"NETMSG_ECS_REPLICATION"|"NETMSG_EFFECT_CREATE"|"NETMSG_EFFECT_DESTROY"|"NETMSG_EFFECT_FORGET"|"NETMSG_END_THE_DAY"|"NETMSG_FLAG_UPDATE"|"NETMSG_FOLLOWER_CANT_USE_ITEM"|"NETMSG_FORCE_TURN_BASED_END_PLAYER_TURN_REQUEST"|"NETMSG_FORCE_TURN_BASED_TOGGLE_REQUEST"|"NETMSG_FULL_RESPEC_UPDATE"|"NETMSG_GAMEACTION"|"NETMSG_GAMECONTROL_PRICETAG"|"NETMSG_GAMECONTROL_UPDATE_C2S"|"NETMSG_GAMECONTROL_UPDATE_S2C"|"NETMSG_GAMEOVER"|"NETMSG_GAMETIME_SYNC"|"NETMSG_GIVE_REWARD"|"NETMSG_HANDSHAKE"|"NETMSG_HOST_LEFT"|"NETMSG_HOST_REFUSE"|"NETMSG_HOST_REFUSEPLAYER"|"NETMSG_HOST_WELCOME"|"NETMSG_HOTBAR_COLUMN_SET"|"NETMSG_HOTBAR_CURRENT_DECK_SET"|"NETMSG_HOTBAR_CUSTOM_DECK"|"NETMSG_HOTBAR_LOCK_SET"|"NETMSG_HOTBAR_ROWS_SET"|"NETMSG_HOTBAR_ROW_REMOVE"|"NETMSG_HOTBAR_SLOT_REMOVE_IS_NEW_FLAG"|"NETMSG_HOTBAR_SLOT_SET"|"NETMSG_INTERRUPT_DECISION"|"NETMSG_INTERRUPT_SET_ASK_DATA"|"NETMSG_INTERRUPT_SET_ENABLED_DATA"|"NETMSG_INVENTORY_ADD"|"NETMSG_INVENTORY_CREATE"|"NETMSG_INVENTORY_CREATE_AND_OPEN"|"NETMSG_INVENTORY_CREATE_NEW"|"NETMSG_INVENTORY_DESTROY"|"NETMSG_INVENTORY_DESTROY_NEW"|"NETMSG_INVENTORY_EQUIP"|"NETMSG_INVENTORY_ITEM_UPDATE"|"NETMSG_INVENTORY_LOCK"|"NETMSG_INVENTORY_LOCKSTATE_SYNC"|"NETMSG_INVENTORY_MOVETOSLOT"|"NETMSG_INVENTORY_SORT"|"NETMSG_INVENTORY_TRANSFER"|"NETMSG_INVENTORY_UNEQUIP"|"NETMSG_INVENTORY_VIEW_CREATE"|"NETMSG_INVENTORY_VIEW_DESTROY"|"NETMSG_INVENTORY_VIEW_SORT"|"NETMSG_INVENTORY_VIEW_UPDATE_ITEMS"|"NETMSG_INVENTORY_VIEW_UPDATE_PARENTS"|"NETMSG_ITEM_ACTION"|"NETMSG_ITEM_ACTIVATE"|"NETMSG_ITEM_CONFIRMATION"|"NETMSG_ITEM_CREATE"|"NETMSG_ITEM_DEACTIVATE"|"NETMSG_ITEM_DESTINATION"|"NETMSG_ITEM_DESTROY"|"NETMSG_ITEM_MOVED_INFORM"|"NETMSG_ITEM_MOVE_TO_WORLD"|"NETMSG_ITEM_OFFSTAGE"|"NETMSG_ITEM_STATUS"|"NETMSG_ITEM_STATUS_LIFETIME"|"NETMSG_ITEM_TOGGLE_IS_WARE"|"NETMSG_ITEM_TRANSFORM"|"NETMSG_ITEM_UPDATE"|"NETMSG_ITEM_USE_REMOTELY"|"NETMSG_JOURNALDIALOGLOG_UPDATE"|"NETMSG_JOURNALRECIPE_UPDATE"|"NETMSG_JOURNAL_RESET"|"NETMSG_LEVEL_CREATED"|"NETMSG_LEVEL_INSTANTIATE_SWAP"|"NETMSG_LEVEL_LOAD"|"NETMSG_LEVEL_LOADED"|"NETMSG_LEVEL_START"|"NETMSG_LEVEL_SWAP_COMPLETE"|"NETMSG_LEVEL_SWAP_READY"|"NETMSG_LEVEL_UP_UPDATE"|"NETMSG_LIGHTING_OVERRIDE"|"NETMSG_LOAD_GAME_WITH_ADDONS"|"NETMSG_LOAD_GAME_WITH_ADDONS_FAIL"|"NETMSG_LOAD_START"|"NETMSG_LOAD_STARTED"|"NETMSG_LOBBY_DATAUPDATE"|"NETMSG_LOBBY_STARTGAME"|"NETMSG_LOBBY_USERUPDATE"|"NETMSG_LOCK_WAYPOINT"|"NETMSG_LONG_REST_DECISION"|"NETMSG_MARKER_UI_CREATE"|"NETMSG_MARKER_UI_UPDATE"|"NETMSG_MIC_DISABLED"|"NETMSG_MODULE_LOAD"|"NETMSG_MODULE_LOADED"|"NETMSG_MULTIPLE_TARGET_OPERATION"|"NETMSG_MUSIC_EVENT"|"NETMSG_MUSIC_STATE"|"NETMSG_MYSTERY_ADVANCED"|"NETMSG_MYSTERY_DISABLED"|"NETMSG_NET_ENTITY_CREATE"|"NETMSG_NET_ENTITY_DESTROY"|"NETMSG_NEW_ITEMS_INSIDE"|"NETMSG_NOTIFICATION"|"NETMSG_OPEN_CRAFT_UI_MESSAGE"|"NETMSG_OPEN_CUSTOM_BOOK_UI_MESSAGE"|"NETMSG_OPEN_MESSAGE_BOX_MESSAGE"|"NETMSG_OPEN_WAYPOINT_UI_MESSAGE"|"NETMSG_OVERHEADTEXT"|"NETMSG_PARTYGROUP"|"NETMSG_PARTYORDER"|"NETMSG_PARTY_BLOCKFOLLOW"|"NETMSG_PARTY_PRESET_LEVELUP"|"NETMSG_PARTY_PRESET_LOAD"|"NETMSG_PARTY_PRESET_SAVE"|"NETMSG_PARTY_PRESET_SPELL"|"NETMSG_PASSIVE_ROLL_SEQUENCE"|"NETMSG_PASSIVE_TOGGLE"|"NETMSG_PAUSE"|"NETMSG_PEER_ACTIVATE"|"NETMSG_PEER_DEACTIVATE"|"NETMSG_PING_REQUEST"|"NETMSG_PLAYER_ACCEPT"|"NETMSG_PLAYER_CHANGENAME"|"NETMSG_PLAYER_CONNECT"|"NETMSG_PLAYER_DISCONNECT"|"NETMSG_PLAYER_JOINED"|"NETMSG_PLAYER_LEFT"|"NETMSG_PLAYER_NAMECHANGED"|"NETMSG_PLAYMOVIE"|"NETMSG_PROJECTILE_CREATE"|"NETMSG_PROJECTILE_UPDATE"|"NETMSG_QUESTS_LOADED"|"NETMSG_QUEST_CATEGORY_UPDATE"|"NETMSG_QUEST_PROGRESS"|"NETMSG_QUEST_STEP"|"NETMSG_QUEST_TRACK"|"NETMSG_READYCHECK"|"NETMSG_REALTIME_MULTIPLAY"|"NETMSG_REGISTER_WAYPOINT"|"NETMSG_REQUESTAUTOSAVE"|"NETMSG_REQUESTED_ROLL"|"NETMSG_REQUEST_RELEASE_CONCENTRATION"|"NETMSG_RESPEC_UPDATE"|"NETMSG_ROLL_STREAM_ROLL_MODE_TYPE"|"NETMSG_SAVEGAME"|"NETMSG_SAVEGAMEHANDSHAKE"|"NETMSG_SAVEGAMEHANDSHAKE_SCREENSHOT"|"NETMSG_SAVEGAME_LOAD_FAIL"|"NETMSG_SCREEN_FADE_FINISHED"|"NETMSG_SCRIPT_EXTENDER"|"NETMSG_SELECT_DICE"|"NETMSG_SERVER_COMMAND"|"NETMSG_SERVER_NOTIFICATION"|"NETMSG_SESSION_LOAD"|"NETMSG_SESSION_LOADED"|"NETMSG_SESSION_UNLOADED"|"NETMSG_SHORT_REST"|"NETMSG_SHOW_ENTER_REGION_UI_MESSAGE"|"NETMSG_SHOW_ERROR"|"NETMSG_SHROUD_UPDATE"|"NETMSG_SKIPMOVIE_RESULT"|"NETMSG_SNEAKING_CONES_VISIBLE_TOGGLE"|"NETMSG_SPELL_CANCEL"|"NETMSG_SPELL_CAST_CANCEL"|"NETMSG_SPELL_CAST_CAST"|"NETMSG_SPELL_CAST_CONFIRM"|"NETMSG_SPELL_CAST_START_PREVIEW"|"NETMSG_SPELL_CAST_UPDATE_PREVIEW"|"NETMSG_SPELL_LEARN"|"NETMSG_SPELL_PREPARE"|"NETMSG_SPELL_REMOVE_LEARNED"|"NETMSG_STORY_ELEMENT_UI"|"NETMSG_STORY_FLAGS_LOAD"|"NETMSG_SURFACE_CREATE"|"NETMSG_SURFACE_META"|"NETMSG_TADPOLE_POWERS_REMOVE"|"NETMSG_TADPOLE_POWER_ADD"|"NETMSG_TELEPORT_ACK"|"NETMSG_TELEPORT_WAYPOINT"|"NETMSG_TIMELINE_ACTOR_HANDSHAKE"|"NETMSG_TIMELINE_HANDSHAKE"|"NETMSG_TIMELINE_NODECOMPLETED"|"NETMSG_TIMELINE_PLAYER_WATCHING"|"NETMSG_TIMELINE_REQUEST_FASTFORWARD"|"NETMSG_TIMELINE_WORLD_CINEMATIC_COMPLETED"|"NETMSG_TRADE_ACTION"|"NETMSG_TRIGGER_CREATE"|"NETMSG_TRIGGER_DESTROY"|"NETMSG_TRIGGER_UPDATE"|"NETMSG_TROPHY_UPDATE"|"NETMSG_TURNBASED_BEGIN_CANCEL_ENDTURN_REQUEST"|"NETMSG_TURNBASED_CANCEL_ENDTURN_REQUEST"|"NETMSG_TURNBASED_ENDTURN_REQUEST"|"NETMSG_TURNBASED_END_CANCEL_ENDTURN_REQUEST"|"NETMSG_TURNBASED_FINISHTEAM"|"NETMSG_TURNBASED_FLEECOMBATRESULT"|"NETMSG_TURNBASED_FLEE_REQUEST"|"NETMSG_TURNBASED_SETTEAM"|"NETMSG_TURNBASED_SKIP_START_DELAY"|"NETMSG_TURNBASED_STARTTURN_CONFIRMATION"|"NETMSG_TUTORIALS_RESET"|"NETMSG_TUTORIALS_SHOWING"|"NETMSG_TUTORIAL_CLOSED"|"NETMSG_TUTORIAL_UI_EVENT"|"NETMSG_TUTORIAL_USER_ACTION"|"NETMSG_UI_COMBINE_OPEN"|"NETMSG_UI_FORCETURNBASED_ENTERED"|"NETMSG_UI_FORCETURNBASED_LEFT"|"NETMSG_UI_FORCETURNBASED_TURN_ENDED"|"NETMSG_UI_FORCETURNBASED_TURN_STARTED"|"NETMSG_UI_INTERACTION_STOPPED"|"NETMSG_UI_QUESTSELECTED"|"NETMSG_UNLOCK_ITEM"|"NETMSG_UNLOCK_WAYPOINT"|"NETMSG_UNPAUSE"|"NETMSG_USE_ITEM_ACTION"|"NETMSG_VOICEDATA"
+--- @alias NetMessage string|"NETMSG_CLIENT_ACCEPT"|"NETMSG_CLIENT_CONNECT"|"NETMSG_CLIENT_JOINED"|"NETMSG_CLIENT_LEFT"|"NETMSG_HANDSHAKE"|"NETMSG_HOST_LEFT"|"NETMSG_HOST_REFUSE"|"NETMSG_HOST_REFUSEPLAYER"|"NETMSG_HOST_WELCOME"|"NETMSG_SCRIPT_EXTENDER"
 --- @alias NsDragAction string|"DragAction_Cancel"|"DragAction_Continue"|"DragAction_Drop"
 --- @alias NsGridUnitType string|"GridUnitType_Auto"|"GridUnitType_Pixel"|"GridUnitType_Star"
 --- @alias NsHoldingState string|"HoldingState_Canceled"|"HoldingState_Completed"|"HoldingState_Started"
@@ -1310,6 +1373,7 @@ Osi = {}
 --- @alias ObjectSize string|"Gargantuan"|"Huge"|"Large"|"Max"|"Medium"|"Small"|"Tiny"
 --- @alias ObscuredState string|"Clear"|"HeavilyObscured"|"LightlyObscured"|"NoOverride"
 --- @alias ObscurityState string|"Clear"|"HeavilyObscured"|"LightlyObscured"
+--- @alias OriginFlags string|"LockBackground"|"LockBodyShape"|"LockBodyType"|"LockClass"|"LockGod"|"LockRace"|"LockSubrace"|"NoDisplayName"|"Unique"
 --- @alias OsiFunctionType string|"Call"|"DB"|"Event"|"Proc"|"Query"
 --- @alias OsirisTaskType string|"Appear"|"AutomatedDialog"|"Combine"|"Disappear"|"Drop"|"FleeFromEntity"|"FleeFromGrid"|"FleeFromRelation"|"FollowNPC"|"FollowOwnerOrLeader"|"LookAt"|"MoveInRange"|"MoveItem"|"MoveToAndTalk"|"MoveToLocation"|"MoveToObject"|"PickupItem"|"PlayAnimation"|"RateLimitedAutomatedDialog"|"Resurrect"|"Steer"|"TeleportToLocation"|"Timer"|"UseItem"|"UseSpell"|"Wander"
 --- @alias OverlayMaterialApplyFlags string|"Armor"|"Body"|"Horns"|"Overhead"|"Unknown40"|"Weapon"|"Wings"
@@ -1368,13 +1432,16 @@ Osi = {}
 --- @alias ServerStatusFlags5 string|"HasTriedEntering"
 --- @alias ServerSteeringType string|"LookAt"|"Repose"|"Steer"|"SteerTo"|"SteerTunnel"
 --- @alias SetStatusDurationType string|"Add"|"ForceSet"|"Multiply"|"SetMinimum"|"Unknown"
---- @alias ShapeshiftChangeType string|"Add"|"Multiply"|"Override"
+--- @alias ShapeshiftChangeType string|"Add"|"Multiply"|"None"|"Override"|"Template"
+--- @alias ShapeshiftInheritanceType string|"KeepOriginal"|"Merge"|"ReplaceOriginal"
 --- @alias ShapeshiftSpellSource string|"ShapeshiftRule"|"Template"|"Unknown"
 --- @alias ShootThroughType string|"AllPassesThrough"|"GargantuanPassesThrough"|"HugePassesThrough"|"LargePassesThrough"|"MediumPassesThrough"|"SmallPassesThrough"|"TinyPassesThrough"
 --- @alias SkillId string|"Acrobatics"|"AnimalHandling"|"Arcana"|"Athletics"|"Deception"|"History"|"Insight"|"Intimidation"|"Invalid"|"Investigation"|"Medicine"|"Nature"|"Perception"|"Performance"|"Persuasion"|"Religion"|"Sentinel"|"SleightOfHand"|"Stealth"|"Survival"
 --- @alias SoundEventFlags string|"EnableGetSourcePlayPosition"|"SoundCache"|"UnloadCallback"|"WaitForLoad"
 --- @alias SoundEventType string|"Ambient"|"CineHUD"|"HUD"|"Music"|"Sound"
+--- @alias SoundResourceFlags string|"IsInternal"|"Preload"
 --- @alias SourceAdvantageType string|"None"|"SourceAdvantageOnAttack"|"SourceAllyAdvantageOnAttack"
+--- @alias SpeakingCapabilityFlags string|"Dialogue"|"PlayPNC"|"PlayVocals"|"Spells"|"VoiceBark"
 --- @alias SpellAnimationCastEvent string|"Cancel"|"Cast"|"CastContinue"|"Finished"|"Prepare"|"TargetingInfo"
 --- @alias SpellAttackType string|"DirectHit"|"MeleeOffHandWeaponAttack"|"MeleeSpellAttack"|"MeleeUnarmedAttack"|"MeleeWeaponAttack"|"None"|"RangedOffHandWeaponAttack"|"RangedSpellAttack"|"RangedUnarmedAttack"|"RangedWeaponAttack"
 --- @alias SpellAttackTypeOverride string|"Projectile_MainHandAttack"|"Projectile_OffhandAttack"|"Target_MainHandAttack"|"Target_OffhandAttack"|"Target_UnarmedAttack"
@@ -1419,12 +1486,16 @@ Osi = {}
 --- @alias StatusHealType string|"All"|"AllArmor"|"MagicArmor"|"None"|"PhysicalArmor"|"Source"|"Vitality"
 --- @alias StatusMaterialApplyFlags string|"ApplyOnArmor"|"ApplyOnBody"|"ApplyOnHorns"|"ApplyOnOverhead"|"ApplyOnWeapon"|"ApplyOnWings"
 --- @alias StatusType string|"BOOST"|"CLIMBING"|"DEACTIVATED"|"DOWNED"|"DYING"|"EFFECT"|"FEAR"|"HEAL"|"INCAPACITATED"|"INSURFACE"|"INVISIBLE"|"KNOCKED_DOWN"|"MATERIAL"|"POLYMORPHED"|"REACTION"|"ROTATE"|"SMELLY"|"SNEAKING"|"STORY_FROZEN"|"TELEPORT_FALLING"|"UNLOCK"
---- @alias SurfaceActionType string|"ChangeSurfaceOnPathAction"|"CreatePuddleAction"|"CreateSurfaceAction"|"ExtinguishFireAction"|"PolygonSurfaceAction"|"RectangleSurfaceAction"|"TransformSurfaceAction"|"ZoneAction"
+--- @alias SurfaceActionType string|"CapsuleSurface"|"ChangeSurfaceOnPath"|"CreatePuddle"|"CreateSurface"|"ForceCreateSurface"|"None"|"PolygonSurface"|"RectangleSurface"|"RemoveSurface"|"TransformSurface"|"Zone"
 --- @alias SurfaceChange string|"Clear"|"Condense"|"Daylight"|"Deelectrify"|"DestroyWater"|"Douse"|"Electrify"|"Freeze"|"Ignite"|"Melt"|"None"|"TurnHellfire"|"UnturnHellfire"|"Vaporize"
 --- @alias SurfaceLayer string|"Cloud"|"Ground"|"None"
 --- @alias SurfaceLayer8 string|"Cloud"|"Ground"|"None"
 --- @alias SurfaceStatusApplyType string|"OnCreation"|"OnCreationOnEnter"|"OnCreationOnEnterOnMove"|"OnCreationOnEnterOnTurnEnd"|"OnCreationOnEnterOnTurnStart"|"OnCreationOnEnterOnTurnStartOnTurnEnd"|"OnCreationOnMove"|"OnCreationOnMoveOnTurnEnd"|"OnCreationOnMoveOnTurnStart"|"OnCreationOnTurnEnd"|"OnCreationOnTurnStart"|"OnCreationOnTurnStartOnTurnEnd"|"OnEnter"|"OnEnterOnMove"|"OnEnterOnMoveOnTurnEnd"|"OnEnterOnMoveOnTurnStart"|"OnEnterOnTurnEnd"|"OnEnterOnTurnStart"|"OnEnterOnTurnStartOnTurnEnd"|"OnMove"|"OnMoveOnTurnEnd"|"OnMoveOnTurnStart"|"OnMoveOnTurnStartOnTurnEnd"|"OnTurnEnd"|"OnTurnStart"|"OnTurnStartOnTurnEnd"
+--- @alias SurfaceTransformActionType string|"Clear"|"Condense"|"Daylight"|"Deelectrify"|"DestroyWater"|"Douse"|"Electrify"|"Freeze"|"Ignite"|"Melt"|"None"|"Sentinel"|"TurnHellfire"|"UnturnHellfire"|"Vaporize"
 --- @alias SurfaceType string|"Acid"|"Alcohol"|"AlienOil"|"Ash"|"BlackPowder"|"BlackPowderDetonationCloud"|"BlackTentacles"|"BladeBarrier"|"Blood"|"BloodCloud"|"BloodElectrified"|"BloodExploding"|"BloodFrozen"|"BloodSilver"|"CausticBrine"|"Chasm"|"Cloudkill6Cloud"|"CloudkillCloud"|"CrawlerMucusCloud"|"DarknessCloud"|"Deepwater"|"DrowPoisonCloud"|"ExplosionCloud"|"Fire"|"FogCloud"|"GithPheromoneGasCloud"|"Grease"|"Hellfire"|"HolyFire"|"IceCloud"|"InvisibleGithAcid"|"InvisibleWeb"|"Lava"|"MaliceCloud"|"Mud"|"None"|"Oil"|"Overgrowth"|"Poison"|"PoisonCloud"|"PotionAntitoxinCloud"|"PotionHealingCloud"|"PotionHealingGreaterCloud"|"PotionHealingSuperiorCloud"|"PotionHealingSupremeCloud"|"PotionInvisibilityCloud"|"PotionResistanceAcidCloud"|"PotionResistanceColdCloud"|"PotionResistanceFireCloud"|"PotionResistanceForceCloud"|"PotionResistanceLightningCloud"|"PotionResistancePoisonCloud"|"PotionSpeedCloud"|"PotionVitalityCloud"|"PurpleWormPoison"|"Sentinel"|"SerpentVenom"|"Sewer"|"ShadowCursedVines"|"ShockwaveCloud"|"SpikeGrowth"|"SporeBlackCloud"|"SporeGreenCloud"|"SporePinkCloud"|"SporeWhiteCloud"|"StinkingCloud"|"TrialFire"|"Vines"|"VoidCloud"|"Water"|"WaterCloud"|"WaterCloudElectrified"|"WaterElectrified"|"WaterFrozen"|"Web"|"WyvernPoison"
+--- @alias TagCategoryFlags string|"Background"|"CharacterSheet"|"Class"|"Class_Deity"|"Code"|"Deity"|"Dialog"|"DialogHidden"|"Identity"|"Origin"|"PlayerRace"|"Profession"|"Race"|"Race_Meta"|"SpellCondition"|"Story"|"Voice"
+--- @alias TagPropertyFlags string|"AffectsSpell"|"AlchemyExtract"|"AlchemyExtractAir"|"AlchemyExtractEarth"|"AlchemyExtractFey"|"AlchemyExtractFire"|"AlchemyExtractShadow"|"AlchemyExtractWater"|"AlchemyIngredient"|"AlchemySolution"|"AlchemySolutionCoating"|"AlchemySolutionElixir"|"AlchemySolutionGrenade"|"AlchemySolutionPotion"|"Avatar"|"Coating"|"EnterCombatInCurrentRound"|"Female"|"FullIllithid"|"HalfIllithid"|"HasExclamationDialog"|"IdentityTag"|"Male"|"Neutral"|"PolymorphedUnwilling"|"Tadpoled"|"Trader"
+--- @alias TemplateType string|"CacheTemplate"|"GlobalTemplate"|"LevelCacheTemplate"|"LevelTemplate"|"LocalTemplate"|"RootTemplate"
 --- @alias TextKeyType string|"Attach"|"Attack"|"Effect"|"FloatData"|"Foley"|"FootMove"|"FootStep"|"Genome"|"Ragdoll"|"React"|"Sound"|"VisualCullFlag"|"Vocal"|"WeaponEffect"
 --- @alias TextureType string|"T1D"|"T1DArray"|"T2D"|"T2DArray"|"T2DCube"|"T2DCubeArray"|"T2DRenderTarget"|"T3D"|"T3DArray"
 --- @alias TravelErrorFlags string|"CannotFastTravel"|"Condition"|"DangerZone"|"Dialog"|"FTB"|"InDanger"
@@ -1600,6 +1671,14 @@ Osi = {}
 
 
 --- @class ActiveComponent:BaseComponent
+
+
+--- @class ActivePersistentLevelTemplate
+--- @field Bound AABound
+--- @field Entity EntityHandle
+--- @field LevelInstanceID FixedString
+--- @field SubLevelName FixedString
+--- @field field_10 uint64
 
 
 --- @class ActiveSkeletonSlotsComponent:BaseComponent
@@ -2025,7 +2104,6 @@ Osi = {}
 --- @field Instance GnGenomeBlueprintInstance
 --- @field InstanceId int32
 --- @field Resource ResourceAnimationBlueprintResource
---- @field field_40 uint64
 
 
 --- @class AnimationBlueprintSystem:BaseSystem
@@ -2192,6 +2270,17 @@ Osi = {}
 --- @field AtmosphereResourceIDs FixedString[]
 --- @field CurrentAtmosphereResourceID FixedString
 --- @field field_84 number
+
+
+--- @class AtmosphericFog
+--- @field Fog Fog
+--- @field Key AtmosphericFogKey
+--- @field field_A0 int32
+
+
+--- @class AtmosphericFogKey
+--- @field field_0 FixedString
+--- @field field_4 int32
 
 
 --- @class AttackDesc
@@ -2528,6 +2617,14 @@ Osi = {}
 
 
 --- @class CanDoActionsComponent:BaseComponent
+--- @field CanAttack boolean
+--- @field CanCastRituals boolean
+--- @field CanCastSpells boolean
+--- @field CanDisarmTrap boolean
+--- @field CanDoFlag4 boolean
+--- @field CanDoWorldActions boolean
+--- @field CanLockpick boolean
+--- @field CanPickpocket boolean
 --- @field Flags CanDoActionsFlags
 
 
@@ -2544,8 +2641,21 @@ Osi = {}
 
 
 --- @class CanInteractComponent:BaseComponent
+--- @field CanBasicItemInteractions boolean
+--- @field CanConsumeItems boolean
+--- @field CanInteract boolean
+--- @field CanMoveObjects boolean
+--- @field CanPickup boolean
+--- @field CanUseContainers boolean
+--- @field CanUseDoors boolean
+--- @field CanUseFlag8 boolean
+--- @field CanUseLadder boolean
+--- @field CanUsePortals boolean
+--- @field Encumbered boolean
 --- @field Flags CanInteractFlags
---- @field Flags2 uint16
+--- @field Flags2 CanInteractStateFlags
+--- @field Shapeshifted boolean
+--- @field State CanInteractStateFlags
 
 
 --- @class CanModifyHealthComponent:BaseComponent
@@ -2553,6 +2663,11 @@ Osi = {}
 
 
 --- @class CanMoveComponent:BaseComponent
+--- @field CanBeTeleported boolean
+--- @field CanFollow boolean
+--- @field CanMove boolean
+--- @field CanWorldClimb boolean
+--- @field CanWorldDrop boolean
 --- @field Encumbrance uint16
 --- @field Flags CanMoveFlags
 --- @field SpeedLimit MovementSpeedType
@@ -2568,7 +2683,13 @@ Osi = {}
 
 
 --- @class CanSenseComponent:BaseComponent
---- @field Flags uint16
+--- @field ActivateTriggers boolean
+--- @field AvoidTraps boolean
+--- @field CanSee boolean
+--- @field DetectCrimes boolean
+--- @field DetectVictimOnlyCrimes boolean
+--- @field Flags AwarenessCapabilityFlags
+--- @field SpotSneakers boolean
 
 
 --- @class CanShootThroughBoostComponent:BaseComponent
@@ -2579,7 +2700,12 @@ Osi = {}
 
 
 --- @class CanSpeakComponent:BaseComponent
---- @field Flags uint16
+--- @field Dialogue boolean
+--- @field Flags SpeakingCapabilityFlags
+--- @field PlayPNC boolean
+--- @field PlayVocals boolean
+--- @field Spells boolean
+--- @field VoiceBark boolean
 
 
 --- @class CanTradeComponent:BaseComponent
@@ -2844,6 +2970,59 @@ Osi = {}
 --- @class ClientControlComponent:BaseComponent
 
 
+--- @class ClusterAttachRequestComponent:BaseComponent
+
+
+--- @class ClusterBoundComponent:BaseComponent
+--- @field Bounds AABound
+
+
+--- @class ClusterBoundMaxComponent:BaseComponent
+--- @field BoundMax number
+
+
+--- @class ClusterChildComponent:BaseComponent
+--- @field Parent EntityHandle
+
+
+--- @class ClusterChildIndexedComponent:BaseComponent
+--- @field Radius int32
+--- @field X int32
+--- @field Y int32
+--- @field Z int32
+
+
+--- @class ClusterComponent:BaseComponent
+
+
+--- @class ClusterContainerComponent:BaseComponent
+--- @field Clusters table<ivec4, EntityHandle>
+
+
+--- @class ClusterDistMaxComponent:BaseComponent
+--- @field DistMax number
+
+
+--- @class ClusterDistMinComponent:BaseComponent
+--- @field DistMin number
+
+
+--- @class ClusterPositionXComponent:BaseComponent
+--- @field X number
+
+
+--- @class ClusterPositionYComponent:BaseComponent
+--- @field Y number
+
+
+--- @class ClusterPositionZComponent:BaseComponent
+--- @field Z number
+
+
+--- @class ClusterRadiusComponent:BaseComponent
+--- @field Radius number
+
+
 --- @class ColorCorrectionRange
 --- @field ExposureShift number
 --- @field Saturation number
@@ -2865,6 +3044,16 @@ Osi = {}
 --- @field ShadowRange ColorCorrectionRange
 --- @field Shadows number
 --- @field SpecularRange ColorCorrectionRange
+
+
+--- @class CombatCameraParams
+--- @field HoldTimeAfterEvent number
+--- @field IsEnabled boolean
+--- @field MaxSequenceTime number
+--- @field MinAngleDegreesDifferenceToChangeCamera number
+--- @field MinChangeCameraTime number
+--- @field ObstructionBufferTime number
+--- @field ObstructionCheckRadius number
 
 
 --- @class CombatComponentTemplate
@@ -2891,7 +3080,7 @@ Osi = {}
 --- @field IsBase boolean
 
 
---- @class CombinedLightComponent:MoveableObject
+--- @class CombinedLightComponent:BaseComponent
 --- @field Entity EntityHandle
 --- @field InstanceGuid FixedString
 --- @field Template FixedString
@@ -2970,24 +3159,21 @@ Osi = {}
 --- @class Construction
 --- @field Filling EntityHandle[]
 --- @field InstanceId Guid
---- @field Template ConstructionTemplate
 --- @field Tiles EntityHandle[]
 
 
 --- @class ConstructionFilling:StandardGameObject
---- @field Construction FixedString
 --- @field Entity EntityHandle
 --- @field FadeGroup FixedString
 --- @field Fadeable boolean
---- @field HierarchyOnlyFade boolean
 --- @field Id FixedString
 --- @field InstanceId Guid
 --- @field Material FixedString
+--- @field ParentTemplate FixedString
 --- @field Physics FixedString
 --- @field Renderable RenderableObject
 --- @field Renderable2 RenderableObject
 --- @field SeeThrough boolean
---- @field Template ConstructionFillingTemplate
 --- @field Tiling number
 --- @field WalkOn boolean
 
@@ -2999,7 +3185,6 @@ Osi = {}
 --- @field FadeGroup FixedString
 --- @field Fadeable boolean
 --- @field HLOD Guid
---- @field HiddenFromMinimapRendering boolean
 --- @field HierarchyOnlyFade boolean
 --- @field Id FixedString
 --- @field Indices uint16[]
@@ -3009,14 +3194,12 @@ Osi = {}
 --- @field Rotation vec4
 --- @field Scale number
 --- @field SeeThrough boolean
---- @field Splines ConstructionSpline[]
 --- @field Tiling number
 --- @field Translate vec3
 --- @field UVOffset vec2
 --- @field UVRotation number
 --- @field Vertices ConstructionVertexElement[]
 --- @field WalkOn boolean
---- @field field_D8 uint8
 
 
 --- @class ConstructionPoint:ConstructionPointSchema
@@ -3039,10 +3222,6 @@ Osi = {}
 
 
 --- @class ConstructionSystem:BaseSystem
---- @field ConstructionUpdateRequests table<Guid, EntityHandle>
---- @field Constructions table<Guid, EntityHandle>
---- @field Fillings table<Guid, EntityHandle>
---- @field Tiles table<Guid, EntityHandle>
 
 
 --- @class ConstructionTemplate:GameObjectTemplate
@@ -3059,38 +3238,32 @@ Osi = {}
 
 
 --- @class ConstructionTile:StandardGameObject
---- @field Construction FixedString
 --- @field Entity EntityHandle
---- @field Flags uint8
---- @field InstanceId Guid
+--- @field Flags ConstructionTileFlags
+--- @field ParentTemplate FixedString
 --- @field Scale number
 --- @field Template ConstructionTileTemplate
+--- @field TileSetResourceId FixedString
 --- @field field_48 EntityHandle
---- @field field_5C FixedString
 
 
 --- @class ConstructionTileTemplate
 --- @field CanSeeThrough boolean
 --- @field ClickThrough boolean
 --- @field Climbable boolean
---- @field Flip boolean
 --- @field HLOD Guid
 --- @field OverridePhysicsResource FixedString
 --- @field Rotation vec4
 --- @field Scale number
---- @field ScaleX number
+--- @field ScaleZ number
 --- @field ShootThrough boolean
 --- @field ShootThroughType uint8
---- @field Side int32
---- @field Stretchable boolean
---- @field TemplateGuid Guid
 --- @field Tile Guid
 --- @field Transforms Transform[]
 --- @field Translate vec3
 --- @field UUID FixedString
 --- @field WalkOn boolean
 --- @field WalkThrough boolean
---- @field gapA4 uint8
 
 
 --- @class ConstructionVertexElement
@@ -3330,7 +3503,6 @@ Osi = {}
 
 --- @class DecalComponent:BaseProxyComponent
 --- @field Decal DecalObject
---- @field field_8 int64
 
 
 --- @class DecalObject:RenderableObject
@@ -3915,7 +4087,7 @@ Osi = {}
 --- @field NoiseWind vec3
 
 
---- @class FogVolumeRequestComponent:MoveableObject
+--- @class FogVolumeRequestComponent:BaseComponent
 --- @field field_0 Guid
 
 
@@ -3955,8 +4127,8 @@ Osi = {}
 --- @field ReceiveDecal boolean
 --- @field RenderChannel RenderChannel
 --- @field Tags TemplateTagContainer
---- @field TemplateHandle uint32
 --- @field TemplateName FixedString
+--- @field TemplateStorageType TemplateType
 --- @field TemplateType FixedString
 --- @field Transform Transform
 --- @field VisualTemplate FixedString
@@ -3968,6 +4140,84 @@ Osi = {}
 --- @field RootTemplateType uint8
 --- @field Scale number
 --- @field Type uint8
+
+
+--- @class GameRenderView:RfRenderView
+--- @field AtmosphereFadeTime number
+--- @field AtmosphereFading boolean
+--- @field AtmosphereInterpolationValue number
+--- @field AtmosphereIsLocked boolean
+--- @field ClusteredGridSize vec2
+--- @field CoverageWindDir vec2
+--- @field CurAtmosphere ResourceAtmosphere
+--- @field CurLighting Lighting
+--- @field CurrentFog AtmosphericFog[]
+--- @field DefaultLocalLightSourceColor vec3
+--- @field DefaultLocalLightSourceIntensity number
+--- @field DiscardAtmosphereID FixedString
+--- @field DiscardLightingParentGUID FixedString
+--- @field DiscardLightingTrigger FixedString
+--- @field EnvironmentEffects EntityHandle[]
+--- @field FogKeys table<AtmosphericFogKey, number>
+--- @field IsCastMoonLightActive boolean
+--- @field IsCinematicMode boolean
+--- @field IsInCombatCameraMode boolean
+--- @field IsInputEnabled boolean
+--- @field IsSkyHidden boolean
+--- @field LevelTransform vec3
+--- @field LightingFading boolean
+--- @field LightingInterpolationScale number
+--- @field LightingInterpolationValue number
+--- @field LightingIsLocked boolean
+--- @field LightingPhysicalModel int32
+--- @field LockAtmosphereIdChange boolean
+--- @field LockLightingIdChange boolean
+--- @field NotifyStateChanged boolean
+--- @field PerCamera RfSbPerCamera[]
+--- @field PerView RfSbPerView[]
+--- @field PrevAtmosphere ResourceAtmosphere
+--- @field PrevLighting Lighting
+--- @field PreviousAtmosphereTrigger FixedString
+--- @field PreviousLightingTrigger FixedString
+--- @field RenderSettings RenderSettings
+--- @field RenderViewSize ivec2
+--- @field RequestTargetAtmosphere ResourceAtmosphere
+--- @field RequestTargetAtmosphereFadeTime number
+--- @field RequestTargetAtmosphereID2 FixedString
+--- @field RequestTargetLighting Lighting
+--- @field RequestTargetLightingFadeTime number
+--- @field RequestTargetLightingID FixedString
+--- @field Scene Scene
+--- @field ShouldDiscardPreviousFrames boolean
+--- @field SunLightDirection vec3
+--- @field SunLightFactor number
+--- @field TargetAtmosphere ResourceAtmosphere
+--- @field TargetAtmosphereTrigger FixedString
+--- @field TargetLighting Lighting
+--- @field TargetLightingTrigger FixedString
+--- @field UseSplitscreen_M uint8
+--- @field ViewMode int32
+--- @field VolumetricGridSize vec2
+--- @field field_2291 uint8
+--- @field field_2292 uint8
+--- @field field_2293 uint8
+--- @field field_2294 int32
+--- @field field_2298 int32
+--- @field field_229C number
+--- @field field_22A0 number
+--- @field field_22A4 int32
+--- @field field_22A8 int64
+--- @field field_22B0 int64
+--- @field field_22B8 int64
+--- @field field_22C0 int64
+--- @field field_22C8 int64
+--- @field field_22D0 int64
+--- @field field_22D8 int64
+--- @field field_29A8 int32
+--- @field field_29AC int32
+--- @field field_2AA0 int32
+--- @field field_2AA4 int32
+--- @field field_2AA8 number
 
 
 --- @class GameTime
@@ -4228,6 +4478,24 @@ Osi = {}
 --- @field field_0 boolean
 
 
+--- @class HLODChildComponent:BaseComponent
+--- @field Parent EntityHandle
+
+
+--- @class HLODComponent:BaseComponent
+--- @field Children EntityHandle[]
+--- @field CullDistanceBias number
+--- @field Instance HLODInstanceData
+--- @field UUID FixedString
+
+
+--- @class HLODInstanceData
+--- @field Children Guid[]
+--- @field Level int32
+--- @field Objects Guid[]
+--- @field UUID Guid
+
+
 --- @class HalveWeaponDamageBoostComponent:BaseComponent
 --- @field Ability AbilityId
 
@@ -4313,14 +4581,7 @@ Osi = {}
 --- @field Attack AttackDesc
 --- @field Hit HitDesc
 --- @field NumConditionRolls uint32
---- @field Results HitResultData
-
-
---- @class HitResultData
---- @field field_0 int32[]
---- @field field_10 int32[]
---- @field field_20 uint8[]
---- @field field_30 int32[]
+--- @field Results table<StatsFunctorId, int32>
 
 
 --- @class HorizontalFOVOverrideBoostComponent:BaseComponent
@@ -4575,10 +4836,6 @@ Osi = {}
 --- @field Amount number
 
 
---- @class KeyComponent:BaseComponent
---- @field Key FixedString
-
-
 --- @class LadderActionData:IActionData
 --- @field AllowScaling boolean
 --- @field BottomHorizontalOffset number
@@ -4601,6 +4858,25 @@ Osi = {}
 --- @field LevelName FixedString
 --- @field RootLevel EntityHandle
 --- @field field_0 EntityHandle
+
+
+--- @class LevelData
+--- @field Dependencies Set_FixedString
+--- @field LevelDesc LevelDesc
+--- @field Meta LevelMetaData
+--- @field State uint32
+--- @field TrackedTemplates table<FixedString, GameObjectTemplate>
+
+
+--- @class LevelDataManager
+--- @field Levels table<FixedString, LevelData>
+
+
+--- @class LevelDesc
+--- @field LevelName FixedString
+--- @field Paths Path[]
+--- @field Type uint8
+--- @field UniqueKey FixedString
 
 
 --- @class LevelInstanceAttachRequestSystem:BaseSystem
@@ -4662,7 +4938,7 @@ Osi = {}
 --- @field LocalBound AABound
 --- @field MergedLevelTemplateUUID FixedString
 --- @field MovingPlatform boolean
---- @field State int32
+--- @field State LevelInstanceState
 --- @field Transform Transform
 --- @field WorldBound AABound
 --- @field field_A6 uint8
@@ -4679,6 +4955,16 @@ Osi = {}
 
 
 --- @class LevelIsOwnerComponent:BaseComponent
+
+
+--- @class LevelMetaData
+--- @field Atmosphere FixedString
+--- @field Bounds AABound
+--- @field CombatCameraFadeDistance number
+--- @field IsPlatformLevel boolean
+--- @field LevelTemplateBoundTrigger FixedString
+--- @field Lighting FixedString
+--- @field VisualStreamingEnabled boolean
 
 
 --- @class LevelPrepareUnloadBusyComponent:BaseComponent
@@ -4967,6 +5253,19 @@ Osi = {}
 --- @field VolumetricCloudSettings VolumetricCloudSettings
 
 
+--- @class LightingDetails
+--- @field CastShadow boolean
+--- @field Color vec3
+--- @field Intensity number
+--- @field Position vec3
+--- @field PreExpose boolean
+--- @field Radius number
+--- @field ScatteringScale number
+--- @field SpotLightAngles vec2
+--- @field Type uint8
+--- @field VolumetricShadow boolean
+
+
 --- @class LightingTrigger:AreaTrigger
 --- @field CurrentLightingResourceID FixedString
 --- @field LightingResourceIDs FixedString[]
@@ -4991,6 +5290,10 @@ Osi = {}
 --- @class LoadedComponent:BaseComponent
 
 
+--- @class LocalBoundComponent:BaseComponent
+--- @field Bounds AABound
+
+
 --- @class LocalTransform
 --- @field LocalBound AABound
 --- @field LocalTransform Transform
@@ -4998,13 +5301,6 @@ Osi = {}
 
 --- @class LockBoostComponent:BaseComponent
 --- @field Lock Guid
-
-
---- @class LockComponent:BaseComponent
---- @field Key_M FixedString
---- @field LockDC int32
---- @field LockDifficultyClassID Guid
---- @field field_18 Guid[]
 
 
 --- @class LockpickActionData:IActionData
@@ -5052,6 +5348,24 @@ Osi = {}
 --- @field MaterialCBSize uint64
 
 
+--- @class MaterialConfiguration
+--- @field Category int32
+--- @field MaterialDetails MaterialTargetDetails[]
+--- @field OverlayGroups MaterialOverlayGroupItem[]
+--- @field Variation int32
+
+
+--- @class MaterialGroup
+--- @field IsReplacement boolean
+--- @field MaterialResourceID FixedString
+--- @field Name FixedString
+--- @field References MaterialReference[]
+
+
+--- @class MaterialGroupLookup
+--- @field MaterialGroups table<Guid, MaterialGroup>
+
+
 --- @class MaterialInfo
 --- @field ApplyFlags OverlayMaterialApplyFlags
 --- @field Entity EntityHandle
@@ -5059,6 +5373,11 @@ Osi = {}
 --- @field MapFlags ApplyMaterialMapFlags
 --- @field MaterialID FixedString
 --- @field OverlayOffset number
+
+
+--- @class MaterialOverlayGroupItem
+--- @field ID Guid
+--- @field MaterialOverlayType int32
 
 
 --- @class MaterialParameterFloat
@@ -5130,21 +5449,28 @@ Osi = {}
 
 --- @class MaterialParameters
 --- @field Material Material
---- @field SamplerStateParameters SamplerStateParameter[]
---- @field ScalarParameters ScalarParameter[]
---- @field Texture2DParameters Texture2DParameter[]
---- @field Vector2Parameters Vector2Parameter[]
---- @field Vector3Parameters Vector3Parameter[]
---- @field VectorParameters Vector4Parameter[]
---- @field VirtualTextureParameters VirtualTextureParameter[]
+--- @field SamplerStateParameters SamplerStateParameterInstance[]
+--- @field ScalarParameters ScalarParameterInstance[]
+--- @field Texture2DParameters Texture2DParameterInstance[]
+--- @field Vector2Parameters Vector2ParameterInstance[]
+--- @field Vector3Parameters Vector3ParameterInstance[]
+--- @field VectorParameters Vector4ParameterInstance[]
+--- @field VirtualTextureParameters VirtualTextureParameterInstance[]
+
+
+--- @class MaterialReference
+--- @field ForceEnabled boolean
+--- @field MaterialApplyFlags int32
+--- @field SlotIndex int32
+--- @field VisualResourceID FixedString
 
 
 --- @class MaterialRenderingData
---- @field EngineBinding SBBinding
+--- @field EngineBinding RfSbBinding
 --- @field EngineCBSize uint16
 --- @field Handle EntityHandle
 --- @field InstancingHash uint64
---- @field MaterialBinding SBBinding
+--- @field MaterialBinding RfSbBinding
 --- @field MaterialCBSize uint16
 --- @field ShaderIndex uint8
 --- @field VertexFormat EntityHandle
@@ -5188,6 +5514,18 @@ Osi = {}
 --- @field WorldMatrixCurr int16
 --- @field WorldMatrixPrev int16
 --- @field WorldPrev int16
+
+
+--- @class MaterialTargetDetails
+--- @field GroupId Guid
+--- @field IsIncreasing boolean
+--- @field MaterialBlend uint8
+--- @field MaterialDuration number
+--- @field MaterialMaxValue number
+--- @field MaterialMinValue number
+--- @field ParameterName FixedString
+--- @field RTPCs RTPCDetails[]
+--- @field SoundEvents SoundEventDetails[]
 
 
 --- @class MaximizeHealingBoostComponent:BaseComponent
@@ -5582,6 +5920,9 @@ Osi = {}
 --- @class NoesisVisual:NoesisDependencyObject
 --- @field VisualChildrenCount uint32
 --- @field VisualParent NoesisVisual
+--- @field HitTest fun(self:NoesisVisual, a1:NoesisVisual, a2:NoesisPoint):NoesisVisual
+--- @field PointFromScreen fun(self:NoesisVisual, a1:NoesisVisual, a2:NoesisPoint):NoesisPoint
+--- @field PointToScreen fun(self:NoesisVisual, a1:NoesisVisual, a2:NoesisPoint):NoesisPoint
 --- @field VisualChild fun(self:NoesisVisual, a1:NoesisVisual, a2:uint32):NoesisVisual
 
 
@@ -5605,6 +5946,9 @@ Osi = {}
 
 --- @class ObjectSizeOverrideBoostComponent:BaseComponent
 --- @field field_0 uint8
+
+
+--- @class OcclusionComponent:BaseComponent
 
 
 --- @class OffStageComponent:BaseComponent
@@ -5641,7 +5985,7 @@ Osi = {}
 
 --- @class OriginalTemplateComponent:BaseComponent
 --- @field OriginalTemplate FixedString
---- @field TemplateType uint8
+--- @field TemplateType TemplateType
 
 
 --- @class OsirisTagComponent:BaseComponent
@@ -5720,6 +6064,11 @@ Osi = {}
 --- @class PathingDistanceChangedOneFrameComponent:BaseComponent
 --- @field DistanceXZ number
 --- @field field_4 number
+
+
+--- @class PeanutSlotData
+--- @field Index int32
+--- @field Slot uint8
 
 
 --- @class PhysicalForceRangeBonusBoostComponent:BaseComponent
@@ -5952,6 +6301,14 @@ Osi = {}
 --- @field VelocityMode PathVelocityMode
 
 
+--- @class RTPCDetails
+--- @field Delay number
+--- @field EventName FixedString
+--- @field SoundDuration number?
+--- @field SoundObjectIndex uint8
+--- @field TargetValue number?
+
+
 --- @class RaceComponent:BaseComponent
 --- @field Race Guid
 
@@ -6012,6 +6369,22 @@ Osi = {}
 --- @field OpaqueChannel uint8
 --- @field RenderPasses RenderPass
 --- @field TransformType uint8
+
+
+--- @class RenderSettings
+--- @field field_0 int64
+--- @field field_10 int64
+--- @field field_18 int64
+--- @field field_20 int64
+--- @field field_28 int64
+--- @field field_30 int64
+--- @field field_38 int64
+--- @field field_40 int64
+--- @field field_48 int64
+--- @field field_50 int64
+--- @field field_58 int64
+--- @field field_60 int32
+--- @field field_8 int64
 
 
 --- @class RenderableObject:MoveableObject
@@ -6136,6 +6509,8 @@ Osi = {}
 
 
 --- @class ResourceRollDefinition
+--- @field Amount uint8
+--- @field Resource Guid
 --- @field field_0 Guid
 --- @field field_10 uint8
 
@@ -6193,18 +6568,6 @@ Osi = {}
 --- @field Version uint16
 
 
---- @class SBBinding
---- @field DxPsIndex uint8
---- @field DxVsIndex uint8
---- @field VkBindingIndex uint8
---- @field VkDescriptorSet uint8
---- @field field_0 uint8
---- @field field_2 uint8
---- @field field_3 uint8
---- @field field_4 uint8
---- @field field_6 uint8
-
-
 --- @class SSAOSettings
 --- @field Bias number
 --- @field DirectLightInfluence number
@@ -6213,7 +6576,7 @@ Osi = {}
 --- @field Radius number
 
 
---- @class SamplerStateParameter:ResourceMaterialResourceParameter
+--- @class SamplerStateParameterInstance:MaterialResourceParameter
 --- @field TextureAddressMode uint8
 --- @field TextureFilterOverride uint8
 
@@ -6225,7 +6588,7 @@ Osi = {}
 --- @class SavegameComponent:BaseComponent
 
 
---- @class ScalarParameter:ResourceMaterialResourceScalarParameter
+--- @class ScalarParameterInstance:MaterialScalarResourceParameter
 
 
 --- @class ScaleMultiplierBoostComponent:BaseComponent
@@ -6444,6 +6807,15 @@ Osi = {}
 --- @class SoundEvent
 
 
+--- @class SoundEventDetails
+--- @field EventName FixedString
+--- @field Force boolean
+--- @field ID Guid
+--- @field SoundObjectIndex uint8
+--- @field Threshold number
+--- @field TriggerOnIncreasing boolean
+
+
 --- @class SoundExternalPath
 --- @field Codec AudioCodec
 --- @field Path string
@@ -6618,6 +6990,8 @@ Osi = {}
 --- @field ArmorType int32
 --- @field ArmorType2 int32
 --- @field InitiativeBonus int32
+--- @field MaxPreparedSpells int32
+--- @field PhysicalForceRangeBonus int32
 --- @field ProficiencyBonus int32
 --- @field RangedAttackAbility AbilityId
 --- @field Skills int32[]
@@ -6766,6 +7140,14 @@ Osi = {}
 --- @field Lifetime Variant<uint8,float>
 
 
+--- @class SurfaceMetaData
+--- @field Level uint8
+--- @field LifeTime number
+--- @field Owner EntityHandle
+--- @field SurfaceHandle ComponentHandle
+--- @field TeamId Guid
+
+
 --- @class SurfacePathInfluence
 --- @field Influence int32
 --- @field IsCloud boolean
@@ -6849,6 +7231,32 @@ Osi = {}
 --- @field To Visual
 
 
+--- @class SyncedTimelineActorControlComponent:BaseComponent
+--- @field Actor Guid
+--- @field IsAdditional boolean
+--- @field IsListener boolean
+--- @field Slot uint8
+--- @field Timeline Guid
+--- @field field_23 uint8
+--- @field field_24 int32
+
+
+--- @class SyncedTimelineControlComponent:BaseComponent
+--- @field CharacterCreationUser uint32
+--- @field CreationState uint8
+--- @field CurrentTimeline Guid
+--- @field DialogInstanceId uint32
+--- @field InitialTimeline Guid
+--- @field Nodes TimelineNode[]
+--- @field PlaybackState uint8
+--- @field SceneTrigger Guid
+--- @field SmoothExitRequested boolean
+--- @field Timeline Guid
+--- @field TimelineResources Guid[]
+--- @field TimelineType uint8
+--- @field Triggers table<Guid, Guid>
+
+
 --- @class TLAutomatedLight
 --- @field AttachBone FixedString
 --- @field ID Guid
@@ -6863,6 +7271,39 @@ Osi = {}
 --- @field Lights TLAutomatedLight[]
 --- @field Name string
 --- @field TypeId uint8
+
+
+--- @class TLLookAtAutomationConfig
+--- @field Bone FixedString
+--- @field EyeLookAtBone uint8
+--- @field EyeLookAtOffset vec3
+--- @field HeadSafeZoneAngle number
+--- @field HeadTurnSpeedMultiplier number
+--- @field IsEyeLookAtEnabled boolean
+--- @field LookAtInterpMode uint8
+--- @field LookAtMode uint8
+--- @field MaxDelayTimeSeconds number
+--- @field MinDelayTimeSeconds number
+--- @field Offset vec3
+--- @field Reset boolean
+--- @field SafeZoneAngle number
+--- @field TorsoTurnSpeedMultiplier number
+--- @field TrackingMode uint8
+--- @field TurnMode uint8
+--- @field TurnSpeedMultiplier number
+--- @field Weight number
+
+
+--- @class TLSystemConfig
+--- @field CombatCamera CombatCameraParams
+--- @field CombatCamerasFallbackSystemicTimeline Guid
+--- @field FileName Path
+--- @field FoVOffset number
+--- @field FoVOffsetDeviation number
+--- @field LookAt TLLookAtAutomationConfig
+--- @field MinimumComponentLength number
+--- @field PercentageActivationChance number
+--- @field SteppingBlendTime number
 
 
 --- @class TagComponent:BaseComponent
@@ -6892,12 +7333,17 @@ Osi = {}
 
 --- @class TemplateInfo
 --- @field TemplateId FixedString
---- @field TemplateType uint8
+--- @field TemplateType TemplateType
 
 
 --- @class TemplateTagContainer
 --- @field DirectTags Set_Guid
 --- @field Tags Set_Guid
+
+
+--- @class TemplateTrace
+--- @field field_0 FixedString
+--- @field field_4 FixedString
 
 
 --- @class TemporaryHPBoostComponent:BaseComponent
@@ -6998,7 +7444,7 @@ Osi = {}
 --- @field field_10 uint8
 
 
---- @class Texture2DParameter:ResourceMaterialResourceTexture2DParameter
+--- @class Texture2DParameterInstance:MaterialTexture2DResourceParameter
 
 
 --- @class TextureAtlas
@@ -7065,12 +7511,153 @@ Osi = {}
 --- @field Value number
 
 
+--- @class Timeline:AspkTimeline
+--- @field ActivatedLightingCamera Guid
+--- @field ActiveTimeline Guid
+--- @field ActorLighting table<Guid, EntityHandle>
+--- @field ActorToTimeline table<Guid, Guid>
+--- @field ArePeanutsVisible boolean
+--- @field Atmosphere Guid
+--- @field AutomaticLightingIdFromAtmosphere Guid
+--- @field ChangeFlags uint8
+--- @field CharacterActors Set_EntityHandle
+--- @field CharacterCreationUser UserId
+--- @field CompanionCameraSceneIdToActorId table<Guid, Guid>
+--- @field CurrentCameraActor Guid
+--- @field CurrentCameraActorOverride Guid
+--- @field CurrentPrefetchPhaseIndex int64
+--- @field CurrentTransform Transform
+--- @field CustomHeaders table<Guid, AspkTimelineHeader>
+--- @field DeferredRequestOngoing boolean
+--- @field DeltaExposure DeltaExposure
+--- @field DialogInstanceId int32
+--- @field Extents vec3
+--- @field FadeRequest ComponentHandle
+--- @field Id Guid
+--- @field InGameTimelineFreeCamEnabled boolean
+--- @field InitialExtents vec3
+--- @field InitialLimitGroundSnappingHeight boolean
+--- @field InitialPeanuts table<Guid, PeanutSlotData>
+--- @field InitialTransform Transform
+--- @field InitiatorAnimState uint8
+--- @field InitiatorId Guid
+--- @field IsAuthoredCombatTimeline boolean
+--- @field IsDuringQuestionHoldAutomation boolean
+--- @field IsGameplayTimeline boolean
+--- @field IsHoldingAtZero boolean
+--- @field IsMainMenuTimeline boolean
+--- @field IsPreviewTimeline boolean
+--- @field IsSystemicCombatTimeline boolean
+--- @field JoinedPlayerActors TimelinePlayerActor[]
+--- @field LSDialogStarted boolean
+--- @field Lighting Guid
+--- @field LimitGroundSnappingHeight boolean
+--- @field LoadedContent Set_Guid
+--- @field NeedsFadeOnPlay boolean
+--- @field NestedRemapResetRequested boolean
+--- @field NodeData TimelineNodeData
+--- @field PausedForInGameControls boolean
+--- @field PositionDirty boolean
+--- @field PreviousCamera Guid
+--- @field QuestionHoldCameraActorIdToSceneId table<Guid, Guid>
+--- @field Random uint64
+--- @field RegisteredActorEntities Set_EntityHandle
+--- @field RegisteredActors table<Guid, EntityHandle>
+--- @field RegisteredPeanuts table<Guid, PeanutSlotData>
+--- @field RootMotions table<EntityHandle, Transform>
+--- @field SceneStageId Guid
+--- @field SceneTriggerId Guid
+--- @field ShouldForceUpdateCameraBehavior boolean
+--- @field ShouldForceUpdateNextJCut boolean
+--- @field ShouldUpdateActiveCustomLighting boolean
+--- @field ShouldUpdateAttachmentTransforms boolean
+--- @field ShouldUpdateAutomatedLighting boolean
+--- @field ShouldUpdateConditionalStaging boolean
+--- @field ShouldUpdateCustomLighting boolean
+--- @field SkippingMode uint32
+--- @field SoundEventsEnabled boolean
+--- @field StartingTimelineResource Guid
+--- @field UnregisteredActors table<Guid, EntityHandle>
+--- @field VOState uint8
+--- @field VisualStreamerHints EntityHandle[]
+--- @field field_298 table<Guid, EntityHandle>
+--- @field field_58 boolean
+--- @field field_59 boolean
+--- @field field_5A boolean
+--- @field field_a0 FixedString
+
+
 --- @class TimelineActorDataComponent:BaseComponent
+--- @field Actor Guid
+--- @field HandsIKToggle uint8
+--- @field HandsIKToggle2 uint8
+--- @field IKToggle uint8
+--- @field IKToggle2 uint8
+--- @field IsListener boolean
+--- @field Slot uint8
+--- @field Timeline Guid
+--- @field TimelineType uint8
+--- @field field_21 uint8
+
+
+--- @class TimelineDataComponent:BaseComponent
+--- @field CreationState uint8
+--- @field CurrentCameraActor Guid
+--- @field CurrentPlayCount int32
+--- @field CurrentTransform Transform
+--- @field DialogInstanceId int32
+--- @field Entity EntityHandle
+--- @field InitialTimeline Guid
+--- @field InstanceId Guid
+--- @field Nodes TimelineNode[]
+--- @field PlayCount int32
+--- @field PlaybackState uint8
+--- @field Sound EntityHandle
+--- @field SteppingBlendTime number
+--- @field TimeRemaining number
+--- @field TimelineResources Guid[]
+--- @field TimelineType uint8
+--- @field field_64 int32
+--- @field field_7B uint8
+--- @field field_8C uint8
+--- @field field_8D uint8
+--- @field field_8E uint8
+--- @field field_8F uint8
+
+
+--- @class TimelineEmotionalMaterials
+--- @field MaterialConfigurations table<Guid, MaterialConfiguration[]>
+--- @field MaterialGroups table<Guid, MaterialGroup>
+
+
+--- @class TimelineNode
+--- @field ContentNodeIdOverride Guid
+--- @field ContentNodeIdOverride1 Guid
+--- @field ContentNodeIdOverride2 Guid
+--- @field NodeId Guid
+--- @field field_40 int64
+--- @field field_48 uint8
+--- @field field_49 uint8
+--- @field field_4A uint8
+--- @field field_4B uint8
+--- @field field_4C uint8
+--- @field field_4D uint8
+--- @field field_4E uint8
+--- @field field_4F uint8
+
+
+--- @class TimelineNodeData
 --- @field field_0 Guid
 --- @field field_10 Guid
---- @field field_20 uint16
---- @field field_22 uint8
---- @field field_23 uint8
+--- @field field_20 Guid
+--- @field field_30 uint64
+--- @field field_38 uint16
+--- @field field_3C uint32
+
+
+--- @class TimelinePlayerActor
+--- @field Actor EntityHandle
+--- @field Player int16
 
 
 --- @class TimelineReferencedTemplate
@@ -7178,6 +7765,7 @@ Osi = {}
 --- @field ComponentName FixedString
 --- @field ElementType TypeInformationRef
 --- @field EnumValues table<FixedString, uint64>
+--- @field EventName FixedString
 --- @field HasWildcardProperties boolean
 --- @field IsBitfield boolean
 --- @field IsBuiltin boolean
@@ -7330,13 +7918,13 @@ Osi = {}
 --- @field Value int32
 
 
---- @class Vector2Parameter:ResourceMaterialResourceVector2Parameter
+--- @class Vector2ParameterInstance:MaterialVector2ResourceParameter
 
 
---- @class Vector3Parameter:ResourceMaterialResourceVector3Parameter
+--- @class Vector3ParameterInstance:MaterialVector3ResourceParameter
 
 
---- @class Vector4Parameter:ResourceMaterialResourceVector4Parameter
+--- @class Vector4ParameterInstance:MaterialVector4ResourceParameter
 
 
 --- @class VirtualTextureBindingData
@@ -7345,7 +7933,7 @@ Osi = {}
 --- @field UniformName FixedString
 
 
---- @class VirtualTextureParameter:ResourceMaterialResourceVirtualTextureParameter
+--- @class VirtualTextureParameterInstance:MaterialVirtualTextureResourceParameter
 
 
 --- @class VirtualTextureShaderParamBinding
@@ -8048,7 +8636,7 @@ Osi = {}
 
 
 --- @class AspkColorARGBKeyFrameData
---- @field Color vec4
+--- @field Color avec4
 --- @field Time number
 
 
@@ -8658,11 +9246,12 @@ Osi = {}
 
 
 --- @class AspkTLAnimationComponent:AspkTLBaseComponent
+--- @field AdditiveFadeIn number
 --- @field AnimationGroup Guid
+--- @field AnimationId AspkTLAnimationLazyId
 --- @field AnimationPlayRate number
 --- @field AnimationPlayStartOffset number
 --- @field AnimationSlot FixedString
---- @field AnimationSourceId Guid
 --- @field BoneGroupId Guid
 --- @field Continuous boolean
 --- @field EnableRootMotion boolean
@@ -8670,29 +9259,17 @@ Osi = {}
 --- @field FadeInOffset number
 --- @field FadeOut number
 --- @field FadeOutOffset number
+--- @field HasRootMotion boolean
 --- @field HoldAnimation boolean
 --- @field IsMirrored boolean
 --- @field OffsetType uint8
---- @field TargetTransform AspkTLAnimationComponentTargetTransforms
---- @field field_190 int64
---- @field field_1a9 string
---- @field field_1aa int16
---- @field field_1ac int32
---- @field field_1f8 int64
---- @field field_2b8 int64
---- @field field_2c0 int64
---- @field field_80 int64
---- @field field_98 int64
---- @field field_a0 int64
---- @field field_a8 int64
+--- @field TargetTransform Transform
 
 
---- @class AspkTLAnimationComponentTargetTransforms
---- @field Position vec3
---- @field RotationQuat vec4
---- @field Scale number
---- @field field_1c number
---- @field field_20 number
+--- @class AspkTLAnimationLazyId
+--- @field Animation AspkTLAnimationComponent
+--- @field AnimationId Guid
+--- @field ResolvedAnimationId Guid?
 
 
 --- @class AspkTLAtmosphereAndLightingComponent:AspkTLBaseComponent
@@ -8704,16 +9281,15 @@ Osi = {}
 
 --- @class AspkTLAttitudeEventComponent:AspkTLKeyBaseComponent_AspkKeysAttitudeEventKey
 --- @field field_b0 FixedString
---- @field field_b4 int32
 
 
 --- @class AspkTLBaseComponent:AspkComponent
 --- @field Actor AspkTLActor
+--- @field Enabled boolean
 --- @field IsMimicry boolean
 --- @field IsSnappedToEnd boolean
 --- @field PhaseIndex int64
 --- @field TypeId uint32
---- @field field_68x uint8
 
 
 --- @class AspkTLCameraDoFComponent:AspkTLBaseComponent
@@ -8795,10 +9371,11 @@ Osi = {}
 
 
 --- @class AspkTLFloatRTPCComponent:AspkTLInterpolationKeyComponent_AspkKeysFloatRTPCKey
+--- @field Entity EntityHandle
+--- @field HasEmitter boolean
 --- @field RTPCName FixedString
 --- @field SoundObjectIndex uint8
 --- @field SoundType uint8
---- @field field_b0 int64
 
 
 --- @class AspkTLGenomeTextEventComponent:AspkTLEventKeyComponent_AspkKeysGenomeTextEventKey
@@ -8848,299 +9425,266 @@ Osi = {}
 
 --- @class AspkTLKeyBaseComponent_AspkKeysAtmosphereAndLightingChannelKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysAtmosphereAndLightingChannelKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysAttachToEventKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysAttachToEventKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysAttitudeEventKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysAttitudeEventKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysCameraDoFChannelKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysCameraDoFChannelKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysCameraFoVKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysCameraFoVKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysCameraLookAtKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysCameraLookAtKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysEffectPhaseEventKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysEffectPhaseEventKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysEmotionEventKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysEmotionEventKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysFloatRTPCKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysFloatRTPCKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysGenomeTextEventKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysGenomeTextEventKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysHandsIKKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysHandsIKKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysKeyBase:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysKeyBase
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysLookAtEventKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysLookAtEventKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysMaterialTextureKeyKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysMaterialTextureKeyKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysPhysicsKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysPhysicsKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysPlayEffectEventKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysPlayEffectEventKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysPlayRateKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysPlayRateKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysShapeShiftKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysShapeShiftKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysShowArmorChannelKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysShowArmorChannelKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysShowHUDKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysShowHUDKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysShowPeanutsKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysShowPeanutsKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysShowVisualKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysShowVisualKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysShowWeaponKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysShowWeaponKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysSoundEventKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysSoundEventKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysSplatterChannelKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysSplatterChannelKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysSpringsKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysSpringsKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysSteppingFadeKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysSteppingFadeKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysSwitchLocationEventKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysSwitchLocationEventKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysSwitchStageEventKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysSwitchStageEventKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysTransformChannelFloatKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysTransformChannelFloatKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysTransformChannelFrameOfReferenceKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysTransformChannelFrameOfReferenceKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent_AspkKeysTransformChannelQuatKey:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysTransformChannelQuatKey
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLKeyBaseComponent<AspkKeysValueKey_float>:AspkTLBaseComponent
 --- @field HasTargetKey boolean
+--- @field IsEvent boolean
 --- @field NeedsKeyUpdate boolean
 --- @field Random uint32[]
---- @field TargetKey AspkKeysValueKey_float
---- @field field_68 number
---- @field field_91 boolean
+--- @field TargetKey uint64
 
 
 --- @class AspkTLLayeredAnimationComponent:AspkTLAnimationComponent
@@ -9155,7 +9699,6 @@ Osi = {}
 --- @field IsOverlay boolean
 --- @field MaterialParameters AspkTLMaterialComponentParameter[]
 --- @field OverlayPriority number
---- @field field_15a int16
 
 
 --- @class AspkTLMaterialComponentMaterialParameter:AspkTLMaterialComponentParameter
@@ -9175,8 +9718,6 @@ Osi = {}
 --- @class AspkTLMaterialComponentTextureParameter:AspkTLMaterialComponentParameter
 --- @field IsVirtual boolean
 --- @field TextureParam boolean
---- @field field_1a int16
---- @field field_1c int32
 
 
 --- @class AspkTLPhysicsComponent:AspkTLEventKeyComponent_AspkKeysPhysicsKey
@@ -9205,26 +9746,12 @@ Osi = {}
 --- @field IsLogicEnabled boolean
 --- @field IsLooping boolean
 --- @field JCutLength number
---- @field SwitchInterval boolean
---- @field field_110 int64
---- @field field_118 int64
---- @field field_120 int64
---- @field field_128 int64
---- @field field_130 int64
---- @field field_138 int64
---- @field field_140 int64
---- @field field_148 int64
---- @field field_150 int64
---- @field field_80 int64
---- @field field_b1 string
---- @field field_b2 int16
+--- @field SwitchInterval number
+--- @field SwitchInterval2 number
+--- @field VTPrefetchData table<Guid, uint32[]>
 --- @field field_b8 int64
 --- @field field_c0 int64
---- @field field_c8 int64
---- @field field_d0 int64
---- @field field_d9 string
---- @field field_da int16
---- @field field_dc int32
+--- @field field_c8 Guid
 
 
 --- @class AspkTLShotHoldPreviousComponent:AspkTLBaseComponent
@@ -9324,6 +9851,7 @@ Osi = {}
 --- @field Duration number
 --- @field Header AspkTimelineHeader
 --- @field Inputs AspkInput[]
+--- @field IsHoldingAtPhaseEnd boolean
 --- @field IsPaused boolean
 --- @field JumpToPhase int32
 --- @field JumpToTime number
@@ -9335,7 +9863,6 @@ Osi = {}
 --- @field State uint8
 --- @field TimePlayed number
 --- @field field_23 boolean
---- @field field_24 boolean
 
 
 --- @class AspkTimelineActorPropertiesReflectionComponent:AspkTLBaseComponent
@@ -9978,7 +10505,16 @@ Osi = {}
 
 
 --- @class DeathDeadReckoningComponent:BaseComponent
---- @field Rolls ConditionRoll[]
+--- @field DistanceXZ number
+--- @field MovementAcceleration number
+--- @field SpeedMultiplier number
+--- @field field_8 number
+
+
+--- @class DeathDeadReckoningSyncComponent:BaseComponent
+--- @field Position vec3
+--- @field Speed number
+--- @field Speed2 number
 
 
 --- @class DeathDeathComponent:DeathDeathData
@@ -10357,6 +10893,10 @@ Osi = {}
 
 
 --- @class DlgVisualStateNode:DlgDialogNode
+
+
+--- @class EclAtmosphereTrigger:AtmosphereTrigger
+--- @field Entity EntityHandle
 
 
 --- @class EclBaseController
@@ -10752,12 +11292,41 @@ Osi = {}
 --- @field Targets EntityHandle[]
 
 
+--- @class EclClientOnlyTimelineDestroyRequest
+--- @field Entity EntityHandle
+
+
 --- @class EclClientTimelineActorControlComponent:BaseComponent
+--- @field Actor Guid
+--- @field IsAdditional boolean
+--- @field IsListener boolean
+--- @field Slot uint8
+--- @field Timeline Guid
 --- @field field_0 Guid
 --- @field field_10 Guid
 --- @field field_20 uint8
---- @field field_21 uint8
---- @field field_22 uint8
+--- @field field_21 boolean
+--- @field field_22 boolean
+
+
+--- @class EclClientTimelineControlComponent:BaseComponent
+--- @field CreationState uint8
+--- @field DialogInstanceId int32
+--- @field Extents vec3
+--- @field InstanceId Guid
+--- @field Nodes TimelineNode[]
+--- @field PlaybackState uint8
+--- @field Timeline Guid
+--- @field TimelineResources Guid[]
+--- @field TimelineType uint8
+--- @field Transform Transform
+--- @field field_36 uint8
+--- @field field_37 uint8
+--- @field field_6C int32
+--- @field field_81 uint8
+--- @field field_82 uint8
+--- @field field_83 uint8
+--- @field field_84 int32
 
 
 --- @class EclConditionalEffect
@@ -10771,6 +11340,11 @@ Osi = {}
 --- @field TargetBone FixedString
 --- @field TextKeyEventStarted boolean
 --- @field VerbalIntent uint8
+
+
+--- @class EclConstructionSystem:ConstructionSystem
+--- @field EnableSeeThrough boolean
+--- @field RequestSetSeeThrough boolean
 
 
 --- @class EclCursorControl
@@ -10828,6 +11402,11 @@ Osi = {}
 --- @field VFX EclStatusVFX[]
 
 
+--- @class EclEquipmentEventSlotData
+--- @field Item EntityHandle
+--- @field field_8 uint32
+
+
 --- @class EclEquipmentRemoveMaterialRequest
 --- @field CheckFlags uint8
 --- @field Entity EntityHandle
@@ -10858,11 +11437,11 @@ Osi = {}
 --- @field Level FixedString
 --- @field Parent EntityHandle
 --- @field RequestFlags VisualRequestFlags
---- @field ScalarParameters ResourcePresetDataScalarParameter[]
+--- @field ScalarParameters MaterialScalarParameterPreset[]
 --- @field Slot ItemSlot
 --- @field SourceBone FixedString
 --- @field SourceBoneSheathed FixedString
---- @field Vector3Parameters ResourcePresetDataVector3Parameter[]
+--- @field Vector3Parameters MaterialVector3ParameterPreset[]
 --- @field VisualFlags VisualLoadFlags
 --- @field VisualTemplates FixedString[]
 
@@ -10893,7 +11472,7 @@ Osi = {}
 --- @field DestroyVisuals Set_EntityHandle
 --- @field DyeUpdates Set_EntityHandle
 --- @field InitVisualLevel table<EntityHandle, FixedString>
---- @field InventoryEvents table<EntityHandle, table<uint16, InventoryContainerSlotData>>
+--- @field InventoryEvents table<EntityHandle, table<uint16, EclEquipmentEventSlotData>>
 --- @field PendingSlotLoads table<EntityHandle, uint64>
 --- @field RemoveAnimationSetRequest table<EntityHandle, Set_FixedString>
 --- @field RemoveMaterials EclEquipmentRemoveMaterialRequest[]
@@ -10902,6 +11481,10 @@ Osi = {}
 --- @field UnloadVisualRequestCount int32
 --- @field UpdateSplatter Set_EntityHandle
 --- @field VFXTargetRequest table<EntityHandle, EntityHandle>
+
+
+--- @class EclFloorTrigger:FloorTrigger
+--- @field Entity EntityHandle
 
 
 --- @class EclGameCameraBehavior:BaseComponent
@@ -11024,6 +11607,10 @@ Osi = {}
 --- @field UICursorPreview CursorType
 --- @field UICursorRunning CursorType
 --- @field field_19 boolean
+
+
+--- @class EclLightingTrigger:LightingTrigger
+--- @field Entity EntityHandle
 
 
 --- @class EclLoadAnimationFromVisualRequestData
@@ -11193,6 +11780,10 @@ Osi = {}
 --- @field field_8_TurnOrder int32?
 
 
+--- @class EclPortalTrigger:PortalTrigger
+--- @field Entity EntityHandle
+
+
 --- @class EclPreviewEffectList
 --- @field Effects EntityHandle[]
 --- @field NextEffectIndex uint64
@@ -11210,6 +11801,20 @@ Osi = {}
 --- @field Tags Guid[]
 
 
+--- @class EclRegionTrigger:AreaTrigger
+--- @field CameraPosLocked boolean
+--- @field Entity EntityHandle
+--- @field MaskRegionInWorld boolean
+--- @field field_78 uint8
+
+
+--- @class EclRoomTrigger:RoomTrigger
+--- @field Border number
+--- @field Entity EntityHandle
+--- @field RenderEffect uint8
+--- @field RenderMethod uint8
+
+
 --- @class EclScenery:BaseProxyComponent
 --- @field Entity EntityRef
 --- @field Entity2 EntityHandle
@@ -11224,6 +11829,13 @@ Osi = {}
 --- @field Attenuation int16
 --- @field InitSound FixedString
 --- @field LoopSound FixedString
+
+
+--- @class EclSoundVolumeTrigger:SoundVolumeTrigger
+--- @field Enabled boolean
+--- @field Entity EntityHandle
+--- @field IsInternal boolean
+--- @field Loaded boolean
 
 
 --- @class EclStatus
@@ -11483,7 +12095,9 @@ Osi = {}
 --- @field ComponentLayoutFlags uint32
 --- @field CurrentLevel FixedString
 --- @field Entity EntityRef
+--- @field EquipmentVisibilityControlled boolean
 --- @field Flags uint16
+--- @field IsPlayer boolean
 --- @field IsWeaponUnsheathed boolean
 --- @field LightChannel uint8
 --- @field Listener EntityHandle
@@ -11493,16 +12107,18 @@ Osi = {}
 --- @field ShapeShiftSourceTemplateOverride FixedString
 --- @field ShouldShowVanityWeapon boolean
 --- @field SourceTemplateOverride FixedString
+--- @field Speakers FixedString[]
 --- @field SpringCollisionResourceIds FixedString[]
 --- @field TimelineType uint8
 --- @field VisibilityFlags uint32
+--- @field VisualLoadFlags VisualLoadFlags
 --- @field VisualResourceId FixedString
+--- @field WeaponsLoaded boolean
 --- @field field_30 EntityHandle
 --- @field field_98 FixedString[]
---- @field field_AC uint8
---- @field field_AD uint8
---- @field field_C2 uint8
---- @field field_C4 uint8
+--- @field field_AC VisualLoadFlags
+--- @field field_C2 boolean
+--- @field field_C4 boolean
 
 
 --- @class EclTaskInfo
@@ -11528,6 +12144,135 @@ Osi = {}
 --- @class EclTaskPreviewInfo
 --- @field SpellColor int32
 --- @field TargetingType int32
+
+
+--- @class EclTimelineActorDataCreateDestroyRequest
+--- @field Entity EntityHandle
+--- @field Synced boolean
+--- @field Timeline Guid
+--- @field field_19 uint8
+
+
+--- @class EclTimelineActorJoinedEventRequest
+--- @field Actor EntityHandle
+--- @field PlayerIndex int16
+--- @field Timeline EntityHandle
+
+
+--- @class EclTimelineActorLeaveRequest
+--- @field Actor Guid
+--- @field Entity EntityHandle
+--- @field IsDummy boolean
+--- @field IsListening boolean
+--- @field Timeline Guid
+--- @field TimelineType uint8
+
+
+--- @class EclTimelineActorLeftEventRequest
+--- @field Actor EntityHandle
+--- @field ActorGuid Guid
+--- @field DialogInstanceId int32
+--- @field PlayerIndex int16
+--- @field Timeline EntityHandle
+
+
+--- @class EclTimelineAutoContinueRequest
+--- @field Timeline Guid
+
+
+--- @class EclTimelineBackgroundEntityRequest
+--- @field Entity Guid
+--- @field Timeline Guid
+
+
+--- @class EclTimelineCharacterAssignedRequest
+--- @field Actor EntityHandle
+--- @field Entity EntityHandle
+--- @field PlayerId int16
+
+
+--- @class EclTimelineCinematicAnimationRequest
+--- @field ActivateTimeline boolean
+--- @field Entity EntityHandle
+
+
+--- @class EclTimelineControlCreateDestroyRequest
+--- @field Create boolean
+--- @field DialogInstanceId int32
+--- @field Entity EntityHandle
+--- @field Timeline Guid
+--- @field TimelineType uint8
+--- @field field_1C int32
+--- @field field_20 int64
+--- @field field_28 int64
+--- @field field_30 int64
+--- @field field_38 int64
+--- @field field_40 int32
+
+
+--- @class EclTimelineDataCreateDestroyRequest
+--- @field Create boolean
+--- @field Entity EntityHandle
+--- @field Synced boolean
+--- @field Timeline Guid
+
+
+--- @class EclTimelineSceneTrigger:TimelineSceneTrigger
+--- @field Entity EntityHandle
+--- @field field_A8 uint64
+
+
+--- @class EclTimelineSystem:BaseSystem
+--- @field ActorDataCreateDestroyRequests EclTimelineActorDataCreateDestroyRequest[]
+--- @field ActorJoinedEventRequests EclTimelineActorJoinedEventRequest[]
+--- @field ActorLeaveRequests EclTimelineActorLeaveRequest[]
+--- @field ActorLeftEventRequests EclTimelineActorLeftEventRequest[]
+--- @field AutoContinueRequests EclTimelineAutoContinueRequest[]
+--- @field BackgroundEntityRequests table<Guid, EclTimelineBackgroundEntityRequest[]>
+--- @field ChangeVisibilityRequests Set_EntityHandle[]
+--- @field CharacterAssignedRequests EclTimelineCharacterAssignedRequest[]
+--- @field CinematicAnimationRequests EclTimelineCinematicAnimationRequest[]
+--- @field ClientOnlyTimelineDestroyRequests EclClientOnlyTimelineDestroyRequest[]
+--- @field ClientSessionLoaded boolean
+--- @field ClientSessionUnloaded boolean
+--- @field CombatTimelines Set_Guid
+--- @field ConfigPath Path
+--- @field DialogIdToTimeline table<uint32, Guid>
+--- @field DialogStarted Set_uint32
+--- @field DialogTimelineRequests uint32[]
+--- @field EmotionalMaterials TimelineEmotionalMaterials
+--- @field FadeRequests table<EntityHandle, boolean>[]
+--- @field FadeStates table<Guid, boolean>[]
+--- @field GlobalTimelineGuid Guid
+--- @field InGameTimelineControlsVisible boolean
+--- @field LevelDeactivated boolean
+--- @field LevelStartingTimelineFinished boolean
+--- @field LevelUnloaded boolean
+--- @field Lighting LightingDetails
+--- @field MaterialGroups MaterialGroupLookup
+--- @field MaterialSwapped table<EntityHandle, boolean>
+--- @field RequestContentForTimelines table<Guid, int32>
+--- @field RequestVisualUpdate boolean
+--- @field SessionGuid Guid
+--- @field SoundSyncs table<Guid, number>
+--- @field SyncedTimelinePlayedNodesChanged table<Guid, int32>
+--- @field SystemConfig TLSystemConfig
+--- @field TimelineControlCreateDestroyRequests EclTimelineControlCreateDestroyRequest[]
+--- @field TimelineData table<Guid, EntityHandle>
+--- @field TimelineDataCreateDestroyRequests EclTimelineDataCreateDestroyRequest[]
+--- @field TimelineVisibilityRequests EclTimelineVisibilityRequest[]
+--- @field Timelines table<Guid, Timeline>
+--- @field UnloadActorsRequests EclTimelineUnloadActorsRequest[]
+
+
+--- @class EclTimelineUnloadActorsRequest
+--- @field Actor Guid
+
+
+--- @class EclTimelineVisibilityRequest
+--- @field PlayerId int16
+--- @field Timeline Guid
+--- @field Visible boolean
 
 
 --- @class EclTradeModeChangeRequest
@@ -11976,28 +12721,28 @@ Osi = {}
 
 
 --- @class EclInterruptPlayerDecisionComponent:BaseComponent
---- @field Decisions table<EntityHandle, uint8>
+--- @field Decisions table<EntityHandle, InterruptDecision>
 
 
---- @class EclLuaControllerAxisEvent:LuaEventBase
+--- @class EclLuaControllerAxisEventParams:LuaEventBase
 --- @field Axis SDLControllerAxis
 --- @field DeviceId int32
 --- @field Value number
 
 
---- @class EclLuaControllerButtonEvent:LuaEventBase
+--- @class EclLuaControllerButtonEventParams:LuaEventBase
 --- @field Button SDLControllerButton
 --- @field DeviceId int32
 --- @field Event SDLKeyEvent
 --- @field Pressed boolean
 
 
---- @class EclLuaGameStateChangedEvent:LuaEventBase
+--- @class EclLuaGameStateChangedEventParams:LuaEventBase
 --- @field FromState ClientGameState
 --- @field ToState ClientGameState
 
 
---- @class EclLuaKeyInputEvent:LuaEventBase
+--- @class EclLuaKeyInputEventParams:LuaEventBase
 --- @field Event SDLKeyEvent
 --- @field Key SDLScanCode
 --- @field Modifiers SDLKeyModifier
@@ -12005,7 +12750,7 @@ Osi = {}
 --- @field Repeat boolean
 
 
---- @class EclLuaMouseButtonEvent:LuaEventBase
+--- @class EclLuaMouseButtonEventParams:LuaEventBase
 --- @field Button int32
 --- @field Clicks int32
 --- @field Pressed boolean
@@ -12013,14 +12758,14 @@ Osi = {}
 --- @field Y int32
 
 
---- @class EclLuaMouseWheelEvent:LuaEventBase
+--- @class EclLuaMouseWheelEventParams:LuaEventBase
 --- @field ScrollX number
 --- @field ScrollY number
 --- @field X int32
 --- @field Y int32
 
 
---- @class EclLuaViewportResizedEvent:LuaEventBase
+--- @class EclLuaViewportResizedEventParams:LuaEventBase
 --- @field Height int32
 --- @field Width int32
 
@@ -12030,7 +12775,7 @@ Osi = {}
 --- @field Event uint8
 --- @field HasWeapon boolean
 --- @field LoopingCastAnimation boolean
---- @field ObjectSize boolean
+--- @field ObjectSize int8
 --- @field Target EntityHandle
 --- @field TargetPosition vec3?
 --- @field TargetRotation vec3
@@ -12196,6 +12941,7 @@ Osi = {}
 --- @class EcsECSComponentLog
 --- @field Create boolean
 --- @field Destroy boolean
+--- @field Modify boolean
 --- @field Name StringView
 --- @field OneFrame boolean
 --- @field Replicate boolean
@@ -12331,15 +13077,19 @@ Osi = {}
 
 
 --- @class EocCombatTurnOrderComponent:BaseComponent
---- @field Groups EocCombatTurnBasedGroup[]
---- @field Groups2 EocCombatTurnBasedGroup[]
+--- @field CurrentGroups EocCombatTurnBasedGroup[]
+--- @field CurrentTurnOrder uint64[]
+--- @field NextRoundGroups EocCombatTurnBasedGroup[]
+--- @field NextRoundTurnOrder uint64[]
 --- @field Participants EocCombatTurnBasedGroup[]
 --- @field Participants2 EocCombatTurnBasedGroup[]
+--- @field Round int32
+--- @field TimeRemaining number?
 --- @field TurnOrderIndices uint64[]
 --- @field TurnOrderIndices2 uint64[]
+--- @field TurnTime number
 --- @field field_40 int32
---- @field field_44 int32
---- @field field_48 int32
+--- @field field_44 number?
 --- @field field_4C number
 
 
@@ -12374,32 +13124,6 @@ Osi = {}
 --- @field Reason uint8
 
 
---- @class EocHotbarBar
---- @field Elements EocHotbarSlot[]
---- @field Height uint32
---- @field Index uint8
---- @field Width uint8
---- @field field_1 uint8
---- @field field_20 string
-
-
---- @class EocHotbarContainerComponent:BaseComponent
---- @field ActiveContainer FixedString
---- @field Containers table<FixedString, EocHotbarBar[]>
-
-
---- @class EocHotbarHotbarCurrentDecksComponent:BaseComponent
---- @field Decks table<FixedString, int32>
-
-
---- @class EocHotbarSlot
---- @field IsNew boolean
---- @field Item EntityHandle
---- @field Passive FixedString
---- @field Slot uint32
---- @field SpellId SpellId
-
-
 --- @class EocImprovisedWeaponCanBeWieldedComponent:BaseComponent
 
 
@@ -12411,6 +13135,24 @@ Osi = {}
 
 --- @class EocImprovisedWeaponWieldingComponent:BaseComponent
 --- @field Weapon EntityHandle
+
+
+--- @class EocLockAnimationStateComponent:BaseComponent
+
+
+--- @class EocLockKeyComponent:BaseComponent
+--- @field Key FixedString
+
+
+--- @class EocLockLifetimeComponent:BaseComponent
+
+
+--- @class EocLockLockComponent:BaseComponent
+--- @field Key_M FixedString
+--- @field LockDC int32
+--- @field LockDifficultyClassID Guid
+--- @field field_18 Guid[]
+--- @field field_8 Guid
 
 
 --- @class EocPickupPickUpExecutingComponent:BaseComponent
@@ -13061,13 +13803,24 @@ Osi = {}
 --- @field qword4A8 Set_EntityHandle
 
 
+--- @class EsvCapsuleSurfaceAction:EsvCreateSurfaceActionBase
+--- @field AnimationCenter vec3
+--- @field AnimationDuration number
+--- @field Cells Set_AiTilePos
+--- @field ElapsedTime number
+--- @field End vec3
+--- @field Radius number
+
+
 --- @class EsvChangeSurfaceOnPathAction:EsvCreateSurfaceActionBase
+--- @field Cells AiTilePos[]
 --- @field CheckExistingSurfaces boolean
---- @field FollowHandle EntityRef
+--- @field FollowHandle EntityHandle
 --- @field IgnoreIrreplacableSurfaces boolean
 --- @field IgnoreOwnerCells boolean
 --- @field IsFinished boolean
 --- @field Radius number
+--- @field field_5C3 boolean
 
 
 --- @class EsvCharacter:BaseComponent
@@ -13181,6 +13934,7 @@ Osi = {}
 --- @field UserID UserId
 --- @field UserID2 UserId
 --- @field WalkThrough boolean
+--- @field CreateCacheTemplate fun(self:EsvCharacter):CharacterTemplate
 --- @field GetStatus fun(self:EsvCharacter, a1:FixedString):EsvStatus
 --- @field GetStatusByType fun(self:EsvCharacter, a1:StatusType):EsvStatus
 
@@ -13269,12 +14023,15 @@ Osi = {}
 
 
 --- @class EsvCreatePuddleAction:EsvCreateSurfaceActionBase
+--- @field CellAtGrow AiTilePos[]
+--- @field ClosedCells AiTilePos[]
 --- @field GrowSpeed number
 --- @field GrowTimer number
 --- @field IgnoreIrreplacableSurfaces boolean
 --- @field IsFinished boolean
 --- @field Step int32
 --- @field SurfaceCells int32
+--- @field field_454 int32
 
 
 --- @class EsvCreateSurfaceAction:EsvCreateSurfaceActionBase
@@ -13288,17 +14045,19 @@ Osi = {}
 --- @field LineCheckBlock uint64
 --- @field MaxHeight number
 --- @field Radius number
---- @field SpellId SpellId
---- @field SurfaceConcentrationTarget uint16
+--- @field SurfaceCells AiTilePos[]
 --- @field SurfaceLayer SurfaceLayer8
 --- @field Timer number
 
 
 --- @class EsvCreateSurfaceActionBase:EsvSurfaceAction
+--- @field ConcentrationBroke boolean
 --- @field Duration number
---- @field IsControlledByConcentration boolean
---- @field Owner EntityRef
+--- @field Owner EntityHandle
 --- @field Position vec3
+--- @field Spell SpellId
+--- @field SurfaceCellsByLayer AiTilePos[][]
+--- @field SurfaceConcentrationTarget uint16
 --- @field SurfaceType SurfaceType
 
 
@@ -13454,14 +14213,6 @@ Osi = {}
 --- @field LevelOverride int32
 
 
---- @class EsvExtinguishFireAction:EsvCreateSurfaceActionBase
---- @field ExtinguishGrowTimer number
---- @field ExtinguishPosition vec3
---- @field Percentage number
---- @field Radius number
---- @field Step number
-
-
 --- @class EsvFallToProneOneFrameComponent:BaseComponent
 
 
@@ -13476,6 +14227,9 @@ Osi = {}
 
 --- @class EsvFloorTrigger:FloorTrigger
 --- @field Entity EntityHandle
+
+
+--- @class EsvForceCreateSurfaceAction:EsvCreateSurfaceActionBase
 
 
 --- @class EsvGameTimerComponent:BaseComponent
@@ -13640,6 +14394,7 @@ Osi = {}
 --- @field field_10 EntityHandle
 --- @field field_68 EntityHandle
 --- @field field_70 FixedString
+--- @field CreateCacheTemplate fun(self:EsvItem):ItemTemplate
 
 
 --- @class EsvItemAction
@@ -13826,9 +14581,6 @@ Osi = {}
 
 
 --- @class EsvNetComponent:BaseComponent
-
-
---- @class EsvOrderComponent:BaseComponent
 
 
 --- @class EsvOsirisAppearTask:EsvTask
@@ -14182,8 +14934,14 @@ Osi = {}
 --- @field GrowTimer number
 --- @field Items EntityHandle[]
 --- @field LastSurfaceCellCount int32
---- @field PolygonVertices vec2[]
---- @field SomePosition vec3
+--- @field PolygonCreated boolean
+--- @field PolygonVertices vec3[]
+--- @field SurfaceCells AiTilePos[]
+--- @field field_448 FixedString
+--- @field field_468 int32
+--- @field field_488 uint8
+--- @field field_490 int64
+--- @field field_500 uint8
 
 
 --- @class EsvPortalTrigger:PortalTrigger
@@ -14203,12 +14961,13 @@ Osi = {}
 
 
 --- @class EsvRectangleSurfaceAction:EsvCreateSurfaceActionBase
---- @field Characters EntityRef[]
+--- @field Cells AiTilePos[]
+--- @field Characters EntityHandle[]
 --- @field CurrentCellCount int32
 --- @field DeathType StatsDeathType
 --- @field GrowStep int32
 --- @field GrowTimer number
---- @field Items EntityRef[]
+--- @field Items EntityHandle[]
 --- @field Length number
 --- @field LineCheckBlock uint64
 --- @field MaxHeight number
@@ -14219,6 +14978,19 @@ Osi = {}
 
 --- @class EsvRegionTrigger:EsvAreaTriggerBase
 --- @field RegionMaskRegionInWorld boolean
+
+
+--- @class EsvRemoveSurfaceAction:EsvCreateSurfaceActionBase
+--- @field Cells AiTilePos[]
+--- @field CurrentGrowTimer number
+--- @field GrowCells AiTilePos[]
+--- @field GrowTimer number
+--- @field Percentage number
+--- @field Radius number
+--- @field RemovePosition vec3
+--- @field RemoveSurfaceType SurfaceType
+--- @field Step number
+--- @field TotalCellCount int32
 
 
 --- @class EsvReplicationDependencyComponent:BaseComponent
@@ -14589,15 +15361,56 @@ Osi = {}
 --- @field Enabled boolean
 
 
---- @class EsvSurfaceAction
---- @field Handle EntityHandle
+--- @class EsvSubSurface
+--- @field Cells AiTilePos[]
+--- @field GrowCells AiTilePos[]
+--- @field Pos AiTilePos
+--- @field Surface EsvSurface
+--- @field SurfaceIndex uint16
+--- @field SurfaceStateFlags uint64
+
+
+--- @class EsvSurface
+--- @field Flags uint8
+--- @field HasLifeTime boolean
+--- @field Index int16
+--- @field IsControlledByConcentration boolean
+--- @field Meta SurfaceMetaData
+--- @field NeedsSplitEvaluation boolean
+--- @field NeighbourMergeCells AiTilePos[]
 --- @field Originator ActionOriginator
+--- @field OwnershipTimer number
+--- @field Parent Guid
+--- @field SpellCastSourceUuid Guid
+--- @field SpellCastingAbility AbilityId
 --- @field StoryActionID int32
+--- @field SubSurfaces EsvSubSurface[]
+--- @field SurfaceConcentrationTarget int16
+--- @field SurfaceEntity EntityHandle
+--- @field SurfaceHandle ComponentHandle
+--- @field TransformActions ComponentHandle[]
+--- @field Type SurfaceType
 
 
---- @class EsvSurfaceComponent:BaseComponent
---- @field field_0 Guid
---- @field field_10 ComponentHandle
+--- @class EsvSurfaceAction
+--- @field BaseCells AiTilePos[]
+--- @field Handle ComponentHandle
+--- @field Originator ActionOriginator
+--- @field SpellCastUuid Guid
+--- @field SpellCastingAbility AbilityId
+--- @field StoryActionID int32
+--- @field SurfaceEntity EntityHandle
+--- @field field_78 uint8
+
+
+--- @class EsvSurfaceConcentrationTarget
+--- @field Index uint16
+--- @field Surfaces Set_ComponentHandle
+
+
+--- @class EsvSurfaceCreatedEventRequest
+--- @field NewlyCreated boolean
+--- @field Surface EsvSurface
 
 
 --- @class EsvSurfaceInteraction
@@ -14621,6 +15434,26 @@ Osi = {}
 --- @field HasLifetime boolean
 --- @field SurfaceType int32
 --- @field Target EntityHandle
+
+
+--- @class EsvSurfacePosition
+--- @field Position vec3
+--- @field Surface ComponentHandle
+
+
+--- @class EsvSurfaceRemovedEventRequest
+--- @field SpellCastUuid Guid
+--- @field field_0 EntityHandle
+--- @field field_8 EntityHandle
+
+
+--- @class EsvSurfaceTransformActionRequirement
+--- @field Type uint8
+
+
+--- @class EsvSurfaceTransformActionRequirements
+--- @field Requirements EsvSurfaceTransformActionRequirement[]
+--- @field TransformType SurfaceTransformActionType
 
 
 --- @class EsvSurfaceTypeCheck
@@ -14671,13 +15504,19 @@ Osi = {}
 --- @class EsvTransformSurfaceAction:EsvSurfaceAction
 --- @field Finished boolean
 --- @field GrowCellPerSecond number
---- @field OriginSurface uint8
---- @field OwnerHandle EntityRef
+--- @field OriginSurface SurfaceType
+--- @field OwnerHandle EntityHandle
 --- @field PlayerCharacterNearby boolean
 --- @field Position vec3
+--- @field SurfaceCellMap table<SurfaceType, AiTilePos[]>
 --- @field SurfaceLayer SurfaceLayer8
 --- @field SurfaceLifetime number
---- @field SurfaceTransformAction uint8
+--- @field SurfaceMap table<SurfaceType, ComponentHandle>
+--- @field SurfaceRemoveCloudCellMap AiTilePos[]
+--- @field SurfaceRemoveGroundCellMap AiTilePos[]
+--- @field SurfaceTransformAction SurfaceTransformActionType
+--- @field SurfaceTypeMap table<SurfaceType, SurfaceType>
+--- @field SurfaceTypes SurfaceType[]
 --- @field Timer number
 
 
@@ -14707,13 +15546,17 @@ Osi = {}
 
 
 --- @class EsvZoneAction:EsvCreateSurfaceActionBase
+--- @field Cells AiTilePos[]
 --- @field CurrentCellCount int64
+--- @field CurrentGrowTimer number
 --- @field Flags uint8
 --- @field GrowStep int32
+--- @field GrowTimer number
+--- @field Hits HitDesc[]
 --- @field Params EsvZoneActionParams
 --- @field Spell SpellId
 --- @field Target vec3
---- @field Targets EntityRef[]
+--- @field Targets EntityHandle[]
 --- @field TextKey FixedString
 
 
@@ -14761,6 +15604,10 @@ Osi = {}
 
 
 --- @class EsvAiCombatArchetypeComponent:BaseComponent
+--- @field ActiveArchetype FixedString
+--- @field ArchetypeOverride FixedString
+--- @field BaseArchetype FixedString
+--- @field ShapeshiftArchetype FixedString
 --- @field field_0 FixedString
 --- @field field_4 FixedString
 --- @field field_8 FixedString
@@ -15140,7 +15987,6 @@ Osi = {}
 --- @field StatusAdded EsvCombatLogStatusAddedRequest[]
 --- @field StatusRemoved EsvCombatLogStatusRemovedRequest[]
 --- @field StealthSpotted EsvCombatLogStealthSpottedRequest[]
---- @field field_40 EsvCombatLogDialogStartRequest[]
 
 
 --- @class EsvCombatLogDialogStartRequest
@@ -15425,7 +16271,8 @@ Osi = {}
 
 
 --- @class EsvFtbTurnBasedComponent:BaseComponent
---- @field Entity uint64
+--- @field field_0 uint8
+--- @field field_4 uint32
 
 
 --- @class EsvFtbZoneComponent:BaseComponent
@@ -15541,6 +16388,94 @@ Osi = {}
 --- @field Hits EsvHitHitEventData[]
 
 
+--- @class EsvHotbarAddCustomDeckData
+--- @field Name string
+
+
+--- @class EsvHotbarAddSlotEntryData
+--- @field AllowDuplicates boolean
+--- @field ForceAdd boolean
+--- @field HotBarController uint8
+--- @field HotbarIndex int32
+--- @field Slot HotbarSlot
+--- @field SlotIndex uint32?
+--- @field field_1 boolean
+
+
+--- @class EsvHotbarAddedSlot
+--- @field Controller uint8
+--- @field Slot HotbarSlot
+
+
+--- @class EsvHotbarChangeNameData
+--- @field Index uint32
+--- @field Name string
+
+
+--- @class EsvHotbarHotbarSystem:BaseSystem
+--- @field AddCustomDeck table<EntityHandle, EsvHotbarAddCustomDeckData[]>
+--- @field AddSlot table<EntityHandle, EsvHotbarAddSlotEntryData[]>
+--- @field ChangeName table<EntityHandle, EsvHotbarChangeNameData[]>
+--- @field Lock table<EntityHandle, boolean>
+--- @field RemoveCustomDeck table<EntityHandle, EsvHotbarRemoveCustomDeckData[]>
+--- @field RemoveRow table<EntityHandle, EsvHotbarRemoveColumnData[]>
+--- @field RemoveSlot table<EntityHandle, EsvHotbarRemoveSlotEntryData[]>
+--- @field RemoveSlotIsNewFlagRequests table<EntityHandle, HotbarSlot[]>
+--- @field SavegameLoading boolean
+--- @field SetColumn table<EntityHandle, EsvHotbarSetColumnData[]>
+--- @field SetRow table<EntityHandle, EsvHotbarSetRowData[]>
+--- @field field_290 Set_EntityHandle
+--- @field field_2c0 Set_EntityHandle
+--- @field field_2f0 table<EntityHandle, EsvInventoryMemberData[]>
+--- @field field_354 uint32
+
+
+--- @class EsvHotbarOrderComponent:BaseComponent
+
+
+--- @class EsvHotbarRemoveColumnData
+--- @field HotbarIndex uint32
+--- @field Index uint32
+
+
+--- @class EsvHotbarRemoveCustomDeckData
+--- @field Index uint32
+
+
+--- @class EsvHotbarRemoveSlotEntryData
+--- @field HotbarIndex int32
+--- @field IgnoreRequirements boolean
+--- @field RemoveSpells boolean
+--- @field Slot HotbarSlot
+--- @field SlotIndex uint32?
+--- @field field_0 boolean
+--- @field field_61 boolean
+
+
+--- @class EsvHotbarSetColumnData
+--- @field HotbarIndex uint32
+--- @field Width uint32
+
+
+--- @class EsvHotbarSetRowData
+--- @field HotbarIndex uint32
+--- @field Index uint32
+
+
+--- @class EsvHotbarSlotEventData
+--- @field IsController boolean
+--- @field IsNew boolean
+--- @field Slot HotbarSlot
+
+
+--- @class EsvHotbarSlotsAddedOneFrameComponent:BaseComponent
+--- @field Events EsvHotbarSlotEventData[]
+
+
+--- @class EsvHotbarSlotsRemovedOneFrameComponent:BaseComponent
+--- @field Events EsvHotbarSlotEventData[]
+
+
 --- @class EsvInterruptActionRequestsComponent:BaseComponent
 --- @field CombatLogRequests EsvInterruptCombatLogRequestData[]
 --- @field StartRequests EsvInterruptStartRequestData[]
@@ -15563,7 +16498,7 @@ Osi = {}
 
 
 --- @class EsvInterruptDecisionSystem:BaseSystem
---- @field Decisions table<EntityHandle, uint8>
+--- @field Decisions table<EntityHandle, InterruptDecision>
 
 
 --- @class EsvInterruptInitialParticipantData
@@ -15888,19 +16823,51 @@ Osi = {}
 --- @field Owner FixedString
 
 
---- @class EsvLuaAfterExecuteFunctorEvent:LuaEventBase
+--- @class EsvLockLockpickingStateComponent:BaseComponent
+--- @field ActionResource Guid
+--- @field ActionResourceSpendTimeRemaining number
+--- @field ActiveRollWaitTimeRemaining number
+--- @field Entity EntityHandle
+--- @field Position vec3
+--- @field RequestId int32
+--- @field Roll EntityHandle
+--- @field ScriptPermissionTimeRemaining number
+--- @field State uint8
+--- @field SteeringState Guid
+--- @field Target EntityHandle
+--- @field Target2 EntityHandle
+
+
+--- @class EsvLockLockpickingSystem:BaseSystem
+--- @field PickLockRequests EsvLockPickLockRequest[]
+--- @field ScriptPermissionResponses EsvLockScriptPermissionResponse[]
+
+
+--- @class EsvLockPickLockRequest
+--- @field Player EntityHandle
+--- @field Target EntityHandle
+--- @field field_10 EntityHandle
+
+
+--- @class EsvLockScriptPermissionResponse
+--- @field Entity EntityHandle
+--- @field RequestId int32
+--- @field Response boolean
+
+
+--- @class EsvLuaAfterExecuteFunctorEventParams:LuaEventBase
 --- @field Functor StatsFunctors
 --- @field Hit HitResult
 --- @field Params StatsContextData
 
 
---- @class EsvLuaBeforeDealDamageEvent:LuaEventBase
+--- @class EsvLuaBeforeDealDamageEventParams:LuaEventBase
 --- @field Attack AttackDesc
 --- @field DamageSums AttackDesc
 --- @field Hit HitDesc
 
 
---- @class EsvLuaDealDamageEvent:LuaEventBase
+--- @class EsvLuaDealDamageEventParams:LuaEventBase
 --- @field Attack AttackDesc
 --- @field Caster EntityHandle
 --- @field Caster2 EntityHandle
@@ -15917,16 +16884,16 @@ Osi = {}
 --- @field Target EntityHandle
 
 
---- @class EsvLuaDealtDamageEvent:EsvLuaDealDamageEvent
+--- @class EsvLuaDealtDamageEventParams:EsvLuaDealDamageEventParams
 --- @field Result HitResult
 
 
---- @class EsvLuaExecuteFunctorEvent:LuaEventBase
+--- @class EsvLuaExecuteFunctorEventParams:LuaEventBase
 --- @field Functor StatsFunctors
 --- @field Params StatsContextData
 
 
---- @class EsvLuaGameStateChangedEvent:LuaEventBase
+--- @class EsvLuaGameStateChangedEventParams:LuaEventBase
 --- @field FromState ServerGameState
 --- @field ToState ServerGameState
 
@@ -16412,50 +17379,51 @@ Osi = {}
 
 --- @class EsvShapeshiftState
 --- @field Abilities Optional_ShapeshiftIntOverride[]
---- @field ActionCapabilities uint16?
+--- @field ActionCapabilities CanDoActionsFlags?
 --- @field AiHint Guid?
 --- @field ApplyVisualInCC boolean
 --- @field Armor int32?
 --- @field ArmorType int32?
---- @field AwarenessCapabilities uint16?
+--- @field AttributeFlags AttributeFlags
+--- @field AwarenessCapabilities AwarenessCapabilityFlags?
 --- @field BlockLevelUp boolean
---- @field BloodSurfaceTypeInheritanceType uint8
+--- @field BloodSurfaceTypeInheritanceType ShapeshiftInheritanceType
 --- @field CanSeeThrough boolean?
 --- @field CanShootThrough boolean?
 --- @field ChangeScript string?
 --- @field CombatArchetype FixedString?
---- @field DeathActionsInheritanceType uint8
+--- @field DeathActionsInheritanceType ShapeshiftInheritanceType
 --- @field DefaultBoosts FixedString
---- @field DefaultBoostsInheritanceType uint8
+--- @field DefaultBoostsInheritanceType ShapeshiftInheritanceType
 --- @field DifficultyStatuses FixedString
---- @field DifficultyStatusesInheritanceType uint8
+--- @field DifficultyStatusesInheritanceType ShapeshiftInheritanceType
 --- @field DisplayName TranslatedString?
 --- @field DummyClass Guid?
---- @field Flags uint32
---- @field FlagsInheritanceType uint8
+--- @field Flags AttributeFlags
+--- @field FlagsInheritanceType ShapeshiftInheritanceType
 --- @field Gender uint8?
---- @field HitBloodTypeInheritanceType uint8
+--- @field HitBloodTypeInheritanceType ShapeshiftInheritanceType
 --- @field HotBar FixedString?
 --- @field Icon FixedString?
---- @field InteractionsCapabilities uint16?
+--- @field InteractionsCapabilities CanInteractFlags?
 --- @field KillEntityAtZeroHP boolean
 --- @field MuteEquipmentSound boolean
 --- @field OverrideSpeaker boolean
 --- @field Passives FixedString
---- @field PassivesInheritanceType uint8
+--- @field PassivesInheritanceType ShapeshiftInheritanceType
 --- @field PersonalStatusImmunities FixedString
---- @field PersonalStatusImmunitiesInheritanceType uint8
+--- @field PersonalStatusImmunitiesInheritanceType ShapeshiftInheritanceType
 --- @field ProficiencyGroup ProficiencyGroupFlags
---- @field ProficiencyGroupsInheritanceType uint8
+--- @field ProficiencyGroupsInheritanceType ShapeshiftInheritanceType
 --- @field Race Guid?
 --- @field RemoveOldTags boolean
 --- @field RemovePrevSpells boolean
 --- @field Resistances ResistanceBoostFlags[][]
---- @field ResistancesInheritanceType uint8
+--- @field ResistancesInheritanceType ShapeshiftInheritanceType
 --- @field RootTemplate EsvShapeshiftRootTemplateOverride?
 --- @field Scale ShapeshiftFloatOverride?
 --- @field ShootThroughType uint8?
---- @field SpeakingCapabilities uint16?
+--- @field SpeakingCapabilities SpeakingCapabilityFlags?
 --- @field SpellCastingAbility AbilityId?
 --- @field SpellsAdd table<ShapeshiftSpellSource, FixedString[]>
 --- @field SpellsRemove FixedString[]
@@ -17648,6 +18616,33 @@ Osi = {}
 --- @field field_18 Guid
 
 
+--- @class EsvSurfaceCreatedEventOneFrameComponent:BaseComponent
+--- @field Surface Guid
+
+
+--- @class EsvSurfaceLevelLoadedComponent:BaseComponent
+
+
+--- @class EsvSurfaceRemovedEventOneFrameComponent:BaseComponent
+--- @field Surface Guid
+
+
+--- @class EsvSurfaceSurfaceComponent:BaseComponent
+--- @field SpellCastUuid Guid
+--- @field Surface EsvSurface
+--- @field SurfaceHandle ComponentHandle
+--- @field field_10 ComponentHandle
+
+
+--- @class EsvSurfaceActionFinishedEventOneFrameComponent:BaseComponent
+--- @field Surface Guid
+
+
+--- @class EsvSurfaceActionGrownEventOneFrameComponent:BaseComponent
+--- @field Cells AiTilePos[]
+--- @field field_0 EntityHandle
+
+
 --- @class EsvTagsTagsChangedEventOneFrameComponent:BaseComponent
 --- @field AddedTags Guid[]
 --- @field RemovedTags Guid[]
@@ -17739,6 +18734,8 @@ Osi = {}
 
 
 --- @class ExtuiButton:ExtuiStyledRenderable
+--- @field AllowOverlap boolean
+--- @field EnableNav boolean
 --- @field MouseButtonLeft boolean
 --- @field MouseButtonMiddle boolean
 --- @field MouseButtonRight boolean
@@ -17768,19 +18765,29 @@ Osi = {}
 --- @field Bullet boolean
 --- @field CollapsingHeader boolean
 --- @field DefaultOpen boolean
+--- @field DrawLinesFull boolean
+--- @field DrawLinesNone boolean
+--- @field DrawLinesToNodes boolean
 --- @field FramePadding boolean
 --- @field Framed boolean
+--- @field LabelSpanAllColumns boolean
 --- @field Leaf boolean
 --- @field NavLeftJumpsBackHere boolean
+--- @field NavLeftJumpsToParent boolean
 --- @field NoAutoOpenOnLog boolean
 --- @field NoTreePushOnOpen boolean
+--- @field OnCollapse RegistryEntry
+--- @field OnExpand RegistryEntry
+--- @field Open boolean
 --- @field OpenOnArrow boolean
 --- @field OpenOnDoubleClick boolean
 --- @field Selected boolean
 --- @field SpanAllColumns boolean
 --- @field SpanAvailWidth boolean
 --- @field SpanFullWidth boolean
+--- @field SpanLabelWidth boolean
 --- @field SpanTextWidth boolean
+--- @field SetOpen fun(self:ExtuiCollapsingHeader, a1:boolean, a2:GuiCond?)
 
 
 --- @class ExtuiColorEdit:ExtuiStyledRenderable
@@ -17799,6 +18806,7 @@ Osi = {}
 --- @field InputRGB boolean
 --- @field NoAlpha boolean
 --- @field NoBorder boolean
+--- @field NoColorMarkers boolean
 --- @field NoDragDrop boolean
 --- @field NoInputs boolean
 --- @field NoLabel boolean
@@ -17810,6 +18818,7 @@ Osi = {}
 --- @field OnChange RegistryEntry
 --- @field PickerHueBar boolean
 --- @field PickerHueWheel boolean
+--- @field PickerNoRotate boolean
 --- @field Uint8 boolean
 
 
@@ -17829,6 +18838,7 @@ Osi = {}
 --- @field InputRGB boolean
 --- @field NoAlpha boolean
 --- @field NoBorder boolean
+--- @field NoColorMarkers boolean
 --- @field NoDragDrop boolean
 --- @field NoInputs boolean
 --- @field NoLabel boolean
@@ -17840,6 +18850,7 @@ Osi = {}
 --- @field OnChange RegistryEntry
 --- @field PickerHueBar boolean
 --- @field PickerHueWheel boolean
+--- @field PickerNoRotate boolean
 --- @field Uint8 boolean
 
 
@@ -17885,6 +18896,7 @@ Osi = {}
 --- @field AlwaysClamp boolean
 --- @field ClampOnInput boolean
 --- @field ClampZeroRange boolean
+--- @field ColorMarkers boolean
 --- @field Components int32
 --- @field Logarithmic boolean
 --- @field Max ivec4
@@ -17893,6 +18905,7 @@ Osi = {}
 --- @field NoRoundToFormat boolean
 --- @field NoSpeedTweaks boolean
 --- @field OnChange RegistryEntry
+--- @field Speed number
 --- @field Value ivec4
 --- @field WrapAround boolean
 
@@ -17901,6 +18914,7 @@ Osi = {}
 --- @field AlwaysClamp boolean
 --- @field ClampOnInput boolean
 --- @field ClampZeroRange boolean
+--- @field ColorMarkers boolean
 --- @field Components int32
 --- @field Logarithmic boolean
 --- @field Max vec4
@@ -17909,6 +18923,7 @@ Osi = {}
 --- @field NoRoundToFormat boolean
 --- @field NoSpeedTweaks boolean
 --- @field OnChange RegistryEntry
+--- @field Speed number
 --- @field Value vec4
 --- @field WrapAround boolean
 
@@ -17928,7 +18943,9 @@ Osi = {}
 
 
 --- @class ExtuiImageButton:ExtuiStyledRenderable
+--- @field AllowOverlap boolean
 --- @field Background vec4
+--- @field EnableNav boolean
 --- @field Image ExtuiImageReference
 --- @field MouseButtonLeft boolean
 --- @field MouseButtonMiddle boolean
@@ -17966,7 +18983,9 @@ Osi = {}
 --- @field ParseEmptyRefVal boolean
 --- @field Password boolean
 --- @field ReadOnly boolean
+--- @field Step int32?
 --- @field Value ivec4
+--- @field WordWrap boolean
 
 
 --- @class ExtuiInputScalar:ExtuiStyledRenderable
@@ -17991,7 +19010,9 @@ Osi = {}
 --- @field ParseEmptyRefVal boolean
 --- @field Password boolean
 --- @field ReadOnly boolean
+--- @field Step number?
 --- @field Value vec4
+--- @field WordWrap boolean
 
 
 --- @class ExtuiInputText:ExtuiStyledRenderable
@@ -18018,6 +19039,7 @@ Osi = {}
 --- @field ReadOnly boolean
 --- @field SizeHint vec2?
 --- @field Text string
+--- @field WordWrap boolean
 
 
 --- @class ExtuiMenu:ExtuiTreeParent
@@ -18063,6 +19085,7 @@ Osi = {}
 --- @field AllowOverlap boolean
 --- @field DontClosePopups boolean
 --- @field Highlight boolean
+--- @field OnDoubleClick RegistryEntry
 --- @field SelectableDisabled boolean
 --- @field Selected boolean
 --- @field Size vec2?
@@ -18079,6 +19102,7 @@ Osi = {}
 --- @field AlwaysClamp boolean
 --- @field ClampOnInput boolean
 --- @field ClampZeroRange boolean
+--- @field ColorMarkers boolean
 --- @field Components int32
 --- @field Logarithmic boolean
 --- @field Max ivec4
@@ -18097,6 +19121,7 @@ Osi = {}
 --- @field AlwaysClamp boolean
 --- @field ClampOnInput boolean
 --- @field ClampZeroRange boolean
+--- @field ColorMarkers boolean
 --- @field Components int32
 --- @field Logarithmic boolean
 --- @field Max vec4
@@ -18136,6 +19161,10 @@ Osi = {}
 --- @field ItemReadOnly boolean
 --- @field ItemWidth number?
 --- @field Label string
+--- @field LiveEditOnInputScalar boolean
+--- @field LiveEditOnInputText boolean
+--- @field Multiline boolean
+--- @field NoFocus boolean
 --- @field NoItemNav boolean
 --- @field NoMarkEdited boolean
 --- @field NoNavDefaultFocus boolean
@@ -18170,8 +19199,10 @@ Osi = {}
 --- @class ExtuiTabBar:ExtuiTreeParent
 --- @field AutoSelectNewTabs boolean
 --- @field DrawSelectedOverline boolean
+--- @field FittingPolicyMixed boolean
 --- @field FittingPolicyResizeDown boolean
 --- @field FittingPolicyScroll boolean
+--- @field FittingPolicyShrink boolean
 --- @field NoCloseWithMiddleMouseButton boolean
 --- @field NoTabListScrollingButtons boolean
 --- @field NoTooltip boolean
@@ -18210,6 +19241,7 @@ Osi = {}
 --- @field FreezeRows uint32
 --- @field Hideable boolean
 --- @field HighlightHoveredColumn boolean
+--- @field InnerWidth number
 --- @field NoBordersInBody boolean
 --- @field NoBordersInBodyUntilResize boolean
 --- @field NoClip boolean
@@ -18247,6 +19279,7 @@ Osi = {}
 
 --- @class ExtuiTableRow:ExtuiTreeParent
 --- @field Headers boolean
+--- @field MinHeight number
 --- @field AddCell fun(self:ExtuiTableRow):ExtuiTableCell
 
 
@@ -18264,10 +19297,15 @@ Osi = {}
 --- @field Bullet boolean
 --- @field CollapsingHeader boolean
 --- @field DefaultOpen boolean
+--- @field DrawLinesFull boolean
+--- @field DrawLinesNone boolean
+--- @field DrawLinesToNodes boolean
 --- @field FramePadding boolean
 --- @field Framed boolean
+--- @field LabelSpanAllColumns boolean
 --- @field Leaf boolean
 --- @field NavLeftJumpsBackHere boolean
+--- @field NavLeftJumpsToParent boolean
 --- @field NoAutoOpenOnLog boolean
 --- @field NoTreePushOnOpen boolean
 --- @field OnCollapse RegistryEntry
@@ -18278,6 +19316,7 @@ Osi = {}
 --- @field SpanAllColumns boolean
 --- @field SpanAvailWidth boolean
 --- @field SpanFullWidth boolean
+--- @field SpanLabelWidth boolean
 --- @field SpanTextWidth boolean
 --- @field SetOpen fun(self:ExtuiTree, a1:boolean, a2:GuiCond?)
 
@@ -18320,11 +19359,13 @@ Osi = {}
 --- @field AddTree fun(self:ExtuiTreeParent, a1:string):ExtuiTree
 --- @field AttachChild fun(self:ExtuiTreeParent, a1:ImguiHandle):boolean
 --- @field DetachChild fun(self:ExtuiTreeParent, a1:ImguiHandle):boolean
+--- @field RemoveAllChildren fun(self:ExtuiTreeParent)
 --- @field RemoveChild fun(self:ExtuiTreeParent, a1:ImguiHandle):boolean
 
 
 --- @class ExtuiWindow:ExtuiWindowBase
 --- @field Closeable boolean
+--- @field MainMenu ImguiHandle
 --- @field OnClose RegistryEntry
 --- @field Open boolean
 --- @field Scaling GuiMeasureScaling
@@ -18406,6 +19447,7 @@ Osi = {}
 --- @field Sequences GnGenomeSequence[]
 --- @field Variables GnGenomeVariant[]
 --- @field VariablesForEdit GnGenomeVariant[]
+--- @field GetNode fun(self:GnGenomeBlueprintInstance, a1:uint32)
 
 
 --- @class GnGenomeEventArgs
@@ -18444,6 +19486,54 @@ Osi = {}
 --- @field InputVariables uint16[]
 --- @field NodeEvents table<FixedString, uint16[]>
 --- @field OutputVariables uint16[]
+
+
+--- @class GnGenomeTimelineActiveAnimations:GnGenomeTimelineAnimation
+--- @field AdditiveAnimations GnGenomeTimelineAnimationPair[]
+--- @field Animations GnGenomeTimelineAnimationPair[]
+--- @field LayeredAnimations GnGenomeTimelineAnimationPair[]
+
+
+--- @class GnGenomeTimelineAnimation
+--- @field AdditiveFadeIn number
+--- @field AdditiveLoopingAnimation FixedString
+--- @field Animation FixedString
+--- @field BoneGroupId Guid
+--- @field EnableRootMotion boolean
+--- @field EndTime number
+--- @field HeadCorrection vec4
+--- @field HoldAnimation boolean
+--- @field IsContinuous boolean
+--- @field IsMirrored boolean
+--- @field PerformanceDriftType boolean
+--- @field PlayRate number
+--- @field PlayStartOffset number
+--- @field Source FixedString
+--- @field StartTime number
+--- @field Voice boolean
+--- @field field_24 uint32
+
+
+--- @class GnGenomeTimelineAnimationPair
+--- @field AnimA GnGenomeTimelineAnimation
+--- @field AnimB GnGenomeTimelineAnimation
+--- @field EndTimeWithFade number
+--- @field EndTimeWithFadeOffset number
+--- @field StartTimeWithFade number
+--- @field StartTimeWithFadeOffset number
+--- @field field_0 Guid
+--- @field field_10 uint8
+--- @field field_11 uint8
+--- @field field_D4 int32
+
+
+--- @class GnGenomeTimelineData
+--- @field Animations GnGenomeTimelineActiveAnimations[]
+--- @field field_0 uint64
+--- @field field_10 number
+--- @field field_18 uint8
+--- @field field_19 uint8
+--- @field field_8 number
 
 
 --- @class GnGenomeVariableTemplate
@@ -18537,6 +19627,40 @@ Osi = {}
 
 --- @class HitWeaponComponent:BaseComponent
 --- @field Weapon EntityHandle
+
+
+--- @class HotbarBar
+--- @field Controller uint8
+--- @field Elements HotbarSlot[]
+--- @field Height uint32
+--- @field Index uint8
+--- @field Name string
+--- @field Width uint8
+--- @field field_1 uint8
+--- @field field_20 string
+
+
+--- @class HotbarContainerComponent:BaseComponent
+--- @field ActiveContainer FixedString
+--- @field Containers table<FixedString, HotbarBar[]>
+--- @field Locked boolean
+
+
+--- @class HotbarContainerKeyCreatedOneFrameComponent:BaseComponent
+--- @field Key FixedString
+
+
+--- @class HotbarCurrentDecksComponent:BaseComponent
+--- @field Decks table<FixedString, int32>
+
+
+--- @class HotbarSlot
+--- @field Delete boolean
+--- @field IsNew boolean
+--- @field Item EntityHandle
+--- @field Passive FixedString
+--- @field Slot uint32
+--- @field SpellId SpellId
 
 
 --- @class InputFireEventDesc
@@ -18953,7 +20077,7 @@ Osi = {}
 
 
 --- @class InterruptDecisionComponent:BaseComponent
---- @field Decisions table<InterruptInterruptEvent, uint8>
+--- @field Decisions table<InterruptInterruptEvent, InterruptDecision>
 
 
 --- @class InterruptDelayedTargetHitInterruptEvent
@@ -19058,7 +20182,7 @@ Osi = {}
 
 
 --- @class InterruptPreferencesComponent:BaseComponent
---- @field Preferences table<FixedString, uint8>
+--- @field Preferences table<FixedString, InterruptInteractionTypes>
 
 
 --- @class InterruptPreparedComponent:BaseComponent
@@ -19350,11 +20474,19 @@ Osi = {}
 --- @class ItemTemplateWalkOnComponent:BaseComponent
 
 
---- @class LuaDoConsoleCommandEvent:LuaEventBase
+--- @class LuaDoConsoleCommandEventParams:LuaEventBase
 --- @field Command string
 
 
---- @class LuaEmptyEvent:LuaEventBase
+--- @class LuaEmptyEventParams:LuaEventBase
+
+
+--- @class LuaEntityTracingOptions
+--- @field ExcludeModificationComponents string[]
+--- @field TrackECB boolean
+--- @field TrackImmediateWorldCache boolean
+--- @field TrackModifications boolean
+--- @field TrackReplication boolean
 
 
 --- @class LuaEventBase
@@ -19366,11 +20498,11 @@ Osi = {}
 --- @field StopPropagation fun(self:LuaEventBase)
 
 
---- @class LuaFindPathEvent:LuaEventBase
+--- @class LuaFindPathEventParams:LuaEventBase
 --- @field Path AiPath
 
 
---- @class LuaNetMessageEvent:LuaEventBase
+--- @class LuaNetMessageEventParams:LuaEventBase
 --- @field Binary boolean
 --- @field Channel StringView
 --- @field Module Guid?
@@ -19379,8 +20511,92 @@ Osi = {}
 --- @field UserID UserId
 
 
---- @class LuaTickEvent:LuaEventBase
+--- @class LuaTickEventParams:LuaEventBase
 --- @field Time GameTime
+
+
+--- @class MaterialResourceParameter
+--- @field Enabled boolean
+--- @field ParameterName FixedString
+
+
+--- @class MaterialScalarParameterPreset
+--- @field Color boolean
+--- @field Custom boolean
+--- @field Enabled boolean
+--- @field Parameter FixedString
+--- @field Value number
+
+
+--- @class MaterialScalarResourceParameter:MaterialResourceParameter
+--- @field BaseValue number
+--- @field Value number
+
+
+--- @class MaterialTexture2DParameterPreset
+--- @field Color boolean
+--- @field Custom boolean
+--- @field Enabled boolean
+--- @field Parameter FixedString
+--- @field Value FixedString
+
+
+--- @class MaterialTexture2DResourceParameter:MaterialResourceParameter
+--- @field ID FixedString
+
+
+--- @class MaterialVector2ParameterPreset
+--- @field Color boolean
+--- @field Custom boolean
+--- @field Enabled boolean
+--- @field Parameter FixedString
+--- @field Value vec2
+
+
+--- @class MaterialVector2ResourceParameter:MaterialResourceParameter
+--- @field BaseValue vec2
+--- @field Value vec2
+
+
+--- @class MaterialVector3ParameterPreset
+--- @field Color boolean
+--- @field Custom boolean
+--- @field Enabled boolean
+--- @field Parameter FixedString
+--- @field Value vec3
+
+
+--- @class MaterialVector3ResourceParameter:MaterialResourceParameter
+--- @field BaseValue vec3
+--- @field IsColor boolean
+--- @field Value vec3
+
+
+--- @class MaterialVector4ResourceParameter:MaterialResourceParameter
+--- @field BaseValue avec4
+--- @field IsColor boolean
+--- @field Value avec4
+
+
+--- @class MaterialVectorParameterPreset
+--- @field Color boolean
+--- @field Custom boolean
+--- @field Enabled boolean
+--- @field Parameter FixedString
+--- @field Value avec4
+
+
+--- @class MaterialVirtualTextureParameterPreset
+--- @field Color boolean
+--- @field Custom boolean
+--- @field Enabled boolean
+--- @field Parameter FixedString
+--- @field Value FixedString
+
+
+--- @class MaterialVirtualTextureResourceParameter:MaterialResourceParameter
+--- @field ID FixedString
+--- @field Index int32
 
 
 --- @class MultiplayerHostComponent:BaseComponent
@@ -20365,9 +21581,18 @@ Osi = {}
 
 
 --- @class ResourceDialogResource:ResourceLoadableResource
+--- @field AllowDeadSpeakers boolean
+--- @field Automated boolean
+--- @field BlockFTB boolean
 --- @field ChildResources Guid[]
---- @field Flags uint8
---- @field Flags2 uint8
+--- @field EnableTimeline boolean
+--- @field Flags DialogResourceFlags
+--- @field Flags2 DialogResourceFlags2
+--- @field IsAllowingJoinCombat boolean
+--- @field IsBehaviour boolean
+--- @field IsPrivateDialog boolean
+--- @field IsSubbedDialog boolean
+--- @field IsWorld boolean
 --- @field Name string
 --- @field SpeakerSlotsWithLines uint8[]
 --- @field TimelineSplitScreenPriority uint8
@@ -20571,7 +21796,7 @@ Osi = {}
 --- @class ResourceFlag:ResourceGuidResource
 --- @field Description string
 --- @field Name FixedString
---- @field Usage uint8
+--- @field Usage FlagType
 
 
 --- @class ResourceFlagSoundState:ResourceGuidResource
@@ -20734,48 +21959,12 @@ Osi = {}
 --- @field Instance Material
 --- @field MaterialType MaterialType
 --- @field RenderChannel RenderChannel
---- @field ScalarParameters ResourceMaterialResourceScalarParameter[]
---- @field Texture2DParameters ResourceMaterialResourceTexture2DParameter[]
---- @field Vector2Parameters ResourceMaterialResourceVector2Parameter[]
---- @field Vector3Parameters ResourceMaterialResourceVector3Parameter[]
---- @field VectorParameters ResourceMaterialResourceVector4Parameter[]
---- @field VirtualTextureParameters ResourceMaterialResourceVirtualTextureParameter[]
-
-
---- @class ResourceMaterialResourceParameter
---- @field Enabled boolean
---- @field ParameterName FixedString
-
-
---- @class ResourceMaterialResourceScalarParameter:ResourceMaterialResourceParameter
---- @field BaseValue number
---- @field Value number
-
-
---- @class ResourceMaterialResourceTexture2DParameter:ResourceMaterialResourceParameter
---- @field ID FixedString
-
-
---- @class ResourceMaterialResourceVector2Parameter:ResourceMaterialResourceParameter
---- @field BaseValue vec2
---- @field Value vec2
-
-
---- @class ResourceMaterialResourceVector3Parameter:ResourceMaterialResourceParameter
---- @field BaseValue vec3
---- @field IsColor boolean
---- @field Value vec3
-
-
---- @class ResourceMaterialResourceVector4Parameter:ResourceMaterialResourceParameter
---- @field BaseValue avec4
---- @field IsColor boolean
---- @field Value avec4
-
-
---- @class ResourceMaterialResourceVirtualTextureParameter:ResourceMaterialResourceParameter
---- @field ID FixedString
---- @field Index int32
+--- @field ScalarParameters MaterialScalarResourceParameter[]
+--- @field Texture2DParameters MaterialTexture2DResourceParameter[]
+--- @field Vector2Parameters MaterialVector2ResourceParameter[]
+--- @field Vector3Parameters MaterialVector3ResourceParameter[]
+--- @field VectorParameters MaterialVector4ResourceParameter[]
+--- @field VirtualTextureParameters MaterialVirtualTextureResourceParameter[]
 
 
 --- @class ResourceMaterialSetResource:ResourceTwoStepLoadableResource
@@ -20813,7 +22002,7 @@ Osi = {}
 --- @field Description TranslatedString
 --- @field DisplayName TranslatedString
 --- @field ExcludesOriginUUID Guid
---- @field Flags uint32
+--- @field Flags OriginFlags
 --- @field GlobalTemplate Guid
 --- @field GodUUID Guid
 --- @field Identity uint8
@@ -20964,66 +22153,18 @@ Osi = {}
 --- @class ResourcePresetData
 --- @field MaterialPresets table<FixedString, ResourcePresetDataMapped>
 --- @field MaterialResource FixedString
---- @field ScalarParameters ResourcePresetDataScalarParameter[]
---- @field Texture2DParameters ResourcePresetDataTexture2DParameter[]
---- @field Vector2Parameters ResourcePresetDataVector2Parameter[]
---- @field Vector3Parameters ResourcePresetDataVector3Parameter[]
---- @field VectorParameters ResourcePresetDataVectorParameter[]
---- @field VirtualTextureParameters ResourcePresetDataVirtualTextureParameter[]
+--- @field ScalarParameters MaterialScalarParameterPreset[]
+--- @field Texture2DParameters MaterialTexture2DParameterPreset[]
+--- @field Vector2Parameters MaterialVector2ParameterPreset[]
+--- @field Vector3Parameters MaterialVector3ParameterPreset[]
+--- @field VectorParameters MaterialVectorParameterPreset[]
+--- @field VirtualTextureParameters MaterialVirtualTextureParameterPreset[]
 
 
 --- @class ResourcePresetDataMapped
 --- @field ForcePresetValues boolean
 --- @field GroupName FixedString
 --- @field MaterialPresetResource FixedString
-
-
---- @class ResourcePresetDataScalarParameter
---- @field Color boolean
---- @field Custom boolean
---- @field Enabled boolean
---- @field Parameter FixedString
---- @field Value number
-
-
---- @class ResourcePresetDataTexture2DParameter
---- @field Color boolean
---- @field Custom boolean
---- @field Enabled boolean
---- @field Parameter FixedString
---- @field Value FixedString
-
-
---- @class ResourcePresetDataVector2Parameter
---- @field Color boolean
---- @field Custom boolean
---- @field Enabled boolean
---- @field Parameter FixedString
---- @field Value vec2
-
-
---- @class ResourcePresetDataVector3Parameter
---- @field Color boolean
---- @field Custom boolean
---- @field Enabled boolean
---- @field Parameter FixedString
---- @field Value vec3
-
-
---- @class ResourcePresetDataVectorParameter
---- @field Color boolean
---- @field Custom boolean
---- @field Enabled boolean
---- @field Parameter FixedString
---- @field Value avec4
-
-
---- @class ResourcePresetDataVirtualTextureParameter
---- @field Color boolean
---- @field Custom boolean
---- @field Enabled boolean
---- @field Parameter FixedString
---- @field Value FixedString
 
 
 --- @class ResourceProgression:ResourceGuidResource
@@ -21246,49 +22387,49 @@ Osi = {}
 
 --- @class ResourceShapeshiftRule:ResourceGuidResource
 --- @field AbilityChanges ResourceShapeshiftRuleTypedInt[]
---- @field ActionCapabilities uint16
+--- @field ActionCapabilities CanDoActionsFlags
 --- @field ApplySpellsFromTemplate boolean
 --- @field ApplyTagsFromTemplate boolean
 --- @field ApplyVisual boolean
 --- @field ApplyVisualInCC boolean
---- @field AwarenessCapabilities uint16
+--- @field AwarenessCapabilities AwarenessCapabilityFlags
 --- @field BaseACOverride boolean
 --- @field BlockLevelUp boolean
---- @field BloodSurfaceTypeInheritanceType uint8
+--- @field BloodSurfaceTypeInheritanceType ShapeshiftInheritanceType
 --- @field ChangeAi boolean
 --- @field ChangeBodyType boolean
 --- @field ChangeIcon boolean
 --- @field ChangeRace boolean
 --- @field ChangeScript string?
---- @field DeathActionsInheritanceType uint8
---- @field DefaultBoostsInheritanceType uint8
---- @field DifficultyStatusesInheritanceType uint8
+--- @field DeathActionsInheritanceType ShapeshiftInheritanceType
+--- @field DefaultBoostsInheritanceType ShapeshiftInheritanceType
+--- @field DifficultyStatusesInheritanceType ShapeshiftInheritanceType
 --- @field DisableEquipmentSlots boolean
 --- @field DummyClass Guid?
---- @field FlagsInheritanceType uint8
+--- @field FlagsInheritanceType ShapeshiftInheritanceType
 --- @field FootstepsType uint8
---- @field HitBloodTypeInheritanceType uint8
+--- @field HitBloodTypeInheritanceType ShapeshiftInheritanceType
 --- @field Hp ResourceShapeshiftRuleTypedInt
 --- @field IgnoreCustomLooks boolean
---- @field InteractionsCapabilities uint16
+--- @field InteractionsCapabilities CanInteractFlags
 --- @field KillEntityAtZeroHP boolean
 --- @field MuteEquipmentSound boolean
 --- @field OverrideSpeaker boolean
---- @field PassivesInheritanceType uint8
+--- @field PassivesInheritanceType ShapeshiftInheritanceType
 --- @field PathInfluence string
---- @field PersonalStatusImmunitiesInheritanceType uint8
---- @field ProficiencyGroupsInheritanceType uint8
+--- @field PersonalStatusImmunitiesInheritanceType ShapeshiftInheritanceType
+--- @field ProficiencyGroupsInheritanceType ShapeshiftInheritanceType
 --- @field RemoveOldTags boolean
 --- @field RemovePrevSpells boolean
---- @field ResistancesInheritanceType uint8
+--- @field ResistancesInheritanceType ShapeshiftInheritanceType
 --- @field RetainCanSeeThrough boolean
 --- @field RetainCanShootThrough boolean
 --- @field RetainCanWalkThrough boolean
 --- @field RetainDisplayName boolean
 --- @field RuleName string
 --- @field Scale ResourceShapeshiftRuleTypedFloat
---- @field SpeakingCapabilities uint16
---- @field SpellCastingAbilityInheritanceType uint8
+--- @field SpeakingCapabilities SpeakingCapabilityFlags
+--- @field SpellCastingAbilityInheritanceType ShapeshiftInheritanceType
 --- @field SpellsAdd FixedString[]
 --- @field SpellsRemove FixedString[]
 --- @field TagsAdd Guid[]
@@ -21302,12 +22443,12 @@ Osi = {}
 
 
 --- @class ResourceShapeshiftRuleTypedFloat
---- @field Type uint8
+--- @field Type ShapeshiftChangeType
 --- @field Value number
 
 
 --- @class ResourceShapeshiftRuleTypedInt
---- @field Type uint8
+--- @field Type ShapeshiftChangeType
 --- @field Value int32
 
 
@@ -21374,8 +22515,10 @@ Osi = {}
 
 --- @class ResourceSoundResource:ResourceResource
 --- @field Duration number
---- @field Flags uint8
+--- @field Flags SoundResourceFlags
+--- @field IsInternal boolean
 --- @field MaxDistance number
+--- @field Preload boolean
 --- @field SoundCodec AudioCodec
 --- @field SoundEvent FixedString
 --- @field SoundEventID uint32
@@ -21433,13 +22576,57 @@ Osi = {}
 
 
 --- @class ResourceTag:ResourceGuidResource
---- @field Categories uint32
+--- @field AffectsSpell boolean
+--- @field AlchemyExtract boolean
+--- @field AlchemyExtractAir boolean
+--- @field AlchemyExtractEarth boolean
+--- @field AlchemyExtractFey boolean
+--- @field AlchemyExtractFire boolean
+--- @field AlchemyExtractShadow boolean
+--- @field AlchemyExtractWater boolean
+--- @field AlchemyIngredient boolean
+--- @field AlchemySolution boolean
+--- @field AlchemySolutionCoating boolean
+--- @field AlchemySolutionElixir boolean
+--- @field AlchemySolutionGrenade boolean
+--- @field AlchemySolutionPotion boolean
+--- @field Avatar boolean
+--- @field Background boolean
+--- @field Categories TagCategoryFlags
+--- @field CharacterSheet boolean
+--- @field Class boolean
+--- @field Class_Deity boolean
+--- @field Coating boolean
+--- @field Code boolean
+--- @field Deity boolean
 --- @field Description string
+--- @field Dialog boolean
+--- @field DialogHidden boolean
 --- @field DisplayDescription TranslatedString
 --- @field DisplayName TranslatedString
+--- @field EnterCombatInCurrentRound boolean
+--- @field Female boolean
+--- @field FullIllithid boolean
+--- @field HalfIllithid boolean
+--- @field HasExclamationDialog boolean
 --- @field Icon FixedString
+--- @field Identity boolean
+--- @field IdentityTag boolean
+--- @field Male boolean
 --- @field Name FixedString
---- @field Properties uint32
+--- @field Neutral boolean
+--- @field Origin boolean
+--- @field PlayerRace boolean
+--- @field PolymorphedUnwilling boolean
+--- @field Profession boolean
+--- @field Properties TagPropertyFlags
+--- @field Race boolean
+--- @field Race_Meta boolean
+--- @field SpellCondition boolean
+--- @field Story boolean
+--- @field Tadpoled boolean
+--- @field Trader boolean
+--- @field Voice boolean
 
 
 --- @class ResourceTagSoundState:ResourceGuidResource
@@ -21604,7 +22791,10 @@ Osi = {}
 
 
 --- @class ResourceVirtualTextureResource:ResourceLoadableResource
+--- @field GTSIndex uint8
 --- @field GTexFileName FixedString
+--- @field IsEditor uint8
+--- @field IsValid uint8
 --- @field LoadedVirtualTextureLayerConfig uint32
 --- @field Prefetch boolean
 --- @field PrefetchMipLevel int8
@@ -21612,8 +22802,6 @@ Osi = {}
 --- @field RootPath string
 --- @field TileSetFileName FixedString
 --- @field VirtualTextureLayerConfig uint32
---- @field field_52 uint8
---- @field field_80 uint8
 
 
 --- @class ResourceVisualLocatorAttachment:ResourceGuidResource
@@ -21800,6 +22988,120 @@ Osi = {}
 --- @field ViewDirty boolean
 --- @field WorldTransform Transform
 --- @field field_58 vec3
+
+
+--- @class RfRenderView
+--- @field DebugName string
+--- @field DisableShadowFading boolean
+--- @field IsRecording boolean
+--- @field ReadState RfRenderViewState
+--- @field RenderOrder int32
+--- @field SplitScreenIndex uint8
+--- @field ViewIndex int32
+--- @field WriteState RfRenderViewState
+--- @field field_2144 int32
+
+
+--- @class RfRenderViewState
+--- @field CameraController RfCameraController
+--- @field DisplayResolution RfViewport
+--- @field Enabled boolean
+--- @field FullscreenUIRefCount int32
+--- @field Offset vec2
+--- @field OwnerInputPlayerIndex uint8
+--- @field RenderResolution RfViewport
+--- @field Scale vec2
+--- @field UpscaledResolution RfViewport
+--- @field field_79 uint8
+--- @field field_7A uint8
+--- @field field_7B uint8
+--- @field field_7C int32
+
+
+--- @class RfViewport
+--- @field Height int32
+--- @field OffsetX int32
+--- @field OffsetY int32
+--- @field Width int32
+--- @field field_0 number
+--- @field field_4 number
+--- @field field_8 number
+--- @field field_C number
+
+
+--- @class RfSbBinding
+--- @field DxCsIndex uint8
+--- @field DxPsIndex uint8
+--- @field DxVsIndex uint8
+--- @field ShaderStage uint8
+--- @field VkBindingIndex uint8
+--- @field VkDescriptorSet uint8
+--- @field field_2 uint8
+--- @field field_3 uint8
+--- @field field_4 uint8
+
+
+--- @class RfSbCoverageParams
+--- @field HeightMin number
+--- @field HeightScale number
+--- @field Offset vec2
+
+
+--- @class RfSbPerCamera
+--- @field FarPlane number
+--- @field JitteredProjectionMatrix mat4
+--- @field NearPlane number
+--- @field ViewMatrix mat4
+--- @field WorldTranslate vec3
+--- @field field_80 vec4
+--- @field field_90 vec4
+--- @field field_A0 vec4
+--- @field field_B0 vec4
+--- @field field_C8 number
+--- @field field_CC number
+--- @field field_DC number
+
+
+--- @class RfSbPerView
+--- @field CastMoonLightActive number
+--- @field CloudHeightMin number
+--- @field CloudShadowFactor number
+--- @field FoVBasedLodsDistanceMultiplier number
+--- @field InvertedViewMatrix mat4
+--- @field LightingInterpolation number
+--- @field LinearClearColor vec4
+--- @field PrevCoverage RfSbCoverageParams
+--- @field PrevCoverageStartHeight number
+--- @field PrevCoverageTransform vec3
+--- @field PrevSkyDomeEnabled number
+--- @field PrevSkyLightIntensity number
+--- @field PrevSunRotation vec3
+--- @field PrevSunYaw number
+--- @field ScatteringIntensity number
+--- @field SkyDomeEnabled number
+--- @field SkyLightColor vec3
+--- @field SkyLightIntensity number
+--- @field SkyLightScatteringSunColor vec3
+--- @field SunCoverageStartHeight number
+--- @field SunCoverageTransform vec3
+--- @field SunDir vec4
+--- @field SunLight vec3
+--- @field SunLightDirection vec3
+--- @field SunLocalCoverageScalar number
+--- @field SunRotation vec3
+--- @field SunScatteringIntensity number
+--- @field SunScatteringIntensityScale number
+--- @field SunYaw number
+--- @field TargetCoverage RfSbCoverageParams
+--- @field TargetCoverageStartHeight int32
+--- @field TargetCoverageTransform vec3
+--- @field TargetSunCoverage RfSbCoverageParams
+--- @field WindDirection number
+--- @field WindDirectionY number
+--- @field WindSpeed number
+--- @field field_70 vec4
+--- @field field_80 vec4
+--- @field field_90 vec4
 
 
 --- @class ShapeshiftAnimationComponent:BaseComponent
@@ -22400,9 +23702,12 @@ Osi = {}
 --- @field Attack AttackDesc
 --- @field Caster EntityRef
 --- @field CasterProxy EntityRef
+--- @field CheckedAbility AbilityId
+--- @field CheckedSkill SkillId
 --- @field Hit HitDesc
 --- @field HitWith HitWith
 --- @field IsFromItem boolean
+--- @field PassiveId FixedString
 --- @field Position vec3
 --- @field SomeRadius number
 --- @field SpellId SpellIdWithPrototype
@@ -22412,8 +23717,8 @@ Osi = {}
 --- @field Target EntityRef
 --- @field TargetProxy EntityRef
 --- @field field_26C FixedString
---- @field field_315 uint8
---- @field field_316 uint8
+--- @field field_315 AbilityId
+--- @field field_316 SkillId
 
 
 --- @class StatsBoostPrototype
@@ -22555,6 +23860,17 @@ Osi = {}
 --- @field UseCasterStats boolean
 
 
+--- @class StatsEquipmentGroup
+--- @field Equipment FixedString[]
+--- @field Name FixedString
+
+
+--- @class StatsEquipmentSet
+--- @field EquipmentGroups StatsEquipmentGroup[]
+--- @field Name FixedString
+--- @field WeaponSetType uint8
+
+
 --- @class StatsExecuteWeaponFunctorsFunctor:StatsFunctor
 --- @field WeaponType ExecuteWeaponFunctorsType
 
@@ -22596,6 +23912,8 @@ Osi = {}
 --- @class StatsFunctorGroup
 --- @field Functors StatsFunctor[]
 --- @field TextKey FixedString
+--- @field AddNew fun(self:StatsFunctorGroup, a1:StatsFunctorId):StatsFunctor
+--- @field Remove fun(self:StatsFunctorGroup, a1:StatsFunctor):boolean
 
 
 --- @class StatsFunctors:StatsCNamedElementManager_StatsFunctor
@@ -22644,7 +23962,90 @@ Osi = {}
 --- @field SuccessFunctors StatsFunctors
 
 
+--- @class StatsItemCombination
+--- @field AlchemyCombineType uint8
+--- @field DyeColorPresetResource Guid
+--- @field Ingredients StatsItemCombinationIngredient[]
+--- @field Name FixedString
+--- @field Results StatsItemCombinationResult[]
+
+
+--- @class StatsItemCombinationIngredient
+--- @field CombineType uint8
+--- @field IngredientType uint32
+--- @field Object FixedString
+--- @field TransformType uint32
+
+
+--- @class StatsItemCombinationPreviewData
+--- @field Name FixedString
+--- @field StatsID FixedString
+--- @field Tooltip FixedString
+--- @field Type FixedString
+--- @field UniqueName FixedString
+
+
+--- @class StatsItemCombinationProperty
+--- @field Entries StatsItemCombinationPropertyEntry[]
+--- @field Icon FixedString
+--- @field Name FixedString
+--- @field Tooltip FixedString
+
+
+--- @class StatsItemCombinationPropertyEntry
+--- @field ID FixedString
+--- @field Result FixedString
+--- @field Type uint32
+
+
+--- @class StatsItemCombinationResult
+--- @field Items StatsItemCombinationResultItem[]
+--- @field PreviewIcon FixedString
+--- @field PreviewStatsID FixedString
+--- @field PreviewTooltip FixedString
+--- @field field_18 TranslatedString
+
+
+--- @class StatsItemCombinationResultItem
+--- @field Amount int32
+--- @field Result FixedString
+
+
+--- @class StatsItemGroup
+--- @field LevelGroups StatsLevelGroup[]
+--- @field Name FixedString
+--- @field field_4 int32
+
+
+--- @class StatsItemType
+--- @field Color string
+--- @field Index int32
+--- @field LevelGroups StatsItemTypeLevelGroup[]
+--- @field Name FixedString
+--- @field Name2 FixedString
+--- @field Name3 FixedString
+--- @field Name4 FixedString
+--- @field field_1C number
+
+
+--- @class StatsItemTypeBoostGroup
+--- @field Boosts FixedString[]
+--- @field field_10 int32
+
+
+--- @class StatsItemTypeLevelGroup
+--- @field BoostGroups StatsItemTypeBoostGroup[]
+--- @field Type int32
+
+
 --- @class StatsKillFunctor:StatsFunctor
+
+
+--- @class StatsLevelGroup
+--- @field MaxLevel int32
+--- @field MinLevel int32
+--- @field Name FixedString
+--- @field RootGroups StatsRootGroup[]
 
 
 --- @class StatsMaximizeRollFunctor:StatsFunctor
@@ -22671,6 +24072,25 @@ Osi = {}
 --- @field Position vec3
 --- @field Source EntityRef
 --- @field Target EntityRef
+
+
+--- @class StatsNameGroup
+--- @field Name FixedString
+--- @field Names StatsNameGroupName[]
+--- @field NamesCool StatsNameGroupName[]
+
+
+--- @class StatsNameGroupLink
+--- @field Frequency int32
+--- @field ItemName FixedString
+--- @field NameGroup FixedString
+--- @field Type int32
+
+
+--- @class StatsNameGroupName
+--- @field Frequency int32
+--- @field Name TranslatedString
+--- @field Name2 TranslatedString
 
 
 --- @class StatsNearbyAttackedContextData:StatsContextData
@@ -22702,13 +24122,14 @@ Osi = {}
 --- @field Using FixedString
 --- @field CopyFrom fun(self:StatsObject, a1:StatsObject, a2:FixedString):boolean
 --- @field SetPersistence fun(self:StatsObject, a1:StatsObject, a2:boolean)
---- @field SetRawAttribute fun(self:StatsObject, a1:StatsObject, a2:FixedString, a3:string):boolean
+--- @field SetRawAttribute fun(self:StatsObject, a1:StatsObject, a2:FixedString, a3:StringView):boolean
 --- @field Sync fun(self:StatsObject, a1:StatsObject, a2:boolean?)
 
 
 --- @class StatsPassivePrototype
 --- @field BoostConditionsIndex stats::ConditionId
 --- @field BoostContext uint64
+--- @field Boosts Guid[]
 --- @field ConditionsIndex stats::ConditionId
 --- @field Description StatsDescriptionInfo
 --- @field EnabledConditions stats::ConditionId
@@ -22799,6 +24220,13 @@ Osi = {}
 --- @field HealingType HealingType
 --- @field HealthPercentage number
 --- @field Probability number
+
+
+--- @class StatsRootGroup
+--- @field Frequency int32
+--- @field NameGroups StatsNameGroupLink[]
+--- @field RootGroup FixedString
+--- @field field_10 FixedString
 
 
 --- @class StatsSabotageFunctor:StatsFunctor
@@ -22897,6 +24325,7 @@ Osi = {}
 --- @field HitAnimationType uint8
 --- @field HitCostGroups StatsTextKeyHitCosts[]
 --- @field InterruptPrototype FixedString
+--- @field IsWeaponAttack boolean
 --- @field ItemWall FixedString
 --- @field Level int32
 --- @field LineOfSightFlags uint32
@@ -22935,7 +24364,7 @@ Osi = {}
 --- @field VerbalIntent uint32
 --- @field WeaponTypes uint32
 --- @field field_101 uint8
---- @field field_299 uint8
+--- @field field_299 boolean
 
 
 --- @class StatsSpellPrototypeAnimationData
@@ -22949,6 +24378,13 @@ Osi = {}
 --- @field Part6 FixedString[]
 --- @field Part7 FixedString[]
 --- @field Part8 FixedString[]
+
+
+--- @class StatsSpellSet
+--- @field Ability AbilityId
+--- @field LearningStrategy uint32
+--- @field Name FixedString
+--- @field Spells FixedString[]
 
 
 --- @class StatsStabilizeFunctor:StatsFunctor
@@ -23089,6 +24525,7 @@ Osi = {}
 --- @field StartLevel int32
 --- @field TotalCount int32
 --- @field TotalFrequency int32
+--- @field field_54 FixedString
 
 
 --- @class StatsTreasureSubTableCategory
@@ -23386,10 +24823,15 @@ Osi = {}
 
 
 --- @class UiUIWidget:NoesisFrameworkElement
---- @field StateGuid Guid
---- @field WidgetContainerGrid NoesisFrameworkElement
+--- @field FileName string
+--- @field Flags uint8
+--- @field Flags2 uint8
+--- @field Flags3 uint8
+--- @field IndexInLayer int32
+--- @field LayerIndex int32
+--- @field PlayerId int16
+--- @field StateId Guid
 --- @field WidgetData UiUIStateWidget
---- @field XAMLPath string
 
 
 --- @class UiUIWidgetMetadata
@@ -24088,6 +25530,7 @@ local Ext_ClientAudio = {}
 --- @field SetFontScaleMultiplier fun(a1:number)
 --- @field SetScale fun(a1:number)
 --- @field SetUIScaleMultiplier fun(a1:number)
+--- @field ToggleDebugTools fun(a1:GuiDebugToolFlags)
 local Ext_ClientIMGUI = {}
 
 
@@ -24098,6 +25541,31 @@ local Ext_ClientIMGUI = {}
 --- @field InjectKeyPress fun(a1:SDLScanCode, a2:SDLKeyModifier?)
 --- @field InjectKeyUp fun(a1:SDLScanCode, a2:SDLKeyModifier?)
 local Ext_ClientInput = {}
+
+
+
+--- @class Ext_ClientLevel
+--- @field BeginPathfinding fun(a1:EntityHandle, a2:vec3, a3:RegistryEntry):AiPath
+--- @field BeginPathfindingImmediate fun(a1:EntityHandle, a2:vec3):AiPath
+--- @field FindPath fun(a1:AiPath):boolean
+--- @field GetActivePathfindingRequests fun():AiPath[]
+--- @field GetEntitiesOnTile fun(a1:vec3):EntityHandle[]
+--- @field GetHeightsAt fun(a1:number, a2:number):number[]
+--- @field GetPathById fun(a1:int32):AiPath
+--- @field GetTileDebugInfo fun(a1:vec3):AiGridLuaTile
+--- @field RaycastAll fun(a1:vec3, a2:vec3, a3:PhysicsType, a4:PhysicsGroupFlags, a5:PhysicsGroupFlags, a6:int32):PhxPhysicsHitAll
+--- @field RaycastAny fun(a1:vec3, a2:vec3, a3:PhysicsType, a4:PhysicsGroupFlags, a5:PhysicsGroupFlags, a6:int32):boolean
+--- @field RaycastClosest fun(a1:vec3, a2:vec3, a3:PhysicsType, a4:PhysicsGroupFlags, a5:PhysicsGroupFlags, a6:int32):PhxPhysicsHit
+--- @field ReleasePath fun(a1:AiPath)
+--- @field SweepBoxAll fun(a1:vec3, a2:vec3, a3:vec3, a4:PhysicsType, a5:PhysicsGroupFlags, a6:PhysicsGroupFlags, a7:int32):PhxPhysicsHitAll
+--- @field SweepBoxClosest fun(a1:vec3, a2:vec3, a3:vec3, a4:PhysicsType, a5:PhysicsGroupFlags, a6:PhysicsGroupFlags, a7:int32):PhxPhysicsHit
+--- @field SweepCapsuleAll fun(a1:vec3, a2:vec3, a3:number, a4:number, a5:PhysicsType, a6:PhysicsGroupFlags, a7:PhysicsGroupFlags, a8:int32):PhxPhysicsHitAll
+--- @field SweepCapsuleClosest fun(a1:vec3, a2:vec3, a3:number, a4:number, a5:PhysicsType, a6:PhysicsGroupFlags, a7:PhysicsGroupFlags, a8:int32):PhxPhysicsHit
+--- @field SweepSphereAll fun(a1:vec3, a2:vec3, a3:number, a4:PhysicsType, a5:PhysicsGroupFlags, a6:PhysicsGroupFlags, a7:int32):PhxPhysicsHitAll
+--- @field SweepSphereClosest fun(a1:vec3, a2:vec3, a3:number, a4:PhysicsType, a5:PhysicsGroupFlags, a6:PhysicsGroupFlags, a7:int32):PhxPhysicsHit
+--- @field TestBox fun(a1:vec3, a2:vec3, a3:PhysicsType, a4:PhysicsGroupFlags, a5:PhysicsGroupFlags):PhxPhysicsHitAll
+--- @field TestSphere fun(a1:vec3, a2:number, a3:PhysicsType, a4:PhysicsGroupFlags, a5:PhysicsGroupFlags):PhxPhysicsHitAll
+local Ext_ClientLevel = {}
 
 
 
@@ -24118,6 +25586,8 @@ local Ext_ClientTemplate = {}
 
 
 --- @class Ext_ClientUI
+--- @field Box fun(a1:AnyRef):NoesisBaseComponent
+--- @field Defer fun(a1:FunctionRef)
 --- @field EnableErrorReporting fun(a1:boolean)
 --- @field GetCursorControl fun():EclCursorControl
 --- @field GetDragDrop fun(a1:uint16):EclPlayerDragData
@@ -24168,6 +25638,7 @@ local Ext_Debug = {}
 --- @field OnDestroyOnce fun(a1:ExtComponentType, a2:FunctionRef, a3:EntityHandle?):uint64
 --- @field OnSystemPostUpdate fun(a1:ExtSystemType, a2:FunctionRef, a3:boolean?):uint64
 --- @field OnSystemUpdate fun(a1:ExtSystemType, a2:FunctionRef, a3:boolean?):uint64
+--- @field SetupTracing fun(a1:LuaEntityTracingOptions)
 --- @field Subscribe fun(a1:ExtComponentType, a2:FunctionRef, a3:EntityHandle?, a4:uint64?):uint64?
 --- @field Unsubscribe fun(a1:uint64):boolean
 --- @field UuidToHandle fun(a1:Guid):EntityHandle
@@ -24176,11 +25647,21 @@ local Ext_Entity = {}
 
 
 --- @class Ext_IO
---- @field AddPathOverride fun(a1:string, a2:string)
+--- @field AddPathOverride fun(a1:string, a2:string, a3:FixedString?)
+--- @field AppendFile fun(a1:string, a2:StringView):boolean
+--- @field FindFiles fun(a1:StringView, a2:StringView, a3:FixedString?, a4:boolean?, a5:boolean?):string[]
 --- @field GetPathOverride fun(a1:string):string?
 --- @field LoadFile fun(a1:string, a2:FixedString?):string?
 --- @field SaveFile fun(a1:string, a2:StringView):boolean
 local Ext_IO = {}
+
+
+
+--- @class Ext_Internal
+--- @field ActivateEvent fun(a1:uint32)
+--- @field DeactivateEvent fun(a1:uint32)
+--- @field GetPublishedEvents fun():table<FixedString, uint32>
+local Ext_Internal = {}
 
 
 
@@ -24199,34 +25680,12 @@ local Ext_Json = {}
 
 
 
---- @class Ext_Level
---- @field BeginPathfinding fun(a1:EntityHandle, a2:vec3, a3:RegistryEntry):AiPath
---- @field BeginPathfindingImmediate fun(a1:EntityHandle, a2:vec3):AiPath
---- @field FindPath fun(a1:AiPath):boolean
---- @field GetActivePathfindingRequests fun():AiPath[]
---- @field GetEntitiesOnTile fun(a1:vec3):EntityHandle[]
---- @field GetHeightsAt fun(a1:number, a2:number):number[]
---- @field GetPathById fun(a1:int32):AiPath
---- @field GetTileDebugInfo fun(a1:vec3):AiGridLuaTile
---- @field RaycastAll fun(a1:vec3, a2:vec3, a3:PhysicsType, a4:PhysicsGroupFlags, a5:PhysicsGroupFlags, a6:int32):PhxPhysicsHitAll
---- @field RaycastAny fun(a1:vec3, a2:vec3, a3:PhysicsType, a4:PhysicsGroupFlags, a5:PhysicsGroupFlags, a6:int32):boolean
---- @field RaycastClosest fun(a1:vec3, a2:vec3, a3:PhysicsType, a4:PhysicsGroupFlags, a5:PhysicsGroupFlags, a6:int32):PhxPhysicsHit
---- @field ReleasePath fun(a1:AiPath)
---- @field SweepBoxAll fun(a1:vec3, a2:vec3, a3:vec3, a4:PhysicsType, a5:PhysicsGroupFlags, a6:PhysicsGroupFlags, a7:int32):PhxPhysicsHitAll
---- @field SweepBoxClosest fun(a1:vec3, a2:vec3, a3:vec3, a4:PhysicsType, a5:PhysicsGroupFlags, a6:PhysicsGroupFlags, a7:int32):PhxPhysicsHit
---- @field SweepCapsuleAll fun(a1:vec3, a2:vec3, a3:number, a4:number, a5:PhysicsType, a6:PhysicsGroupFlags, a7:PhysicsGroupFlags, a8:int32):PhxPhysicsHitAll
---- @field SweepCapsuleClosest fun(a1:vec3, a2:vec3, a3:number, a4:number, a5:PhysicsType, a6:PhysicsGroupFlags, a7:PhysicsGroupFlags, a8:int32):PhxPhysicsHit
---- @field SweepSphereAll fun(a1:vec3, a2:vec3, a3:number, a4:PhysicsType, a5:PhysicsGroupFlags, a6:PhysicsGroupFlags, a7:int32):PhxPhysicsHitAll
---- @field SweepSphereClosest fun(a1:vec3, a2:vec3, a3:number, a4:PhysicsType, a5:PhysicsGroupFlags, a6:PhysicsGroupFlags, a7:int32):PhxPhysicsHit
---- @field TestBox fun(a1:vec3, a2:vec3, a3:PhysicsType, a4:PhysicsGroupFlags, a5:PhysicsGroupFlags):PhxPhysicsHitAll
---- @field TestSphere fun(a1:vec3, a2:number, a3:PhysicsType, a4:PhysicsGroupFlags, a5:PhysicsGroupFlags):PhxPhysicsHitAll
-local Ext_Level = {}
-
-
-
 --- @class Ext_Loca
+--- @field GetAllTranslatedStringKeys fun(a1:FixedString):table<FixedString, TranslatedString>
 --- @field GetTranslatedString fun(a1:FixedString, a2:string?):string
+--- @field GetTranslatedStringKey fun(a1:FixedString):TranslatedString?
 --- @field UpdateTranslatedString fun(a1:FixedString, a2:string):boolean
+--- @field UpdateTranslatedStringKey fun(a1:FixedString, a2:FixedString):boolean
 local Ext_Loca = {}
 
 
@@ -24314,9 +25773,41 @@ local Ext_Mod = {}
 
 
 --- @class Ext_Resource
---- @field Get fun(a1:FixedString, a2:ResourceBankType)
+--- @field Get fun(a1:FixedString, a2:ResourceBankType):ResourceResource
 --- @field GetAll fun(a1:ResourceBankType):FixedString[]
+--- @field GetPackageResource fun(a1:FixedString, a2:FixedString, a3:ResourceBankType?):ResourceResource
+--- @field GetPackageResources fun(a1:FixedString, a2:ResourceBankType?):FixedString[]
+--- @field GetPackages fun():FixedString[]
 local Ext_Resource = {}
+
+
+
+--- @class Ext_ServerLevel
+--- @field AddActivePersistentLevelTemplate fun(a1:FixedString, a2:FixedString, a3:FixedString):uint32?
+--- @field BeginPathfinding fun(a1:EntityHandle, a2:vec3, a3:RegistryEntry):AiPath
+--- @field BeginPathfindingImmediate fun(a1:EntityHandle, a2:vec3):AiPath
+--- @field CreateSurfaceAction fun(a1:SurfaceActionType):EsvSurfaceAction
+--- @field ExecuteSurfaceAction fun(a1:EsvSurfaceAction)
+--- @field FindPath fun(a1:AiPath):boolean
+--- @field GetActivePathfindingRequests fun():AiPath[]
+--- @field GetEntitiesOnTile fun(a1:vec3):EntityHandle[]
+--- @field GetHeightsAt fun(a1:number, a2:number):number[]
+--- @field GetLevelInfo fun(a1:FixedString):LevelData
+--- @field GetPathById fun(a1:int32):AiPath
+--- @field GetTileDebugInfo fun(a1:vec3):AiGridLuaTile
+--- @field RaycastAll fun(a1:vec3, a2:vec3, a3:PhysicsType, a4:PhysicsGroupFlags, a5:PhysicsGroupFlags, a6:int32):PhxPhysicsHitAll
+--- @field RaycastAny fun(a1:vec3, a2:vec3, a3:PhysicsType, a4:PhysicsGroupFlags, a5:PhysicsGroupFlags, a6:int32):boolean
+--- @field RaycastClosest fun(a1:vec3, a2:vec3, a3:PhysicsType, a4:PhysicsGroupFlags, a5:PhysicsGroupFlags, a6:int32):PhxPhysicsHit
+--- @field ReleasePath fun(a1:AiPath)
+--- @field SweepBoxAll fun(a1:vec3, a2:vec3, a3:vec3, a4:PhysicsType, a5:PhysicsGroupFlags, a6:PhysicsGroupFlags, a7:int32):PhxPhysicsHitAll
+--- @field SweepBoxClosest fun(a1:vec3, a2:vec3, a3:vec3, a4:PhysicsType, a5:PhysicsGroupFlags, a6:PhysicsGroupFlags, a7:int32):PhxPhysicsHit
+--- @field SweepCapsuleAll fun(a1:vec3, a2:vec3, a3:number, a4:number, a5:PhysicsType, a6:PhysicsGroupFlags, a7:PhysicsGroupFlags, a8:int32):PhxPhysicsHitAll
+--- @field SweepCapsuleClosest fun(a1:vec3, a2:vec3, a3:number, a4:number, a5:PhysicsType, a6:PhysicsGroupFlags, a7:PhysicsGroupFlags, a8:int32):PhxPhysicsHit
+--- @field SweepSphereAll fun(a1:vec3, a2:vec3, a3:number, a4:PhysicsType, a5:PhysicsGroupFlags, a6:PhysicsGroupFlags, a7:int32):PhxPhysicsHitAll
+--- @field SweepSphereClosest fun(a1:vec3, a2:vec3, a3:number, a4:PhysicsType, a5:PhysicsGroupFlags, a6:PhysicsGroupFlags, a7:int32):PhxPhysicsHit
+--- @field TestBox fun(a1:vec3, a2:vec3, a3:PhysicsType, a4:PhysicsGroupFlags, a5:PhysicsGroupFlags):PhxPhysicsHitAll
+--- @field TestSphere fun(a1:vec3, a2:number, a3:PhysicsType, a4:PhysicsGroupFlags, a5:PhysicsGroupFlags):PhxPhysicsHitAll
+local Ext_ServerLevel = {}
 
 
 
@@ -24346,6 +25837,7 @@ local Ext_ServerTemplate = {}
 
 
 --- @class Ext_StaticData
+--- @field ClearResourceBank fun(a1:ExtResourceManagerType)
 --- @field Create fun(a1:ExtResourceManagerType, a2:Guid?)
 --- @field Get fun(a1:Guid, a2:ExtResourceManagerType)
 --- @field GetAll fun(a1:ExtResourceManagerType):Guid[]
@@ -24354,11 +25846,21 @@ local Ext_ServerTemplate = {}
 --- @field GetIconUVs fun(a1:FixedString):UVValues
 --- @field GetSources fun(a1:ExtResourceManagerType):table<Guid, Guid[]>
 --- @field GetTextureAtlasManager fun():TextureAtlasMap
+--- @field LoadResource fun(a1:FixedString, a2:ResourceBankType):DlgDialog
+--- @field ReleaseResource fun(a1:FixedString, a2:ResourceBankType):boolean
+--- @field SyncResourceBank fun(a1:ExtResourceManagerType)
 local Ext_StaticData = {}
 
 
 
 --- @class Ext_Stats
+--- @field EquipmentSet Ext_StatsEquipmentSet
+--- @field ItemCombo Ext_StatsItemCombo
+--- @field ItemComboPreview Ext_StatsItemComboPreview
+--- @field ItemComboProperty Ext_StatsItemComboProperty
+--- @field ItemGroup Ext_StatsItemGroup
+--- @field NameGroup Ext_StatsNameGroup
+--- @field SpellSet Ext_StatsSpellSet
 --- @field TreasureCategory Ext_StatsTreasureCategory
 --- @field TreasureTable Ext_StatsTreasureTable
 --- @field AddAttribute fun(a1:FixedString, a2:FixedString, a3:FixedString):boolean
@@ -24368,7 +25870,7 @@ local Ext_StaticData = {}
 --- @field EnumLabelToIndex fun(a1:FixedString, a2:FixedString):int64?
 --- @field ExecuteFunctor fun(a1:StatsFunctor, a2:StatsContextData)
 --- @field ExecuteFunctors fun(a1:StatsFunctors, a2:StatsContextData)
---- @field Get fun(a1:string, a2:int32?, a3:boolean?, a4:boolean?):FixedString[]
+--- @field Get fun(a1:string, a2:int32?, a3:boolean?):FixedString[]
 --- @field GetCachedBoost fun(a1:Guid):StatsBoostPrototype
 --- @field GetCachedInterrupt fun(a1:FixedString):StatsInterruptPrototype
 --- @field GetCachedPassive fun(a1:FixedString):StatsPassivePrototype
@@ -24382,6 +25884,60 @@ local Ext_StaticData = {}
 --- @field SetPersistence fun(a1:FixedString, a2:boolean)
 --- @field Sync fun(a1:FixedString, a2:boolean?)
 local Ext_Stats = {}
+
+
+
+--- @class Ext_StatsEquipmentSet
+--- @field Create fun(a1:FixedString):StatsEquipmentSet
+--- @field Get fun(a1:FixedString):StatsEquipmentSet
+--- @field GetAll fun():StatsEquipmentSet[]
+local Ext_StatsEquipmentSet = {}
+
+
+
+--- @class Ext_StatsItemCombo
+--- @field Create fun(a1:FixedString):StatsItemCombination
+--- @field Get fun(a1:FixedString):StatsItemCombination
+--- @field GetAll fun():StatsItemCombination[]
+local Ext_StatsItemCombo = {}
+
+
+
+--- @class Ext_StatsItemComboPreview
+--- @field Create fun(a1:FixedString):StatsItemCombinationPreviewData
+--- @field Get fun(a1:FixedString):StatsItemCombinationPreviewData
+--- @field GetAll fun():StatsItemCombinationPreviewData[]
+local Ext_StatsItemComboPreview = {}
+
+
+
+--- @class Ext_StatsItemComboProperty
+--- @field Create fun(a1:FixedString):StatsItemCombinationProperty
+--- @field Get fun(a1:FixedString):StatsItemCombinationProperty
+--- @field GetAll fun():StatsItemCombinationProperty[]
+local Ext_StatsItemComboProperty = {}
+
+
+
+--- @class Ext_StatsItemGroup
+--- @field Get fun(a1:FixedString):StatsItemGroup
+--- @field GetAll fun():StatsItemGroup[]
+local Ext_StatsItemGroup = {}
+
+
+
+--- @class Ext_StatsNameGroup
+--- @field Get fun(a1:FixedString):StatsNameGroup
+--- @field GetAll fun():StatsNameGroup[]
+local Ext_StatsNameGroup = {}
+
+
+
+--- @class Ext_StatsSpellSet
+--- @field Create fun(a1:FixedString):StatsSpellSet
+--- @field Get fun(a1:FixedString):StatsSpellSet
+--- @field GetAll fun():StatsSpellSet[]
+local Ext_StatsSpellSet = {}
 
 
 
@@ -24457,6 +26013,7 @@ function Ext_Types.GenerateIdeHelpers(outputPath, opts) end
 
 --- @class Ext_Utils
 --- @field GameVersion fun():string?
+--- @field GenerateGuid fun():Guid
 --- @field GetCommandLineParams fun():string[]
 --- @field GetDialogManager fun():DlgDialogManager
 --- @field GetGameState fun()
@@ -24497,6 +26054,8 @@ local Ext_Vars = {}
 --- @field ClientIMGUI Ext_ClientIMGUI
 --- @field Input Ext_ClientInput
 --- @field ClientInput Ext_ClientInput
+--- @field Level Ext_ClientLevel
+--- @field ClientLevel Ext_ClientLevel
 --- @field Net Ext_ClientNet
 --- @field ClientNet Ext_ClientNet
 --- @field Template Ext_ClientTemplate
@@ -24506,8 +26065,8 @@ local Ext_Vars = {}
 --- @field Debug Ext_Debug
 --- @field Entity Ext_Entity
 --- @field IO Ext_IO
+--- @field Internal Ext_Internal
 --- @field Json Ext_Json
---- @field Level Ext_Level
 --- @field Loca Ext_Loca
 --- @field Log Ext_Log
 --- @field Math Ext_Math
@@ -24525,13 +26084,15 @@ local Ext_Vars = {}
 --- @field Debug Ext_Debug
 --- @field Entity Ext_Entity
 --- @field IO Ext_IO
+--- @field Internal Ext_Internal
 --- @field Json Ext_Json
---- @field Level Ext_Level
 --- @field Loca Ext_Loca
 --- @field Log Ext_Log
 --- @field Math Ext_Math
 --- @field Mod Ext_Mod
 --- @field Resource Ext_Resource
+--- @field Level Ext_ServerLevel
+--- @field ServerLevel Ext_ServerLevel
 --- @field Net Ext_ServerNet
 --- @field ServerNet Ext_ServerNet
 --- @field Template Ext_ServerTemplate
@@ -25112,6 +26673,22 @@ Ext_Enums.AudioCodec = {
 	[20] = "OpusWEM",
 }
 
+--- @enum AwarenessCapabilityFlags
+Ext_Enums.AwarenessCapabilityFlags = {
+	CanSee = 1,
+	SpotSneakers = 2,
+	DetectCrimes = 4,
+	AvoidTraps = 8,
+	ActivateTriggers = 16,
+	DetectVictimOnlyCrimes = 32,
+	[1] = "CanSee",
+	[2] = "SpotSneakers",
+	[4] = "DetectCrimes",
+	[8] = "AvoidTraps",
+	[16] = "ActivateTriggers",
+	[32] = "DetectVictimOnlyCrimes",
+}
+
 --- @enum BodyType
 Ext_Enums.BodyType = {
 	Male = 0,
@@ -25513,6 +27090,7 @@ Ext_Enums.CanDoActionsFlags = {
 	CanCastSpells = 1,
 	CanAttack = 2,
 	CanDoFlag4 = 4,
+	CanDoWorldActions = 4,
 	CanCastRituals = 8,
 	CanPickpocket = 16,
 	CanLockpick = 32,
@@ -25520,6 +27098,7 @@ Ext_Enums.CanDoActionsFlags = {
 	[1] = "CanCastSpells",
 	[2] = "CanAttack",
 	[4] = "CanDoFlag4",
+	[4] = "CanDoWorldActions",
 	[8] = "CanCastRituals",
 	[16] = "CanPickpocket",
 	[32] = "CanLockpick",
@@ -25528,14 +27107,34 @@ Ext_Enums.CanDoActionsFlags = {
 
 --- @enum CanInteractFlags
 Ext_Enums.CanInteractFlags = {
+	CanBasicItemInteractions = 1,
 	CanInteract = 1,
+	CanUseDoors = 2,
 	CanUsePortals = 2,
 	CanUseLadder = 4,
+	CanUseContainers = 8,
 	CanUseFlag8 = 8,
+	CanPickup = 16,
+	CanConsumeItems = 32,
+	CanMoveObjects = 64,
+	[1] = "CanBasicItemInteractions",
 	[1] = "CanInteract",
+	[2] = "CanUseDoors",
 	[2] = "CanUsePortals",
 	[4] = "CanUseLadder",
+	[8] = "CanUseContainers",
 	[8] = "CanUseFlag8",
+	[16] = "CanPickup",
+	[32] = "CanConsumeItems",
+	[64] = "CanMoveObjects",
+}
+
+--- @enum CanInteractStateFlags
+Ext_Enums.CanInteractStateFlags = {
+	Encumbered = 1,
+	Shapeshifted = 2,
+	[1] = "Encumbered",
+	[2] = "Shapeshifted",
 }
 
 --- @enum CanMoveFlags
@@ -25934,6 +27533,24 @@ Ext_Enums.ConditionRollType = {
 	[16] = "AbilityCheckRoll",
 }
 
+--- @enum ConstructionTileFlags
+Ext_Enums.ConstructionTileFlags = {
+	WalkOn = 1,
+	Climbable = 2,
+	ShootThrough = 4,
+	CanSeeThrough = 8,
+	WalkThrough = 16,
+	ClickThrough = 32,
+	SeeThrough = 64,
+	[1] = "WalkOn",
+	[2] = "Climbable",
+	[4] = "ShootThrough",
+	[8] = "CanSeeThrough",
+	[16] = "WalkThrough",
+	[32] = "ClickThrough",
+	[64] = "SeeThrough",
+}
+
 --- @enum ContainerInteractionType
 Ext_Enums.ContainerInteractionType = {
 	Sort = 0,
@@ -26178,6 +27795,32 @@ Ext_Enums.DealDamageWeaponType = {
 	[10] = "ImprovisedWeapon",
 }
 
+--- @enum DialogFlagType
+Ext_Enums.DialogFlagType = {
+	Dialog = 0,
+	Local = 1,
+	User = 2,
+	Party = 3,
+	Object = 4,
+	Global = 5,
+	Tag = 6,
+	Script = 7,
+	Quest = 8,
+	UserShape = 9,
+	DialogInstance = 10,
+	[0] = "Dialog",
+	[1] = "Local",
+	[2] = "User",
+	[3] = "Party",
+	[4] = "Object",
+	[5] = "Global",
+	[6] = "Tag",
+	[7] = "Script",
+	[8] = "Quest",
+	[9] = "UserShape",
+	[10] = "DialogInstance",
+}
+
 --- @enum DialogNodeFlags
 Ext_Enums.DialogNodeFlags = {
 	IsEndNode = 1,
@@ -26200,6 +27843,32 @@ Ext_Enums.DialogNodeFlags = {
 	[128] = "IsGreetingNode",
 	[256] = "AllowGrouping",
 	[512] = "IsEndAllDialogs",
+}
+
+--- @enum DialogResourceFlags
+Ext_Enums.DialogResourceFlags = {
+	Automated = 1,
+	IsWorld = 2,
+	IsBehaviour = 4,
+	EnableTimeline = 8,
+	BlockFTB = 16,
+	IsSubbedDialog = 32,
+	IsPrivateDialog = 64,
+	AllowDeadSpeakers = 128,
+	[1] = "Automated",
+	[2] = "IsWorld",
+	[4] = "IsBehaviour",
+	[8] = "EnableTimeline",
+	[16] = "BlockFTB",
+	[32] = "IsSubbedDialog",
+	[64] = "IsPrivateDialog",
+	[128] = "AllowDeadSpeakers",
+}
+
+--- @enum DialogResourceFlags2
+Ext_Enums.DialogResourceFlags2 = {
+	IsAllowingJoinCombat = 1,
+	[1] = "IsAllowingJoinCombat",
 }
 
 --- @enum DiceSizeId
@@ -26287,11 +27956,13 @@ Ext_Enums.ECSComponentChangeFlags = {
 	Replicate = 4,
 	OneFrame = 8,
 	ReplicatedComponent = 16,
+	Modify = 32,
 	[1] = "Create",
 	[2] = "Destroy",
 	[4] = "Replicate",
 	[8] = "OneFrame",
 	[16] = "ReplicatedComponent",
+	[32] = "Modify",
 }
 
 --- @enum ECSEntityChangeFlags
@@ -26401,7 +28072,6 @@ Ext_Enums.ExtComponentType = {
 	Armor,
 	ArmorSetState,
 	BaseHp,
-	Bound,
 	IsCharacter,
 	Data,
 	Detached,
@@ -26675,6 +28345,7 @@ Ext_Enums.ExtComponentType = {
 	DeadByDefault,
 	Downed,
 	DeadReckoning,
+	DeadReckoningSync,
 	ServerKiller,
 	ServerDeathState,
 	ServerDeathContinue,
@@ -27042,6 +28713,14 @@ Ext_Enums.ExtComponentType = {
 	ServerTriggerCachedLeaveEvents,
 	ServerTriggerLoadedHandled,
 	ServerTriggerWorldAutoTriggered,
+	ClientSoundVolumeTrigger,
+	ClientAtmosphereTrigger,
+	ClientFloorTrigger,
+	ClientPortalTrigger,
+	ClientRoomTrigger,
+	ClientTimelineSceneTrigger,
+	ClientRegionTrigger,
+	ClientLightingTrigger,
 	ServerOsirisPingRequestSingleton,
 	ServerPingCooldownSingleton,
 	ServerPingRequestSingleton,
@@ -27059,6 +28738,12 @@ Ext_Enums.ExtComponentType = {
 	AnubisRuntime,
 	AnubisEnabled,
 	Constellation,
+	HotbarContainer,
+	HotbarDecks,
+	HotbarContainerKeyCreated,
+	ServerHotbarOrder,
+	ServerHotbarSlotsAdded,
+	ServerHotbarSlotsRemoved,
 	Background,
 	God,
 	Proficiency,
@@ -27079,13 +28764,9 @@ Ext_Enums.ExtComponentType = {
 	SavegameLoaded,
 	LootingState,
 	Loot,
-	Lock,
-	Key,
 	SummonLifetime,
 	Invisibility,
 	Icon,
-	HotbarContainer,
-	HotbarDecks,
 	OriginTag,
 	OriginPassives,
 	ClassTag,
@@ -27098,9 +28779,6 @@ Ext_Enums.ExtComponentType = {
 	IsInTurnBasedMode,
 	ItemBoosts,
 	ClientPaperdoll,
-	TLPreviewDummy,
-	TimelineActorData,
-	ClientTimelineActorControl,
 	AnimationSet,
 	AnimationUpdate,
 	AnimationBlueprint,
@@ -27164,6 +28842,18 @@ Ext_Enums.ExtComponentType = {
 	ServerUuidHistoryMapping,
 	UuidHistoryTracked,
 	FloorInfo,
+	Lock,
+	Key,
+	LockAnimationState,
+	LockLifetime,
+	ServerLockpickingState,
+	TLPreviewDummy,
+	TimelineActorData,
+	TimelineData,
+	SyncedTimelineActorControl,
+	SyncedTimelineControl,
+	ClientTimelineActorControl,
+	ClientTimelineControl,
 	Sound,
 	SoundMaterial,
 	SoundRoomCurrentState,
@@ -27196,6 +28886,24 @@ Ext_Enums.ExtComponentType = {
 	InstancingBatchModifyOneFrame,
 	InstancingBatchInitialized,
 	InstancingBatchVisualReloadedOneFrame,
+	HLOD,
+	HLODChild,
+	Bound,
+	LocalBound,
+	Occlusion,
+	ClusterBound,
+	ClusterBoundMax,
+	ClusterChild,
+	ClusterChildIndexed,
+	ClusterContainer,
+	ClusterDistMin,
+	ClusterDistMax,
+	ClusterPositionX,
+	ClusterPositionY,
+	ClusterPositionZ,
+	ClusterRadius,
+	Cluster,
+	ClusterAttachRequest,
 	FadeChildrenAdded,
 	FadeChildrenRemoved,
 	FadeableObstructionHierarchy,
@@ -27252,7 +28960,6 @@ Ext_Enums.ExtComponentType = {
 	ServerReplicationDependencyOwner,
 	HistoryTargetUUID,
 	ServerPeersInRange,
-	ServerSurface,
 	ServerDisarmAttempt,
 	ServerUnsheathSpellAnimationLifetime,
 	ServerUnsheath,
@@ -27260,11 +28967,16 @@ Ext_Enums.ExtComponentType = {
 	ServerIsLightBlocker,
 	ServerIsVisionBlocker,
 	ServerDarknessActive,
-	ServerHotbarOrder,
 	ServerInventoryItemDataPopulated,
 	ServerVariableManager,
 	IsMarkedForDeletion,
 	JumpFollow,
+	ServerSurface,
+	ServerSurfaceLevelLoaded,
+	ServerSurfaceCreatedEvent,
+	ServerSurfaceRemovedEvent,
+	ServerSurfaceActionFinishedEvent,
+	ServerSurfaceActionGrownEvent,
 	ServerTemplateChangedEvent,
 	ServerTemplateTransformedEvent,
 	TagsChangedEvent,
@@ -27557,7 +29269,6 @@ Ext_Enums.ExtSystemType = {
 	VisualChanged,
 	Visual,
 	Light,
-	Construction,
 	FadeableObstructionMapping,
 	LevelInstanceAttachRequest,
 	LevelInstanceLoadRequest,
@@ -27623,14 +29334,44 @@ Ext_Enums.ExtSystemType = {
 	ServerSightViewshed,
 	ServerRollSave,
 	ServerCombatLog,
+	ServerLockpicking,
+	ServerHotbar,
 	ClientEquipmentVisuals,
 	ClientVisual,
 	ClientCharacterIconRender,
 	ClientCharacterManager,
 	ClientVisualsVisibilityState,
 	ClientEffectHandler,
+	ClientTimeline,
+	ClientConstruction,
 	SoundRouting,
 	Max,
+}
+
+--- @enum FlagType
+Ext_Enums.FlagType = {
+	Local = 0,
+	User = 1,
+	UserShape = 2,
+	Party = 3,
+	Character = 4,
+	Global = 5,
+	Dialog = 6,
+	DialogInstance = 7,
+	Quest = 8,
+	Tag = 9,
+	Script = 10,
+	[0] = "Local",
+	[1] = "User",
+	[2] = "UserShape",
+	[3] = "Party",
+	[4] = "Character",
+	[5] = "Global",
+	[6] = "Dialog",
+	[7] = "DialogInstance",
+	[8] = "Quest",
+	[9] = "Tag",
+	[10] = "Script",
 }
 
 --- @enum FleeErrorFlags
@@ -27760,9 +29501,13 @@ Ext_Enums.GuiButtonFlags = {
 	MouseButtonLeft = 1,
 	MouseButtonRight = 2,
 	MouseButtonMiddle = 4,
+	EnableNav = 8,
+	AllowOverlap = 4096,
 	[1] = "MouseButtonLeft",
 	[2] = "MouseButtonRight",
 	[4] = "MouseButtonMiddle",
+	[8] = "EnableNav",
+	[4096] = "AllowOverlap",
 }
 
 --- @enum GuiChildFlags
@@ -27808,42 +29553,51 @@ Ext_Enums.GuiColor = {
 	ScrollbarGrabHovered = 16,
 	ScrollbarGrabActive = 17,
 	CheckMark = 18,
-	SliderGrab = 19,
-	SliderGrabActive = 20,
-	Button = 21,
-	ButtonHovered = 22,
-	ButtonActive = 23,
-	Header = 24,
-	HeaderHovered = 25,
-	HeaderActive = 26,
-	Separator = 27,
-	SeparatorHovered = 28,
-	SeparatorActive = 29,
-	ResizeGrip = 30,
-	ResizeGripHovered = 31,
-	ResizeGripActive = 32,
-	TabHovered = 33,
-	Tab = 34,
-	TabActive = 35,
-	TabUnfocused = 37,
-	TabUnfocusedActive = 38,
-	TabDimmedSelectedOverline = 39,
-	PlotLines = 40,
-	PlotLinesHovered = 41,
-	PlotHistogram = 42,
-	PlotHistogramHovered = 43,
-	TableHeaderBg = 44,
-	TableBorderStrong = 45,
-	TableBorderLight = 46,
-	TableRowBg = 47,
-	TableRowBgAlt = 48,
-	TextLink = 49,
-	TextSelectedBg = 50,
-	DragDropTarget = 51,
-	NavHighlight = 52,
-	NavWindowingHighlight = 53,
-	NavWindowingDimBg = 54,
-	ModalWindowDimBg = 55,
+	CheckboxSelectedBg = 19,
+	SliderGrab = 20,
+	SliderGrabActive = 21,
+	Button = 22,
+	ButtonHovered = 23,
+	ButtonActive = 24,
+	Header = 25,
+	HeaderHovered = 26,
+	HeaderActive = 27,
+	Separator = 28,
+	SeparatorHovered = 29,
+	SeparatorActive = 30,
+	ResizeGrip = 31,
+	ResizeGripHovered = 32,
+	ResizeGripActive = 33,
+	TabHovered = 35,
+	Tab = 36,
+	TabActive = 37,
+	TabSelected = 37,
+	TabSelectedOverline = 38,
+	TabDimmed = 39,
+	TabUnfocused = 39,
+	TabDimmedSelected = 40,
+	TabUnfocusedActive = 40,
+	TabDimmedSelectedOverline = 41,
+	PlotLines = 42,
+	PlotLinesHovered = 43,
+	PlotHistogram = 44,
+	PlotHistogramHovered = 45,
+	TableHeaderBg = 46,
+	TableBorderStrong = 47,
+	TableBorderLight = 48,
+	TableRowBg = 49,
+	TableRowBgAlt = 50,
+	TextLink = 51,
+	TextSelectedBg = 52,
+	TreeLines = 53,
+	DragDropTarget = 54,
+	DragDropTargetBg = 55,
+	UnsavedMarker = 56,
+	NavCursor = 57,
+	NavHighlight = 57,
+	NavWindowingHighlight = 58,
+	NavWindowingDimBg = 59,
+	ModalWindowDimBg = 60,
 	[0] = "Text",
 	[1] = "TextDisabled",
 	[2] = "WindowBg",
@@ -27863,42 +29617,51 @@ Ext_Enums.GuiColor = {
 	[16] = "ScrollbarGrabHovered",
 	[17] = "ScrollbarGrabActive",
 	[18] = "CheckMark",
-	[19] = "SliderGrab",
-	[20] = "SliderGrabActive",
-	[21] = "Button",
-	[22] = "ButtonHovered",
-	[23] = "ButtonActive",
-	[24] = "Header",
-	[25] = "HeaderHovered",
-	[26] = "HeaderActive",
-	[27] = "Separator",
-	[28] = "SeparatorHovered",
-	[29] = "SeparatorActive",
-	[30] = "ResizeGrip",
-	[31] = "ResizeGripHovered",
-	[32] = "ResizeGripActive",
-	[33] = "TabHovered",
-	[34] = "Tab",
-	[35] = "TabActive",
-	[37] = "TabUnfocused",
-	[38] = "TabUnfocusedActive",
-	[39] = "TabDimmedSelectedOverline",
-	[40] = "PlotLines",
-	[41] = "PlotLinesHovered",
-	[42] = "PlotHistogram",
-	[43] = "PlotHistogramHovered",
-	[44] = "TableHeaderBg",
-	[45] = "TableBorderStrong",
-	[46] = "TableBorderLight",
-	[47] = "TableRowBg",
-	[48] = "TableRowBgAlt",
-	[49] = "TextLink",
-	[50] = "TextSelectedBg",
-	[51] = "DragDropTarget",
-	[52] = "NavHighlight",
-	[53] = "NavWindowingHighlight",
-	[54] = "NavWindowingDimBg",
-	[55] = "ModalWindowDimBg",
+	[19] = "CheckboxSelectedBg",
+	[20] = "SliderGrab",
+	[21] = "SliderGrabActive",
+	[22] = "Button",
+	[23] = "ButtonHovered",
+	[24] = "ButtonActive",
+	[25] = "Header",
+	[26] = "HeaderHovered",
+	[27] = "HeaderActive",
+	[28] = "Separator",
+	[29] = "SeparatorHovered",
+	[30] = "SeparatorActive",
+	[31] = "ResizeGrip",
+	[32] = "ResizeGripHovered",
+	[33] = "ResizeGripActive",
+	[35] = "TabHovered",
+	[36] = "Tab",
+	[37] = "TabActive",
+	[37] = "TabSelected",
+	[38] = "TabSelectedOverline",
+	[39] = "TabDimmed",
+	[39] = "TabUnfocused",
+	[40] = "TabDimmedSelected",
+	[40] = "TabUnfocusedActive",
+	[41] = "TabDimmedSelectedOverline",
+	[42] = "PlotLines",
+	[43] = "PlotLinesHovered",
+	[44] = "PlotHistogram",
+	[45] = "PlotHistogramHovered",
+	[46] = "TableHeaderBg",
+	[47] = "TableBorderStrong",
+	[48] = "TableBorderLight",
+	[49] = "TableRowBg",
+	[50] = "TableRowBgAlt",
+	[51] = "TextLink",
+	[52] = "TextSelectedBg",
+	[53] = "TreeLines",
+	[54] = "DragDropTarget",
+	[55] = "DragDropTargetBg",
+	[56] = "UnsavedMarker",
+	[57] = "NavCursor",
+	[57] = "NavHighlight",
+	[58] = "NavWindowingHighlight",
+	[59] = "NavWindowingDimBg",
+	[60] = "ModalWindowDimBg",
 }
 
 --- @enum GuiColorEditFlags
@@ -27914,10 +29677,11 @@ Ext_Enums.GuiColorEditFlags = {
 	NoSidePreview = 256,
 	NoDragDrop = 512,
 	NoBorder = 1024,
-	AlphaOpaque = 2048,
-	AlphaNoBg = 4096,
-	AlphaPreviewHalf = 8192,
-	AlphaBar = 65536,
+	NoColorMarkers = 2048,
+	AlphaOpaque = 4096,
+	AlphaNoBg = 8192,
+	AlphaPreviewHalf = 16384,
+	AlphaBar = 262144,
 	HDR = 524288,
 	DisplayRGB = 1048576,
 	DisplayHSV = 2097152,
@@ -27926,8 +29690,9 @@ Ext_Enums.GuiColorEditFlags = {
 	Float = 16777216,
 	PickerHueBar = 33554432,
 	PickerHueWheel = 67108864,
-	InputRGB = 134217728,
-	InputHSV = 268435456,
+	PickerNoRotate = 134217728,
+	InputRGB = 268435456,
+	InputHSV = 536870912,
 	[0] = "AlphaPreview",
 	[2] = "NoAlpha",
 	[4] = "NoPicker",
@@ -27939,10 +29704,11 @@ Ext_Enums.GuiColorEditFlags = {
 	[256] = "NoSidePreview",
 	[512] = "NoDragDrop",
 	[1024] = "NoBorder",
-	[2048] = "AlphaOpaque",
-	[4096] = "AlphaNoBg",
-	[8192] = "AlphaPreviewHalf",
-	[65536] = "AlphaBar",
+	[2048] = "NoColorMarkers",
+	[4096] = "AlphaOpaque",
+	[8192] = "AlphaNoBg",
+	[16384] = "AlphaPreviewHalf",
+	[262144] = "AlphaBar",
 	[524288] = "HDR",
 	[1048576] = "DisplayRGB",
 	[2097152] = "DisplayHSV",
@@ -27951,8 +29717,9 @@ Ext_Enums.GuiColorEditFlags = {
 	[16777216] = "Float",
 	[33554432] = "PickerHueBar",
 	[67108864] = "PickerHueWheel",
-	[134217728] = "InputRGB",
-	[268435456] = "InputHSV",
+	[134217728] = "PickerNoRotate",
+	[268435456] = "InputRGB",
+	[536870912] = "InputHSV",
 }
 
 --- @enum GuiComboFlags
@@ -27985,6 +29752,22 @@ Ext_Enums.GuiCond = {
 	[2] = "Once",
 	[4] = "FirstUseEver",
 	[8] = "Appearing",
+}
+
+--- @enum GuiDebugToolFlags
+Ext_Enums.GuiDebugToolFlags = {
+	Demo = 1,
+	Metrics = 2,
+	DebugLog = 4,
+	IDStack = 8,
+	StyleEditor = 16,
+	ItemPicker = 32,
+	[1] = "Demo",
+	[2] = "Metrics",
+	[4] = "DebugLog",
+	[8] = "IDStack",
+	[16] = "StyleEditor",
+	[32] = "ItemPicker",
 }
 
 --- @enum GuiDragFlags
@@ -28027,6 +29810,7 @@ Ext_Enums.GuiInputTextFlags = {
 	NoHorizontalScroll = 32768,
 	NoUndoRedo = 65536,
 	ElideLeft = 131072,
+	WordWrap = 16777216,
 	Multiline = 67108864,
 	[1] = "CharsDecimal",
 	[2] = "CharsHexadecimal",
@@ -28046,6 +29830,7 @@ Ext_Enums.GuiInputTextFlags = {
 	[32768] = "NoHorizontalScroll",
 	[65536] = "NoUndoRedo",
 	[131072] = "ElideLeft",
+	[16777216] = "WordWrap",
 	[67108864] = "Multiline",
 }
 
@@ -28057,24 +29842,32 @@ Ext_Enums.GuiItemFlags = {
 	ButtonRepeat = 8,
 	AutoClosePopups = 16,
 	AllowDuplicateId = 32,
-	Disabled = 1024,
+	Disabled = 64,
+	LiveEditOnInputText = 128,
+	LiveEditOnInputScalar = 256,
 	ItemReadOnly = 2048,
 	NoWindowHoverableCheck = 8192,
 	AllowItemOverlap = 16384,
 	NoNavDisableMouseHover = 32768,
 	NoMarkEdited = 65536,
+	NoFocus = 131072,
+	Multiline = 67108864,
 	[1] = "NoTabStop",
 	[2] = "NoItemNav",
 	[4] = "NoNavDefaultFocus",
 	[8] = "ButtonRepeat",
 	[16] = "AutoClosePopups",
 	[32] = "AllowDuplicateId",
-	[1024] = "Disabled",
+	[64] = "Disabled",
+	[128] = "LiveEditOnInputText",
+	[256] = "LiveEditOnInputScalar",
 	[2048] = "ItemReadOnly",
 	[8192] = "NoWindowHoverableCheck",
 	[16384] = "AllowItemOverlap",
 	[32768] = "NoNavDisableMouseHover",
 	[65536] = "NoMarkEdited",
+	[131072] = "NoFocus",
+	[67108864] = "Multiline",
 }
 
 --- @enum GuiItemStatusFlags
@@ -28117,15 +29910,17 @@ Ext_Enums.GuiMeasureScaling = {
 
 --- @enum GuiPopupFlags
 Ext_Enums.GuiPopupFlags = {
-	MouseButtonRight = 1,
-	MouseButtonMiddle = 2,
+	MouseButtonLeft = 4,
+	MouseButtonRight = 8,
+	MouseButtonMiddle = 12,
 	NoReopen = 32,
 	NoOpenOverExistingPopup = 128,
 	NoOpenOverItems = 256,
 	AnyPopupId = 1024,
 	AnyPopupLevel = 2048,
-	[1] = "MouseButtonRight",
-	[2] = "MouseButtonMiddle",
+	[4] = "MouseButtonLeft",
+	[8] = "MouseButtonRight",
+	[12] = "MouseButtonMiddle",
 	[32] = "NoReopen",
 	[128] = "NoOpenOverExistingPopup",
 	[256] = "NoOpenOverItems",
@@ -28159,6 +29954,7 @@ Ext_Enums.GuiSliderFlags = {
 	ClampZeroRange = 1024,
 	AlwaysClamp = 1536,
 	NoSpeedTweaks = 2048,
+	ColorMarkers = 4096,
 	[32] = "Logarithmic",
 	[64] = "NoRoundToFormat",
 	[128] = "NoInput",
@@ -28167,6 +29963,7 @@ Ext_Enums.GuiSliderFlags = {
 	[1024] = "ClampZeroRange",
 	[1536] = "AlwaysClamp",
 	[2048] = "NoSpeedTweaks",
+	[4096] = "ColorMarkers",
 }
 
 --- @enum GuiSortDirection
@@ -28201,20 +29998,29 @@ Ext_Enums.GuiStyleVar = {
 	CellPadding = 17,
 	ScrollbarSize = 18,
 	ScrollbarRounding = 19,
-	GrabMinSize = 20,
-	GrabRounding = 21,
-	ImageBorderSize = 22,
-	TabRounding = 23,
-	TabBorderSize = 24,
-	TabBarBorderSize = 25,
-	TabBarOverlineSize = 26,
-	TableAngledHeadersAngle = 27,
-	TableAngledHeadersTextAlign = 28,
-	ButtonTextAlign = 29,
-	SelectableTextAlign = 30,
-	SeparatorTextBorderSize = 31,
-	SeparatorTextAlign = 32,
-	SeparatorTextPadding = 33,
+	ScrollbarPadding = 20,
+	GrabMinSize = 21,
+	GrabRounding = 22,
+	ImageRounding = 23,
+	ImageBorderSize = 24,
+	TabRounding = 25,
+	TabBorderSize = 26,
+	TabMinWidthBase = 27,
+	TabMinWidthShrink = 28,
+	TabBarBorderSize = 29,
+	TabBarOverlineSize = 30,
+	TableAngledHeadersAngle = 31,
+	TableAngledHeadersTextAlign = 32,
+	TreeLinesSize = 33,
+	TreeLinesRounding = 34,
+	MenuItemRounding = 35,
+	SelectableRounding = 36,
+	DragDropTargetRounding = 37,
+	ButtonTextAlign = 38,
+	SelectableTextAlign = 39,
+	SeparatorTextBorderSize = 41,
+	SeparatorTextAlign = 42,
+	SeparatorTextPadding = 43,
 	[0] = "Alpha",
 	[1] = "DisabledAlpha",
 	[2] = "WindowPadding",
@@ -28235,20 +30041,29 @@ Ext_Enums.GuiStyleVar = {
 	[17] = "CellPadding",
 	[18] = "ScrollbarSize",
 	[19] = "ScrollbarRounding",
-	[20] = "GrabMinSize",
-	[21] = "GrabRounding",
-	[22] = "ImageBorderSize",
-	[23] = "TabRounding",
-	[24] = "TabBorderSize",
-	[25] = "TabBarBorderSize",
-	[26] = "TabBarOverlineSize",
-	[27] = "TableAngledHeadersAngle",
-	[28] = "TableAngledHeadersTextAlign",
-	[29] = "ButtonTextAlign",
-	[30] = "SelectableTextAlign",
-	[31] = "SeparatorTextBorderSize",
-	[32] = "SeparatorTextAlign",
-	[33] = "SeparatorTextPadding",
+	[20] = "ScrollbarPadding",
+	[21] = "GrabMinSize",
+	[22] = "GrabRounding",
+	[23] = "ImageRounding",
+	[24] = "ImageBorderSize",
+	[25] = "TabRounding",
+	[26] = "TabBorderSize",
+	[27] = "TabMinWidthBase",
+	[28] = "TabMinWidthShrink",
+	[29] = "TabBarBorderSize",
+	[30] = "TabBarOverlineSize",
+	[31] = "TableAngledHeadersAngle",
+	[32] = "TableAngledHeadersTextAlign",
+	[33] = "TreeLinesSize",
+	[34] = "TreeLinesRounding",
+	[35] = "MenuItemRounding",
+	[36] = "SelectableRounding",
+	[37] = "DragDropTargetRounding",
+	[38] = "ButtonTextAlign",
+	[39] = "SelectableTextAlign",
+	[41] = "SeparatorTextBorderSize",
+	[42] = "SeparatorTextAlign",
+	[43] = "SeparatorTextPadding",
 }
 
 --- @enum GuiTabBarFlags
@@ -28260,8 +30075,10 @@ Ext_Enums.GuiTabBarFlags = {
 	NoTabListScrollingButtons = 16,
 	NoTooltip = 32,
 	DrawSelectedOverline = 64,
-	FittingPolicyResizeDown = 128,
-	FittingPolicyScroll = 256,
+	FittingPolicyMixed = 128,
+	FittingPolicyResizeDown = 256,
+	FittingPolicyShrink = 256,
+	FittingPolicyScroll = 512,
 	[1] = "Reorderable",
 	[2] = "AutoSelectNewTabs",
 	[4] = "TabListPopupButton",
@@ -28269,8 +30086,10 @@ Ext_Enums.GuiTabBarFlags = {
 	[16] = "NoTabListScrollingButtons",
 	[32] = "NoTooltip",
 	[64] = "DrawSelectedOverline",
-	[128] = "FittingPolicyResizeDown",
-	[256] = "FittingPolicyScroll",
+	[128] = "FittingPolicyMixed",
+	[256] = "FittingPolicyResizeDown",
+	[256] = "FittingPolicyShrink",
+	[512] = "FittingPolicyScroll",
 }
 
 --- @enum GuiTabItemFlags
@@ -28433,9 +30252,15 @@ Ext_Enums.GuiTreeNodeFlags = {
 	FramePadding = 1024,
 	SpanAvailWidth = 2048,
 	SpanFullWidth = 4096,
+	SpanLabelWidth = 8192,
 	SpanTextWidth = 8192,
 	SpanAllColumns = 16384,
+	LabelSpanAllColumns = 32768,
 	NavLeftJumpsBackHere = 131072,
+	NavLeftJumpsToParent = 131072,
+	DrawLinesNone = 262144,
+	DrawLinesFull = 524288,
+	DrawLinesToNodes = 1048576,
 	[1] = "Selected",
 	[2] = "Framed",
 	[4] = "AllowOverlap",
@@ -28450,9 +30275,15 @@ Ext_Enums.GuiTreeNodeFlags = {
 	[1024] = "FramePadding",
 	[2048] = "SpanAvailWidth",
 	[4096] = "SpanFullWidth",
+	[8192] = "SpanLabelWidth",
 	[8192] = "SpanTextWidth",
 	[16384] = "SpanAllColumns",
+	[32768] = "LabelSpanAllColumns",
 	[131072] = "NavLeftJumpsBackHere",
+	[131072] = "NavLeftJumpsToParent",
+	[262144] = "DrawLinesNone",
+	[524288] = "DrawLinesFull",
+	[1048576] = "DrawLinesToNodes",
 }
 
 --- @enum GuiWindowFlags
@@ -29077,6 +30908,24 @@ Ext_Enums.InteractionFilterType = {
 	[2] = "Block",
 }
 
+--- @enum InterruptDecision
+Ext_Enums.InterruptDecision = {
+	Use = 0,
+	Ignore = 1,
+	Ask = 2,
+	[0] = "Use",
+	[1] = "Ignore",
+	[2] = "Ask",
+}
+
+--- @enum InterruptInteractionTypes
+Ext_Enums.InterruptInteractionTypes = {
+	Ask = 1,
+	Enabled = 2,
+	[1] = "Ask",
+	[2] = "Enabled",
+}
+
 --- @enum InterruptRequestSource
 Ext_Enums.InterruptRequestSource = {
 	Boost = 0,
@@ -29319,6 +31168,20 @@ Ext_Enums.ItemUseType = {
 	[7] = "Consumable",
 }
 
+--- @enum LevelInstanceState
+Ext_Enums.LevelInstanceState = {
+	Uninitialized = 0,
+	Load = 1,
+	LoadDependencies = 2,
+	Instantiate = 3,
+	Instantiated = 4,
+	[0] = "Uninitialized",
+	[1] = "Load",
+	[2] = "LoadDependencies",
+	[3] = "Instantiate",
+	[4] = "Instantiated",
+}
+
 --- @enum LightChannelValue
 Ext_Enums.LightChannelValue = {
 	World = 0,
@@ -29450,6 +31313,7 @@ Ext_Enums.LuaTypeId = {
 	Nullable = 14,
 	Module = 15,
 	Variant = 16,
+	Event = 17,
 	[0] = "Unknown",
 	[1] = "Void",
 	[2] = "Boolean",
@@ -29467,6 +31331,7 @@ Ext_Enums.LuaTypeId = {
 	[14] = "Nullable",
 	[15] = "Module",
 	[16] = "Variant",
+	[17] = "Event",
 }
 
 --- @enum MaterialFlags
@@ -29732,315 +31597,6 @@ Ext_Enums.NetMessage = {
 	NETMSG_CLIENT_ACCEPT = 7,
 	NETMSG_CLIENT_JOINED = 8,
 	NETMSG_CLIENT_LEFT = 9,
-	NETMSG_PLAYER_CONNECT = 10,
-	NETMSG_PLAYER_DISCONNECT = 11,
-	NETMSG_PLAYER_ACCEPT = 12,
-	NETMSG_PLAYER_JOINED = 13,
-	NETMSG_PLAYER_LEFT = 14,
-	NETMSG_PLAYER_CHANGENAME = 15,
-	NETMSG_PLAYER_NAMECHANGED = 16,
-	NETMSG_ECS_REPLICATION = 17,
-	NETMSG_VOICEDATA = 18,
-	NETMSG_SKIPMOVIE_RESULT = 19,
-	NETMSG_MIC_DISABLED = 20,
-	NETMSG_SURFACE_CREATE = 22,
-	NETMSG_SURFACE_META = 23,
-	NETMSG_DARKNESSTILE_UPDATE = 24,
-	NETMSG_GAMEACTION = 25,
-	NETMSG_CHARACTER_CREATE = 26,
-	NETMSG_CHARACTER_DESTROY = 27,
-	NETMSG_CHARACTER_CONFIRMATION = 28,
-	NETMSG_CHARACTER_ACTIVATE = 29,
-	NETMSG_CHARACTER_DEACTIVATE = 30,
-	NETMSG_CHARACTER_ASSIGN = 31,
-	NETMSG_CHARACTER_STEERING = 32,
-	NETMSG_CHARACTER_ACTION = 33,
-	NETMSG_CHARACTER_ACTION_DATA = 34,
-	NETMSG_CHARACTER_ACTION_REQUEST_RESULT = 35,
-	NETMSG_CHARACTER_STATUS = 36,
-	NETMSG_CHARACTER_STATUS_LIFETIME = 37,
-	NETMSG_CHARACTER_UPDATE = 38,
-	NETMSG_CHARACTER_CONTROL = 39,
-	NETMSG_CHARACTER_DIALOG = 40,
-	NETMSG_CHARACTER_UNSHEATHING = 41,
-	NETMSG_CHARACTER_END_REPOSE = 42,
-	NETMSG_CHARACTER_USE_MOVEMENT = 43,
-	NETMSG_CHARACTER_MOVE_FAILED = 44,
-	NETMSG_CHARACTER_SELECTED_CLIMB_ON = 45,
-	NETMSG_FOLLOWER_CANT_USE_ITEM = 46,
-	NETMSG_CHARACTER_AOO = 47,
-	NETMSG_CHARACTER_TRANSFORM = 48,
-	NETMSG_CHARACTER_TELEPORT = 49,
-	NETMSG_CHARACTER_PICKPOCKET = 50,
-	NETMSG_CHARACTER_OFFSTAGE = 51,
-	NETMSG_CHARACTER_LOOT = 52,
-	NETMSG_CHARACTER_ITEM_USED = 53,
-	NETMSG_CHARACTER_IN_DIALOG = 54,
-	NETMSG_CHARACTER_BEHAVIOR = 55,
-	NETMSG_PARTYGROUP = 60,
-	NETMSG_PARTYORDER = 61,
-	NETMSG_PARTY_BLOCKFOLLOW = 64,
-	NETMSG_SHROUD_UPDATE = 65,
-	NETMSG_ITEM_CREATE = 67,
-	NETMSG_ITEM_DESTROY = 68,
-	NETMSG_ITEM_ACTIVATE = 69,
-	NETMSG_ITEM_DEACTIVATE = 70,
-	NETMSG_ITEM_DESTINATION = 71,
-	NETMSG_ITEM_UPDATE = 72,
-	NETMSG_ITEM_USE_REMOTELY = 73,
-	NETMSG_ITEM_MOVE_TO_WORLD = 74,
-	NETMSG_ITEM_ACTION = 75,
-	NETMSG_ITEM_STATUS = 76,
-	NETMSG_ITEM_STATUS_LIFETIME = 77,
-	NETMSG_ITEM_TRANSFORM = 78,
-	NETMSG_ITEM_CONFIRMATION = 79,
-	NETMSG_ITEM_OFFSTAGE = 80,
-	NETMSG_ITEM_MOVED_INFORM = 81,
-	NETMSG_INVENTORY_CREATE = 82,
-	NETMSG_INVENTORY_CREATE_AND_OPEN = 83,
-	NETMSG_INVENTORY_DESTROY = 84,
-	NETMSG_INVENTORY_VIEW_CREATE = 85,
-	NETMSG_INVENTORY_VIEW_DESTROY = 86,
-	NETMSG_INVENTORY_VIEW_UPDATE_ITEMS = 87,
-	NETMSG_INVENTORY_VIEW_UPDATE_PARENTS = 88,
-	NETMSG_INVENTORY_VIEW_SORT = 89,
-	NETMSG_INVENTORY_ITEM_UPDATE = 90,
-	NETMSG_INVENTORY_LOCKSTATE_SYNC = 91,
-	NETMSG_PROJECTILE_CREATE = 92,
-	NETMSG_PROJECTILE_UPDATE = 93,
-	NETMSG_TURNBASED_FINISHTEAM = 98,
-	NETMSG_TURNBASED_SETTEAM = 99,
-	NETMSG_TURNBASED_FLEECOMBATRESULT = 100,
-	NETMSG_TURNBASED_FLEE_REQUEST = 101,
-	NETMSG_TURNBASED_ENDTURN_REQUEST = 102,
-	NETMSG_TURNBASED_CANCEL_ENDTURN_REQUEST = 103,
-	NETMSG_TURNBASED_BEGIN_CANCEL_ENDTURN_REQUEST = 104,
-	NETMSG_TURNBASED_END_CANCEL_ENDTURN_REQUEST = 105,
-	NETMSG_TURNBASED_STARTTURN_CONFIRMATION = 106,
-	NETMSG_TURNBASED_SKIP_START_DELAY = 107,
-	NETMSG_UI_FORCETURNBASED_ENTERED = 108,
-	NETMSG_UI_FORCETURNBASED_LEFT = 109,
-	NETMSG_UI_FORCETURNBASED_TURN_STARTED = 110,
-	NETMSG_UI_FORCETURNBASED_TURN_ENDED = 111,
-	NETMSG_NET_ENTITY_CREATE = 116,
-	NETMSG_NET_ENTITY_DESTROY = 117,
-	NETMSG_PEER_ACTIVATE = 118,
-	NETMSG_PEER_DEACTIVATE = 119,
-	NETMSG_SPELL_LEARN = 120,
-	NETMSG_SPELL_REMOVE_LEARNED = 121,
-	NETMSG_SPELL_PREPARE = 122,
-	NETMSG_SPELL_CANCEL = 123,
-	NETMSG_TADPOLE_POWER_ADD = 124,
-	NETMSG_TADPOLE_POWERS_REMOVE = 125,
-	NETMSG_EFFECT_CREATE = 126,
-	NETMSG_EFFECT_FORGET = 127,
-	NETMSG_EFFECT_DESTROY = 128,
-	NETMSG_GAMECONTROL_UPDATE_S2C = 129,
-	NETMSG_GAMECONTROL_UPDATE_C2S = 130,
-	NETMSG_GAMECONTROL_PRICETAG = 131,
-	NETMSG_PLAYMOVIE = 132,
-	NETMSG_CHARACTER_ERROR = 133,
-	NETMSG_CACHETEMPLATE = 134,
-	NETMSG_OVERHEADTEXT = 135,
-	NETMSG_COMBATLOG = 136,
-	NETMSG_COMBATLOGITEMINTERACTION = 137,
-	NETMSG_COMBATLOGENTRIES = 138,
-	NETMSG_SCREEN_FADE_FINISHED = 139,
-	NETMSG_OPEN_CUSTOM_BOOK_UI_MESSAGE = 140,
-	NETMSG_CLOSE_CUSTOM_BOOK_UI_MESSAGE = 141,
-	NETMSG_OPEN_MESSAGE_BOX_MESSAGE = 142,
-	NETMSG_CLOSED_MESSAGE_BOX_MESSAGE = 143,
-	NETMSG_OPEN_WAYPOINT_UI_MESSAGE = 144,
-	NETMSG_CLOSE_UI_MESSAGE = 145,
-	NETMSG_SHOW_ENTER_REGION_UI_MESSAGE = 146,
-	NETMSG_JOURNAL_RESET = 147,
-	NETMSG_QUEST_STEP = 148,
-	NETMSG_QUEST_CATEGORY_UPDATE = 149,
-	NETMSG_QUEST_PROGRESS = 150,
-	NETMSG_QUESTS_LOADED = 151,
-	NETMSG_TROPHY_UPDATE = 152,
-	NETMSG_JOURNALRECIPE_UPDATE = 153,
-	NETMSG_MARKER_UI_CREATE = 154,
-	NETMSG_MARKER_UI_UPDATE = 155,
-	NETMSG_QUEST_TRACK = 156,
-	NETMSG_UI_QUESTSELECTED = 157,
-	NETMSG_MYSTERY_ADVANCED = 158,
-	NETMSG_MYSTERY_DISABLED = 159,
-	NETMSG_NOTIFICATION = 160,
-	NETMSG_GAMEOVER = 161,
-	NETMSG_ACT_OVER = 162,
-	NETMSG_REGISTER_WAYPOINT = 163,
-	NETMSG_FLAG_UPDATE = 164,
-	NETMSG_DIALOG_STATE_MESSAGE = 168,
-	NETMSG_DIALOG_NODE_MESSAGE = 169,
-	NETMSG_DIALOG_ANSWER_MESSAGE = 170,
-	NETMSG_DIALOG_ANSWER_HIGHLIGHT_MESSAGE = 171,
-	NETMSG_DIALOG_HISTORY_MESSAGE = 172,
-	NETMSG_DIALOG_ACTORJOINS_MESSAGE = 173,
-	NETMSG_DIALOG_ACTORLEAVES_MESSAGE = 174,
-	NETMSG_DIALOG_REPLACESPEAKER_MESSAGE = 175,
-	NETMSG_DIALOG_SUGGESTANSWER_MESSAGE = 176,
-	NETMSG_DIALOG_REQUEST_IN_DIALOGUE_ATTACK_MESSAGE = 177,
-	NETMSG_DIALOG_TIMELINE_UNLOADED_MESSAGE = 178,
-	NETMSG_TRADE_ACTION = 179,
-	NETMSG_CAMERA_ACTIVATE = 180,
-	NETMSG_CAMERA_ROTATE = 181,
-	NETMSG_CAMERA_TARGET = 182,
-	NETMSG_LIGHTING_OVERRIDE = 183,
-	NETMSG_ATMOSPHERE_OVERRIDE = 184,
-	NETMSG_CHAT = 185,
-	NETMSG_GAMETIME_SYNC = 186,
-	NETMSG_REQUESTAUTOSAVE = 188,
-	NETMSG_SAVEGAME = 189,
-	NETMSG_SAVEGAMEHANDSHAKE = 190,
-	NETMSG_SAVEGAMEHANDSHAKE_SCREENSHOT = 191,
-	NETMSG_MODULE_LOAD = 192,
-	NETMSG_MODULE_LOADED = 193,
-	NETMSG_SESSION_LOAD = 194,
-	NETMSG_SESSION_LOADED = 195,
-	NETMSG_SESSION_UNLOADED = 196,
-	NETMSG_LEVEL_LOAD = 197,
-	NETMSG_LEVEL_CREATED = 198,
-	NETMSG_LEVEL_LOADED = 199,
-	NETMSG_LOAD_START = 200,
-	NETMSG_LOAD_STARTED = 201,
-	NETMSG_LEVEL_INSTANTIATE_SWAP = 202,
-	NETMSG_LEVEL_SWAP_READY = 203,
-	NETMSG_LEVEL_SWAP_COMPLETE = 204,
-	NETMSG_LEVEL_START = 205,
-	NETMSG_CHANGE_RULESETS = 206,
-	NETMSG_CHARACTER_CHANGE_OWNERSHIP = 207,
-	NETMSG_JOURNALDIALOGLOG_UPDATE = 208,
-	NETMSG_ACHIEVEMENT_UNLOCKED_MESSAGE = 209,
-	NETMSG_SAVEGAME_LOAD_FAIL = 210,
-	NETMSG_SERVER_COMMAND = 211,
-	NETMSG_SERVER_NOTIFICATION = 212,
-	NETMSG_STORY_ELEMENT_UI = 213,
-	NETMSG_OPEN_CRAFT_UI_MESSAGE = 214,
-	NETMSG_ACHIEVEMENT_PROGRESS_MESSAGE = 215,
-	NETMSG_UNLOCK_WAYPOINT = 216,
-	NETMSG_LOCK_WAYPOINT = 218,
-	NETMSG_COMBINE_RESULT = 219,
-	NETMSG_UNLOCK_ITEM = 220,
-	NETMSG_TELEPORT_WAYPOINT = 221,
-	NETMSG_SHORT_REST = 222,
-	NETMSG_CAST_ALL = 223,
-	NETMSG_END_THE_DAY = 224,
-	NETMSG_LONG_REST_DECISION = 225,
-	NETMSG_REALTIME_MULTIPLAY = 226,
-	NETMSG_DIALOG_LISTEN = 227,
-	NETMSG_DIALOG_INVALID_ANSWER = 228,
-	NETMSG_MUSIC_STATE = 229,
-	NETMSG_MUSIC_EVENT = 230,
-	NETMSG_LOBBY_DATAUPDATE = 231,
-	NETMSG_LOBBY_USERUPDATE = 232,
-	NETMSG_LOBBY_STARTGAME = 233,
-	NETMSG_TELEPORT_ACK = 234,
-	NETMSG_CAMERA_SPLINE = 236,
-	NETMSG_CHARACTER_MOVEMENT_FALLING = 237,
-	NETMSG_READYCHECK = 238,
-	NETMSG_PAUSE = 239,
-	NETMSG_UNPAUSE = 240,
-	NETMSG_DIPLOMACY = 241,
-	NETMSG_TRIGGER_CREATE = 242,
-	NETMSG_TRIGGER_DESTROY = 243,
-	NETMSG_TRIGGER_UPDATE = 244,
-	NETMSG_PING_REQUEST = 245,
-	NETMSG_CUSTOM_STATS_DEFINITION_CREATE = 246,
-	NETMSG_CUSTOM_STATS_DEFINITION_REMOVE = 247,
-	NETMSG_CUSTOM_STATS_DEFINITION_UPDATE = 248,
-	NETMSG_CUSTOM_STATS_CREATE = 249,
-	NETMSG_CUSTOM_STATS_UPDATE = 250,
-	NETMSG_GIVE_REWARD = 251,
-	NETMSG_LOAD_GAME_WITH_ADDONS = 252,
-	NETMSG_LOAD_GAME_WITH_ADDONS_FAIL = 253,
-	NETMSG_SHOW_ERROR = 254,
-	NETMSG_CLIENT_GAME_SETTINGS = 255,
-	NETMSG_MULTIPLE_TARGET_OPERATION = 257,
-	NETMSG_DLC_UPDATE = 258,
-	NETMSG_TIMELINE_HANDSHAKE = 259,
-	NETMSG_TIMELINE_ACTOR_HANDSHAKE = 260,
-	NETMSG_TIMELINE_NODECOMPLETED = 261,
-	NETMSG_TIMELINE_PLAYER_WATCHING = 262,
-	NETMSG_TIMELINE_REQUEST_FASTFORWARD = 263,
-	NETMSG_TIMELINE_WORLD_CINEMATIC_COMPLETED = 264,
-	NETMSG_FORCE_TURN_BASED_END_PLAYER_TURN_REQUEST = 265,
-	NETMSG_FORCE_TURN_BASED_TOGGLE_REQUEST = 266,
-	NETMSG_REQUESTED_ROLL = 267,
-	NETMSG_PASSIVE_ROLL_SEQUENCE = 268,
-	NETMSG_CHARACTER_PATHING = 269,
-	NETMSG_CHARACTER_REQUEST_WEAPON_SET_SWITCH = 270,
-	NETMSG_CHARACTER_REQUEST_ARMOR_SET_SWITCH = 271,
-	NETMSG_CHARACTER_CREATION_ABORT = 272,
-	NETMSG_CHARACTER_CREATION_READY = 273,
-	NETMSG_CHARACTER_CREATION_UPDATE = 274,
-	NETMSG_CHARACTER_CREATION_PLAYORIGINTIMELINE = 275,
-	NETMSG_LEVEL_UP_UPDATE = 276,
-	NETMSG_RESPEC_UPDATE = 277,
-	NETMSG_FULL_RESPEC_UPDATE = 278,
-	NETMSG_CHARACTER_CREATION_LEVELUP = 279,
-	NETMSG_CHARACTER_CREATION_RESPEC = 280,
-	NETMSG_UI_COMBINE_OPEN = 281,
-	NETMSG_UI_INTERACTION_STOPPED = 282,
-	NETMSG_TUTORIAL_CLOSED = 283,
-	NETMSG_TUTORIAL_UI_EVENT = 284,
-	NETMSG_TUTORIAL_USER_ACTION = 285,
-	NETMSG_TUTORIALS_SHOWING = 286,
-	NETMSG_TUTORIALS_RESET = 287,
-	NETMSG_PASSIVE_TOGGLE = 288,
-	NETMSG_DUALWIELDING_TOGGLE = 289,
-	NETMSG_SNEAKING_CONES_VISIBLE_TOGGLE = 290,
-	NETMSG_HOTBAR_SLOT_SET = 291,
-	NETMSG_HOTBAR_SLOT_REMOVE_IS_NEW_FLAG = 292,
-	NETMSG_HOTBAR_COLUMN_SET = 293,
-	NETMSG_HOTBAR_ROWS_SET = 294,
-	NETMSG_HOTBAR_ROW_REMOVE = 295,
-	NETMSG_HOTBAR_LOCK_SET = 296,
-	NETMSG_HOTBAR_CUSTOM_DECK = 297,
-	NETMSG_HOTBAR_CURRENT_DECK_SET = 298,
-	NETMSG_PARTY_PRESET_SAVE = 299,
-	NETMSG_PARTY_PRESET_LOAD = 300,
-	NETMSG_PARTY_PRESET_LEVELUP = 301,
-	NETMSG_PARTY_PRESET_SPELL = 302,
-	NETMSG_STORY_FLAGS_LOAD = 303,
-	NETMSG_ITEM_TOGGLE_IS_WARE = 304,
-	NETMSG_ROLL_STREAM_ROLL_MODE_TYPE = 305,
-	NETMSG_REQUEST_RELEASE_CONCENTRATION = 306,
-	NETMSG_ACTIVE_ROLL_MODIFIERS = 307,
-	NETMSG_CHARACTER_DROP_ENTITY = 308,
-	NETMSG_CHARACTER_CANCEL_DROP_ENTITY = 309,
-	NETMSG_CHARACTER_LOCKPICK = 310,
-	NETMSG_CHARACTER_TRAPDISARM = 311,
-	NETMSG_CHARACTER_IMPROV_WEAPON = 312,
-	NETMSG_CHARACTER_STOWED_VISIBILITY = 313,
-	NETMSG_DECLUTTERED_ITEMS = 314,
-	NETMSG_SPELL_CAST_START_PREVIEW = 315,
-	NETMSG_SPELL_CAST_UPDATE_PREVIEW = 316,
-	NETMSG_SPELL_CAST_CONFIRM = 317,
-	NETMSG_SPELL_CAST_CANCEL = 318,
-	NETMSG_SPELL_CAST_CAST = 319,
-	NETMSG_USE_ITEM_ACTION = 320,
-	NETMSG_INVENTORY_CREATE_NEW = 321,
-	NETMSG_INVENTORY_DESTROY_NEW = 322,
-	NETMSG_INVENTORY_ADD = 323,
-	NETMSG_INVENTORY_MOVETOSLOT = 324,
-	NETMSG_INVENTORY_TRANSFER = 325,
-	NETMSG_INVENTORY_SORT = 326,
-	NETMSG_INVENTORY_EQUIP = 327,
-	NETMSG_INVENTORY_UNEQUIP = 328,
-	NETMSG_INVENTORY_LOCK = 329,
-	NETMSG_DIALOG_INSTANCEDIALOGCHANGED = 330,
-	NETMSG_CHARACTER_ORIGINAL_TEMPLATE_UPDATE = 331,
-	NETMSG_INTERRUPT_DECISION = 332,
-	NETMSG_INTERRUPT_SET_ASK_DATA = 333,
-	NETMSG_INTERRUPT_SET_ENABLED_DATA = 334,
-	NETMSG_SELECT_DICE = 335,
-	NETMSG_CAMERA_ARRIVED = 336,
-	NETMSG_CLEAR_RECIPE_NEW_FLAG = 337,
-	NETMSG_COMBINE_ITEMS = 338,
-	NETMSG_NEW_ITEMS_INSIDE = 339,
-	NETMSG_CLIENT_DIALOG_PRIVACY_CHANGED = 340,
-	NETMSG_CLIENT_DIALOG_JOIN_PRIVACY_FAILED = 341,
 	NETMSG_SCRIPT_EXTENDER = 400,
 	[1] = "NETMSG_HANDSHAKE",
 	[2] = "NETMSG_HOST_WELCOME",
@@ -30051,315 +31607,6 @@ Ext_Enums.NetMessage = {
 	[7] = "NETMSG_CLIENT_ACCEPT",
 	[8] = "NETMSG_CLIENT_JOINED",
 	[9] = "NETMSG_CLIENT_LEFT",
-	[10] = "NETMSG_PLAYER_CONNECT",
-	[11] = "NETMSG_PLAYER_DISCONNECT",
-	[12] = "NETMSG_PLAYER_ACCEPT",
-	[13] = "NETMSG_PLAYER_JOINED",
-	[14] = "NETMSG_PLAYER_LEFT",
-	[15] = "NETMSG_PLAYER_CHANGENAME",
-	[16] = "NETMSG_PLAYER_NAMECHANGED",
-	[17] = "NETMSG_ECS_REPLICATION",
-	[18] = "NETMSG_VOICEDATA",
-	[19] = "NETMSG_SKIPMOVIE_RESULT",
-	[20] = "NETMSG_MIC_DISABLED",
-	[22] = "NETMSG_SURFACE_CREATE",
-	[23] = "NETMSG_SURFACE_META",
-	[24] = "NETMSG_DARKNESSTILE_UPDATE",
-	[25] = "NETMSG_GAMEACTION",
-	[26] = "NETMSG_CHARACTER_CREATE",
-	[27] = "NETMSG_CHARACTER_DESTROY",
-	[28] = "NETMSG_CHARACTER_CONFIRMATION",
-	[29] = "NETMSG_CHARACTER_ACTIVATE",
-	[30] = "NETMSG_CHARACTER_DEACTIVATE",
-	[31] = "NETMSG_CHARACTER_ASSIGN",
-	[32] = "NETMSG_CHARACTER_STEERING",
-	[33] = "NETMSG_CHARACTER_ACTION",
-	[34] = "NETMSG_CHARACTER_ACTION_DATA",
-	[35] = "NETMSG_CHARACTER_ACTION_REQUEST_RESULT",
-	[36] = "NETMSG_CHARACTER_STATUS",
-	[37] = "NETMSG_CHARACTER_STATUS_LIFETIME",
-	[38] = "NETMSG_CHARACTER_UPDATE",
-	[39] = "NETMSG_CHARACTER_CONTROL",
-	[40] = "NETMSG_CHARACTER_DIALOG",
-	[41] = "NETMSG_CHARACTER_UNSHEATHING",
-	[42] = "NETMSG_CHARACTER_END_REPOSE",
-	[43] = "NETMSG_CHARACTER_USE_MOVEMENT",
-	[44] = "NETMSG_CHARACTER_MOVE_FAILED",
-	[45] = "NETMSG_CHARACTER_SELECTED_CLIMB_ON",
-	[46] = "NETMSG_FOLLOWER_CANT_USE_ITEM",
-	[47] = "NETMSG_CHARACTER_AOO",
-	[48] = "NETMSG_CHARACTER_TRANSFORM",
-	[49] = "NETMSG_CHARACTER_TELEPORT",
-	[50] = "NETMSG_CHARACTER_PICKPOCKET",
-	[51] = "NETMSG_CHARACTER_OFFSTAGE",
-	[52] = "NETMSG_CHARACTER_LOOT",
-	[53] = "NETMSG_CHARACTER_ITEM_USED",
-	[54] = "NETMSG_CHARACTER_IN_DIALOG",
-	[55] = "NETMSG_CHARACTER_BEHAVIOR",
-	[60] = "NETMSG_PARTYGROUP",
-	[61] = "NETMSG_PARTYORDER",
-	[64] = "NETMSG_PARTY_BLOCKFOLLOW",
-	[65] = "NETMSG_SHROUD_UPDATE",
-	[67] = "NETMSG_ITEM_CREATE",
-	[68] = "NETMSG_ITEM_DESTROY",
-	[69] = "NETMSG_ITEM_ACTIVATE",
-	[70] = "NETMSG_ITEM_DEACTIVATE",
-	[71] = "NETMSG_ITEM_DESTINATION",
-	[72] = "NETMSG_ITEM_UPDATE",
-	[73] = "NETMSG_ITEM_USE_REMOTELY",
-	[74] = "NETMSG_ITEM_MOVE_TO_WORLD",
-	[75] = "NETMSG_ITEM_ACTION",
-	[76] = "NETMSG_ITEM_STATUS",
-	[77] = "NETMSG_ITEM_STATUS_LIFETIME",
-	[78] = "NETMSG_ITEM_TRANSFORM",
-	[79] = "NETMSG_ITEM_CONFIRMATION",
-	[80] = "NETMSG_ITEM_OFFSTAGE",
-	[81] = "NETMSG_ITEM_MOVED_INFORM",
-	[82] = "NETMSG_INVENTORY_CREATE",
-	[83] = "NETMSG_INVENTORY_CREATE_AND_OPEN",
-	[84] = "NETMSG_INVENTORY_DESTROY",
-	[85] = "NETMSG_INVENTORY_VIEW_CREATE",
-	[86] = "NETMSG_INVENTORY_VIEW_DESTROY",
-	[87] = "NETMSG_INVENTORY_VIEW_UPDATE_ITEMS",
-	[88] = "NETMSG_INVENTORY_VIEW_UPDATE_PARENTS",
-	[89] = "NETMSG_INVENTORY_VIEW_SORT",
-	[90] = "NETMSG_INVENTORY_ITEM_UPDATE",
-	[91] = "NETMSG_INVENTORY_LOCKSTATE_SYNC",
-	[92] = "NETMSG_PROJECTILE_CREATE",
-	[93] = "NETMSG_PROJECTILE_UPDATE",
-	[98] = "NETMSG_TURNBASED_FINISHTEAM",
-	[99] = "NETMSG_TURNBASED_SETTEAM",
-	[100] = "NETMSG_TURNBASED_FLEECOMBATRESULT",
-	[101] = "NETMSG_TURNBASED_FLEE_REQUEST",
-	[102] = "NETMSG_TURNBASED_ENDTURN_REQUEST",
-	[103] = "NETMSG_TURNBASED_CANCEL_ENDTURN_REQUEST",
-	[104] = "NETMSG_TURNBASED_BEGIN_CANCEL_ENDTURN_REQUEST",
-	[105] = "NETMSG_TURNBASED_END_CANCEL_ENDTURN_REQUEST",
-	[106] = "NETMSG_TURNBASED_STARTTURN_CONFIRMATION",
-	[107] = "NETMSG_TURNBASED_SKIP_START_DELAY",
-	[108] = "NETMSG_UI_FORCETURNBASED_ENTERED",
-	[109] = "NETMSG_UI_FORCETURNBASED_LEFT",
-	[110] = "NETMSG_UI_FORCETURNBASED_TURN_STARTED",
-	[111] = "NETMSG_UI_FORCETURNBASED_TURN_ENDED",
-	[116] = "NETMSG_NET_ENTITY_CREATE",
-	[117] = "NETMSG_NET_ENTITY_DESTROY",
-	[118] = "NETMSG_PEER_ACTIVATE",
-	[119] = "NETMSG_PEER_DEACTIVATE",
-	[120] = "NETMSG_SPELL_LEARN",
-	[121] = "NETMSG_SPELL_REMOVE_LEARNED",
-	[122] = "NETMSG_SPELL_PREPARE",
-	[123] = "NETMSG_SPELL_CANCEL",
-	[124] = "NETMSG_TADPOLE_POWER_ADD",
-	[125] = "NETMSG_TADPOLE_POWERS_REMOVE",
-	[126] = "NETMSG_EFFECT_CREATE",
-	[127] = "NETMSG_EFFECT_FORGET",
-	[128] = "NETMSG_EFFECT_DESTROY",
-	[129] = "NETMSG_GAMECONTROL_UPDATE_S2C",
-	[130] = "NETMSG_GAMECONTROL_UPDATE_C2S",
-	[131] = "NETMSG_GAMECONTROL_PRICETAG",
-	[132] = "NETMSG_PLAYMOVIE",
-	[133] = "NETMSG_CHARACTER_ERROR",
-	[134] = "NETMSG_CACHETEMPLATE",
-	[135] = "NETMSG_OVERHEADTEXT",
-	[136] = "NETMSG_COMBATLOG",
-	[137] = "NETMSG_COMBATLOGITEMINTERACTION",
-	[138] = "NETMSG_COMBATLOGENTRIES",
-	[139] = "NETMSG_SCREEN_FADE_FINISHED",
-	[140] = "NETMSG_OPEN_CUSTOM_BOOK_UI_MESSAGE",
-	[141] = "NETMSG_CLOSE_CUSTOM_BOOK_UI_MESSAGE",
-	[142] = "NETMSG_OPEN_MESSAGE_BOX_MESSAGE",
-	[143] = "NETMSG_CLOSED_MESSAGE_BOX_MESSAGE",
-	[144] = "NETMSG_OPEN_WAYPOINT_UI_MESSAGE",
-	[145] = "NETMSG_CLOSE_UI_MESSAGE",
-	[146] = "NETMSG_SHOW_ENTER_REGION_UI_MESSAGE",
-	[147] = "NETMSG_JOURNAL_RESET",
-	[148] = "NETMSG_QUEST_STEP",
-	[149] = "NETMSG_QUEST_CATEGORY_UPDATE",
-	[150] = "NETMSG_QUEST_PROGRESS",
-	[151] = "NETMSG_QUESTS_LOADED",
-	[152] = "NETMSG_TROPHY_UPDATE",
-	[153] = "NETMSG_JOURNALRECIPE_UPDATE",
-	[154] = "NETMSG_MARKER_UI_CREATE",
-	[155] = "NETMSG_MARKER_UI_UPDATE",
-	[156] = "NETMSG_QUEST_TRACK",
-	[157] = "NETMSG_UI_QUESTSELECTED",
-	[158] = "NETMSG_MYSTERY_ADVANCED",
-	[159] = "NETMSG_MYSTERY_DISABLED",
-	[160] = "NETMSG_NOTIFICATION",
-	[161] = "NETMSG_GAMEOVER",
-	[162] = "NETMSG_ACT_OVER",
-	[163] = "NETMSG_REGISTER_WAYPOINT",
-	[164] = "NETMSG_FLAG_UPDATE",
-	[168] = "NETMSG_DIALOG_STATE_MESSAGE",
-	[169] = "NETMSG_DIALOG_NODE_MESSAGE",
-	[170] = "NETMSG_DIALOG_ANSWER_MESSAGE",
-	[171] = "NETMSG_DIALOG_ANSWER_HIGHLIGHT_MESSAGE",
-	[172] = "NETMSG_DIALOG_HISTORY_MESSAGE",
-	[173] = "NETMSG_DIALOG_ACTORJOINS_MESSAGE",
-	[174] = "NETMSG_DIALOG_ACTORLEAVES_MESSAGE",
-	[175] = "NETMSG_DIALOG_REPLACESPEAKER_MESSAGE",
-	[176] = "NETMSG_DIALOG_SUGGESTANSWER_MESSAGE",
-	[177] = "NETMSG_DIALOG_REQUEST_IN_DIALOGUE_ATTACK_MESSAGE",
-	[178] = "NETMSG_DIALOG_TIMELINE_UNLOADED_MESSAGE",
-	[179] = "NETMSG_TRADE_ACTION",
-	[180] = "NETMSG_CAMERA_ACTIVATE",
-	[181] = "NETMSG_CAMERA_ROTATE",
-	[182] = "NETMSG_CAMERA_TARGET",
-	[183] = "NETMSG_LIGHTING_OVERRIDE",
-	[184] = "NETMSG_ATMOSPHERE_OVERRIDE",
-	[185] = "NETMSG_CHAT",
-	[186] = "NETMSG_GAMETIME_SYNC",
-	[188] = "NETMSG_REQUESTAUTOSAVE",
-	[189] = "NETMSG_SAVEGAME",
-	[190] = "NETMSG_SAVEGAMEHANDSHAKE",
-	[191] = "NETMSG_SAVEGAMEHANDSHAKE_SCREENSHOT",
-	[192] = "NETMSG_MODULE_LOAD",
-	[193] = "NETMSG_MODULE_LOADED",
-	[194] = "NETMSG_SESSION_LOAD",
-	[195] = "NETMSG_SESSION_LOADED",
-	[196] = "NETMSG_SESSION_UNLOADED",
-	[197] = "NETMSG_LEVEL_LOAD",
-	[198] = "NETMSG_LEVEL_CREATED",
-	[199] = "NETMSG_LEVEL_LOADED",
-	[200] = "NETMSG_LOAD_START",
-	[201] = "NETMSG_LOAD_STARTED",
-	[202] = "NETMSG_LEVEL_INSTANTIATE_SWAP",
-	[203] = "NETMSG_LEVEL_SWAP_READY",
-	[204] = "NETMSG_LEVEL_SWAP_COMPLETE",
-	[205] = "NETMSG_LEVEL_START",
-	[206] = "NETMSG_CHANGE_RULESETS",
-	[207] = "NETMSG_CHARACTER_CHANGE_OWNERSHIP",
-	[208] = "NETMSG_JOURNALDIALOGLOG_UPDATE",
-	[209] = "NETMSG_ACHIEVEMENT_UNLOCKED_MESSAGE",
-	[210] = "NETMSG_SAVEGAME_LOAD_FAIL",
-	[211] = "NETMSG_SERVER_COMMAND",
-	[212] = "NETMSG_SERVER_NOTIFICATION",
-	[213] = "NETMSG_STORY_ELEMENT_UI",
-	[214] = "NETMSG_OPEN_CRAFT_UI_MESSAGE",
-	[215] = "NETMSG_ACHIEVEMENT_PROGRESS_MESSAGE",
-	[216] = "NETMSG_UNLOCK_WAYPOINT",
-	[218] = "NETMSG_LOCK_WAYPOINT",
-	[219] = "NETMSG_COMBINE_RESULT",
-	[220] = "NETMSG_UNLOCK_ITEM",
-	[221] = "NETMSG_TELEPORT_WAYPOINT",
-	[222] = "NETMSG_SHORT_REST",
-	[223] = "NETMSG_CAST_ALL",
-	[224] = "NETMSG_END_THE_DAY",
-	[225] = "NETMSG_LONG_REST_DECISION",
-	[226] = "NETMSG_REALTIME_MULTIPLAY",
-	[227] = "NETMSG_DIALOG_LISTEN",
-	[228] = "NETMSG_DIALOG_INVALID_ANSWER",
-	[229] = "NETMSG_MUSIC_STATE",
-	[230] = "NETMSG_MUSIC_EVENT",
-	[231] = "NETMSG_LOBBY_DATAUPDATE",
-	[232] = "NETMSG_LOBBY_USERUPDATE",
-	[233] = "NETMSG_LOBBY_STARTGAME",
-	[234] = "NETMSG_TELEPORT_ACK",
-	[236] = "NETMSG_CAMERA_SPLINE",
-	[237] = "NETMSG_CHARACTER_MOVEMENT_FALLING",
-	[238] = "NETMSG_READYCHECK",
-	[239] = "NETMSG_PAUSE",
-	[240] = "NETMSG_UNPAUSE",
-	[241] = "NETMSG_DIPLOMACY",
-	[242] = "NETMSG_TRIGGER_CREATE",
-	[243] = "NETMSG_TRIGGER_DESTROY",
-	[244] = "NETMSG_TRIGGER_UPDATE",
-	[245] = "NETMSG_PING_REQUEST",
-	[246] = "NETMSG_CUSTOM_STATS_DEFINITION_CREATE",
-	[247] = "NETMSG_CUSTOM_STATS_DEFINITION_REMOVE",
-	[248] = "NETMSG_CUSTOM_STATS_DEFINITION_UPDATE",
-	[249] = "NETMSG_CUSTOM_STATS_CREATE",
-	[250] = "NETMSG_CUSTOM_STATS_UPDATE",
-	[251] = "NETMSG_GIVE_REWARD",
-	[252] = "NETMSG_LOAD_GAME_WITH_ADDONS",
-	[253] = "NETMSG_LOAD_GAME_WITH_ADDONS_FAIL",
-	[254] = "NETMSG_SHOW_ERROR",
-	[255] = "NETMSG_CLIENT_GAME_SETTINGS",
-	[257] = "NETMSG_MULTIPLE_TARGET_OPERATION",
-	[258] = "NETMSG_DLC_UPDATE",
-	[259] = "NETMSG_TIMELINE_HANDSHAKE",
-	[260] = "NETMSG_TIMELINE_ACTOR_HANDSHAKE",
-	[261] = "NETMSG_TIMELINE_NODECOMPLETED",
-	[262] = "NETMSG_TIMELINE_PLAYER_WATCHING",
-	[263] = "NETMSG_TIMELINE_REQUEST_FASTFORWARD",
-	[264] = "NETMSG_TIMELINE_WORLD_CINEMATIC_COMPLETED",
-	[265] = "NETMSG_FORCE_TURN_BASED_END_PLAYER_TURN_REQUEST",
-	[266] = "NETMSG_FORCE_TURN_BASED_TOGGLE_REQUEST",
-	[267] = "NETMSG_REQUESTED_ROLL",
-	[268] = "NETMSG_PASSIVE_ROLL_SEQUENCE",
-	[269] = "NETMSG_CHARACTER_PATHING",
-	[270] = "NETMSG_CHARACTER_REQUEST_WEAPON_SET_SWITCH",
-	[271] = "NETMSG_CHARACTER_REQUEST_ARMOR_SET_SWITCH",
-	[272] = "NETMSG_CHARACTER_CREATION_ABORT",
-	[273] = "NETMSG_CHARACTER_CREATION_READY",
-	[274] = "NETMSG_CHARACTER_CREATION_UPDATE",
-	[275] = "NETMSG_CHARACTER_CREATION_PLAYORIGINTIMELINE",
-	[276] = "NETMSG_LEVEL_UP_UPDATE",
-	[277] = "NETMSG_RESPEC_UPDATE",
-	[278] = "NETMSG_FULL_RESPEC_UPDATE",
-	[279] = "NETMSG_CHARACTER_CREATION_LEVELUP",
-	[280] = "NETMSG_CHARACTER_CREATION_RESPEC",
-	[281] = "NETMSG_UI_COMBINE_OPEN",
-	[282] = "NETMSG_UI_INTERACTION_STOPPED",
-	[283] = "NETMSG_TUTORIAL_CLOSED",
-	[284] = "NETMSG_TUTORIAL_UI_EVENT",
-	[285] = "NETMSG_TUTORIAL_USER_ACTION",
-	[286] = "NETMSG_TUTORIALS_SHOWING",
-	[287] = "NETMSG_TUTORIALS_RESET",
-	[288] = "NETMSG_PASSIVE_TOGGLE",
-	[289] = "NETMSG_DUALWIELDING_TOGGLE",
-	[290] = "NETMSG_SNEAKING_CONES_VISIBLE_TOGGLE",
-	[291] = "NETMSG_HOTBAR_SLOT_SET",
-	[292] = "NETMSG_HOTBAR_SLOT_REMOVE_IS_NEW_FLAG",
-	[293] = "NETMSG_HOTBAR_COLUMN_SET",
-	[294] = "NETMSG_HOTBAR_ROWS_SET",
-	[295] = "NETMSG_HOTBAR_ROW_REMOVE",
-	[296] = "NETMSG_HOTBAR_LOCK_SET",
-	[297] = "NETMSG_HOTBAR_CUSTOM_DECK",
-	[298] = "NETMSG_HOTBAR_CURRENT_DECK_SET",
-	[299] = "NETMSG_PARTY_PRESET_SAVE",
-	[300] = "NETMSG_PARTY_PRESET_LOAD",
-	[301] = "NETMSG_PARTY_PRESET_LEVELUP",
-	[302] = "NETMSG_PARTY_PRESET_SPELL",
-	[303] = "NETMSG_STORY_FLAGS_LOAD",
-	[304] = "NETMSG_ITEM_TOGGLE_IS_WARE",
-	[305] = "NETMSG_ROLL_STREAM_ROLL_MODE_TYPE",
-	[306] = "NETMSG_REQUEST_RELEASE_CONCENTRATION",
-	[307] = "NETMSG_ACTIVE_ROLL_MODIFIERS",
-	[308] = "NETMSG_CHARACTER_DROP_ENTITY",
-	[309] = "NETMSG_CHARACTER_CANCEL_DROP_ENTITY",
-	[310] = "NETMSG_CHARACTER_LOCKPICK",
-	[311] = "NETMSG_CHARACTER_TRAPDISARM",
-	[312] = "NETMSG_CHARACTER_IMPROV_WEAPON",
-	[313] = "NETMSG_CHARACTER_STOWED_VISIBILITY",
-	[314] = "NETMSG_DECLUTTERED_ITEMS",
-	[315] = "NETMSG_SPELL_CAST_START_PREVIEW",
-	[316] = "NETMSG_SPELL_CAST_UPDATE_PREVIEW",
-	[317] = "NETMSG_SPELL_CAST_CONFIRM",
-	[318] = "NETMSG_SPELL_CAST_CANCEL",
-	[319] = "NETMSG_SPELL_CAST_CAST",
-	[320] = "NETMSG_USE_ITEM_ACTION",
-	[321] = "NETMSG_INVENTORY_CREATE_NEW",
-	[322] = "NETMSG_INVENTORY_DESTROY_NEW",
-	[323] = "NETMSG_INVENTORY_ADD",
-	[324] = "NETMSG_INVENTORY_MOVETOSLOT",
-	[325] = "NETMSG_INVENTORY_TRANSFER",
-	[326] = "NETMSG_INVENTORY_SORT",
-	[327] = "NETMSG_INVENTORY_EQUIP",
-	[328] = "NETMSG_INVENTORY_UNEQUIP",
-	[329] = "NETMSG_INVENTORY_LOCK",
-	[330] = "NETMSG_DIALOG_INSTANCEDIALOGCHANGED",
-	[331] = "NETMSG_CHARACTER_ORIGINAL_TEMPLATE_UPDATE",
-	[332] = "NETMSG_INTERRUPT_DECISION",
-	[333] = "NETMSG_INTERRUPT_SET_ASK_DATA",
-	[334] = "NETMSG_INTERRUPT_SET_ENABLED_DATA",
-	[335] = "NETMSG_SELECT_DICE",
-	[336] = "NETMSG_CAMERA_ARRIVED",
-	[337] = "NETMSG_CLEAR_RECIPE_NEW_FLAG",
-	[338] = "NETMSG_COMBINE_ITEMS",
-	[339] = "NETMSG_NEW_ITEMS_INSIDE",
-	[340] = "NETMSG_CLIENT_DIALOG_PRIVACY_CHANGED",
-	[341] = "NETMSG_CLIENT_DIALOG_JOIN_PRIVACY_FAILED",
 	[400] = "NETMSG_SCRIPT_EXTENDER",
 }
 
@@ -30901,6 +32148,28 @@ Ext_Enums.ObscurityState = {
 	[0] = "Clear",
 	[1] = "LightlyObscured",
 	[2] = "HeavilyObscured",
+}
+
+--- @enum OriginFlags
+Ext_Enums.OriginFlags = {
+	Unique = 1,
+	NoDisplayName = 2,
+	LockBodyType = 4,
+	LockRace = 8,
+	LockSubrace = 16,
+	LockBackground = 32,
+	LockClass = 64,
+	LockGod = 128,
+	LockBodyShape = 512,
+	[1] = "Unique",
+	[2] = "NoDisplayName",
+	[4] = "LockBodyType",
+	[8] = "LockRace",
+	[16] = "LockSubrace",
+	[32] = "LockBackground",
+	[64] = "LockClass",
+	[128] = "LockGod",
+	[512] = "LockBodyShape",
 }
 
 --- @enum OsiFunctionType
@@ -32336,19 +33605,19 @@ Ext_Enums.SceneryFlags = {
 --- @enum ServerActionType
 Ext_Enums.ServerActionType = {
 	Animation = 2,
-	MoveItem = 4,
-	KnockedDown = 5,
-	UseItem = 6,
-	CombineItem = 8,
-	TeleportFalling = 9,
-	Incapacitated = 10,
+	MoveItem = 3,
+	KnockedDown = 4,
+	UseItem = 5,
+	CombineItem = 7,
+	TeleportFalling = 8,
+	Incapacitated = 9,
 	[2] = "Animation",
-	[4] = "MoveItem",
-	[5] = "KnockedDown",
-	[6] = "UseItem",
-	[8] = "CombineItem",
-	[9] = "TeleportFalling",
-	[10] = "Incapacitated",
+	[3] = "MoveItem",
+	[4] = "KnockedDown",
+	[5] = "UseItem",
+	[7] = "CombineItem",
+	[8] = "TeleportFalling",
+	[9] = "Incapacitated",
 }
 
 --- @enum ServerBehaviourType
@@ -33013,12 +34282,26 @@ Ext_Enums.SetStatusDurationType = {
 
 --- @enum ShapeshiftChangeType
 Ext_Enums.ShapeshiftChangeType = {
-	Add = 0,
-	Multiply = 1,
-	Override = 2,
-	[0] = "Add",
-	[1] = "Multiply",
-	[2] = "Override",
+	None = 0,
+	Add = 1,
+	Multiply = 2,
+	Override = 3,
+	Template = 4,
+	[0] = "None",
+	[1] = "Add",
+	[2] = "Multiply",
+	[3] = "Override",
+	[4] = "Template",
+}
+
+--- @enum ShapeshiftInheritanceType
+Ext_Enums.ShapeshiftInheritanceType = {
+	KeepOriginal = 0,
+	ReplaceOriginal = 1,
+	Merge = 2,
+	[0] = "KeepOriginal",
+	[1] = "ReplaceOriginal",
+	[2] = "Merge",
 }
 
 --- @enum ShapeshiftSpellSource
@@ -33119,6 +34402,14 @@ Ext_Enums.SoundEventType = {
 	[4] = "CineHUD",
 }
 
+--- @enum SoundResourceFlags
+Ext_Enums.SoundResourceFlags = {
+	Preload = 1,
+	IsInternal = 2,
+	[1] = "Preload",
+	[2] = "IsInternal",
+}
+
 --- @enum SourceAdvantageType
 Ext_Enums.SourceAdvantageType = {
 	None = 0,
@@ -33127,6 +34418,20 @@ Ext_Enums.SourceAdvantageType = {
 	[0] = "None",
 	[1] = "SourceAdvantageOnAttack",
 	[2] = "SourceAllyAdvantageOnAttack",
+}
+
+--- @enum SpeakingCapabilityFlags
+Ext_Enums.SpeakingCapabilityFlags = {
+	Spells = 1,
+	Dialogue = 2,
+	VoiceBark = 4,
+	PlayVocals = 8,
+	PlayPNC = 16,
+	[1] = "Spells",
+	[2] = "Dialogue",
+	[4] = "VoiceBark",
+	[8] = "PlayVocals",
+	[16] = "PlayPNC",
 }
 
 --- @enum SpellAnimationCastEvent
@@ -34557,22 +35862,28 @@ Ext_Enums.StatusType = {
 
 --- @enum SurfaceActionType
 Ext_Enums.SurfaceActionType = {
-	CreateSurfaceAction = 1,
-	CreatePuddleAction = 2,
-	ExtinguishFireAction = 3,
-	ZoneAction = 4,
-	TransformSurfaceAction = 5,
-	ChangeSurfaceOnPathAction = 6,
-	RectangleSurfaceAction = 7,
-	PolygonSurfaceAction = 8,
-	[1] = "CreateSurfaceAction",
-	[2] = "CreatePuddleAction",
-	[3] = "ExtinguishFireAction",
-	[4] = "ZoneAction",
-	[5] = "TransformSurfaceAction",
-	[6] = "ChangeSurfaceOnPathAction",
-	[7] = "RectangleSurfaceAction",
-	[8] = "PolygonSurfaceAction",
+	None = 0,
+	CreateSurface = 1,
+	CreatePuddle = 2,
+	RemoveSurface = 3,
+	Zone = 4,
+	TransformSurface = 5,
+	ChangeSurfaceOnPath = 6,
+	RectangleSurface = 7,
+	PolygonSurface = 8,
+	ForceCreateSurface = 9,
+	CapsuleSurface = 10,
+	[0] = "None",
+	[1] = "CreateSurface",
+	[2] = "CreatePuddle",
+	[3] = "RemoveSurface",
+	[4] = "Zone",
+	[5] = "TransformSurface",
+	[6] = "ChangeSurfaceOnPath",
+	[7] = "RectangleSurface",
+	[8] = "PolygonSurface",
+	[9] = "ForceCreateSurface",
+	[10] = "CapsuleSurface",
 }
 
 --- @enum SurfaceChange
@@ -34681,6 +35992,40 @@ Ext_Enums.SurfaceStatusApplyType = {
 	[23] = "OnMoveOnTurnEnd",
 	[24] = "OnMoveOnTurnStartOnTurnEnd",
 	[25] = "OnCreationOnEnterOnMove",
+}
+
+--- @enum SurfaceTransformActionType
+Ext_Enums.SurfaceTransformActionType = {
+	None = 0,
+	Ignite = 1,
+	Douse = 2,
+	Electrify = 3,
+	Deelectrify = 4,
+	Freeze = 5,
+	Melt = 6,
+	Vaporize = 7,
+	Condense = 8,
+	DestroyWater = 9,
+	Clear = 10,
+	Daylight = 11,
+	TurnHellfire = 12,
+	UnturnHellfire = 13,
+	Sentinel = 14,
+	[0] = "None",
+	[1] = "Ignite",
+	[2] = "Douse",
+	[3] = "Electrify",
+	[4] = "Deelectrify",
+	[5] = "Freeze",
+	[6] = "Melt",
+	[7] = "Vaporize",
+	[8] = "Condense",
+	[9] = "DestroyWater",
+	[10] = "Clear",
+	[11] = "Daylight",
+	[12] = "TurnHellfire",
+	[13] = "UnturnHellfire",
+	[14] = "Sentinel",
 }
 
 --- @enum SurfaceType
@@ -34837,6 +36182,118 @@ Ext_Enums.SurfaceType = {
 	[73] = "CrawlerMucusCloud",
 	[74] = "Cloudkill6Cloud",
 	[75] = "Sentinel",
+}
+
+--- @enum TagCategoryFlags
+Ext_Enums.TagCategoryFlags = {
+	Code = 1,
+	Dialog = 2,
+	Origin = 4,
+	Identity = 8,
+	Profession = 16,
+	Race = 32,
+	Race_Meta = 64,
+	Story = 128,
+	Voice = 256,
+	Background = 512,
+	Class = 1024,
+	DialogHidden = 2048,
+	Deity = 4096,
+	Class_Deity = 8192,
+	PlayerRace = 16384,
+	CharacterSheet = 32768,
+	SpellCondition = 65536,
+	[1] = "Code",
+	[2] = "Dialog",
+	[4] = "Origin",
+	[8] = "Identity",
+	[16] = "Profession",
+	[32] = "Race",
+	[64] = "Race_Meta",
+	[128] = "Story",
+	[256] = "Voice",
+	[512] = "Background",
+	[1024] = "Class",
+	[2048] = "DialogHidden",
+	[4096] = "Deity",
+	[8192] = "Class_Deity",
+	[16384] = "PlayerRace",
+	[32768] = "CharacterSheet",
+	[65536] = "SpellCondition",
+}
+
+--- @enum TagPropertyFlags
+Ext_Enums.TagPropertyFlags = {
+	Avatar = 1,
+	Tadpoled = 2,
+	HalfIllithid = 4,
+	FullIllithid = 8,
+	EnterCombatInCurrentRound = 16,
+	IdentityTag = 32,
+	Male = 64,
+	Female = 128,
+	Neutral = 256,
+	AlchemyIngredient = 512,
+	AlchemyExtract = 1024,
+	AlchemyExtractAir = 2048,
+	AlchemyExtractEarth = 4096,
+	AlchemyExtractFey = 8192,
+	AlchemyExtractFire = 16384,
+	AlchemyExtractShadow = 32768,
+	AlchemyExtractWater = 65536,
+	AlchemySolution = 131072,
+	AlchemySolutionPotion = 262144,
+	AlchemySolutionGrenade = 524288,
+	AlchemySolutionElixir = 1048576,
+	AlchemySolutionCoating = 2097152,
+	PolymorphedUnwilling = 4194304,
+	Trader = 8388608,
+	Coating = 16777216,
+	HasExclamationDialog = 33554432,
+	AffectsSpell = 67108864,
+	[1] = "Avatar",
+	[2] = "Tadpoled",
+	[4] = "HalfIllithid",
+	[8] = "FullIllithid",
+	[16] = "EnterCombatInCurrentRound",
+	[32] = "IdentityTag",
+	[64] = "Male",
+	[128] = "Female",
+	[256] = "Neutral",
+	[512] = "AlchemyIngredient",
+	[1024] = "AlchemyExtract",
+	[2048] = "AlchemyExtractAir",
+	[4096] = "AlchemyExtractEarth",
+	[8192] = "AlchemyExtractFey",
+	[16384] = "AlchemyExtractFire",
+	[32768] = "AlchemyExtractShadow",
+	[65536] = "AlchemyExtractWater",
+	[131072] = "AlchemySolution",
+	[262144] = "AlchemySolutionPotion",
+	[524288] = "AlchemySolutionGrenade",
+	[1048576] = "AlchemySolutionElixir",
+	[2097152] = "AlchemySolutionCoating",
+	[4194304] = "PolymorphedUnwilling",
+	[8388608] = "Trader",
+	[16777216] = "Coating",
+	[33554432] = "HasExclamationDialog",
+	[67108864] = "AffectsSpell",
+}
+
+--- @enum TemplateType
+Ext_Enums.TemplateType = {
+	RootTemplate = 0,
+	GlobalTemplate = 1,
+	LocalTemplate = 2,
+	CacheTemplate = 3,
+	LevelTemplate = 4,
+	LevelCacheTemplate = 5,
+	[0] = "RootTemplate",
+	[1] = "GlobalTemplate",
+	[2] = "LocalTemplate",
+	[3] = "CacheTemplate",
+	[4] = "LevelTemplate",
+	[5] = "LevelCacheTemplate",
 }
 
 --- @enum TextKeyType
@@ -35229,11 +36686,12 @@ Ext_Enums.WeaponType = {
 --- @field AnimationSet AnimationSetSystem
 --- @field ClientCharacterIconRender EclCharacterIconRenderSystem
 --- @field ClientCharacterManager EclCharacterManager
+--- @field ClientConstruction EclConstructionSystem
 --- @field ClientEffectHandler EclEffectHandlerSystem
 --- @field ClientEquipmentVisuals EclEquipmentVisualsSystem
+--- @field ClientTimeline EclTimelineSystem
 --- @field ClientVisual EclVisualSystem
 --- @field ClientVisualsVisibilityState EclEquipmentVisualsVisibilityStateSystem
---- @field Construction ConstructionSystem
 --- @field Effect EffectsManager
 --- @field FadeableObstructionMapping FadeableObstructionMappingSystem
 --- @field InstancingRequest InstancingInstancingRequestSystem
@@ -35261,6 +36719,7 @@ Ext_Enums.WeaponType = {
 --- @field ServerGod EsvGodSystem
 --- @field ServerGravity EsvGravitySystem
 --- @field ServerHit EsvHitHitSystem
+--- @field ServerHotbar EsvHotbarHotbarSystem
 --- @field ServerInterruptDecision EsvInterruptDecisionSystem
 --- @field ServerInterruptManagement EsvInterruptManagementSystem
 --- @field ServerInterruptRequests EsvInterruptRequestsSystem
@@ -35273,6 +36732,7 @@ Ext_Enums.WeaponType = {
 --- @field ServerInventoryReceivalNotification EsvInventoryEntityReceivalNotificationSystem
 --- @field ServerInventoryStack EsvInventoryStackSystem
 --- @field ServerLeader EsvLeaderSystem
+--- @field ServerLockpicking EsvLockLockpickingSystem
 --- @field ServerLongRest EsvRestLongRestSystem
 --- @field ServerMagicPocketsTracking EsvInventoryMagicPocketsTrackingSystem
 --- @field ServerNewInventoryMember EsvInventoryNewInventoryMemberSystem
@@ -35313,6 +36773,8 @@ Ext_Enums.WeaponType = {
 --- @field ClientIMGUI Ext_ClientIMGUI
 --- @field Input Ext_ClientInput
 --- @field ClientInput Ext_ClientInput
+--- @field Level Ext_ClientLevel|Ext_ServerLevel
+--- @field ClientLevel Ext_ClientLevel
 --- @field Net Ext_ClientNet|Ext_ServerNet
 --- @field ClientNet Ext_ClientNet
 --- @field Template Ext_ClientTemplate|Ext_ServerTemplate
@@ -35322,13 +36784,14 @@ Ext_Enums.WeaponType = {
 --- @field Debug Ext_Debug
 --- @field Entity Ext_Entity
 --- @field IO Ext_IO
+--- @field Internal Ext_Internal
 --- @field Json Ext_Json
---- @field Level Ext_Level
 --- @field Loca Ext_Loca
 --- @field Log Ext_Log
 --- @field Math Ext_Math
 --- @field Mod Ext_Mod
 --- @field Resource Ext_Resource
+--- @field ServerLevel Ext_ServerLevel
 --- @field ServerNet Ext_ServerNet
 --- @field ServerTemplate Ext_ServerTemplate
 --- @field StaticData Ext_StaticData
@@ -35350,90 +36813,84 @@ Ext = {Events = {}}
 --- @class SubscribableEventDev<T>:{ (Throw:fun(self:SubscribableEvent, e:T|LuaEventBase))}
 
 --#region Extender Events
+--- 🔨**Server-Only**🔨  
+--- @type SubscribableEvent<EsvLuaAfterExecuteFunctorEventParams>  
+Ext.Events.AfterExecuteFunctor = {}
+--- 🔨**Server-Only**🔨  
+--- @type SubscribableEvent<EsvLuaBeforeDealDamageEventParams>  
+Ext.Events.BeforeDealDamage = {}
+--- 🔧**Client-Only**🔧  
+--- @type SubscribableEvent<EclLuaControllerAxisEventParams>  
+Ext.Events.ControllerAxisInput = {}
+--- 🔧**Client-Only**🔧  
+--- @type SubscribableEvent<EclLuaControllerButtonEventParams>  
+Ext.Events.ControllerButtonInput = {}
+--- 🔨**Server-Only**🔨  
+--- @type SubscribableEvent<EsvLuaDealDamageEventParams>  
+Ext.Events.DealDamage = {}
+--- 🔨**Server-Only**🔨  
+--- @type SubscribableEvent<EsvLuaDealtDamageEventParams>  
+Ext.Events.DealtDamage = {}
 --- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<LuaDoConsoleCommandEvent>  
+--- @type SubscribableEvent<LuaDoConsoleCommandEventParams>  
 Ext.Events.DoConsoleCommand = {}
+--- 🔨**Server-Only**🔨  
+--- @type SubscribableEvent<EsvLuaExecuteFunctorEventParams>  
+Ext.Events.ExecuteFunctor = {}
 --- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<EclLuaControllerAxisEvent>  
-Ext.Events.EclLuaControllerAxis = {}
---- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<EclLuaControllerButtonEvent>  
-Ext.Events.EclLuaControllerButton = {}
---- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<EclLuaGameStateChangedEvent>  
-Ext.Events.EclLuaGameStateChanged = {}
---- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<EclLuaKeyInputEvent>  
-Ext.Events.EclLuaKeyInput = {}
---- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<EclLuaMouseButtonEvent>  
-Ext.Events.EclLuaMouseButton = {}
---- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<EclLuaMouseWheelEvent>  
-Ext.Events.EclLuaMouseWheel = {}
---- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<EclLuaViewportResizedEvent>  
-Ext.Events.EclLuaViewportResized = {}
---- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<LuaEmptyEvent>  
-Ext.Events.Empty = {}
---- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<EsvLuaAfterExecuteFunctorEvent>  
-Ext.Events.EsvLuaAfterExecuteFunctor = {}
---- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<EsvLuaBeforeDealDamageEvent>  
-Ext.Events.EsvLuaBeforeDealDamage = {}
---- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<EsvLuaDealDamageEvent>  
-Ext.Events.EsvLuaDealDamage = {}
---- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<EsvLuaExecuteFunctorEvent>  
-Ext.Events.EsvLuaExecuteFunctor = {}
---- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<EsvLuaGameStateChangedEvent>  
-Ext.Events.EsvLuaGameStateChanged = {}
---- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<LuaFindPathEvent>  
+--- @type SubscribableEvent<LuaFindPathEventParams>  
 Ext.Events.FindPath = {}
---- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<LuaEmptyEvent>  
+--- 🔨**Server-Only**🔨  
+--- @type SubscribableEvent<EsvLuaGameStateChangedEventParams>  
 Ext.Events.GameStateChanged = {}
+--- 🔧**Client-Only**🔧  
+--- @type SubscribableEvent<EclLuaGameStateChangedEventParams>  
+Ext.Events.GameStateChanged = {}
+--- 🔧**Client-Only**🔧  
+--- @type SubscribableEvent<EclLuaKeyInputEventParams>  
+Ext.Events.KeyInput = {}
 --- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<LuaEmptyEvent>  
-Ext.Events.Log = {}
---- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<LuaEmptyEvent>  
+--- @type SubscribableEvent<LuaEmptyEventParams>  
 Ext.Events.ModuleLoadStarted = {}
 --- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<LuaEmptyEvent>  
+--- @type SubscribableEvent<LuaEmptyEventParams>  
 Ext.Events.ModuleResume = {}
+--- 🔧**Client-Only**🔧  
+--- @type SubscribableEvent<EclLuaMouseButtonEventParams>  
+Ext.Events.MouseButtonInput = {}
+--- 🔧**Client-Only**🔧  
+--- @type SubscribableEvent<EclLuaMouseWheelEventParams>  
+Ext.Events.MouseWheelInput = {}
 --- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<LuaNetMessageEvent>  
+--- @type SubscribableEvent<LuaNetMessageEventParams>  
 Ext.Events.NetMessage = {}
 --- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<LuaEmptyEvent>  
+--- @type SubscribableEvent<LuaNetMessageEventParams>  
 Ext.Events.NetModMessage = {}
 --- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<LuaEmptyEvent>  
+--- @type SubscribableEvent<LuaEmptyEventParams>  
 Ext.Events.ResetCompleted = {}
 --- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<LuaEmptyEvent>  
+--- @type SubscribableEvent<LuaEmptyEventParams>  
 Ext.Events.SessionLoaded = {}
 --- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<LuaEmptyEvent>  
+--- @type SubscribableEvent<LuaEmptyEventParams>  
 Ext.Events.SessionLoading = {}
 --- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<LuaEmptyEvent>  
+--- @type SubscribableEvent<LuaEmptyEventParams>  
 Ext.Events.Shutdown = {}
 --- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<LuaEmptyEvent>  
+--- @type SubscribableEvent<LuaEmptyEventParams>  
 Ext.Events.StatsLoaded = {}
 --- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<LuaEmptyEvent>  
+--- @type SubscribableEvent<LuaEmptyEventParams>  
 Ext.Events.StatsStructureLoaded = {}
 --- 🔨🔧**Server/Client**🔧🔨  
---- @type SubscribableEvent<LuaTickEvent>  
+--- @type SubscribableEvent<LuaTickEventParams>  
 Ext.Events.Tick = {}
+--- 🔧**Client-Only**🔧  
+--- @type SubscribableEvent<EclLuaViewportResizedEventParams>  
+Ext.Events.ViewportResized = {}
 --#endregion
 
 
@@ -35506,349 +36963,349 @@ function Ext.RegisterConsoleCommand(cmd, handler) end
 --#region ExtraData
 
 Ext.ExtraData = {
-	["NPC max combat turn time"] = 20.,
-	["ThrowDistanceMin"] = 3.,
-	["ThrowDistanceMax"] = 18.,
-	["ThrowStrengthCapMultiplier"] = 0.2,
-	["ThrowWeightMultiplier"] = 2.,
-	["Telekinesis Range"] = 4.,
-	["End Of Combat SightRange Multiplier"] = 3.,
-	["Sneak Damage Multiplier"] = 1.,
-	["Infectious Disease Depth"] = 5.,
-	["Infectious Disease Radius"] = 5.,
+	["NPC max combat turn time"] = 20.0,
+	["ThrowDistanceMin"] = 3.0,
+	["ThrowDistanceMax"] = 18.0,
+	["ThrowStrengthCapMultiplier"] = 0.20000000298023,
+	["ThrowWeightMultiplier"] = 2.0,
+	["Telekinesis Range"] = 4.0,
+	["End Of Combat SightRange Multiplier"] = 3.0,
+	["Sneak Damage Multiplier"] = 1.0,
+	["Infectious Disease Depth"] = 5.0,
+	["Infectious Disease Radius"] = 5.0,
 	["Haste Speed Modifier"] = 1.5,
-	["Slow Speed Modifier"] = 0.8,
+	["Slow Speed Modifier"] = 0.80000001192093,
 	["Ally Joins Ally SightRange Multiplier"] = 2.5,
-	["Surface Distance Evaluation"] = 2.,
-	["Once Per Combat Spell Realtime Cooldown"] = 1.,
-	["HintDuration"] = 5.,
-	["Projectile Terrain Offset"] = 3.,
-	["Surface Clear Owner Time"] = 1.,
-	["Decaying Touch Damage Modifier"] = 1.,
-	["FirstItemTypeShift"] = 9.,
-	["SecondItemTypeShift"] = 16.,
-	["PickpocketGoldValuePerPoint"] = 50.,
-	["PickpocketWeightPerPoint"] = 2000.,
-	["PickpocketExperienceLevelsPerPoint"] = 4.,
-	["PersuasionAttitudeBonusPerPoint"] = 5.,
-	["AbilityBaseValue"] = 10.,
-	["AbilityCharCreationBonus"] = 1.,
-	["AbilityLevelGrowth"] = 0.,
-	["AbilityBoostGrowth"] = 0.,
-	["AbilityGrowthDamp"] = 0.,
-	["AbilitySoftCap"] = 40.,
-	["WitsGrowthDamp"] = 0.,
-	["VitalityStartingAmount"] = 21.,
+	["Surface Distance Evaluation"] = 2.0,
+	["Once Per Combat Spell Realtime Cooldown"] = 1.0,
+	["HintDuration"] = 5.0,
+	["Projectile Terrain Offset"] = 3.0,
+	["Surface Clear Owner Time"] = 1.0,
+	["Decaying Touch Damage Modifier"] = 1.0,
+	["FirstItemTypeShift"] = 9.0,
+	["SecondItemTypeShift"] = 16.0,
+	["PickpocketGoldValuePerPoint"] = 50.0,
+	["PickpocketWeightPerPoint"] = 2000.0,
+	["PickpocketExperienceLevelsPerPoint"] = 4.0,
+	["PersuasionAttitudeBonusPerPoint"] = 5.0,
+	["AbilityBaseValue"] = 10.0,
+	["AbilityCharCreationBonus"] = 1.0,
+	["AbilityLevelGrowth"] = 0.0,
+	["AbilityBoostGrowth"] = 0.0,
+	["AbilityGrowthDamp"] = 0.0,
+	["AbilitySoftCap"] = 40.0,
+	["WitsGrowthDamp"] = 0.0,
+	["VitalityStartingAmount"] = 21.0,
 	["VitalityExponentialGrowth"] = 1.25,
-	["VitalityLinearGrowth"] = 9.091,
-	["VitalityToDamageRatio"] = 5.,
-	["VitalityToDamageRatioGrowth"] = 0.2,
-	["ExpectedDamageBoostFromAbilityPerLevel"] = 6.5e-002,
-	["ExpectedDamageBoostFromSpellSchoolPerLevel"] = 1.5e-002,
-	["ExpectedDamageBoostFromWeaponSkillPerLevel"] = 2.5e-002,
-	["ExpectedConGrowthForArmorCalculation"] = 1.,
-	["FirstVitalityLeapLevel"] = 9.,
+	["VitalityLinearGrowth"] = 9.0909996032715,
+	["VitalityToDamageRatio"] = 5.0,
+	["VitalityToDamageRatioGrowth"] = 0.20000000298023,
+	["ExpectedDamageBoostFromAbilityPerLevel"] = 0.064999997615814,
+	["ExpectedDamageBoostFromSpellSchoolPerLevel"] = 0.014999999664724,
+	["ExpectedDamageBoostFromWeaponSkillPerLevel"] = 0.025000000372529,
+	["ExpectedConGrowthForArmorCalculation"] = 1.0,
+	["FirstVitalityLeapLevel"] = 9.0,
 	["FirstVitalityLeapGrowth"] = 1.25,
-	["SecondVitalityLeapLevel"] = 13.,
+	["SecondVitalityLeapLevel"] = 13.0,
 	["SecondVitalityLeapGrowth"] = 1.25,
-	["ThirdVitalityLeapLevel"] = 16.,
+	["ThirdVitalityLeapLevel"] = 16.0,
 	["ThirdVitalityLeapGrowth"] = 1.25,
-	["FourthVitalityLeapLevel"] = 18.,
-	["FourthVitalityLeapGrowth"] = 1.35,
-	["DamageBoostFromAbility"] = 5.e-002,
-	["MonsterDamageBoostPerLevel"] = 2.e-002,
-	["PhysicalArmourBoostFromAbility"] = 0.,
-	["MagicArmourBoostFromAbility"] = 0.,
-	["VitalityBoostFromAbility"] = 7.e-002,
-	["DodgingBoostFromAbility"] = 0.,
-	["HealToDamageRatio"] = 1.3,
-	["ArmorToVitalityRatio"] = 0.55,
-	["ArmorRegenTimer"] = 1.e-002,
-	["ArmorRegenConstGrowth"] = 1.,
-	["ArmorRegenPercentageGrowth"] = 10.,
-	["ArmorAfterHitCooldown"] = -7.,
-	["MagicArmorRegenTimer"] = 1.e-002,
-	["MagicArmorRegenConstGrowth"] = 1.,
-	["MagicArmorRegenPercentageGrowth"] = 10.,
-	["MagicArmorAfterHitCooldown"] = -7.,
-	["ArmorHeadPercentage"] = 0.15,
-	["ArmorUpperBodyPercentage"] = 0.3,
-	["ArmorLowerBodyPercentage"] = 0.2,
+	["FourthVitalityLeapLevel"] = 18.0,
+	["FourthVitalityLeapGrowth"] = 1.3500000238419,
+	["DamageBoostFromAbility"] = 0.050000000745058,
+	["MonsterDamageBoostPerLevel"] = 0.019999999552965,
+	["PhysicalArmourBoostFromAbility"] = 0.0,
+	["MagicArmourBoostFromAbility"] = 0.0,
+	["VitalityBoostFromAbility"] = 0.070000000298023,
+	["DodgingBoostFromAbility"] = 0.0,
+	["HealToDamageRatio"] = 1.2999999523163,
+	["ArmorToVitalityRatio"] = 0.55000001192093,
+	["ArmorRegenTimer"] = 0.0099999997764826,
+	["ArmorRegenConstGrowth"] = 1.0,
+	["ArmorRegenPercentageGrowth"] = 10.0,
+	["ArmorAfterHitCooldown"] = -7.0,
+	["MagicArmorRegenTimer"] = 0.0099999997764826,
+	["MagicArmorRegenConstGrowth"] = 1.0,
+	["MagicArmorRegenPercentageGrowth"] = 10.0,
+	["MagicArmorAfterHitCooldown"] = -7.0,
+	["ArmorHeadPercentage"] = 0.15000000596046,
+	["ArmorUpperBodyPercentage"] = 0.30000001192093,
+	["ArmorLowerBodyPercentage"] = 0.20000000298023,
 	["ArmorShieldPercentage"] = 0.5,
-	["ArmorHandsPercentage"] = 0.15,
-	["ArmorFeetPercentage"] = 0.15,
-	["ArmorAmuletPercentage"] = 0.12,
-	["ArmorRingPercentage"] = 8.e-002,
-	["CharacterBaseMemoryCapacity"] = 100.,
+	["ArmorHandsPercentage"] = 0.15000000596046,
+	["ArmorFeetPercentage"] = 0.15000000596046,
+	["ArmorAmuletPercentage"] = 0.11999999731779,
+	["ArmorRingPercentage"] = 0.079999998211861,
+	["CharacterBaseMemoryCapacity"] = 100.0,
 	["CharacterBaseMemoryCapacityGrowth"] = 0.5,
-	["CharacterAbilityPointsPerMemoryCapacity"] = 1.,
-	["CombatSkillCap"] = 10.,
-	["CombatSkillLevelGrowth"] = 100.,
-	["CombatSkillNpcGrowth"] = 0.,
-	["CombatSkillDamageBonus"] = 5.,
-	["CombatSkillCritBonus"] = 1.,
-	["CombatSkillCritMultiplierBonus"] = 5.,
-	["CombatSkillAccuracyBonus"] = 5.,
-	["CombatSkillDodgingBonus"] = 1.,
-	["CombatSkillReflectionBonus"] = 5.,
-	["NumStartingCivilSkillPoints"] = 2.,
-	["CivilSkillCap"] = 5.,
-	["CivilSkillLevelGrowth"] = 100.,
-	["CivilPointOffset"] = 0.,
-	["SavethrowLowChance"] = 15.,
-	["SavethrowHighChance"] = 50.,
-	["SavethrowBelowLowPenalty"] = 5.,
-	["SavethrowPenaltyCap"] = -30.,
-	["CriticalBonusFromWits"] = 1.,
-	["InitiativeBonusFromWits"] = 1.,
-	["WeaponAccuracyPenaltyPerLevel"] = -20.,
-	["WeaponAccuracyPenaltyCap"] = -80.,
-	["ShieldAPCost"] = 0.,
-	["WeaponWeightLight"] = 500.,
-	["WeaponWeightMedium"] = 1050.,
-	["WeaponWeightHeavy"] = 2600.,
-	["WeaponWeightGiant"] = 8200.,
-	["HighGroundThreshold"] = 2.3,
-	["LowGroundAttackRollPenalty"] = -2.,
-	["HighGroundAttackRollBonus"] = 2.,
-	["LowGroundMeleeRange"] = 0.,
+	["CharacterAbilityPointsPerMemoryCapacity"] = 1.0,
+	["CombatSkillCap"] = 10.0,
+	["CombatSkillLevelGrowth"] = 100.0,
+	["CombatSkillNpcGrowth"] = 0.0,
+	["CombatSkillDamageBonus"] = 5.0,
+	["CombatSkillCritBonus"] = 1.0,
+	["CombatSkillCritMultiplierBonus"] = 5.0,
+	["CombatSkillAccuracyBonus"] = 5.0,
+	["CombatSkillDodgingBonus"] = 1.0,
+	["CombatSkillReflectionBonus"] = 5.0,
+	["NumStartingCivilSkillPoints"] = 2.0,
+	["CivilSkillCap"] = 5.0,
+	["CivilSkillLevelGrowth"] = 100.0,
+	["CivilPointOffset"] = 0.0,
+	["SavethrowLowChance"] = 15.0,
+	["SavethrowHighChance"] = 50.0,
+	["SavethrowBelowLowPenalty"] = 5.0,
+	["SavethrowPenaltyCap"] = -30.0,
+	["CriticalBonusFromWits"] = 1.0,
+	["InitiativeBonusFromWits"] = 1.0,
+	["WeaponAccuracyPenaltyPerLevel"] = -20.0,
+	["WeaponAccuracyPenaltyCap"] = -80.0,
+	["ShieldAPCost"] = 0.0,
+	["WeaponWeightLight"] = 500.0,
+	["WeaponWeightMedium"] = 1050.0,
+	["WeaponWeightHeavy"] = 2600.0,
+	["WeaponWeightGiant"] = 8200.0,
+	["HighGroundThreshold"] = 2.2999999523163,
+	["LowGroundAttackRollPenalty"] = -2.0,
+	["HighGroundAttackRollBonus"] = 2.0,
+	["LowGroundMeleeRange"] = 0.0,
 	["HighGroundMeleeRange"] = 0.5,
-	["HighGroundRangeMultiplier"] = 1.,
-	["SneakDefaultAPCost"] = 1.,
-	["BlindRangePenalty"] = 3.,
-	["RangeBoostedGlobalCap"] = 30.,
-	["SurfaceDurationFromHitFloorReaction"] = 18.,
-	["SurfaceDurationFireIgniteOverride"] = 12.,
-	["SurfaceDurationFromCharacterBleeding"] = -1.,
-	["SurfaceDurationAfterDecay"] = -1.,
-	["SmokeDurationAfterDecay"] = 6.,
-	["DualWieldingAPPenalty"] = 2.,
+	["HighGroundRangeMultiplier"] = 1.0,
+	["SneakDefaultAPCost"] = 1.0,
+	["BlindRangePenalty"] = 3.0,
+	["RangeBoostedGlobalCap"] = 30.0,
+	["SurfaceDurationFromHitFloorReaction"] = 18.0,
+	["SurfaceDurationFireIgniteOverride"] = 12.0,
+	["SurfaceDurationFromCharacterBleeding"] = -1.0,
+	["SurfaceDurationAfterDecay"] = -1.0,
+	["SmokeDurationAfterDecay"] = 6.0,
+	["DualWieldingAPPenalty"] = 2.0,
 	["DualWieldingDamagePenalty"] = 0.5,
-	["ChanceToSetStatusOnContact"] = 100.,
-	["SkillPhysArmorBonusBase"] = 5.,
-	["SkillPhysArmorBonusPerPoint"] = 2.,
-	["SkillPhysArmorBonusMax"] = 5.,
-	["SkillMagicArmorBonusBase"] = 5.,
-	["SkillMagicArmorBonusPerPoint"] = 2.,
-	["SkillMagicArmorBonusMax"] = 5.,
-	["SkillVitalityBonusBase"] = 3.,
-	["SkillVitalityBonusPerPoint"] = 1.,
-	["SkillVitalityBonusMax"] = 3.,
-	["SpellSchoolDamageToPhysicalArmorPerPoint"] = 0.,
-	["SpellSchoolDamageToMagicArmorPerPoint"] = 0.,
-	["SpellSchoolArmorRestoredPerPoint"] = 5.,
-	["SpellSchoolVitalityRestoredPerPoint"] = 5.,
-	["SpellSchoolHighGroundBonusPerPoint"] = 5.,
-	["SpellSchoolFireDamageBoostPerPoint"] = 5.,
-	["SpellSchoolPoisonAndEarthDamageBoostPerPoint"] = 5.,
-	["SpellSchoolAirDamageBoostPerPoint"] = 5.,
-	["SpellSchoolWaterDamageBoostPerPoint"] = 5.,
-	["SpellSchoolPhysicalDamageBoostPerPoint"] = 5.,
-	["SpellSchoolSulfuricDamageBoostPerPoint"] = 5.,
-	["SpellSchoolLifeStealPerPoint"] = 10.,
-	["SpiritVisionFallbackRadius"] = 10.,
-	["AiCoverProjectileTurnMemory"] = 2.,
-	["CarryWeightBase"] = 40.,
-	["CarryWeightPerStr"] = 10000.,
-	["DeflectProjectileRange"] = 1.,
-	["CleaveRangeOverride"] = 125.,
-	["FleeDistance"] = 13.,
-	["GlobalGoldValueMultiplier"] = 1.,
-	["PriceBarterCoefficient"] = 0.1,
-	["PriceAttitudeCoefficient"] = 5.e-003,
-	["PriceRoundToFiveAfterAmount"] = 100.,
-	["PriceRoundToTenAfterAmount"] = 1000.,
-	["GMCharacterAbilityCap"] = 100.,
-	["GMCharacterArmorCap"] = 999999.,
-	["GMCharacterResistanceMin"] = -1000.,
-	["GMCharacterResistanceMax"] = 1000.,
-	["GMCharacterAPCap"] = 100.,
-	["GMCharacterSPCap"] = 3.,
-	["GMItemLevelCap"] = 50.,
-	["GMItemAbilityCap"] = 100.,
-	["GMItemArmorMin"] = -999999.,
-	["GMItemArmorMax"] = 999999.,
-	["GMItemResistanceMin"] = -1000.,
-	["GMItemResistanceMax"] = 1000.,
-	["TraderDroppedItemsPercentage"] = 51.,
-	["TraderDroppedItemsCap"] = 3.,
-	["TraderDonationsRequiredAttitude"] = -45.,
-	["TeleportUnchainDistance"] = 50.,
-	["FlankingElevationThreshold"] = 1.2,
-	["DefaultDC"] = 15.,
-	["FallDamageBaseDamage"] = 1.e-002,
-	["FallDamageMinimumDistance"] = 4.,
-	["FallDamageMaximumDistance"] = 21.,
-	["FallDamageDamageType"] = 3.,
+	["ChanceToSetStatusOnContact"] = 100.0,
+	["SkillPhysArmorBonusBase"] = 5.0,
+	["SkillPhysArmorBonusPerPoint"] = 2.0,
+	["SkillPhysArmorBonusMax"] = 5.0,
+	["SkillMagicArmorBonusBase"] = 5.0,
+	["SkillMagicArmorBonusPerPoint"] = 2.0,
+	["SkillMagicArmorBonusMax"] = 5.0,
+	["SkillVitalityBonusBase"] = 3.0,
+	["SkillVitalityBonusPerPoint"] = 1.0,
+	["SkillVitalityBonusMax"] = 3.0,
+	["SpellSchoolDamageToPhysicalArmorPerPoint"] = 0.0,
+	["SpellSchoolDamageToMagicArmorPerPoint"] = 0.0,
+	["SpellSchoolArmorRestoredPerPoint"] = 5.0,
+	["SpellSchoolVitalityRestoredPerPoint"] = 5.0,
+	["SpellSchoolHighGroundBonusPerPoint"] = 5.0,
+	["SpellSchoolFireDamageBoostPerPoint"] = 5.0,
+	["SpellSchoolPoisonAndEarthDamageBoostPerPoint"] = 5.0,
+	["SpellSchoolAirDamageBoostPerPoint"] = 5.0,
+	["SpellSchoolWaterDamageBoostPerPoint"] = 5.0,
+	["SpellSchoolPhysicalDamageBoostPerPoint"] = 5.0,
+	["SpellSchoolSulfuricDamageBoostPerPoint"] = 5.0,
+	["SpellSchoolLifeStealPerPoint"] = 10.0,
+	["SpiritVisionFallbackRadius"] = 10.0,
+	["AiCoverProjectileTurnMemory"] = 2.0,
+	["CarryWeightBase"] = 40.0,
+	["CarryWeightPerStr"] = 10000.0,
+	["DeflectProjectileRange"] = 1.0,
+	["CleaveRangeOverride"] = 125.0,
+	["FleeDistance"] = 13.0,
+	["GlobalGoldValueMultiplier"] = 1.0,
+	["PriceBarterCoefficient"] = 0.10000000149012,
+	["PriceAttitudeCoefficient"] = 0.0049999998882413,
+	["PriceRoundToFiveAfterAmount"] = 100.0,
+	["PriceRoundToTenAfterAmount"] = 1000.0,
+	["GMCharacterAbilityCap"] = 100.0,
+	["GMCharacterArmorCap"] = 999999.0,
+	["GMCharacterResistanceMin"] = -1000.0,
+	["GMCharacterResistanceMax"] = 1000.0,
+	["GMCharacterAPCap"] = 100.0,
+	["GMCharacterSPCap"] = 3.0,
+	["GMItemLevelCap"] = 50.0,
+	["GMItemAbilityCap"] = 100.0,
+	["GMItemArmorMin"] = -999999.0,
+	["GMItemArmorMax"] = 999999.0,
+	["GMItemResistanceMin"] = -1000.0,
+	["GMItemResistanceMax"] = 1000.0,
+	["TraderDroppedItemsPercentage"] = 51.0,
+	["TraderDroppedItemsCap"] = 3.0,
+	["TraderDonationsRequiredAttitude"] = -45.0,
+	["TeleportUnchainDistance"] = 50.0,
+	["FlankingElevationThreshold"] = 1.2000000476837,
+	["DefaultDC"] = 15.0,
+	["FallDamageBaseDamage"] = 0.0099999997764826,
+	["FallDamageMinimumDistance"] = 4.0,
+	["FallDamageMaximumDistance"] = 21.0,
+	["FallDamageDamageType"] = 3.0,
 	["FallDamagePronePercent"] = 0.25,
-	["FallDamageMultiplierHugeGargantuan"] = 2.,
-	["FallImpactPushDistance"] = 2.,
-	["FallImpactConstant"] = 5.e-006,
+	["FallDamageMultiplierHugeGargantuan"] = 2.0,
+	["FallImpactPushDistance"] = 2.0,
+	["FallImpactConstant"] = 4.9999998736894e-06,
 	["FallImpactMinWeight"] = 0.5,
-	["LethalHP"] = 1.,
-	["SpinningSpeed"] = 5.,
-	["ItemWeightLight"] = 100.,
-	["ItemWeightMedium"] = 1000.,
-	["ItemWeightHeavy"] = 50000.,
-	["WisdomTierHigh"] = 10.,
-	["CoinPileMediumThreshold"] = 100.,
-	["CoinPileBigThreshold"] = 500.,
-	["DarknessHeightOffset"] = 0.1,
-	["DarknessGracePeriod"] = 0.2,
-	["DarknessGraceFrames"] = 6.,
-	["SightConePreviewMaxDistanceFromPlayerSq"] = 900.,
-	["SpellMoveFloodMaxSourceDistance"] = 9.,
+	["LethalHP"] = 1.0,
+	["SpinningSpeed"] = 5.0,
+	["ItemWeightLight"] = 100.0,
+	["ItemWeightMedium"] = 1000.0,
+	["ItemWeightHeavy"] = 50000.0,
+	["WisdomTierHigh"] = 10.0,
+	["CoinPileMediumThreshold"] = 100.0,
+	["CoinPileBigThreshold"] = 500.0,
+	["DarknessHeightOffset"] = 0.10000000149012,
+	["DarknessGracePeriod"] = 0.20000000298023,
+	["DarknessGraceFrames"] = 6.0,
+	["SightConePreviewMaxDistanceFromPlayerSq"] = 900.0,
+	["SpellMoveFloodMaxSourceDistance"] = 9.0,
 	["UnarmedRange"] = 1.5,
-	["ActiveRollRerollInspirationCost"] = 1.,
-	["PickpocketWeightSquaredThreshold"] = 250000.,
-	["PickpocketPriceSquaredThreshold"] = 100.,
-	["JoinAllyInCombatRadius"] = 7.,
-	["AbilityMaxValue"] = 30.,
-	["PassiveRollDelay"] = 0.4,
-	["PickpocketingMaxPrice"] = 1000.,
-	["PickpocketingWeightModifierConstant"] = 0.2,
+	["ActiveRollRerollInspirationCost"] = 1.0,
+	["PickpocketWeightSquaredThreshold"] = 250000.0,
+	["PickpocketPriceSquaredThreshold"] = 100.0,
+	["JoinAllyInCombatRadius"] = 7.0,
+	["AbilityMaxValue"] = 30.0,
+	["PassiveRollDelay"] = 0.40000000596046,
+	["PickpocketingMaxPrice"] = 1000.0,
+	["PickpocketingWeightModifierConstant"] = 0.20000000298023,
 	["PickpocketingPriceModifierConstant"] = 0.5,
-	["PickpocketingPriceDC"] = 20.,
-	["PickpocketingMinimumDC"] = 5.,
-	["FollowDistance"] = 70.,
-	["SneakFollowDistance"] = 5.,
-	["SeekHiddenRange"] = 3.,
+	["PickpocketingPriceDC"] = 20.0,
+	["PickpocketingMinimumDC"] = 5.0,
+	["FollowDistance"] = 70.0,
+	["SneakFollowDistance"] = 5.0,
+	["SeekHiddenRange"] = 3.0,
 	["SeekHiddenTimeout"] = 0.5,
 	["DamageTerrainOffset"] = 3.25,
-	["SurfaceOnMoveDistanceMultiplier"] = 1.,
+	["SurfaceOnMoveDistanceMultiplier"] = 1.0,
 	["SurfaceOnEnterDistanceMultiplier"] = 0.5,
 	["GameplayLightsFadeTime"] = 0.5,
-	["MaxPickingDistance"] = 30.,
-	["LearnSpellCostPerLevel"] = 50.,
-	["SavantLearnSpellCostPerLevel"] = 25.,
-	["MaxShortRestPoints"] = 2.,
-	["DualWieldingPlayersDefaultOn"] = 1.,
-	["DualWieldingNPCsDefaultOn"] = 1.,
-	["MaximumXPCap"] = 200000.,
-	["CombatCameraEndDelay"] = 1.,
-	["DamagingSurfacesThreshold"] = 35.,
-	["FollowThroughDamagingSurfaceDistance"] = 20.,
-	["CameraTakeControlTimer"] = 1.,
-	["CameraEnableTakeControlOnEndTurn"] = 1.,
-	["CombatCameraRangedAttackWait"] = 1.,
-	["CCTurnPauseTime"] = 1.,
-	["BaseSpellDifficultyCheck"] = 8.,
-	["GlobalBaseACModifier"] = 0.,
-	["RollStreamDialogDebtRange"] = 1.,
-	["RollStreamPlayerSpellDebtRange"] = 1.,
-	["RollStreamNPCSpellDebtRange"] = 1.,
-	["RollStreamPlayerRandomCastDebtRange"] = 1.,
-	["RollStreamNPCRandomCastDebtRange"] = 1.,
-	["RollStreamSuccessDebtConsumeMultiplier"] = 2.,
-	["RollStreamFailDebtConsumeMultiplier"] = 2.,
-	["ContainerCloseDistance"] = 1.e-002,
-	["CharacterInteractionHeightMin"] = 1.,
-	["MaxPickUpMultiplier"] = 5.,
-	["PointAndClickPostDelay"] = 0.1,
-	["PortraitClickSpamThreshold"] = 10.,
-	["CombatCameraStatusEndTurnWait"] = 1.,
-	["Disarm_MaxDistance"] = 4.,
-	["Disarm_ThrowAngle"] = 100.,
-	["Disarm_RandomConeAngle"] = 40.,
-	["EncumberedMultiplier"] = 7.,
-	["HeavilyEncumberedMultiplier"] = 9.,
-	["CarryLimitMultiplier"] = 10.,
-	["ShoveCurveConstant"] = 65.,
-	["ShoveDistanceMax"] = 6.,
-	["ShoveDistanceMin"] = 1.,
-	["ShoveMultiplier"] = 12.,
-	["DragCheckMultiplier"] = 12.,
-	["DragCurveConstant"] = 65.,
-	["DragDistanceMax"] = 6.,
-	["ForceFunctorFallbackStrength"] = 10.,
-	["ExhaustedRest_HealthPercent"] = 50.,
-	["ExhaustedRest_ResourcePercent"] = 50.,
-	["ActiveRollPartyNearbyDistance"] = 9.,
-	["ActiveRollDisableIgnoreRange"] = 0.,
-	["CannotActTimeout"] = 2.,
-	["AutoSuccessCastingInActiveRoll"] = 1.,
-	["SplatterDistanceThreshold"] = 120.,
-	["SplatterDirtPerDistance"] = 0.1,
-	["SplatterBloodPerDistance"] = 0.2,
-	["SplatterBloodPerAttack"] = 0.1,
-	["SplatterMaxBloodLimit"] = 1.,
-	["SplatterMaxDirtLimit"] = 0.9,
-	["SplatterSweatDelta"] = 0.1,
-	["PickupObjectMultiplier"] = 5.,
-	["MoveObjectMultiplier"] = 12.,
-	["MoveObjectRangeCheckMultiplier"] = 12.,
-	["MoveObjectRangeCurveConstant"] = 65.,
-	["MoveObjectRangeDistanceMax"] = 6.,
-	["ReactTimeThreshold"] = 0.2,
-	["AISwarmMoveGroupMinDistance"] = 15.,
+	["MaxPickingDistance"] = 30.0,
+	["LearnSpellCostPerLevel"] = 50.0,
+	["SavantLearnSpellCostPerLevel"] = 25.0,
+	["MaxShortRestPoints"] = 2.0,
+	["DualWieldingPlayersDefaultOn"] = 1.0,
+	["DualWieldingNPCsDefaultOn"] = 1.0,
+	["MaximumXPCap"] = 200000.0,
+	["CombatCameraEndDelay"] = 1.0,
+	["DamagingSurfacesThreshold"] = 35.0,
+	["FollowThroughDamagingSurfaceDistance"] = 20.0,
+	["CameraTakeControlTimer"] = 1.0,
+	["CameraEnableTakeControlOnEndTurn"] = 1.0,
+	["CombatCameraRangedAttackWait"] = 1.0,
+	["CCTurnPauseTime"] = 1.0,
+	["BaseSpellDifficultyCheck"] = 8.0,
+	["GlobalBaseACModifier"] = 0.0,
+	["RollStreamDialogDebtRange"] = 1.0,
+	["RollStreamPlayerSpellDebtRange"] = 1.0,
+	["RollStreamNPCSpellDebtRange"] = 1.0,
+	["RollStreamPlayerRandomCastDebtRange"] = 1.0,
+	["RollStreamNPCRandomCastDebtRange"] = 1.0,
+	["RollStreamSuccessDebtConsumeMultiplier"] = 2.0,
+	["RollStreamFailDebtConsumeMultiplier"] = 2.0,
+	["ContainerCloseDistance"] = 0.0099999997764826,
+	["CharacterInteractionHeightMin"] = 1.0,
+	["MaxPickUpMultiplier"] = 5.0,
+	["PointAndClickPostDelay"] = 0.10000000149012,
+	["PortraitClickSpamThreshold"] = 10.0,
+	["CombatCameraStatusEndTurnWait"] = 1.0,
+	["Disarm_MaxDistance"] = 4.0,
+	["Disarm_ThrowAngle"] = 100.0,
+	["Disarm_RandomConeAngle"] = 40.0,
+	["EncumberedMultiplier"] = 7.0,
+	["HeavilyEncumberedMultiplier"] = 9.0,
+	["CarryLimitMultiplier"] = 10.0,
+	["ShoveCurveConstant"] = 65.0,
+	["ShoveDistanceMax"] = 6.0,
+	["ShoveDistanceMin"] = 1.0,
+	["ShoveMultiplier"] = 12.0,
+	["DragCheckMultiplier"] = 12.0,
+	["DragCurveConstant"] = 65.0,
+	["DragDistanceMax"] = 6.0,
+	["ForceFunctorFallbackStrength"] = 10.0,
+	["ExhaustedRest_HealthPercent"] = 50.0,
+	["ExhaustedRest_ResourcePercent"] = 50.0,
+	["ActiveRollPartyNearbyDistance"] = 9.0,
+	["ActiveRollDisableIgnoreRange"] = 0.0,
+	["CannotActTimeout"] = 2.0,
+	["AutoSuccessCastingInActiveRoll"] = 1.0,
+	["SplatterDistanceThreshold"] = 120.0,
+	["SplatterDirtPerDistance"] = 0.10000000149012,
+	["SplatterBloodPerDistance"] = 0.20000000298023,
+	["SplatterBloodPerAttack"] = 0.10000000149012,
+	["SplatterMaxBloodLimit"] = 1.0,
+	["SplatterMaxDirtLimit"] = 0.89999997615814,
+	["SplatterSweatDelta"] = 0.10000000149012,
+	["PickupObjectMultiplier"] = 5.0,
+	["MoveObjectMultiplier"] = 12.0,
+	["MoveObjectRangeCheckMultiplier"] = 12.0,
+	["MoveObjectRangeCurveConstant"] = 65.0,
+	["MoveObjectRangeDistanceMax"] = 6.0,
+	["ReactTimeThreshold"] = 0.20000000298023,
+	["AISwarmMoveGroupMinDistance"] = 15.0,
 	["ScaleChangeSpeed"] = 0.5,
-	["SizeChangeWeightMultiplier"] = 2.35,
-	["PickpocketInteractionRange"] = 1.,
-	["DangerousLevelGap"] = 2.,
-	["FallMinDamagePathfindingCost"] = 1000.,
-	["FallMaxDamagePathfindingCost"] = 2000.,
-	["FallDeadPathfindingCost"] = 10000.,
-	["PerformerZoneJoinRadius"] = 8.,
-	["PerformerZoneSilenceRadius"] = 0.,
-	["MaxPerformerZones"] = 4.,
-	["PerformerZoneMaxPlayersByType"] = 4.,
-	["FootstepMixdownTime"] = 10.,
-	["FootstepMixWaitTime"] = 5.,
-	["AmbienceMixDownDelayTime"] = 10.,
-	["DefaultInstrumentStowedVisuals"] = 2.,
-	["HoverStateMixLeaveDelayTime"] = 1.,
-	["HoverStateMixEnterDelayTime"] = 2.,
-	["Minimum SightRange When Calculating End Of Combat Range"] = 12.,
-	["InterruptZoneRange"] = 23.,
-	["CameraFlyingZoomDistanceExtra"] = 10.,
+	["SizeChangeWeightMultiplier"] = 2.3499999046326,
+	["PickpocketInteractionRange"] = 1.0,
+	["DangerousLevelGap"] = 2.0,
+	["FallMinDamagePathfindingCost"] = 1000.0,
+	["FallMaxDamagePathfindingCost"] = 2000.0,
+	["FallDeadPathfindingCost"] = 10000.0,
+	["PerformerZoneJoinRadius"] = 8.0,
+	["PerformerZoneSilenceRadius"] = 0.0,
+	["MaxPerformerZones"] = 4.0,
+	["PerformerZoneMaxPlayersByType"] = 4.0,
+	["FootstepMixdownTime"] = 10.0,
+	["FootstepMixWaitTime"] = 5.0,
+	["AmbienceMixDownDelayTime"] = 10.0,
+	["DefaultInstrumentStowedVisuals"] = 2.0,
+	["HoverStateMixLeaveDelayTime"] = 1.0,
+	["HoverStateMixEnterDelayTime"] = 2.0,
+	["Minimum SightRange When Calculating End Of Combat Range"] = 12.0,
+	["InterruptZoneRange"] = 23.0,
+	["CameraFlyingZoomDistanceExtra"] = 10.0,
 	["CameraFlyingZoomDistanceRemap"] = 0.5,
-	["InterruptNearbyDistance"] = 18.,
-	["PingCooldownTime"] = 2.,
-	["SoundFootstepGroupMinSize"] = 3.,
-	["SoundFootstepGroupMaxRadius"] = 8.,
+	["InterruptNearbyDistance"] = 18.0,
+	["PingCooldownTime"] = 2.0,
+	["SoundFootstepGroupMinSize"] = 3.0,
+	["SoundFootstepGroupMaxRadius"] = 8.0,
 	["SoundFootstepGroupBoundRadius"] = 0.5,
-	["PingMarkerLifeTime"] = 4.,
-	["EscortStragglerDistance"] = 10.,
-	["DefaultUnifiedTutorialsLifeTime"] = 12000.,
-	["ForceFunctorConeAngle"] = 30.,
-	["SplitScreenMaxSoundListenerDistance"] = 20.,
-	["TutorialHotbarSlotRemovedTimeout"] = 2.,
-	["CamListener_DistPercentFromCam_Close"] = 0.,
-	["CamListener_DistPercentFromCam_Medium"] = 70.,
-	["CamListener_DistPercentFromCam_Far"] = 40.,
-	["CamListener_ZoomOut_Close"] = 0.,
-	["CamListener_ZoomOut_Medium"] = 0.4,
-	["CamListener_ZoomOut_Far"] = 0.6,
-	["InitiativeDie"] = 4.,
-	["PassiveSkillScoreAdvMod"] = 5.,
-	["TransferredEvidenceOnGroundRadius"] = 8.,
+	["PingMarkerLifeTime"] = 4.0,
+	["EscortStragglerDistance"] = 10.0,
+	["DefaultUnifiedTutorialsLifeTime"] = 12000.0,
+	["ForceFunctorConeAngle"] = 30.0,
+	["SplitScreenMaxSoundListenerDistance"] = 20.0,
+	["TutorialHotbarSlotRemovedTimeout"] = 2.0,
+	["CamListener_DistPercentFromCam_Close"] = 0.0,
+	["CamListener_DistPercentFromCam_Medium"] = 70.0,
+	["CamListener_DistPercentFromCam_Far"] = 40.0,
+	["CamListener_ZoomOut_Close"] = 0.0,
+	["CamListener_ZoomOut_Medium"] = 0.40000000596046,
+	["CamListener_ZoomOut_Far"] = 0.60000002384186,
+	["InitiativeDie"] = 4.0,
+	["PassiveSkillScoreAdvMod"] = 5.0,
+	["TransferredEvidenceOnGroundRadius"] = 8.0,
 	["PointLightVerticalLimit"] = 2.5,
-	["CombatCameraDeathAnimationWait"] = 2.,
+	["CombatCameraDeathAnimationWait"] = 2.0,
 	["MoveToTargetCloseEnoughMin"] = 0.5,
 	["MoveToTargetCloseEnoughMax"] = 3.5,
-	["DialogInstanceFlagRange"] = 10.,
-	["InterruptFarDistance"] = 30.,
-	["Level1"] = 300.,
-	["Level10"] = 20000.,
-	["Level11"] = 24000.,
-	["Level12"] = 30000.,
-	["Level2"] = 600.,
-	["Level3"] = 1800.,
-	["Level4"] = 3800.,
-	["Level5"] = 6500.,
-	["Level6"] = 8000.,
-	["Level7"] = 9000.,
-	["Level8"] = 12000.,
-	["Level9"] = 14000.,
-	["MaxXPLevel"] = 12.,
-	["MultiplyEffectsByDurationTurnLimit"] = 20.,
-	["PhotoModeCameraFloorDistance"] = 5.e-002,
-	["PhotoModeCameraLookAtSmoothing"] = 20.,
-	["PhotoModeCameraMovementSpeed"] = 6.,
-	["PhotoModeCameraRange"] = 25.,
-	["PhotoModeCameraRotationSpeed"] = 1.2,
-	["SpellZoneSurfaceGrowIntervalDefault"] = 1.,
-	["SpellZoneSurfaceGrowStepDefault"] = 100.,
+	["DialogInstanceFlagRange"] = 10.0,
+	["InterruptFarDistance"] = 30.0,
+	["Level1"] = 300.0,
+	["Level10"] = 20000.0,
+	["Level11"] = 24000.0,
+	["Level12"] = 30000.0,
+	["Level2"] = 600.0,
+	["Level3"] = 1800.0,
+	["Level4"] = 3800.0,
+	["Level5"] = 6500.0,
+	["Level6"] = 8000.0,
+	["Level7"] = 9000.0,
+	["Level8"] = 12000.0,
+	["Level9"] = 14000.0,
+	["MaxXPLevel"] = 12.0,
+	["MultiplyEffectsByDurationTurnLimit"] = 20.0,
+	["PhotoModeCameraFloorDistance"] = 0.050000000745058,
+	["PhotoModeCameraLookAtSmoothing"] = 20.0,
+	["PhotoModeCameraMovementSpeed"] = 6.0,
+	["PhotoModeCameraRange"] = 25.0,
+	["PhotoModeCameraRotationSpeed"] = 1.2000000476837,
+	["SpellZoneSurfaceGrowIntervalDefault"] = 1.0,
+	["SpellZoneSurfaceGrowStepDefault"] = 100.0,
 }
 
 --#endregion
