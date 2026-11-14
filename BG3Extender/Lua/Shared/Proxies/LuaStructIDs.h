@@ -7,6 +7,7 @@
 #include <GameDefinitions/AllSpark.h>
 #include <GameDefinitions/Render.h>
 #include <GameDefinitions/Stats/Common.h>
+#include <GameDefinitions/Misc.h>
 
 // Non-SE forward declarations
 
