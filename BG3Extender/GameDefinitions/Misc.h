@@ -41,12 +41,14 @@ namespace bg3se
     {
         struct SoundSetting
         {
+            // [0] and [1] hold the current value, [2] the default: changing the setting in the
+            // options screen leaves [2] behind.
             std::array<float, 3> ConfigValue;
             FixedString ConfigKey;
             HashSet<FixedString> RTPCs;
             char field_40;
-            TranslatedString field_44;
-            void* UpdateProc;
+            TranslatedString DisplayName;
+            [[bg3::hidden]] void* UpdateProc;
         };
 
         struct ControlSwitch
@@ -220,7 +222,7 @@ namespace bg3se
         uint8_t field_1BE;
         uint8_t field_1BF;
         
-        SoundSetting SoundSettings[12];
+        std::array<SoundSetting, 12> SoundSettings;
         int SoundVolumeDynamicRange;
         int SoundOcclusionQuality;
         bool MuteSoundWhenNotFocused;

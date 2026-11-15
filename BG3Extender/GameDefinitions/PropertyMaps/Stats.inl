@@ -1,3 +1,10 @@
+BEGIN_CLS(GlobalSwitches::SoundSetting)
+P_RO(ConfigValue)
+P_RO(ConfigKey)
+P_RO(RTPCs)
+P_RO(DisplayName)
+END_CLS()
+
 // WIP - not exported yet!
 BEGIN_CLS(GlobalSwitches)
 P_RO(UIScaling)
@@ -67,6 +74,7 @@ P(NorthFacingMinimap)
 P(HoldToEndTurn)
 P(ExtraTooltipDescriptions)
 
+P_RO(SoundSettings)
 P(SoundVolumeDynamicRange)
 P(SoundOcclusionQuality)
 P(MuteSoundWhenNotFocused)
