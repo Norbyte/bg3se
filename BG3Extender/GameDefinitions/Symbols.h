@@ -59,8 +59,25 @@ struct StaticSymbols : Noncopyable<StaticSymbols>
     esv::GameStateThreaded__GameStateWorker__DoWorkProc* esv__GameStateThreaded__GameStateWorker__DoWork{ nullptr };
     ecl::GameStateMachine__UpdateProc* ecl__GameStateMachine__Update{ nullptr };
     esv::GameStateMachine__UpdateProc* esv__GameStateMachine__Update{ nullptr };
+    CameraSystem__CommitCameraProc* ls__CameraSystem__CommitCamera{ nullptr };
+    ecl::CameraSystem__UpdateCameraProc* ecl__CameraSystem__UpdateCamera{ nullptr };
+    ecl::CameraSystem__UpdateCameraPitchProc* ecl__CameraSystem__UpdateCameraPitch{ nullptr };
+    ecl::CameraSystem__UpdateCameraZoomProc* ecl__CameraSystem__UpdateCameraZoom{ nullptr };
+    ecl::GameCameraBehavior__GetCameraDefinitionProc* ecl__GameCameraBehavior__GetCameraDefinition{ nullptr };
+    ecl::GameCameraBehavior__CalculatePitchProc* ecl__GameCameraBehavior__CalculatePitch{ nullptr };
+    ecl::CameraSystem__HandleInputProc* ecl__CameraSystem__HandleInput{ nullptr };
+    ecl::CameraSystem__SetDefaultZoomProc* ecl__CameraSystem__SetDefaultZoom{ nullptr };
     App__LoadGraphicSettingsProc* App__LoadGraphicSettings{ nullptr };
     input::InputManager** ls__gInputManager{ nullptr };
+    uint8_t const* ecl__MoveController__KeyboardModeGate{ nullptr };
+    uint8_t const* App__ReloadInputConfig{ nullptr };
+    uint8_t const* App__InputConfigPathCall{ nullptr };
+    uint8_t const* gui__DCKeybindingOptions__RemapCall{ nullptr };
+    uint8_t const* CameraRotationStartCall{ nullptr };
+    uint8_t const* CameraRotationStopCall1{ nullptr };
+    uint8_t const* CameraRotationStopCall2{ nullptr };
+    uint8_t const* CameraRotationStopCall3{ nullptr };
+    uint8_t const* CameraRotationCursorCall{ nullptr };
 
     ecs::EntityWorld__UpdateProc* ecs__EntityWorld__Update{ nullptr };
     ecs::EntityWorld__FlushECBsProc* ecs__EntityWorld__FlushECBs{ nullptr };

@@ -42,6 +42,7 @@
 - [Stats](#stats)
   - [Stats Objects](#stats-objects)
   - [Reading/Writing Stat Attributes](#reading-writing-stats)
+- [Input](#input)
 - [Input/Output (IO)](#io)
 - [Timers](#timers)
 - [JSON Support](#json-support)
@@ -56,6 +57,7 @@
 - [Level](#level)
 - [Math Library](#math)
 - [Engine Events](#engine-events)
+- [Camera](#camera)
 
 <a id="getting-started"></a>
 ## Getting Started
@@ -2048,3 +2050,77 @@ You can listen to SE and engine events with `Ext.Events.<EVENT_NAME>:Subscribe(f
 | `ResetCompleted` | Thrown when `Ext.Debug.Reset()` or `reset` console command completes on the client or server.<br/>Indicates that the Lua state was reloaded. |
 | `GameStateChanged` | Indicates that the server/client game state changed (e.g., loading save, paused, main menu, etc.). |
 | `Tick` | Thrown after each game engine tick on both the client and the server.<br/>Server logic runs at ~30hz, so this event is thrown roughly every 33ms.<br/>Helper: `Ext.OnNextTick(fun)` registers a handler that is only called on the next tick and is unregistered afterwards. |
+
+## Camera
+
+Client-only. Camera events use the standard [SE event system](#lua-events). `Ext.Events.CameraUpdated:Subscribe(callback, options)` returns a handler ID; call `Ext.Events.CameraUpdated:Unsubscribe(id)` on the same event to remove it. The standard `Priority` and `Once` options apply. Subscriptions are cleared when the client Lua state is destroyed.
+
+Callbacks run synchronously in priority order, with registration order preserved for equal priorities. Explicit subscription additions and removals during dispatch take effect after the outermost dispatch of that event finishes. `StopPropagation()` skips later callbacks for that invocation; it does not prevent the native operation.
+
+```lua
+local id = Ext.Events.CameraPitchCalculated:Subscribe(function(e)
+    e.Pitch = 0.5
+end)
+Ext.Events.CameraPitchCalculated:Unsubscribe(id)
+```
+
+The update events are listed in gameplay update order. Input handling and zoom resets have their own before/after pairs; pitch calculation can also run outside the pitch update.
+
+| Event | Description |
+|-------|-------------|
+| `CameraUpdating` | Client-only. Thrown before a gameplay camera is updated. |
+| `CameraPitchUpdating` | Client-only. Thrown before the camera pitch update. |
+| `CameraPitchCalculated` | Client-only. Allows overriding a calculated camera pitch. |
+| `CameraPitchUpdated` | Client-only. Thrown after the camera pitch update. |
+| `CameraZoomUpdated` | Client-only. Thrown after zoom and collision-distance updates, before final placement. |
+| `CameraCommitting` | Client-only. Allows editing eye and target immediately before native camera submission. |
+| `CameraUpdated` | Client-only. Thrown after a gameplay camera is updated. |
+| `CameraInput` | Client-only. Allows modifying or preventing camera input handling. |
+| `CameraInputHandled` | Client-only. Thrown after camera input handling. |
+| `CameraZoomResetting` | Client-only. Thrown before the default zoom is applied. |
+| `CameraZoomReset` | Client-only. Thrown after the default zoom is applied. |
+
+All camera events except `CameraCommitting` expose `Camera` (`ecl.GameCameraBehavior`). Its fields can be modified, but the reference cannot be replaced. Event objects and their references are only valid during the callback.
+
+`CameraUpdating` and `CameraUpdated` also expose read-only `Entity`, the entity that owns the camera component.
+
+`CameraUpdating`, `CameraUpdated`, `CameraPitchUpdating`, `CameraPitchUpdated`, and `CameraZoomUpdated` also expose read-only `DeltaTime` in seconds. These events cannot be prevented. They apply to individual cameras, not the whole camera system.
+
+`CameraPitchCalculated` exposes read-only `IgnoreAvoidance`, `SelectMode`, and `OriginalPitch`, and writable `Pitch`. Set `Pitch` to replace the calculated value. Nonfinite values are ignored. This event also runs during target and collision calculations, outside the pitch update.
+
+`CameraInput` exposes `Input` (`input.InputEvent`) and writable `Result` (unsigned 16-bit integer, initially zero). Changes to `Input` are passed to the camera handler. Calling `PreventAction()` skips the handler and returns `Result`. Zero allows fallback input handling; one suppresses it at the camera dispatch boundary.
+
+`CameraInputHandled` exposes the same `Camera` and `Input`, plus read-only `Result` returned by the handler. It is not thrown when `CameraInput` prevents handling.
+
+`CameraZoomResetting` and `CameraZoomReset` cannot be prevented. They run before and after the default-zoom routine, respectively.
+
+`CameraCommitting` runs immediately before the native camera transform is submitted. For gameplay cameras this is after obstruction/avoidance placement, inside `CameraUpdating`/`CameraUpdated`. It also applies to other cameras using this commit routine; it is not a once-per-frame notification.
+
+The payload has read-only `Entity` and writable `Eye` and `Target` world-space `vec3` values. Assign `{x, y, z}` tables to these fields to replace the submitted position and look-at target. Changes affect this submission only; they do not overwrite the gameplay camera's target or smoothing state. No `Camera` field is supplied because this routine also accepts cameras without `GameCameraBehavior`. Filter by `Entity` when an override should affect a particular camera.
+
+The event cannot prevent the native commit. Failed dispatch, nonfinite coordinates, and zero-length or nonfinite eye-to-target squared distance retain both original vectors. Event objects expire after the callback; copy values that must be retained.
+
+### GameCameraBehavior.CameraDefinition
+
+Read-only property returning the `CameraGlobalSwitches` selected for this camera on each access. The returned object's fields are writable. Available through `entity.GameCameraBehavior.CameraDefinition` independently of subscriptions, and through `e.Camera.CameraDefinition` in a callback. Returns `nil` if the native getter is unavailable.
+
+
+## Input <a id="input"></a>
+
+### Keyboard movement bindings
+
+`Ext.Input.SyncKeyboardMovementBindings()` (client only) copies the configured player-one camera directions into the corresponding `CharacterMove` bindings and reloads the game input config when it changes. It returns false if native mappings, config parsing or file replacement fail; failure disables the movement override. Call once when gameplay is ready, or explicitly to retry a failed setup. After successful setup, native keybinding-menu commits refresh the mappings automatically until the client Lua VM is reset.
+
+
+### Rotation cursor
+
+`Ext.Input.SetRotationCursorEnabled(enabled)` (client only) enables invisible, confined relative mouse movement while the game rotates the camera. The hardware and game cursors return to the window-relative position recorded at rotation start when rotation ends. Disabling the policy, losing focus, or resetting client Lua releases an owned capture. The policy defaults to disabled and must be reapplied after a Lua reset.
+
+The boolean return value indicates whether native support is available and the request was accepted. Capture occurs on the SDL thread; a successful return does not guarantee acquisition. The policy is shared by client mods; the latest call wins.
+
+```lua
+-- Apply when the mod's camera/input settings are ready.
+local supported = Ext.Input.SetRotationCursorEnabled(true)
+-- Release when the mod yields control or turns the feature off.
+Ext.Input.SetRotationCursorEnabled(false)
+```
