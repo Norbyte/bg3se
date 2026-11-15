@@ -25,11 +25,12 @@ return {
 --- @param handler NetListenerCallback Lua handler
 function Ext.RegisterNetListener(channel, handler) end
 
---- Loads the specified Lua file
---- @param fileName string? Path of Lua file, relative to Mods/<Mod>/Story/RawFiles/Lua
+--- Loads the specified Lua file; each file is only executed once, subsequent calls return the values returned by the first load
+--- @param mod string Path of Lua file relative to Mods/<Mod>/ScriptExtender/Lua of the current mod, or the UUID of the mod to load from if `path` is specified
+--- @param path string? Path of Lua file, relative to Mods/<Mod>/ScriptExtender/Lua of the mod specified by `mod`
 --- @see Ext_Utils#Include
---- @return any
-function Ext.Require(fileName) end
+--- @return any ...
+function Ext.Require(mod, path) end
 
 --- Returns whether the code is executing in a client context
 --- @return boolean
@@ -39,14 +40,20 @@ function Ext.IsClient() end
 --- @return boolean
 function Ext.IsServer() end
 
---- Console window shortcut for Ext.Dump
+--- Convenience helper for Ext.Dump
 _D = Ext.Dump
 
---- Console window shortcut for Ext.DumpShallow
-_DS = Ext.Dump
+--- Convenience helper for Ext.DumpShallow
+_DS = Ext.DumpShallow
 
---- Console window shortcut for Ext.Utils.Print
-_P = Ext.Utils.Print
+--- Convenience helper for Ext.Log.Print
+_P = Ext.Log.Print
+
+--- Convenience helper for Ext.Log.PrintWarning
+_PW = Ext.Log.PrintWarning
+
+--- Convenience helper for Ext.Log.PrintError
+_PE = Ext.Log.PrintError
 
 --- Console window helper to get current player character 
 --- This is the host on the server, or the hotbar character on the client  
@@ -62,9 +69,13 @@ _E = function() end
 _W = function() end
 
 --- Helper for dumping variables to the console  
---- This is essentially `Ext.Utils.Print(Ext.DumpExport(val))`  
+--- This is essentially `Ext.Log.Print(Ext.DumpExport(val))`  
 --- @param val any
 function Ext.Dump(val) end
+
+--- Helper for dumping variables to the console, only expanding the first level of tables/objects and the first 3 elements of arrays
+--- @param val any
+function Ext.DumpShallow(val) end
 
 --- Helper for dumping variables to a string
 --- @param val any
@@ -79,6 +90,25 @@ function Ext.OnNextTick(callback) end
 --- @param cmd string Console command
 --- @param handler fun(cmd:string, ...:string)
 function Ext.RegisterConsoleCommand(cmd, handler) end
+
+--- 🔨**Server-Only**🔨
+--- @class Ext_ServerOsiris
+local Ext_ServerOsiris = {}
+
+--- Registers a listener that is called when the specified Osiris event, call or query is executed
+--- @param name string Name of the Osiris function/event
+--- @param arity integer Number of parameters of the Osiris function/event
+--- @param typeName string When the listener is triggered; 'before', 'after', 'beforeDelete' or 'afterDelete'
+--- @param callback fun(...:string|number)
+--- @return integer subscriberId ID that can be passed to UnregisterListener
+function Ext_ServerOsiris.RegisterListener(name, arity, typeName, callback) end
+
+--- Removes a listener registered with RegisterListener
+--- @param subscriberId integer
+--- @return boolean removed
+function Ext_ServerOsiris.UnregisterListener(subscriberId) end
+
+Ext.Osiris = Ext_ServerOsiris
 
 --#endregion
 ]],

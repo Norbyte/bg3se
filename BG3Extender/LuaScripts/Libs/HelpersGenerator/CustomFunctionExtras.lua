@@ -1,16 +1,18 @@
 ---@diagnostic disable
 
 return {
-    ["Ext_Stats.Get"] = {
-        Before = "--- @return StatEntryType"
+    ["NoesisBaseObject.DependencyProperties"] = {
+        ReplaceReturnValue = "table<string, any>"
     },
-    ["Ext_ServerOsiris.RegisterListener"] = {
-        Replace = [[--- @param name string 
---- @param arity integer 
---- @param typeName OsirisEventType 
---- @param callback fun(...:string|number)
-function Ext_ServerOsiris.RegisterListener(name, arity, typeName, callback) end
-]]
+    ["NoesisBaseObject.DirectProperties"] = {
+        ReplaceReturnValue = "table<string, any>"
+    },
+    ["NoesisBaseObject.GetAllProperties"] = {
+        ReplaceReturnValue = "table<string, any>"
+    },
+
+    ["GnGenomeBlueprintInstance.GetNode"] = {
+        ReplaceReturnValue = "GnGenomeNode?"
     },
 
     -- IMGUI type helpers
@@ -99,6 +101,9 @@ function Ext_ServerOsiris.RegisterListener(name, arity, typeName, callback) end
     ["ExtuiTreeParent.AddInputText"] = {
         ReplaceReturnValue = "ExtuiInputText"
     },
+    ["ExtuiTreeParent.AddMenu"] = {
+        ReplaceReturnValue = "ExtuiMenu"
+    },
     ["ExtuiTreeParent.AddNewLine"] = {
         ReplaceReturnValue = "ExtuiNewLine"
     },
@@ -108,8 +113,14 @@ function Ext_ServerOsiris.RegisterListener(name, arity, typeName, callback) end
     ["ExtuiTreeParent.AddChildWindow"] = {
         ReplaceReturnValue = "ExtuiChildWindow"
     },
+    ["ExtuiTreeParent.AddProgressBar"] = {
+        ReplaceReturnValue = "ExtuiProgressBar"
+    },
     ["ExtuiTreeParent.AddRadioButton"] = {
         ReplaceReturnValue = "ExtuiRadioButton"
+    },
+    ["ExtuiTreeParent.AddSelectable"] = {
+        ReplaceReturnValue = "ExtuiSelectable"
     },
     ["ExtuiTreeParent.AddSeparator"] = {
         ReplaceReturnValue = "ExtuiSeparator"
@@ -134,6 +145,9 @@ function Ext_ServerOsiris.RegisterListener(name, arity, typeName, callback) end
     },
     ["ExtuiTreeParent.AddText"] = {
         ReplaceReturnValue = "ExtuiText"
+    },
+    ["ExtuiTreeParent.AddTextLink"] = {
+        ReplaceReturnValue = "ExtuiTextLink"
     },
     ["ExtuiTreeParent.AddTree"] = {
         ReplaceReturnValue = "ExtuiTree"

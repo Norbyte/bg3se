@@ -5697,8 +5697,8 @@ Osi = {}
 
 
 --- @class NoesisBaseCommand:NoesisBaseComponent
---- @field CanExecute fun(self:NoesisBaseCommand, a1:NoesisBaseCommand, a2:NoesisBaseComponent?):boolean
---- @field Execute fun(self:NoesisBaseCommand, a1:NoesisBaseCommand, a2:NoesisBaseComponent?)
+--- @field CanExecute fun(self:NoesisBaseCommand, a1:NoesisBaseComponent?):boolean
+--- @field Execute fun(self:NoesisBaseCommand, a1:NoesisBaseComponent?)
 
 
 --- @class NoesisBaseComponent:NoesisBaseRefCounted
@@ -5706,13 +5706,13 @@ Osi = {}
 
 --- @class NoesisBaseObject
 --- @field Type Noesis::Symbol
---- @field DependencyProperties fun(self:NoesisBaseObject, a1:NoesisBaseObject)
---- @field DirectProperties fun(self:NoesisBaseObject, a1:NoesisBaseObject)
---- @field GetAllProperties fun(self:NoesisBaseObject, a1:NoesisBaseObject)
---- @field GetProperty fun(self:NoesisBaseObject, a1:NoesisBaseObject, a2:FixedString)
---- @field SetProperty fun(self:NoesisBaseObject, a1:NoesisBaseObject, a2:FixedString, a3:AnyRef)
---- @field ToString fun(self:NoesisBaseObject, a1:NoesisBaseObject):string
---- @field TypeInfo fun(self:NoesisBaseObject, a1:NoesisBaseObject):NoesisTypeClass
+--- @field DependencyProperties fun(self:NoesisBaseObject):table<string, any>
+--- @field DirectProperties fun(self:NoesisBaseObject):table<string, any>
+--- @field GetAllProperties fun(self:NoesisBaseObject):table<string, any>
+--- @field GetProperty fun(self:NoesisBaseObject, a1:FixedString):any
+--- @field SetProperty fun(self:NoesisBaseObject, a1:FixedString, a2:AnyRef)
+--- @field ToString fun(self:NoesisBaseObject):string
+--- @field TypeInfo fun(self:NoesisBaseObject):NoesisTypeClass
 
 
 --- @class NoesisBaseRefCounted:NoesisBaseObject
@@ -5760,10 +5760,10 @@ Osi = {}
 --- @field InheritanceParent NoesisFrameworkElement
 --- @field Parent NoesisFrameworkElement
 --- @field TemplatedParent NoesisFrameworkElement
---- @field Child fun(self:NoesisFrameworkElement, a1:NoesisFrameworkElement, a2:uint32):NoesisBaseComponent
---- @field Find fun(self:NoesisFrameworkElement, a1:NoesisFrameworkElement, a2:string):NoesisBaseComponent
---- @field Resource fun(self:NoesisFrameworkElement, a1:NoesisFrameworkElement, a2:string, a3:boolean?):NoesisBaseComponent
---- @field TreeParent fun(self:NoesisFrameworkElement, a1:NoesisFrameworkElement):NoesisBaseObject
+--- @field Child fun(self:NoesisFrameworkElement, a1:uint32):NoesisBaseComponent
+--- @field Find fun(self:NoesisFrameworkElement, a1:string):NoesisBaseComponent
+--- @field Resource fun(self:NoesisFrameworkElement, a1:string, a2:boolean?):NoesisBaseComponent
+--- @field TreeParent fun(self:NoesisFrameworkElement):NoesisBaseObject
 
 
 --- @class NoesisGiveFeedbackEventArgs:NoesisRoutedEventArgs
@@ -5781,8 +5781,8 @@ Osi = {}
 
 
 --- @class NoesisICommand
---- @field CanExecute fun(self:NoesisICommand, a1:NoesisICommand, a2:NoesisBaseComponent?):boolean
---- @field Execute fun(self:NoesisICommand, a1:NoesisICommand, a2:NoesisBaseComponent?)
+--- @field CanExecute fun(self:NoesisICommand, a1:NoesisBaseComponent?):boolean
+--- @field Execute fun(self:NoesisICommand, a1:NoesisBaseComponent?)
 
 
 --- @class NoesisKeyEventArgs:NoesisRoutedEventArgs
@@ -5910,8 +5910,8 @@ Osi = {}
 
 
 --- @class NoesisUIElement:NoesisVisual
---- @field Subscribe fun(self:NoesisUIElement, a1:NoesisUIElement, a2:FixedString, a3:FunctionRef):uint64
---- @field Unsubscribe fun(self:NoesisUIElement, a1:NoesisUIElement, a2:uint64):boolean
+--- @field Subscribe fun(self:NoesisUIElement, a1:FixedString, a2:FunctionRef):uint64
+--- @field Unsubscribe fun(self:NoesisUIElement, a1:uint64):boolean
 
 
 --- @class NoesisUIElementData:NoesisDependencyData
@@ -5920,10 +5920,10 @@ Osi = {}
 --- @class NoesisVisual:NoesisDependencyObject
 --- @field VisualChildrenCount uint32
 --- @field VisualParent NoesisVisual
---- @field HitTest fun(self:NoesisVisual, a1:NoesisVisual, a2:NoesisPoint):NoesisVisual
---- @field PointFromScreen fun(self:NoesisVisual, a1:NoesisVisual, a2:NoesisPoint):NoesisPoint
---- @field PointToScreen fun(self:NoesisVisual, a1:NoesisVisual, a2:NoesisPoint):NoesisPoint
---- @field VisualChild fun(self:NoesisVisual, a1:NoesisVisual, a2:uint32):NoesisVisual
+--- @field HitTest fun(self:NoesisVisual, a1:NoesisPoint):NoesisVisual
+--- @field PointFromScreen fun(self:NoesisVisual, a1:NoesisPoint):NoesisPoint
+--- @field PointToScreen fun(self:NoesisVisual, a1:NoesisPoint):NoesisPoint
+--- @field VisualChild fun(self:NoesisVisual, a1:uint32):NoesisVisual
 
 
 --- @class NullifyAbilityBoostComponent:BaseComponent
@@ -19341,12 +19341,12 @@ Osi = {}
 --- @field AddInputInt fun(self:ExtuiTreeParent, a1:string, a2:int32?):ExtuiInputInt
 --- @field AddInputScalar fun(self:ExtuiTreeParent, a1:string, a2:number?):ExtuiInputScalar
 --- @field AddInputText fun(self:ExtuiTreeParent, a1:string, a2:string?):ExtuiInputText
---- @field AddMenu fun(self:ExtuiTreeParent, a1:string):ImguiHandle
+--- @field AddMenu fun(self:ExtuiTreeParent, a1:string):ExtuiMenu
 --- @field AddNewLine fun(self:ExtuiTreeParent):ExtuiNewLine
 --- @field AddPopup fun(self:ExtuiTreeParent, a1:string):ExtuiPopup
---- @field AddProgressBar fun(self:ExtuiTreeParent):ImguiHandle
+--- @field AddProgressBar fun(self:ExtuiTreeParent):ExtuiProgressBar
 --- @field AddRadioButton fun(self:ExtuiTreeParent, a1:string, a2:boolean?):ExtuiRadioButton
---- @field AddSelectable fun(self:ExtuiTreeParent, a1:string, a2:GuiSelectableFlags?, a3:vec2?):ImguiHandle
+--- @field AddSelectable fun(self:ExtuiTreeParent, a1:string, a2:GuiSelectableFlags?, a3:vec2?):ExtuiSelectable
 --- @field AddSeparator fun(self:ExtuiTreeParent):ExtuiSeparator
 --- @field AddSeparatorText fun(self:ExtuiTreeParent, a1:string):ExtuiSeparatorText
 --- @field AddSlider fun(self:ExtuiTreeParent, a1:string, a2:number?, a3:number?, a4:number?):ExtuiSlider
@@ -19355,7 +19355,7 @@ Osi = {}
 --- @field AddTabBar fun(self:ExtuiTreeParent, a1:string):ExtuiTabBar
 --- @field AddTable fun(self:ExtuiTreeParent, a1:string, a2:uint32):ExtuiTable
 --- @field AddText fun(self:ExtuiTreeParent, a1:string):ExtuiText
---- @field AddTextLink fun(self:ExtuiTreeParent, a1:string):ImguiHandle
+--- @field AddTextLink fun(self:ExtuiTreeParent, a1:string):ExtuiTextLink
 --- @field AddTree fun(self:ExtuiTreeParent, a1:string):ExtuiTree
 --- @field AttachChild fun(self:ExtuiTreeParent, a1:ImguiHandle):boolean
 --- @field DetachChild fun(self:ExtuiTreeParent, a1:ImguiHandle):boolean
@@ -19447,7 +19447,7 @@ Osi = {}
 --- @field Sequences GnGenomeSequence[]
 --- @field Variables GnGenomeVariant[]
 --- @field VariablesForEdit GnGenomeVariant[]
---- @field GetNode fun(self:GnGenomeBlueprintInstance, a1:uint32)
+--- @field GetNode fun(self:GnGenomeBlueprintInstance, a1:uint32):GnGenomeNode?
 
 
 --- @class GnGenomeEventArgs
@@ -24120,10 +24120,10 @@ Osi = {}
 --- @field Name FixedString
 --- @field OriginalModId FixedString
 --- @field Using FixedString
---- @field CopyFrom fun(self:StatsObject, a1:StatsObject, a2:FixedString):boolean
---- @field SetPersistence fun(self:StatsObject, a1:StatsObject, a2:boolean)
---- @field SetRawAttribute fun(self:StatsObject, a1:StatsObject, a2:FixedString, a3:StringView):boolean
---- @field Sync fun(self:StatsObject, a1:StatsObject, a2:boolean?)
+--- @field CopyFrom fun(self:StatsObject, a1:FixedString):boolean
+--- @field SetPersistence fun(self:StatsObject, a1:boolean)
+--- @field SetRawAttribute fun(self:StatsObject, a1:FixedString, a2:StringView):boolean
+--- @field Sync fun(self:StatsObject, a1:boolean?)
 
 
 --- @class StatsPassivePrototype
@@ -25605,7 +25605,7 @@ local Ext_ClientUI = {}
 --- @field Crash fun(a1:int32)
 --- @field DebugBreak fun()
 --- @field DebugDumpLifetimes fun()
---- @field DumpStack fun()
+--- @field DumpStack fun(...:any)
 --- @field GenerateIdeHelpers fun(a1:boolean?)
 --- @field IsDeveloperMode fun():boolean
 --- @field Reset fun(a1:boolean?, a2:boolean?)
@@ -25619,7 +25619,7 @@ local Ext_Debug = {}
 --- @field Create fun():EntityHandle
 --- @field Destroy fun(a1:EntityHandle):boolean
 --- @field EnableTracing fun(a1:boolean)
---- @field Get fun(a1:AnyRef)
+--- @field Get fun(entity:Guid|NetId|EntityHandle?):EntityHandle?
 --- @field GetAllEntities fun():EntityHandle[]
 --- @field GetAllEntitiesWithComponent fun(a1:ExtComponentType):EntityHandle[]
 --- @field GetAllEntitiesWithUuid fun():table<Guid, EntityHandle>
@@ -25666,17 +25666,18 @@ local Ext_Internal = {}
 
 
 --- @class Ext_Json
---- @field Parse fun(str:string):table parsedTable
---- @field Stringify fun(data:table, opts:JsonStringifyOptions?):string tableAsString
+--- @field Parse fun(str:string, binary:boolean?):any parsedValue
+--- @field Stringify (fun(data:any, opts:JsonStringifyOptions?):string)|(fun(data:any, beautify:boolean?, stringifyInternalTypes:boolean?, iterateUserdata:boolean?):string)
 local Ext_Json = {}
 --- @class JsonStringifyOptions
---- @field Beautify boolean Sorts the output table, and indents with tabs. Defaults to true.
---- @field StringifyInternalTypes boolean Defaults to false.
---- @field IterateUserdata boolean Defaults to false.
---- @field AvoidRecursion boolean Defaults to false.
---- @field MaxDepth integer Defaults to 64, the maximum value.
---- @field LimitDepth integer Defaults to -1 (off).
---- @field LimitArrayElements integer Defaults to -1 (off).
+--- @field Beautify boolean? Sorts the output table, and indents with tabs. Defaults to true.
+--- @field StringifyInternalTypes boolean? Defaults to false.
+--- @field IterateUserdata boolean? Defaults to false.
+--- @field AvoidRecursion boolean? Defaults to false.
+--- @field Binary boolean? Produce a binary blob instead of JSON; parse it with `Ext.Json.Parse(str, true)`. Defaults to false.
+--- @field MaxDepth integer? Defaults to 64, the maximum value.
+--- @field LimitDepth integer? Defaults to -1 (off).
+--- @field LimitArrayElements integer? Defaults to -1 (off).
 
 
 
@@ -25691,17 +25692,17 @@ local Ext_Loca = {}
 
 
 --- @class Ext_Log
---- @field Print fun()
---- @field PrintError fun()
---- @field PrintWarning fun()
+--- @field Print fun(...:any)
+--- @field PrintError fun(...:any)
+--- @field PrintWarning fun(...:any)
 local Ext_Log = {}
 
 
 
 --- @class Ext_Math
 --- @field Acos fun(a1:number):number
---- @field Add fun()
---- @field Angle fun()
+--- @field Add (fun(a:number|vec3|vec4|mat3|mat4, b:number|vec3|vec4|mat3|mat4, out:vec3|vec4|mat3|mat4))|(fun(a:number|vec3|vec4|mat3|mat4, b:number|vec3|vec4|mat3|mat4):number|vec3|vec4|mat3|mat4)
+--- @field Angle fun(a:vec3|vec4, b:vec3|vec4):number
 --- @field Asin fun(a1:number):number
 --- @field Atan fun(a1:number):number
 --- @field Atan2 fun(a1:number, a2:number):number
@@ -25714,49 +25715,49 @@ local Ext_Log = {}
 --- @field BuildScale fun(a1:vec3):mat4
 --- @field BuildTranslation fun(a1:vec3):mat4
 --- @field Clamp fun(a1:number, a2:number, a3:number):number
---- @field Cross fun(a1:vec3, a2:vec3)
+--- @field Cross (fun(x:vec3, y:vec3, out:vec3))|(fun(x:vec3, y:vec3):vec3)
 --- @field Decompose fun(a1:mat4, a2:vec3, a3:vec3, a4:vec3)
---- @field Determinant fun()
+--- @field Determinant fun(m:mat3|mat4):number
 --- @field Distance fun(a1:vec3, a2:vec3):number
---- @field Div fun()
+--- @field Div (fun(a:number|vec3|vec4|mat3|mat4, b:number|vec3|vec4|mat3|mat4, out:vec3|vec4|mat3|mat4))|(fun(a:number|vec3|vec4|mat3|mat4, b:number|vec3|vec4|mat3|mat4):number|vec3|vec4|mat3|mat4)
 --- @field Dot fun(a1:vec3, a2:vec3):number
---- @field ExtractAxisAngle fun():number
---- @field ExtractEulerAngles fun():vec3
+--- @field ExtractAxisAngle fun(m:mat3|mat4, axis:vec3):number Returns the rotation angle; the rotation axis is written into `axis`.
+--- @field ExtractEulerAngles fun(m:mat3|mat4):vec3
 --- @field Fract fun(a1:number):number
---- @field Inverse fun()
+--- @field Inverse (fun(m:mat3|mat4, out:mat3|mat4))|(fun(m:mat3|mat4):mat3|mat4)
 --- @field IsInf fun(a1:number):boolean
 --- @field IsNaN fun(a1:number):boolean
---- @field Length fun()
+--- @field Length fun(x:number|vec3|vec4):number
 --- @field Lerp fun(a1:number, a2:number, a3:number):number
 --- @field Mat3ToQuat fun(a1:mat3):quat
 --- @field Mat4ToQuat fun(a1:mat4):quat
---- @field Mul fun()
---- @field Normalize fun()
---- @field OuterProduct fun()
---- @field Perpendicular fun()
---- @field Project fun()
+--- @field Mul (fun(a:number|vec3|vec4|mat3|mat4, b:number|vec3|vec4|mat3|mat4, out:vec3|vec4|mat3|mat4))|(fun(a:number|vec3|vec4|mat3|mat4, b:number|vec3|vec4|mat3|mat4):number|vec3|vec4|mat3|mat4)
+--- @field Normalize (fun(x:vec3|vec4, out:vec3|vec4))|(fun(x:vec3|vec4):vec3|vec4)
+--- @field OuterProduct (fun(c:vec3|vec4, r:vec3|vec4, out:mat3|mat4))|(fun(c:vec3|vec4, r:vec3|vec4):mat3|mat4)
+--- @field Perpendicular (fun(x:vec3|vec4, normal:vec3|vec4, out:vec3|vec4))|(fun(x:vec3|vec4, normal:vec3|vec4):vec3|vec4)
+--- @field Project (fun(x:vec3|vec4, normal:vec3|vec4, out:vec3|vec4))|(fun(x:vec3|vec4, normal:vec3|vec4):vec3|vec4)
 --- @field QuatDot fun(a1:quat, a2:quat):number
 --- @field QuatFromEuler fun(a1:vec3):quat
 --- @field QuatFromToRotation fun(a1:vec3, a2:vec3):quat
 --- @field QuatInverse fun(a1:quat):quat
 --- @field QuatLength fun(a1:quat):number
---- @field QuatMul fun()
+--- @field QuatMul fun(a:quat|vec3, b:quat|vec3):quat|vec3
 --- @field QuatNormalize fun(a1:quat):quat
---- @field QuatRotate fun(a1:quat)
+--- @field QuatRotate fun(q:quat, v:vec3|vec4):vec3|vec4
 --- @field QuatRotateAxisAngle fun(a1:quat, a2:vec3, a3:number):quat
 --- @field QuatSlerp fun(a1:quat, a2:quat, a3:number):quat
 --- @field QuatToMat3 fun(a1:quat):mat3
 --- @field QuatToMat4 fun(a1:quat):mat4
---- @field Random fun()
---- @field Reflect fun()
---- @field Rotate fun()
+--- @field Random fun(m:integer?, n:integer?):number Without arguments, returns a float in [0, 1). With `m` only, returns an integer in [1, m]. With both, returns an integer in [m, n].
+--- @field Reflect (fun(i:vec3|vec4, n:vec3|vec4, out:vec3|vec4))|(fun(i:vec3|vec4, n:vec3|vec4):vec3|vec4)
+--- @field Rotate fun(m:mat3|mat4, angle:number, axis:vec3) Rotates `m` in place.
 --- @field Round fun(a1:number):int64
 --- @field Scale fun(a1:mat4, a2:vec3)
 --- @field Sign fun(a1:number):number
 --- @field Smoothstep fun(a1:number, a2:number, a3:number):number
---- @field Sub fun()
+--- @field Sub (fun(a:number|vec3|vec4|mat3|mat4, b:number|vec3|vec4|mat3|mat4, out:vec3|vec4|mat3|mat4))|(fun(a:number|vec3|vec4|mat3|mat4, b:number|vec3|vec4|mat3|mat4):number|vec3|vec4|mat3|mat4)
 --- @field Translate fun(a1:mat4, a2:vec3)
---- @field Transpose fun()
+--- @field Transpose (fun(m:mat3|mat4, out:mat3|mat4))|(fun(m:mat3|mat4):mat3|mat4)
 --- @field Trunc fun(a1:number):number
 local Ext_Math = {}
 
@@ -25838,8 +25839,8 @@ local Ext_ServerTemplate = {}
 
 --- @class Ext_StaticData
 --- @field ClearResourceBank fun(a1:ExtResourceManagerType)
---- @field Create fun(a1:ExtResourceManagerType, a2:Guid?)
---- @field Get fun(a1:Guid, a2:ExtResourceManagerType)
+--- @field Create fun(type:ExtResourceManagerType, guid:Guid?):ResourceGuidResource?
+--- @field Get fun(guid:Guid, type:ExtResourceManagerType):ResourceGuidResource?
 --- @field GetAll fun(a1:ExtResourceManagerType):Guid[]
 --- @field GetByModId fun(a1:ExtResourceManagerType, a2:Guid):Guid[]
 --- @field GetIconAtlas fun(a1:FixedString):TextureAtlas
@@ -25864,13 +25865,13 @@ local Ext_StaticData = {}
 --- @field TreasureCategory Ext_StatsTreasureCategory
 --- @field TreasureTable Ext_StatsTreasureTable
 --- @field AddAttribute fun(a1:FixedString, a2:FixedString, a3:FixedString):boolean
---- @field AddEnumerationValue fun(typeName:FixedString, enumLabel:FixedString):int32
+--- @field AddEnumerationValue fun(typeName:FixedString, enumLabel:FixedString):int32?
 --- @field Create fun(a1:FixedString, a2:FixedString, a3:FixedString?, a4:boolean?):StatsObject
 --- @field EnumIndexToLabel fun(a1:FixedString, a2:int32):FixedString?
 --- @field EnumLabelToIndex fun(a1:FixedString, a2:FixedString):int64?
 --- @field ExecuteFunctor fun(a1:StatsFunctor, a2:StatsContextData)
 --- @field ExecuteFunctors fun(a1:StatsFunctors, a2:StatsContextData)
---- @field Get fun(a1:string, a2:int32?, a3:boolean?):FixedString[]
+--- @field Get fun(statName:string, level:int32?, warnOnError:boolean?):StatsObject
 --- @field GetCachedBoost fun(a1:Guid):StatsBoostPrototype
 --- @field GetCachedInterrupt fun(a1:FixedString):StatsInterruptPrototype
 --- @field GetCachedPassive fun(a1:FixedString):StatsPassivePrototype
@@ -25942,22 +25943,22 @@ local Ext_StatsSpellSet = {}
 
 
 --- @class Ext_StatsTreasureCategory
---- @field GetLegacy fun(id:FixedString):StatTreasureCategory
---- @field Update fun(id:FixedString, tbl:StatTreasureCategory)
+--- @field GetLegacy fun(id:FixedString):table?
+--- @field Update fun(id:FixedString, tbl:table)
 local Ext_StatsTreasureCategory = {}
 
 
 
 --- @class Ext_StatsTreasureTable
 --- @field Get fun(a1:FixedString):StatsTreasureTable
---- @field GetLegacy fun(id:FixedString):StatTreasureTable
---- @field Update fun(tbl:StatTreasureTable)
+--- @field GetLegacy fun(id:FixedString):table?
+--- @field Update fun(tbl:table)
 local Ext_StatsTreasureTable = {}
 
 
 
 --- @class Ext_Table
---- @field Find fun()
+--- @field Find fun(tbl:table?, value:any):any Returns the key of `value` in `tbl`, or nil if not found.
 local Ext_Table = {}
 
 
@@ -25983,24 +25984,24 @@ local Ext_Timer = {}
 --- @class Ext_Types
 --- @field AddCustomFunction fun(a1:FixedString, a2:FixedString, a3:FunctionRef):boolean
 --- @field AddCustomProperty fun(a1:FixedString, a2:FixedString, a3:FunctionRef, a4:FunctionRef?):boolean
---- @field Construct fun(a1:FixedString)
+--- @field Construct fun(a1:FixedString):any
 --- @field GetAllTypes fun():FixedString[]
 --- @field GetBaseValueType fun(a1:AnyRef):string?
---- @field GetFunctionLocation fun(a1:AnyRef)
---- @field GetHashSetValueAt fun(a1:AnyRef, a2:uint32)
---- @field GetObjectType fun(a1:AnyRef):FixedString|"userdata"|"lightuserdata" objectType
+--- @field GetFunctionLocation fun(func:function):string, integer
+--- @field GetHashSetValueAt fun(a1:AnyRef, a2:uint32):any
+--- @field GetObjectType fun(object:any):string?
 --- @field GetTypeInfo fun(a1:FixedString):TypeInformation
 --- @field GetValueType fun(a1:AnyRef):string?
 --- @field IsA fun(a1:AnyRef, a2:FixedString):boolean
---- @field Serialize fun()
+--- @field Serialize fun(object:any):table
 --- @field TypeOf fun(a1:AnyRef):TypeInformation
---- @field Unserialize fun()
---- @field Validate fun():boolean
+--- @field Unserialize fun(object:any, data:table)
+--- @field Validate fun(object:any):boolean
 local Ext_Types = {}
 --- @class GenerateIdeHelpersOptions
---- @field AddAliasEnums boolean Add the enums in alias format, for string comparison. Defaults to true.
---- @field UseBaseExtraData boolean Only include the base ExtraData keys/values in Shared, instead of grabbing whatever the current keys are in the mod environment.
---- @field GenerateExtraDataAsClass boolean Annotate ExtraData as a class, so it only has fields with no fixed/hardcoded values.
+--- @field AddAliasEnums boolean? Add the enums in alias format, for string comparison. Defaults to true.
+--- @field UseBaseExtraData boolean? Only include the base ExtraData keys/values in Shared, instead of grabbing whatever the current keys are in the mod environment.
+--- @field GenerateExtraDataAsClass boolean? Annotate ExtraData as a class, so it only has fields with no fixed/hardcoded values.
 
 --- Generate an ExtIdeHelpers file
 --- @param outputPath string? Optional path to save the generated helper file, relative to the `%LOCALAPPDATA%\Larian Studios\Baldur's Gate 3\Script Extender` folder
@@ -26016,15 +26017,15 @@ function Ext_Types.GenerateIdeHelpers(outputPath, opts) end
 --- @field GenerateGuid fun():Guid
 --- @field GetCommandLineParams fun():string[]
 --- @field GetDialogManager fun():DlgDialogManager
---- @field GetGameState fun()
+--- @field GetGameState fun():ClientGameState|ServerGameState|nil
 --- @field GetGlobalSwitches fun():GlobalSwitches
 --- @field GetMemoryUsage fun():int64
 --- @field GetValueType fun(value:any):string|"nil"|"number"|"string"|"boolean"|"table"|"function"|"thread"|"userdata"|"lightuserdata" valueType # Returns a base type, lightuserdata, or an extender type.
 --- @field HandleToInteger fun(a1:EntityHandle):int64
 --- @field Include fun(modGUID:string?, path:string, replaceGlobals:table?):any returnedValue Whatever the script returned, if anything
 --- @field IntegerToHandle fun(a1:int64):EntityHandle
---- @field IsValidHandle fun(handle:ComponentHandle):boolean
---- @field LoadString fun(str:string):UserReturn Similar to lua `loadstring`, with extra safeguards.
+--- @field IsValidHandle fun(handle:any):boolean
+--- @field LoadString fun(str:string, env:table?):function?, string? Similar to lua `loadstring`, with extra safeguards. Returns nil and an error message if the string fails to compile.
 --- @field ProfileBegin fun(a1:Ref)
 --- @field ProfileEnd fun()
 --- @field ShowError fun(a1:string)
@@ -26038,12 +26039,23 @@ local Ext_Utils = {}
 --- @field DirtyModVariables fun(a1:Guid?, a2:FixedString?)
 --- @field DirtyUserVariables fun(a1:Guid?, a2:FixedString?)
 --- @field GetEntitiesWithVariable fun(a1:FixedString):Guid[]
---- @field GetModVariables fun(a1:Guid)
---- @field RegisterModVariable fun(a1:Guid, a2:FixedString)
---- @field RegisterUserVariable fun(a1:FixedString)
+--- @field GetModVariables fun(modUuid:Guid):table
+--- @field RegisterModVariable fun(modUuid:Guid, name:FixedString, opts:UserVariableOptions)
+--- @field RegisterUserVariable fun(name:FixedString, opts:UserVariableOptions)
 --- @field SyncModVariables fun()
 --- @field SyncUserVariables fun()
 local Ext_Vars = {}
+--- @class UserVariableOptions
+--- @field Server boolean? Variable is present on server entities. Defaults to true.
+--- @field Client boolean? Variable is present on client entities. Defaults to false.
+--- @field WriteableOnServer boolean? Variable can be modified on server side. Defaults to true.
+--- @field WriteableOnClient boolean? Variable can be modified on client side. Defaults to false.
+--- @field Persistent boolean? Variable is written to/restored from savegames. Defaults to true.
+--- @field SyncToClient boolean? Server-side changes to the variable are synced to all clients. Defaults to false.
+--- @field SyncToServer boolean? Client-side changes to the variable are synced to the server. Defaults to false.
+--- @field SyncOnTick boolean? Client-server sync is performed once per game loop tick. Defaults to true.
+--- @field SyncOnWrite boolean? Client-server sync is performed immediately when the variable is written. Defaults to false.
+--- @field DontCache boolean? Disable Lua caching of variable values. Defaults to false.
 
 
 
@@ -36903,11 +36915,12 @@ Ext.Events.ViewportResized = {}
 --- @param handler NetListenerCallback Lua handler
 function Ext.RegisterNetListener(channel, handler) end
 
---- Loads the specified Lua file
---- @param fileName string? Path of Lua file, relative to Mods/<Mod>/Story/RawFiles/Lua
+--- Loads the specified Lua file; each file is only executed once, subsequent calls return the values returned by the first load
+--- @param mod string Path of Lua file relative to Mods/<Mod>/ScriptExtender/Lua of the current mod, or the UUID of the mod to load from if `path` is specified
+--- @param path string? Path of Lua file, relative to Mods/<Mod>/ScriptExtender/Lua of the mod specified by `mod`
 --- @see Ext_Utils#Include
---- @return any
-function Ext.Require(fileName) end
+--- @return any ...
+function Ext.Require(mod, path) end
 
 --- Returns whether the code is executing in a client context
 --- @return boolean
@@ -36917,14 +36930,20 @@ function Ext.IsClient() end
 --- @return boolean
 function Ext.IsServer() end
 
---- Console window shortcut for Ext.Dump
+--- Convenience helper for Ext.Dump
 _D = Ext.Dump
 
---- Console window shortcut for Ext.DumpShallow
-_DS = Ext.Dump
+--- Convenience helper for Ext.DumpShallow
+_DS = Ext.DumpShallow
 
---- Console window shortcut for Ext.Utils.Print
-_P = Ext.Utils.Print
+--- Convenience helper for Ext.Log.Print
+_P = Ext.Log.Print
+
+--- Convenience helper for Ext.Log.PrintWarning
+_PW = Ext.Log.PrintWarning
+
+--- Convenience helper for Ext.Log.PrintError
+_PE = Ext.Log.PrintError
 
 --- Console window helper to get current player character 
 --- This is the host on the server, or the hotbar character on the client  
@@ -36940,9 +36959,13 @@ _E = function() end
 _W = function() end
 
 --- Helper for dumping variables to the console  
---- This is essentially `Ext.Utils.Print(Ext.DumpExport(val))`  
+--- This is essentially `Ext.Log.Print(Ext.DumpExport(val))`  
 --- @param val any
 function Ext.Dump(val) end
+
+--- Helper for dumping variables to the console, only expanding the first level of tables/objects and the first 3 elements of arrays
+--- @param val any
+function Ext.DumpShallow(val) end
 
 --- Helper for dumping variables to a string
 --- @param val any
@@ -36957,6 +36980,25 @@ function Ext.OnNextTick(callback) end
 --- @param cmd string Console command
 --- @param handler fun(cmd:string, ...:string)
 function Ext.RegisterConsoleCommand(cmd, handler) end
+
+--- 🔨**Server-Only**🔨
+--- @class Ext_ServerOsiris
+local Ext_ServerOsiris = {}
+
+--- Registers a listener that is called when the specified Osiris event, call or query is executed
+--- @param name string Name of the Osiris function/event
+--- @param arity integer Number of parameters of the Osiris function/event
+--- @param typeName string When the listener is triggered; 'before', 'after', 'beforeDelete' or 'afterDelete'
+--- @param callback fun(...:string|number)
+--- @return integer subscriberId ID that can be passed to UnregisterListener
+function Ext_ServerOsiris.RegisterListener(name, arity, typeName, callback) end
+
+--- Removes a listener registered with RegisterListener
+--- @param subscriberId integer
+--- @return boolean removed
+function Ext_ServerOsiris.UnregisterListener(subscriberId) end
+
+Ext.Osiris = Ext_ServerOsiris
 
 --#endregion
 
