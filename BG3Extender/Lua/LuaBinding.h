@@ -335,7 +335,7 @@ namespace bg3se::lua
             return DispatchEvent(evt, meta->LuaEventName, canPreventAction.value_or(meta->CanPreventAction), meta->Restrictions);
         }
 
-        std::optional<int> LoadScript(STDString const & script, STDString const & name = "", int globalsIdx = 0);
+        std::optional<int> LoadScript(StringView script, StringView name, int globalsIdx = 0);
 
     protected:
         LuaStateWrapper L;

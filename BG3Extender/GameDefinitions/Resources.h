@@ -103,9 +103,9 @@ struct [[bg3::hidden]] VirtualTextureManagerBase : public ProtectedGameObject<Vi
 
     bool UseChunkedVirtualTextures;
     SRWLOCK GTSLock;
-    LegacyRefMap<STDString, GTSInfo> LoadedGTS;
-    HashMap<TextureLayerConfigId, Array<STDString>> field_28;
-    HashMap<Guid, STDString> TileSets;
+    LegacyRefMap<Path, GTSInfo> LoadedGTS;
+    HashMap<TextureLayerConfigId, Array<Path>> field_28;
+    HashMap<Guid, Path> TileSets;
 };
 
 struct [[bg3::hidden]] VirtualTexturePrefetcher
@@ -231,7 +231,7 @@ struct [[bg3::hidden]] TrackedTexture
     uint32_t RefCount;
     uint32_t WaitingForLoadRefCount;
     uint8_t State;
-    STDString Path;
+    Path Path;
     void* EventObject;
     CRITICAL_SECTION CriticalSection;
     Array<void*> LoadCallbacks;
@@ -258,8 +258,8 @@ struct TextureAtlas : public ProtectedGameObject<TextureAtlas>
 {
     [[bg3::hidden]] void* VMT;
     LegacyMap<FixedString, UVValues*> Icons;
-    STDString Path;
-    STDString TexturePath;
+    Path Path;
+    bg3se::Path TexturePath;
     uint32_t IconWidth;
     uint32_t IconHeight;
     uint32_t TextureWidth;
@@ -271,7 +271,7 @@ struct TextureAtlas : public ProtectedGameObject<TextureAtlas>
 struct TextureAtlasMap : public ProtectedGameObject<TextureAtlasMap>
 {
     [[bg3::hidden]] void* VMT;
-    LegacyRefMap<STDString, TextureAtlas*> AtlasMap;
+    LegacyRefMap<Path, TextureAtlas*> AtlasMap;
     LegacyMap<FixedString, TextureAtlas*> IconMap;
     [[bg3::hidden]] uint32_t Unknown;
 };
@@ -310,7 +310,7 @@ struct [[bg3::hidden]] ResourcePackage
     // ResourceContainer Container;
     ResourceBank* Bank;
     FixedString PackageName;
-    STDString Path;
+    Path Path;
     // Release build only
     LegacyRefMap<FixedString, resource::Resource*> Resources;
     bool IsStandardModule;
@@ -337,7 +337,7 @@ struct [[bg3::hidden]] ResourceManager
     void* GameAnalytics;
     VirtualTextureManager* VirtualTextureManager;
     CRITICAL_SECTION CriticalSection;
-    LegacyRefMap<STDString, void*> ResourceDependencies;
+    LegacyRefMap<Path, void*> ResourceDependencies;
     LegacyMap<FixedString, Path*> Sources;
     Array<void*> VisualLoaders;
     LegacyMap<FixedString, void*> GenomeAnimationManagers;
@@ -1067,7 +1067,7 @@ struct VirtualTextureResource : public LoadableResource
     [[bg3::readonly]] uint8_t GTSIndex;
     [[bg3::readonly]] uint32_t VirtualTextureLayerConfig;
     [[bg3::readonly]] uint32_t LoadedVirtualTextureLayerConfig;
-    STDString RootPath;
+    Path RootPath;
     [[bg3::hidden]] SRWLOCK Lock;
     FixedString TileSetFileName;
     FixedString GTexFileName;

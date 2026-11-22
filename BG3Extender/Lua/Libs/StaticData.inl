@@ -334,7 +334,7 @@ TextureAtlasMap* GetTextureAtlasManager()
 
 TextureAtlas* GetTextureAtlas(STDString path)
 {
-    return (*GetStaticSymbols().ls__gTextureAtlasMap)->AtlasMap.get_or_default(path);
+    return (*GetStaticSymbols().ls__gTextureAtlasMap)->AtlasMap.get_or_default(Path{ path });
 }
 
 TextureAtlas* GetIconAtlas(FixedString icon)

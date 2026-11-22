@@ -14,7 +14,7 @@ public:
     bool LoadBuiltinResource(int resourceId);
     void LoadBuffer(std::span<uint8_t> const& buf);
 
-    std::optional<STDString> GetResource(STDString const& path) const;
+    std::optional<STDString> GetResource(StringView path) const;
 
 private:
     std::unordered_map<STDString, STDString> resources_;

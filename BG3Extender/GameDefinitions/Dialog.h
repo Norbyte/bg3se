@@ -199,7 +199,7 @@ struct Dialog : public ProtectedGameObject<Dialog>
     HashMap<int, int> DefaultAddressedSpeakers;
     HashSet<int> PeanutSlots;
     Array<DialogNode*> RootNodes;
-    STDString FileName;
+    Path FileName;
     FixedString UUID;
     FixedString TimelineId;
     double UnloadedTimeStamp;

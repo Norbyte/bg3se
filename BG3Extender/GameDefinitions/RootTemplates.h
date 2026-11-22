@@ -95,7 +95,7 @@ struct GameObjectTemplate : public ProtectedGameObject<GameObjectTemplate>
     uint8_t GlobalDeletedFlag;
     OverrideableProperty<RenderChannel> RenderChannel;
     OverrideableProperty<uint8_t> ParentTemplateFlags;
-    STDString FileName;
+    Path FileName;
 };
 
 struct GlobalConfigParameter

@@ -76,10 +76,26 @@ namespace bg3se
         std::replace(path.begin(), path.end(), '\\', '/');
     }
 
-    STDString StaticSymbols::ToPath(StringView path, PathRootType root, bool canonicalize) const
+    STDString StaticSymbols::GetRootPath(PathRootType root) const
     {
         if (ls__PathRoots == nullptr) {
-            ERR("LibraryManager::ToPath(): Path root API not available!");
+            ERR("LibraryManager::GetRootPath(): Path root API not available!");
+            return "";
+        }
+
+        auto rootPath = ls__PathRoots[(unsigned)root];
+        if (rootPath == nullptr || rootPath->empty()) {
+            ERR("StaticSymbols::GetRootPath(): Path roots not initialized!");
+            return "";
+        }
+
+        return *rootPath;
+    }
+
+    STDString StaticSymbols::ToPath(StringView path, PathRootType root, bool canonicalize) const
+    {
+        auto rootPath = GetRootPath(root);
+        if (rootPath.empty()) {
             return "";
         }
 
@@ -88,36 +104,24 @@ namespace bg3se
             CanonicalizePath(canonicalPath);
         }
 
-        if (root == PathRootType::Root) {
-            return canonicalPath;
-        }
-
-        auto rootPath = ls__PathRoots[(unsigned)root];
-        if (rootPath == nullptr) {
-            ERR("StaticSymbols::ToPath(): Path roots not initialized!");
-            return "";
-        }
-
-        STDString absolutePath(*rootPath);
+        STDString absolutePath(rootPath);
         absolutePath += "/" + canonicalPath;
         return absolutePath;
     }
 
     FileReaderPin StaticSymbols::MakeFileReader(StringView path, PathRootType root, bool canonicalize, FileMappingType mapping, FileOpenFlags flags) const
     {
-        if (ls__PathRoots == nullptr || ls__FileReader__ctor == nullptr) {
-            ERR("StaticSymbols::MakeFileReader(): File reader API not available!");
-            return FileReaderPin(nullptr);
-        }
-
-        auto absolutePath = ToPath(path, root, canonicalize);
-        return MakeFileReaderAbsolute(absolutePath, mapping, flags);
+        return MakeFileReaderAbsolute(ToPath(path, root, canonicalize), mapping, flags);
     }
 
     FileReaderPin StaticSymbols::MakeFileReaderAbsolute(StringView path, FileMappingType mapping, FileOpenFlags flags) const
     {
-        Path lsPath;
-        lsPath.Name = path;
+        if (ls__FileReader__ctor == nullptr) {
+            ERR("StaticSymbols::MakeFileReaderAbsolute(): File reader API not available!");
+            return FileReaderPin(nullptr);
+        }
+
+        Path lsPath{ path };
 
         auto reader = GameAlloc<FileReader>();
         ls__FileReader__ctor(reader, lsPath, (uint32_t)mapping, (uint32_t)flags);

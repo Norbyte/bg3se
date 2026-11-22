@@ -25,3 +25,4 @@
 #include <Extender/Shared/Utils.h>
 #include <GameDefinitions/Base/Base.h>
 #include <Extender/Shared/Optick.h>
+#include <Extender/Shared/FilesystemHelpers.h>

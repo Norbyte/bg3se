@@ -516,7 +516,9 @@ bool OpenOutputFile(STDString const& baseName, char const* extension, STDString&
 {
     outputPath = baseName;
     outputPath += extension;
-    f.open(GetStaticSymbols().ToPath(outputPath, PathRootType::Data, true).c_str(), std::ios::out | std::ios::binary);
+
+    auto resolvedPath = GetStaticSymbols().ToPath(outputPath, PathRootType::Data, true);
+    f.open(resolvedPath.c_str(), std::ios::out | std::ios::binary);
 
     if (!f.good()) {
         f.close();
@@ -525,7 +527,9 @@ bool OpenOutputFile(STDString const& baseName, char const* extension, STDString&
         outputPath += "_";
         outputPath += std::to_string(GetCurrentProcessId());
         outputPath += extension;
-        f.open(GetStaticSymbols().ToPath(outputPath, PathRootType::Data, true).c_str(), std::ios::out | std::ios::binary);
+
+        resolvedPath = GetStaticSymbols().ToPath(outputPath, PathRootType::Data, true);
+        f.open(resolvedPath.c_str(), std::ios::out | std::ios::binary);
     }
 
     return f.good();

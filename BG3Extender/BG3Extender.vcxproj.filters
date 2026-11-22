@@ -76,9 +76,6 @@
     <ClCompile Include="Extender\Shared\ExtensionState.cpp">
       <Filter>Extender\Shared</Filter>
     </ClCompile>
-    <ClCompile Include="Extender\Shared\ScriptHelpers.cpp">
-      <Filter>Extender\Shared</Filter>
-    </ClCompile>
     <ClCompile Include="Extender\Shared\tinyxml2.cpp">
       <Filter>Extender\Shared</Filter>
     </ClCompile>
@@ -298,7 +295,7 @@
     <ClInclude Include="Extender\Shared\ExtensionState.h">
       <Filter>Extender\Shared</Filter>
     </ClInclude>
-    <ClInclude Include="Extender\Shared\ScriptHelpers.h">
+    <ClInclude Include="Extender\Shared\FilesystemHelpers.h">
       <Filter>Extender\Shared</Filter>
     </ClInclude>
     <ClInclude Include="Extender\Shared\tinyxml2.h">
@@ -551,6 +548,7 @@
     <ClInclude Include="Lua\Libs\StaticData.h" />
     <ClInclude Include="Extender\Shared\APIExports.h" />
     <ClInclude Include="Extender\Shared\API.h" />
+    <ClInclude Include="Extender\Shared\FilesystemHelpers.inl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

@@ -339,4 +339,14 @@ PersistentRegistryEntry do_get(lua_State* L, int index, Overload<PersistentRegis
     return PersistentRegistryEntry(L, index);
 }
 
+Path do_get(lua_State* L, int index, Overload<Path>)
+{
+    auto path = do_get(L, index, Overload<StringView>{});
+    if (!path.empty() && !ValidateAbsolutePath(path, PathRootType::Data, true)) {
+        luaL_error(L, "Param %d: Path is invalid or unsafe: %s", index, path.data());
+    }
+
+    return Path{ path };
+}
+
 END_NS()

@@ -112,14 +112,32 @@ namespace bg3se
     struct Path
     {
         inline Path() {}
+        inline Path(StringView s) : FullPath(s) {}
+        Path(Path const& s) = default;
+        Path(Path&& s) noexcept = default;
+        Path& operator =(Path const& s) = default;
+        Path& operator =(Path&& s) noexcept = default;
 
-        inline Path(STDString const& s) : Name(s) {}
+        inline bool operator ==(Path const& o) const
+        {
+            return o.FullPath == FullPath;
+        }
 
-        STDString Name;
+        inline bool operator !=(Path const& o) const
+        {
+            return o.FullPath != FullPath;
+        }
+
+        STDString FullPath;
 #if !defined(OSI_EOCAPP)
         uint32_t Unknown{ 0 };
 #endif
     };
+
+    inline uint64_t Hash(Path const& s)
+    {
+        return Hash(s.FullPath);
+    }
 
     struct TranslatedString;
 

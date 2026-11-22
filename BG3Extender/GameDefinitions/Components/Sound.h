@@ -77,7 +77,7 @@ DEFINE_TAG_COMPONENT(ls, SoundActivatedComponent, SoundActivated)
 
 struct SoundExternalPath
 {
-    STDString Path;
+    Path Path;
     AudioCodec Codec{ AudioCodec::Vorbis };
 };
 

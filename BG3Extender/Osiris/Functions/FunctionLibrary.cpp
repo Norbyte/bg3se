@@ -2,7 +2,6 @@
 #include <Extender/ScriptExtender.h>
 #include <Osiris/Functions/FunctionLibrary.h>
 #include <Extender/Version.h>
-#include <Extender/Shared/ScriptHelpers.h>
 #include <fstream>
 
 namespace bg3se::esv

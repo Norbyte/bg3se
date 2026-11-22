@@ -3,7 +3,6 @@
 #include <Extender/Client/IMGUI/IMGUI.h>
 #include <Extender/Client/IMGUI/Objects.h>
 #include <Extender/Client/ExtensionStateClient.h>
-#include <Extender/Shared/ScriptHelpers.h>
 #include <CoreLib/Wrappers.h>
 
 // #define IMGUI_DEBUG(msg, ...) DEBUG("[IMGUI] " msg, __VA_ARGS__)
@@ -1908,9 +1907,7 @@ void IMGUIManager::InitializeUI()
     io.ConfigDebugIniSettings = gExtender->GetConfig().DeveloperMode;
 
     auto configPath = GetStaticSymbols().ToPath("imgui.ini", PathRootType::UserProfile);
-    if (!configPath.empty()) {
-        io.IniFilename = _strdup(configPath.c_str());
-    }
+    io.IniFilename = _strdup(configPath.c_str());
 
     auto getClipboardText = GImGui->PlatformIO.Platform_GetClipboardTextFn;
     auto setClipboardText = GImGui->PlatformIO.Platform_SetClipboardTextFn;
@@ -2010,7 +2007,7 @@ bool IMGUIManager::LoadFont(FontData& request)
         }
     }
 
-    auto blob = script::LoadExternalFile(path, PathRootType::Data);
+    auto blob = LoadExternalFile(path, UserPathRootType::Data);
     if (!blob) {
         OsiError("Failed to open font file: " << path);
         return false;

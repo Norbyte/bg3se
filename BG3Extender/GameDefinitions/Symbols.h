@@ -262,8 +262,9 @@ struct StaticSymbols : Noncopyable<StaticSymbols>
     ResourceBank* GetCurrentResourceBank() const;
 
     void CanonicalizePath(STDString & path) const;
+    STDString GetRootPath(PathRootType root) const;
     STDString ToPath(StringView path, PathRootType root, bool canonicalize = true) const;
-    FileReaderPin MakeFileReader(StringView path, PathRootType root = PathRootType::Data, bool canonicalize = true, FileMappingType mapping = FileMappingType::MemoryMapped, FileOpenFlags flags = FileOpenFlags::Default) const;
+    FileReaderPin MakeFileReader(StringView path, PathRootType root, bool canonicalize = true, FileMappingType mapping = FileMappingType::MemoryMapped, FileOpenFlags flags = FileOpenFlags::Default) const;
     FileReaderPin MakeFileReaderAbsolute(StringView path, FileMappingType mapping = FileMappingType::MemoryMapped, FileOpenFlags flags = FileOpenFlags::Default) const;
     void DestroyFileReader(FileReader* reader);
     bool FileExists(StringView path, PathRootType root = PathRootType::Data, bool canonicalize = true) const;

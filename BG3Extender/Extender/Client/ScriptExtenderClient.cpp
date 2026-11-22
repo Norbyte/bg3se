@@ -138,10 +138,9 @@ bool IsLoadingState(GameState state)
 // Undo "ModCrashSanityCheck" mechanism that disables mods on an unclean exit
 void CleanupSanityCheck()
 {
-    auto path = GetStaticSymbols().ToPath("ModCrashSanityCheck", PathRootType::UserProfile);
-    auto pathw = FromUTF8(path);
-    if (PathIsDirectoryW(pathw.c_str())) {
-        RemoveDirectoryW(pathw.c_str());
+    auto path = FromUTF8(GetStaticSymbols().ToPath("ModCrashSanityCheck", PathRootType::UserProfile));
+    if (PathIsDirectoryW(path.c_str())) {
+        RemoveDirectoryW(path.c_str());
         INFO("Removed ModCrashSanityCheck");
     }
 }

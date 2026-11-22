@@ -155,7 +155,7 @@ template <class T>
 struct [[bg3::hidden]] GuidResourceBank : public GuidResourceBankBase
 {
     HashMap<Guid, T> Resources;
-    STDString Path;
+    Path Path;
 };
 
 

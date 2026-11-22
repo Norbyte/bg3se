@@ -60,7 +60,7 @@ namespace bg3se
         for (auto const& mod : modManager->LoadOrderedModules) {
             auto dir = mod.Info.Directory;
             auto configFile = "Mods/" + dir + "/ScriptExtender/Config.json";
-            auto reader = GetStaticSymbols().MakeFileReader(configFile);
+            auto reader = GetStaticSymbols().MakeFileReader(configFile, PathRootType::Data);
 
             if (reader.IsLoaded()) {
                 ExtensionModConfig config;
@@ -333,9 +333,9 @@ namespace bg3se
         luaPostResetCallbacks_.push_back(callback);
     }
 
-    std::optional<STDString> ExtensionStateBase::ResolveModScriptPath(STDString const& modNameGuid, STDString const& fileName)
+    std::optional<STDString> ExtensionStateBase::ResolveModScriptPath(StringView modNameGuid, StringView fileName)
     {
-        auto mod = GetModManager()->FindModByNameGuid(modNameGuid.c_str());
+        auto mod = GetModManager()->FindModByNameGuid(modNameGuid.data());
         if (mod == nullptr) {
             OsiError("Mod does not exist or is not loaded: " << modNameGuid);
             return {};
@@ -344,7 +344,7 @@ namespace bg3se
         return ResolveModScriptPath(*mod, fileName);
     }
 
-    STDString ExtensionStateBase::ResolveModScriptPath(Module const& mod, STDString const& fileName)
+    STDString ExtensionStateBase::ResolveModScriptPath(Module const& mod, StringView fileName)
     {
         STDString path("Mods/");
         path += mod.Info.Directory;
@@ -353,31 +353,7 @@ namespace bg3se
         return path;
     }
 
-    std::optional<int> ExtensionStateBase::LuaLoadExternalFile(STDString const & path)
-    {
-        std::ifstream f(path.c_str(), std::ios::in | std::ios::binary);
-        if (!f.good()) {
-            OsiError("File does not exist: " << path);
-            return {};
-        }
-
-        f.seekg(0, std::ios::end);
-        auto length = f.tellg();
-        f.seekg(0, std::ios::beg);
-        STDString s((uint32_t)length, '\0');
-        f.read(s.data(), length);
-        f.close();
-
-        LuaVirtualPin lua(*this);
-        if (!lua) {
-            OsiErrorS("Called when the Lua VM has not been initialized!");
-            return {};
-        }
-
-        return lua->LoadScript(s, path);
-    }
-
-    std::optional<int> ExtensionStateBase::LuaLoadGameFile(FileReaderPin & reader, STDString const & scriptName, int globalsIdx)
+    std::optional<int> ExtensionStateBase::LuaLoadGameFile(FileReaderPin & reader, StringView scriptName, int globalsIdx)
     {
         if (!reader.IsLoaded()) {
             OsiErrorS("Attempted to load script from invalid file reader");
@@ -393,10 +369,16 @@ namespace bg3se
         return lua->LoadScript(reader.ToString(), scriptName, globalsIdx);
     }
 
-    std::optional<int> ExtensionStateBase::LuaLoadGameFile(STDString const & path, STDString const & scriptName, 
+    std::optional<int> ExtensionStateBase::LuaLoadGameFile(StringView path, StringView scriptName,
         bool warnOnError, int globalsIdx)
     {
-        auto reader = GetStaticSymbols().MakeFileReader(path);
+        auto fullPath = GetAndValidatePath(path, PathRootType::Data);
+        if (!fullPath) {
+            OsiError("Attempted to include file with invalid path: '" << path << "'");
+            return {};
+        }
+
+        auto reader = GetStaticSymbols().MakeFileReaderAbsolute(*fullPath);
         if (!reader.IsLoaded()) {
             if (warnOnError) {
                 OsiError("Script file could not be opened: " << path);
@@ -405,18 +387,18 @@ namespace bg3se
         }
 
         loadedFiles_.insert(std::make_pair(scriptName, path));
-        auto fullPath = GetStaticSymbols().ToPath(path, PathRootType::Data);
-        loadedFileFullPaths_.insert(std::make_pair(scriptName, fullPath));
+        loadedFileFullPaths_.insert(std::make_pair(scriptName, *fullPath));
 
         auto result = LuaLoadGameFile(reader, scriptName.empty() ? path : scriptName, globalsIdx);
 
         if (!result) {
-            auto it = loadedFiles_.find(scriptName);
+            STDString trackedName{ scriptName };
+            auto it = loadedFiles_.find(trackedName);
             if (it != loadedFiles_.end()) {
                 loadedFiles_.erase(it);
             }
 
-            auto fit = loadedFileFullPaths_.find(scriptName);
+            auto fit = loadedFileFullPaths_.find(trackedName);
             if (fit != loadedFileFullPaths_.end()) {
                 loadedFileFullPaths_.erase(fit);
             }
@@ -425,10 +407,10 @@ namespace bg3se
         return result;
     }
 
-    std::optional<int> ExtensionStateBase::LuaLoadModScript(STDString const & modNameGuid, STDString const & fileName, 
+    std::optional<int> ExtensionStateBase::LuaLoadModScript(StringView modNameGuid, StringView fileName,
         bool warnOnError, int globalsIdx)
     {
-        auto mod = GetModManager()->FindModByNameGuid(modNameGuid.c_str());
+        auto mod = GetModManager()->FindModByNameGuid(modNameGuid.data());
         if (mod == nullptr) {
             OsiError("Mod does not exist or is not loaded: " << modNameGuid);
             return {};
@@ -441,12 +423,13 @@ namespace bg3se
             // Strip GUID from end of dir
             scriptName = scriptName.substr(0, scriptName.length() - 37);
         }
-        scriptName += "/" + fileName;
+        scriptName += "/";
+        scriptName += fileName;
 
         return LuaLoadGameFile(path, scriptName, warnOnError, globalsIdx);
     }
 
-    std::optional<int> ExtensionStateBase::LuaLoadBuiltinFile(STDString const & path, bool warnOnError, int globalsIdx)
+    std::optional<int> ExtensionStateBase::LuaLoadBuiltinFile(StringView path, bool warnOnError, int globalsIdx)
     {
         auto file = gExtender->GetLuaBuiltinBundle().GetResource(path);
         if (!file) {
@@ -462,11 +445,12 @@ namespace bg3se
             return {};
         }
 
-        auto scriptName = STDString("builtin://") + path;
+        auto scriptName = STDString("builtin://");
+        scriptName += path;
         return lua->LoadScript(*file, scriptName, globalsIdx);
     }
 
-    std::optional<int> ExtensionStateBase::LuaLoadFile(STDString const & path, STDString const & scriptName, 
+    std::optional<int> ExtensionStateBase::LuaLoadFile(StringView path, StringView scriptName,
         bool warnOnError, int globalsIdx)
     {
         if (path.starts_with("builtin://")) {

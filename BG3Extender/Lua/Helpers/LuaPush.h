@@ -129,7 +129,7 @@ inline void push(lua_State* L, lua_CFunction v)
 
 inline void push(lua_State* L, Path const& p)
 {
-    push(L, p.Name);
+    push(L, p.FullPath);
 }
 
 inline void push(lua_State* L, NetId const& v)

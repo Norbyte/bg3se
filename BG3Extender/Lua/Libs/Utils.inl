@@ -4,11 +4,8 @@
 /// <lua_module>Utils</lua_module>
 BEGIN_NS(lua::utils)
 
-UserReturn Include(lua_State * L)
+UserReturn Include(lua_State* L, std::optional<StringView> modGuid, StringView fileName)
 {
-    auto modGuid = get<std::optional<STDString>>(L, 1);
-    auto fileName = get<STDString>(L, 2);
-
     bool replaceGlobals = lua_gettop(L) > 2 && !lua_isnil(L, 3);
     auto globalsIdx = lua_gettop(L) + 1;
 

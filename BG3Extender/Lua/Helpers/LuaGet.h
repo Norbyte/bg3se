@@ -102,10 +102,7 @@ TypeInformationRef do_get(lua_State* L, int index, Overload<TypeInformationRef>)
 ImguiHandle do_get(lua_State* L, int index, Overload<ImguiHandle>);
 extui::Renderable* do_get(lua_State* L, int index, Overload<extui::Renderable*>);
 
-inline Path do_get(lua_State* L, int index, Overload<Path>)
-{
-    return Path(luaL_checkstring(L, index));
-}
+Path do_get(lua_State* L, int index, Overload<Path>);
 
 template <class T>
 inline OverrideableProperty<T> do_get(lua_State* L, int index, Overload<OverrideableProperty<T>>)

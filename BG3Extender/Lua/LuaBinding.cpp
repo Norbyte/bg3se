@@ -611,12 +611,12 @@ void State::OpenLibs()
 #endif
 }
 
-std::optional<int> State::LoadScript(STDString const & script, STDString const & name, int globalsIdx)
+std::optional<int> State::LoadScript(StringView script, StringView name, int globalsIdx)
 {
     int top = lua_gettop(L);
 
     /* Load the file containing the script we are going to run */
-    int status = luaL_loadbufferx(L, script.c_str(), script.size(), name.c_str(), "text");
+    int status = luaL_loadbufferx(L, script.data(), script.size(), name.data(), "text");
     if (status != LUA_OK) {
         LuaError("Failed to parse script: " << lua_tostring(L, -1));
         lua_pop(L, 1);  /* pop error message from the stack */

@@ -3,7 +3,6 @@
 #include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Symbols.h>
 #include <GameDefinitions/Stats/Prototype.h>
-#include <Extender/Shared/ScriptHelpers.h>
 #include <Extender/ScriptExtender.h>
 
 #include <GameDefinitions/Stats/Functors.inl>

@@ -58,7 +58,7 @@ void StatLoadOrderHelper::OnStatFileOpened(Path const& path)
     if (!loadingStats_) return;
 
     std::cmatch match;
-    if (std::regex_match(path.Name.c_str(), match, sStatPathRegex)) {
+    if (std::regex_match(path.FullPath.c_str(), match, sStatPathRegex)) {
         std::unique_lock lock(modMapMutex_);
 
         auto modIt = modDirectoryToModMap_.find(match[1].str().c_str());
@@ -66,7 +66,7 @@ void StatLoadOrderHelper::OnStatFileOpened(Path const& path)
             OnStatFileOpened();
             statLastTxtMod_ = modIt->second;
         } else {
-            WARN("Unable to resolve mod while loading stats .txt: %s", path.Name.c_str());
+            WARN("Unable to resolve mod while loading stats .txt: %s", path.FullPath.c_str());
         }
     }
 }

@@ -32,7 +32,7 @@ void LuaBundle::LoadBuffer(std::span<uint8_t> const& buf)
     }
 }
 
-std::optional<STDString> LuaBundle::GetResource(STDString const& path) const
+std::optional<STDString> LuaBundle::GetResource(StringView path) const
 {
     if (!resourcePath_.empty()) {
         auto resPath = resourcePath_ + L"/" + FromUTF8(path).c_str();
@@ -47,7 +47,7 @@ std::optional<STDString> LuaBundle::GetResource(STDString const& path) const
         }
     }
 
-    auto it = resources_.find(path);
+    auto it = resources_.find(STDString(path));
     if (it != resources_.end()) {
         return it->second;
     } else {

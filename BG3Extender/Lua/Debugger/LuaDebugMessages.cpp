@@ -428,7 +428,7 @@ void DebugMessageHandler::HandleRequestSource(uint32_t seq, DbgRequestSource con
     // Check for a loaded Lua file from mods
     auto path = FindLuaSourcePath(STDString(req.name()));
     if (path) {
-        auto reader = GetStaticSymbols().MakeFileReader(*path, PathRootType::Root);
+        auto reader = GetStaticSymbols().MakeFileReaderAbsolute(*path);
         if (!reader.IsLoaded()) {
             LuaError("Script file could not be opened: " << *path);
         } else {

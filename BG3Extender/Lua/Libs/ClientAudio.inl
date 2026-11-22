@@ -168,9 +168,13 @@ bool UnloadEvent(char const* eventName)
 
 bool PlayExternalSound(LuaSoundObjectId soundObject, char const* eventName, char const* path, AudioCodec codec, std::optional<float> positionSec)
 {
-    STDString lsPath = GetStaticSymbols().ToPath(path, PathRootType::Data);
-    auto eventId = GetSoundManager()->GetIDFromString(eventName);
-    return GetSoundManager()->PlayExternalSound((SoundObjectId)soundObject, eventId, lsPath, (uint8_t)codec, positionSec.value_or(0.0f), false, nullptr);
+    auto lsPath = GetAndValidatePath(path, PathRootType::Data);
+    if (lsPath) {
+        auto eventId = GetSoundManager()->GetIDFromString(eventName);
+        return GetSoundManager()->PlayExternalSound((SoundObjectId)soundObject, eventId, *lsPath, (uint8_t)codec, positionSec.value_or(0.0f), false, nullptr);
+    } else {
+        return false;
+    }
 }
 
 bool LoadBank(const char* bankName)

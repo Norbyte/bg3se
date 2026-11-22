@@ -132,7 +132,7 @@ void VirtualTextureHelpers::BindSEVirtualTextures()
                 auto path = *GetStaticSymbols().ls__PathRoots[(unsigned)PathRootType::Data];
                 path += "/";
                 path += remap->GetStringView();
-                vtManager->TileSets.set(newGuid, path);
+                vtManager->TileSets.set(newGuid, Path{ path });
                 preloads.push_back(tex);
             }
 
@@ -213,7 +213,7 @@ void VirtualTextureHelpers::MergeModVTs()
 
     HashMap<STDString, GTSMapping> paths;
     for (auto const& path : vtManager->TileSets) {
-        paths.set(path.Value(), GTSMapping{});
+        paths.set(path.Value().FullPath, GTSMapping{});
     }
 
     if (!MergeGTS(paths)) {
@@ -261,7 +261,7 @@ HashMap<FixedString, FixedString> VirtualTextureHelpers::CollectRemaps()
     auto modManager = GetStaticSymbols().GetModManagerClient();
     for (auto const& mod : modManager->LoadOrderedModules) {
         auto virtualTextureConfig = "Mods/" + mod.Info.Directory + "/ScriptExtender/VirtualTextures.json";
-        auto reader = GetStaticSymbols().MakeFileReader(virtualTextureConfig);
+        auto reader = GetStaticSymbols().MakeFileReader(virtualTextureConfig, PathRootType::Data);
 
         if (reader.IsLoaded()) {
             DEBUG("Loading virtual texture mappings: %s", virtualTextureConfig.c_str());

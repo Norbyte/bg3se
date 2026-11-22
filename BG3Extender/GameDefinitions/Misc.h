@@ -142,7 +142,7 @@ namespace bg3se
         bool field_EE;
         bool field_EF;
         bool field_F0;
-        STDString ScreenshotDir;
+        Path ScreenshotDir;
         bool AutoListenEnabled;
         bool DisableLocalMessagePassing;
         bool EnableSteamP2P;

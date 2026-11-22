@@ -342,8 +342,8 @@ struct [[bg3::hidden]] GenomeManager : public ProtectedGameObject<GenomeManager>
     CRITICAL_SECTION ListenerLock;
     LegacyRefMap<GenomeBlueprint*, Array<GenomeBlueprintInstance*>> BlueprintInstances;
     CRITICAL_SECTION InstanceLock;
-    LegacyRefMap<STDString, BlueprintInstanceData> LoadedBlueprints;
-    LegacyRefMap<GenomeBlueprint*, STDString> BlueprintsToPath;
+    LegacyRefMap<Path, BlueprintInstanceData> LoadedBlueprints;
+    LegacyRefMap<GenomeBlueprint*, Path> BlueprintsToPath;
     SRWLOCK BlueprintInstantiationRWLock;
     int LockThreadID;
     int LockWriteEnterCount;

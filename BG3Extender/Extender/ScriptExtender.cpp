@@ -23,6 +23,8 @@
 #include <Extender/Shared/UserVariables.inl>
 #include <Extender/Shared/UseActions.inl>
 #include <Extender/Shared/VirtualTextures.inl>
+#include <Extender/Shared/FilesystemHelpers.inl>
+
 #if USE_OPTICK
 #include <optick_server.h>
 #endif
@@ -519,16 +521,26 @@ void ScriptExtender::ClearPathOverrides()
 }
 
 
-void ScriptExtender::AddPathOverride(STDString const & path, STDString const & overriddenPath)
+bool ScriptExtender::AddPathOverride(StringView path, StringView overriddenPath)
 {
-    auto absolutePath = GetStaticSymbols().ToPath(path, PathRootType::Data);
-    auto absoluteOverriddenPath = GetStaticSymbols().ToPath(overriddenPath, PathRootType::Data);
+    auto absolutePath = GetAndValidatePath(path, PathRootType::Data);
+    if (!absolutePath) {
+        OsiError("Source path invalid or unsafe: '" << path << "'");
+        return false;
+    }
+
+    auto absoluteOverriddenPath = GetAndValidatePath(overriddenPath, PathRootType::Data);
+    if (!absoluteOverriddenPath) {
+        OsiError("Destination path invalid or unsafe: '" << overriddenPath << "'");
+        return false;
+    }
 
     std::unique_lock lock(pathOverrideMutex_);
-    pathOverrides_.insert(std::make_pair(absolutePath, absoluteOverriddenPath));
+    pathOverrides_.insert(std::make_pair(*absolutePath, *absoluteOverriddenPath));
+    return true;
 }
 
-std::optional<STDString> ScriptExtender::GetPathOverride(STDString const & path)
+std::optional<STDString> ScriptExtender::GetPathOverride(StringView path)
 {
     auto absolutePath = GetStaticSymbols().ToPath(path, PathRootType::Data);
 
@@ -545,21 +557,17 @@ FileReader * ScriptExtender::OnFileReaderCreate(FileReader__CtorProc* next, File
 {
     if (!pathOverrides_.empty()) {
         std::shared_lock lock(pathOverrideMutex_);
-        auto it = pathOverrides_.find(path.Name);
+        auto it = pathOverrides_.find(path.FullPath);
         if (it != pathOverrides_.end()) {
-            DEBUG("FileReader path override: %s -> %s", path.Name.c_str(), it->second.c_str());
-            Path overriddenPath;
-            overriddenPath.Name = it->second;
-#if !defined(OSI_EOCAPP)
-            overriddenPath.Unknown = path->Unknown;
-#endif
+            DEBUG("FileReader path override: %s -> %s", path.FullPath.c_str(), it->second.c_str());
+            Path overriddenPath{ it->second };
             lock.unlock();
             return next(self, overriddenPath, type, unknown);
         }
     }
 
-    if (path.Name.size() > 4 
-        && memcmp(path.Name.data() + path.Name.size() - 4, ".txt", 4) == 0) {
+    if (path.FullPath.size() > 4
+        && memcmp(path.FullPath.data() + path.FullPath.size() - 4, ".txt", 4) == 0) {
         statLoadOrderHelper_.OnStatFileOpened(path);
     }
 

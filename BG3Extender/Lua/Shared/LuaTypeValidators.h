@@ -226,7 +226,7 @@ inline bool Validate(ScratchString const* s, Overload<ScratchString>)
 
 inline bool Validate(Path const* p, Overload<Path>)
 {
-    return Validate(&p->Name, Overload<STDString>{});
+    return Validate(&p->FullPath, Overload<STDString>{});
 }
 
 inline bool Validate(FixedString const* s, Overload<FixedString>)

@@ -104,17 +104,16 @@ namespace bg3se
         void RequestLuaReset(bool startup);
         void AddPostResetCallback(PostResetCallback callback);
 
-        std::optional<STDString> ResolveModScriptPath(STDString const& modNameGuid, STDString const& fileName);
-        STDString ResolveModScriptPath(Module const& mod, STDString const& fileName);
+        std::optional<STDString> ResolveModScriptPath(StringView modNameGuid, StringView fileName);
+        STDString ResolveModScriptPath(Module const& mod, StringView fileName);
 
-        std::optional<int> LuaLoadExternalFile(STDString const & path);
-        std::optional<int> LuaLoadGameFile(FileReaderPin & reader, STDString const & scriptName, int globalsIdx = 0);
-        std::optional<int> LuaLoadGameFile(STDString const & path, STDString const & scriptName, 
+        std::optional<int> LuaLoadGameFile(FileReaderPin & reader, StringView scriptName, int globalsIdx = 0);
+        std::optional<int> LuaLoadGameFile(StringView path, StringView scriptName,
             bool warnOnError = true, int globalsIdx = 0);
-        std::optional<int> LuaLoadModScript(STDString const & modNameGuid, STDString const & fileName, 
+        std::optional<int> LuaLoadModScript(StringView modNameGuid, StringView fileName,
             bool warnOnError = true, int globalsIdx = 0);
-        std::optional<int> LuaLoadBuiltinFile(STDString const& fileName, bool warnOnError = true, int globalsIdx = 0);
-        std::optional<int> LuaLoadFile(STDString const& path, STDString const& scriptName, bool warnOnError = true, int globalsIdx = 0);
+        std::optional<int> LuaLoadBuiltinFile(StringView fileName, bool warnOnError = true, int globalsIdx = 0);
+        std::optional<int> LuaLoadFile(StringView path, StringView scriptName, bool warnOnError = true, int globalsIdx = 0);
 
         inline std::unordered_map<FixedString, ExtensionModConfig> const& GetConfigs() const
         {

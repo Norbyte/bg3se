@@ -6,7 +6,6 @@
 #include <Lua/LuaSerializers.h>
 #include <Extender/ScriptExtender.h>
 #include <Extender/Server/ExtensionStateServer.h>
-#include <Extender/Shared/ScriptHelpers.h>
 #include <Extender/Shared/API.h>
 #include <Lua/Debugger/LuaDebugger.h>
 #include <GameDefinitions/Components/All.h>

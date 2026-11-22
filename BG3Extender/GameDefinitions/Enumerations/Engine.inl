@@ -41,6 +41,11 @@ BEGIN_ENUM(PathRootType, int)
     EV(PhotoMode, 18)
 END_ENUM()
 
+BEGIN_ENUM(UserPathRootType, int)
+    EV(Data, 0)
+    EV(UserProfileScriptExtender, 1)
+END_ENUM()
+
 BEGIN_BITMASK(InputType, uint8_t)
     EV(Press, 1)
     EV(Release, 2)

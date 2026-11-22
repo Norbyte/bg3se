@@ -150,8 +150,8 @@ public:
     }
 
     void ClearPathOverrides();
-    void AddPathOverride(STDString const & path, STDString const & overriddenPath);
-    std::optional<STDString> GetPathOverride(STDString const& path);
+    bool AddPathOverride(StringView path, StringView overriddenPath);
+    std::optional<STDString> GetPathOverride(StringView path);
 
     std::wstring MakeLogFilePath(std::wstring const& Type, std::wstring const& Extension);
     void InitRuntimeLogging();
