@@ -1067,7 +1067,7 @@ struct CharacterIconRenderSystem : public BaseSystem
     EntityHandle EntityBeingRendered;
     EntityHandle field_140;
     uint32_t field_148;
-    EntityHandle RenderCallback;
+    [[bg3::hidden]] ComponentHandle RenderCallback;
     uint32_t SessionCount;
     [[bg3::hidden]] void* EquipmentVisualsSystem;
 };
