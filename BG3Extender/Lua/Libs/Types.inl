@@ -124,6 +124,12 @@ bool IsA(lua_State* L, AnyRef object, FixedString typeName)
     }
 }
 
+bool IsArrayLike(lua_State* L, AnyRef arr)
+{
+    return lua_type(L, arr.Index) == LUA_TTABLE
+        && lua_is_linear_array(L, arr.Index);
+}
+
 TypeInformation* GetTypeInfo(FixedString const& typeName)
 {
     auto const& type = TypeInformationRepository::GetInstance().GetType(typeName);
@@ -381,6 +387,7 @@ void RegisterTypesLib()
     MODULE_FUNCTION(GetTypeInfo)
     MODULE_FUNCTION(TypeOf)
     MODULE_FUNCTION(IsA)
+    MODULE_FUNCTION(IsArrayLike)
     MODULE_FUNCTION(GetAllTypes)
     MODULE_FUNCTION(Validate)
     MODULE_FUNCTION(Serialize)

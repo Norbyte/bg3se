@@ -53,7 +53,13 @@ bool lua_is_linear_array(lua_State* L, int idx)
     if (!ttistable(val)) return false;
 
     auto tab = hvalue(val);
-    if (tab->lastfree) return false;
+    if (tab->lastfree) {
+        // Hash part may be allocated but hold only removed (nil-valued) entries
+        auto nodes = sizenode(tab);
+        for (unsigned i = 0; i < nodes; i++) {
+            if (!ttisnil(gval(gnode(tab, i)))) return false;
+        }
+    }
 
     // Skip trailing nil-s
     unsigned int sz;
