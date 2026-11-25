@@ -1,4 +1,5 @@
 #include <Extender/ScriptExtender.h>
+#include <Extender/Client/KeyboardMovement.h>
 
 /// <lua_module>Input</lua_module>
 BEGIN_NS(ecl::lua::input)
@@ -41,6 +42,25 @@ bg3se::input::InputManager* GetInputManager()
     return *GetStaticSymbols().ls__gInputManager;
 }
 
+bool SetKeyboardMovementOverride(bool enabled)
+{
+    return ecl::SetKeyboardMovementOverride(enabled);
+}
+
+bool GetKeyboardMovementOverride()
+{
+    return ecl::GetKeyboardMovementOverride();
+}
+
+bool SetRotationCursorEnabled(bool enabled)
+{
+    return gExtender->GetClient().GetSDL().SetRotationCursorEnabled(enabled);
+}
+
+bool SyncKeyboardMovementBindings()
+{
+    return ecl::SyncKeyboardMovementBindings();
+}
 
 void RegisterInputLib()
 {
@@ -50,6 +70,10 @@ void RegisterInputLib()
     MODULE_FUNCTION(InjectKeyDown)
     MODULE_FUNCTION(InjectKeyUp)
     MODULE_FUNCTION(GetInputManager)
+    MODULE_FUNCTION(SetKeyboardMovementOverride)
+    MODULE_FUNCTION(GetKeyboardMovementOverride)
+    MODULE_FUNCTION(SetRotationCursorEnabled)
+    MODULE_FUNCTION(SyncKeyboardMovementBindings)
     END_MODULE()
 }
 

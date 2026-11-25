@@ -151,8 +151,25 @@ namespace bg3se
         SYM_OFF(esv__GameStateThreaded__GameStateWorker__DoWork);
         SYM_OFF(ecl__GameStateMachine__Update);
         SYM_OFF(esv__GameStateMachine__Update);
+        SYM_OFF(ls__CameraSystem__CommitCamera);
+        SYM_OFF(ecl__CameraSystem__UpdateCamera);
+        SYM_OFF(ecl__CameraSystem__UpdateCameraPitch);
+        SYM_OFF(ecl__CameraSystem__UpdateCameraZoom);
+        SYM_OFF(ecl__GameCameraBehavior__GetCameraDefinition);
+        SYM_OFF(ecl__GameCameraBehavior__CalculatePitch);
+        SYM_OFF(ecl__CameraSystem__HandleInput);
+        SYM_OFF(ecl__CameraSystem__SetDefaultZoom);
         SYM_OFF(App__LoadGraphicSettings);
         SYM_OFF(ls__gInputManager);
+        SYM_OFF(ecl__MoveController__KeyboardModeGate);
+        SYM_OFF(App__ReloadInputConfig);
+        SYM_OFF(App__InputConfigPathCall);
+        SYM_OFF(gui__DCKeybindingOptions__RemapCall);
+        SYM_OFF(CameraRotationStartCall);
+        SYM_OFF(CameraRotationStopCall1);
+        SYM_OFF(CameraRotationStopCall2);
+        SYM_OFF(CameraRotationStopCall3);
+        SYM_OFF(CameraRotationCursorCall);
 
         SYM_OFF(ecs__EntityWorld__Update);
         SYM_OFF(ecs__EntityWorld__FlushECBs);
